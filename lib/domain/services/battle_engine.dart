@@ -56,7 +56,7 @@ class BattleEngine {
       });
 
       // Validate the claim
-      final claim = VictoryClaim.validate(claimedValue);
+      final claim = VictoryClaim.validate(claimedValue, DateTime.now());
 
       if (claim.isCorrect) {
         // Correct victory claim
@@ -325,5 +325,5 @@ final class BattleTimeOut extends BattleResult {
 final class BattleError extends BattleResult {
   final String message;
 
-  const BattleError({required this.message});
+  const BattleError(this.message);
 }

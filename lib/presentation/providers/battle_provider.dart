@@ -4,6 +4,7 @@ import '../../domain/entities/enemy.dart';
 import '../../domain/entities/prime.dart';
 import '../../domain/entities/timer_state.dart';
 import '../../domain/entities/penalty_state.dart';
+import '../../domain/entities/victory_claim.dart';
 import '../../domain/services/battle_engine.dart';
 import '../../domain/services/enemy_generator.dart';
 import '../../domain/services/timer_manager.dart';
@@ -14,13 +15,11 @@ import '../../core/utils/logger.dart';
 
 /// State notifier for battle management
 class BattleNotifier extends StateNotifier<BattleState> {
-  final BattleEngine _battleEngine;
   final EnemyGenerator _enemyGenerator;
   final TimerManager _timerManager;
   final Ref _ref;
 
   BattleNotifier(
-    this._battleEngine,
     this._enemyGenerator,
     this._timerManager,
     this._ref,
@@ -40,7 +39,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
       // Generate enemy based on current state
       final enemy = _enemyGenerator.generateEnemy(
         inventory.primes,
-        gameState.playerLevel,
+        gameState.player.level,
       );
 
       // Calculate timer duration with penalties
@@ -85,7 +84,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
         'enemy': state.currentEnemy!.currentValue,
       });
 
-      final result = _battleEngine.executeAttack(state.currentEnemy!, prime);
+      final result = BattleEngine.executeAttack(state.currentEnemy!, prime);
 
       await result.when(
         victory: (defeatedEnemy, rewardPrime, victoryClaim) async {
@@ -132,7 +131,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
         'enemyValue': state.currentEnemy!.currentValue,
       });
 
-      final result = _battleEngine.processVictoryClaim(
+      final result = BattleEngine.processVictoryClaim(
         state.currentEnemy!,
         state.currentEnemy!.currentValue,
       );
@@ -174,7 +173,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
     try {
       Logger.logBattle('Escaping from battle');
 
-      final result = _battleEngine.processEscape();
+      final result = BattleEngine.processEscape();
 
       result.when(
         victory: (_, __, ___) {}, // Won't happen
@@ -201,7 +200,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
 
     // Handle timeout
     if (timerState.isExpired && state.status == BattleStatus.fighting) {
-      final result = _battleEngine.processTimeOut();
+      final result = BattleEngine.processTimeOut();
       
       result.when(
         victory: (_, __, ___) {}, // Won't happen
@@ -404,7 +403,6 @@ class BattleNotifier extends StateNotifier<BattleState> {
 /// Battle provider
 final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>((ref) {
   return BattleNotifier(
-    BattleEngine(),
     EnemyGenerator(),
     TimerManager(),
     ref,

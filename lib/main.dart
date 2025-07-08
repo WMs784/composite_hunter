@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'presentation/theme/app_theme.dart';
 import 'presentation/routes/app_router.dart';
 import 'presentation/routes/route_names.dart';
 
 void main() {
-  runApp(const CompositeHunterApp());
+  runApp(const ProviderScope(child: CompositeHunterApp()));
 }
 
 class CompositeHunterApp extends StatelessWidget {

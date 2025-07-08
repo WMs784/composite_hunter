@@ -353,7 +353,7 @@ class GameNotifier extends StateNotifier<GameState> {
 
 /// Game provider
 final gameProvider = StateNotifierProvider<GameNotifier, GameState>((ref) {
-  final repository = ref.read(gameRepositoryProvider);
+  final repository = GameRepository();
   final mapper = GameMapper();
   return GameNotifier(repository, mapper);
 });

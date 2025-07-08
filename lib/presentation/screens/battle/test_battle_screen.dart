@@ -5,86 +5,77 @@ import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../../domain/entities/prime.dart';
-import '../../../domain/entities/battle_state.dart';
 
-// Battle screen initial data
-List<Prime> _getInitialPrimes() => [
+// Simple test providers
+final testEnemyProvider = StateProvider<int>((ref) => 12);
+final testTimerProvider = StateProvider<int>((ref) => 90);
+final testPrimesProvider = StateProvider<List<Prime>>((ref) => [
   Prime(value: 2, count: 3, firstObtained: DateTime.now()),
   Prime(value: 3, count: 2, firstObtained: DateTime.now()),
   Prime(value: 5, count: 1, firstObtained: DateTime.now()),
-  Prime(value: 7, count: 0, firstObtained: DateTime.now()),
-  Prime(value: 11, count: 0, firstObtained: DateTime.now()),
-  Prime(value: 13, count: 0, firstObtained: DateTime.now()),
-];
+  Prime(value: 7, count: 1, firstObtained: DateTime.now()),
+]);
 
-// Simple working providers for battle screen
-final battleEnemyProvider = StateProvider<int>((ref) => 12);
-final battleTimerProvider = StateProvider<int>((ref) => 90);
-final battlePrimesProvider = StateProvider<List<Prime>>((ref) => _getInitialPrimes());
-
-class BattleScreen extends ConsumerStatefulWidget {
-  const BattleScreen({super.key});
+class TestBattleScreen extends ConsumerStatefulWidget {
+  const TestBattleScreen({super.key});
 
   @override
-  ConsumerState<BattleScreen> createState() => _BattleScreenState();
+  ConsumerState<TestBattleScreen> createState() => _TestBattleScreenState();
 }
 
-class _BattleScreenState extends ConsumerState<BattleScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Initialize battle state
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      print('Battle screen initialized');
-    });
-  }
-
+class _TestBattleScreenState extends ConsumerState<TestBattleScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Battle'),
+        title: const Text('Test Battle'),
         actions: [
           IconButton(
             icon: const Icon(Icons.inventory),
-            onPressed: () => AppRouter.goToInventory(context),
+            onPressed: () {
+              print('Inventory button pressed');
+              AppRouter.goToInventory(context);
+            },
             tooltip: 'Inventory',
           ),
           IconButton(
             icon: const Icon(Icons.emoji_events),
-            onPressed: () => AppRouter.goToAchievements(context),
+            onPressed: () {
+              print('Achievements button pressed');
+              AppRouter.goToAchievements(context);
+            },
             tooltip: 'Achievements',
           ),
         ],
       ),
-      body: const SafeArea(
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(Dimensions.paddingM),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               // Timer display
-              _TimerSection(),
+              _TestTimerSection(),
               
-              SizedBox(height: Dimensions.spacingL),
+              const SizedBox(height: 20),
               
               // Enemy display
               Expanded(
                 flex: 2,
-                child: _EnemySection(),
+                child: _TestEnemySection(),
               ),
               
-              SizedBox(height: Dimensions.spacingL),
+              const SizedBox(height: 20),
               
               // Prime grid
               Expanded(
                 flex: 3,
-                child: _PrimeGridSection(),
+                child: _TestPrimeGridSection(),
               ),
               
-              SizedBox(height: Dimensions.spacingL),
+              const SizedBox(height: 20),
               
               // Action buttons
-              _ActionButtonsSection(),
+              _TestActionButtonsSection(),
             ],
           ),
         ),
@@ -93,29 +84,20 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 }
 
-class _TimerSection extends ConsumerWidget {
-  const _TimerSection();
-
+class _TestTimerSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final timer = ref.watch(battleTimerProvider);
+    final timer = ref.watch(testTimerProvider);
     final minutes = timer ~/ 60;
     final seconds = timer % 60;
     final formattedTime = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
-    Color timerColor = AppColors.timerNormal;
-    if (timer <= 10) {
-      timerColor = AppColors.timerCritical;
-    } else if (timer <= 30) {
-      timerColor = AppColors.timerWarning;
-    }
-
     return Container(
       width: double.infinity,
-      height: Dimensions.timerDisplayHeight,
+      height: 80,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(Dimensions.radiusM),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.outline),
       ),
       child: Center(
@@ -124,14 +106,17 @@ class _TimerSection extends ConsumerWidget {
           children: [
             Text(
               formattedTime,
-              style: AppTextStyles.timerDisplay.copyWith(
-                color: timerColor,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.timerNormal,
               ),
             ),
-            const SizedBox(height: Dimensions.spacingXs),
+            const SizedBox(height: 4),
             Text(
               'Time Remaining',
-              style: AppTextStyles.labelSmall.copyWith(
+              style: TextStyle(
+                fontSize: 12,
                 color: AppColors.onSurfaceVariant,
               ),
             ),
@@ -142,28 +127,25 @@ class _TimerSection extends ConsumerWidget {
   }
 }
 
-class _EnemySection extends ConsumerWidget {
-  const _EnemySection();
-
+class _TestEnemySection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final enemy = ref.watch(battleEnemyProvider);
-    final isPrime = _isPrime(enemy);
+    final enemy = ref.watch(testEnemyProvider);
 
     return Card(
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(Dimensions.paddingL),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Enemy display
             Container(
-              width: Dimensions.enemyDisplaySize,
-              height: Dimensions.enemyDisplaySize,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
                 color: AppColors.enemyNormal,
-                borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
@@ -175,27 +157,31 @@ class _EnemySection extends ConsumerWidget {
               child: Center(
                 child: Text(
                   enemy.toString(),
-                  style: AppTextStyles.enemyValue.copyWith(
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
                     color: AppColors.onPrimary,
                   ),
                 ),
               ),
             ),
             
-            const SizedBox(height: Dimensions.spacingM),
+            const SizedBox(height: 16),
             
-            Text(
-              isPrime ? 'Prime Number' : 'Composite Number',
-              style: AppTextStyles.titleMedium,
+            const Text(
+              'Enemy Composite Number',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             
-            const SizedBox(height: Dimensions.spacingS),
+            const SizedBox(height: 8),
             
             Text(
-              isPrime 
-                ? 'Enemy is defeated! Claim victory!'
-                : 'Attack with prime factors to defeat it!',
-              style: AppTextStyles.bodySmall.copyWith(
+              'Attack with prime factors to defeat it!',
+              style: TextStyle(
+                fontSize: 14,
                 color: AppColors.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
@@ -207,71 +193,65 @@ class _EnemySection extends ConsumerWidget {
   }
 }
 
-class _PrimeGridSection extends ConsumerWidget {
-  const _PrimeGridSection();
-
+class _TestPrimeGridSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primes = ref.watch(battlePrimesProvider);
-    final enemy = ref.watch(battleEnemyProvider);
+    final primes = ref.watch(testPrimesProvider);
+    final enemy = ref.watch(testEnemyProvider);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Your Prime Numbers',
-          style: AppTextStyles.titleMedium,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         
-        const SizedBox(height: Dimensions.spacingM),
+        const SizedBox(height: 16),
         
         Expanded(
-          child: primes.isEmpty
-              ? const Center(
-                  child: Text(
-                    'No primes available for attack',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                )
-              : GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: Dimensions.primeGridCrossAxisCount,
-                    childAspectRatio: Dimensions.primeGridAspectRatio,
-                    crossAxisSpacing: Dimensions.primeGridSpacing,
-                    mainAxisSpacing: Dimensions.primeGridRunSpacing,
-                  ),
-                  itemCount: primes.length,
-                  itemBuilder: (context, index) {
-                    final prime = primes[index];
-                    final canAttack = enemy % prime.value == 0;
-                    
-                    return _PrimeButton(
-                      prime: prime,
-                      canAttack: canAttack,
-                      onPressed: () {
-                        print('Prime ${prime.value} attack');
-                        if (canAttack && prime.count > 0) {
-                          ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
-                          final updatedPrimes = [...primes];
-                          updatedPrimes[index] = prime.copyWith(count: prime.count - 1);
-                          ref.read(battlePrimesProvider.notifier).state = updatedPrimes;
-                        }
-                      },
-                    );
-                  },
-                ),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              childAspectRatio: 1.0,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: primes.length,
+            itemBuilder: (context, index) {
+              final prime = primes[index];
+              final canAttack = enemy % prime.value == 0;
+              
+              return _TestPrimeButton(
+                prime: prime,
+                canAttack: canAttack,
+                onPressed: () {
+                  print('Prime ${prime.value} pressed');
+                  if (canAttack) {
+                    ref.read(testEnemyProvider.notifier).state = enemy ~/ prime.value;
+                    final updatedPrimes = [...primes];
+                    updatedPrimes[index] = prime.copyWith(count: prime.count - 1);
+                    ref.read(testPrimesProvider.notifier).state = updatedPrimes;
+                  }
+                },
+              );
+            },
+          ),
         ),
       ],
     );
   }
 }
 
-class _PrimeButton extends StatelessWidget {
+class _TestPrimeButton extends StatelessWidget {
   final Prime prime;
   final bool canAttack;
   final VoidCallback? onPressed;
 
-  const _PrimeButton({
+  const _TestPrimeButton({
     required this.prime,
     required this.canAttack,
     this.onPressed,
@@ -283,13 +263,13 @@ class _PrimeButton extends StatelessWidget {
     
     return Material(
       color: isAvailable ? AppColors.primeAvailable : AppColors.primeUnavailable,
-      borderRadius: BorderRadius.circular(Dimensions.radiusM),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: isAvailable ? onPressed : null,
-        borderRadius: BorderRadius.circular(Dimensions.radiusM),
+        borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Dimensions.radiusM),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isAvailable ? AppColors.primary : AppColors.outline,
               width: 2,
@@ -300,27 +280,30 @@ class _PrimeButton extends StatelessWidget {
             children: [
               Text(
                 prime.value.toString(),
-                style: AppTextStyles.primeValue.copyWith(
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                   color: isAvailable ? AppColors.onPrimary : AppColors.onSurfaceVariant,
                 ),
               ),
               
-              const SizedBox(height: Dimensions.spacingXs),
+              const SizedBox(height: 4),
               
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingS,
-                  vertical: Dimensions.paddingXs,
+                  horizontal: 6,
+                  vertical: 2,
                 ),
                 decoration: BoxDecoration(
                   color: isAvailable 
                       ? AppColors.primaryContainer 
                       : AppColors.surfaceVariant,
-                  borderRadius: BorderRadius.circular(Dimensions.radiusS),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   'x${prime.count}',
-                  style: AppTextStyles.primeCount.copyWith(
+                  style: TextStyle(
+                    fontSize: 12,
                     color: isAvailable 
                         ? AppColors.onPrimaryContainer 
                         : AppColors.onSurfaceVariant,
@@ -335,13 +318,11 @@ class _PrimeButton extends StatelessWidget {
   }
 }
 
-class _ActionButtonsSection extends ConsumerWidget {
-  const _ActionButtonsSection();
-
+class _TestActionButtonsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final enemy = ref.watch(battleEnemyProvider);
-    final canClaimVictory = _isPrime(enemy);
+    final enemy = ref.watch(testEnemyProvider);
+    final canClaimVictory = enemy <= 1 || _isPrime(enemy);
     
     return Row(
       children: [
@@ -349,15 +330,14 @@ class _ActionButtonsSection extends ConsumerWidget {
           child: OutlinedButton(
             onPressed: () {
               print('Escape button pressed');
-              // Reset battle
-              ref.read(battleEnemyProvider.notifier).state = 12;
-              ref.read(battlePrimesProvider.notifier).state = _getInitialPrimes();
+              // Reset enemy
+              ref.read(testEnemyProvider.notifier).state = 12;
             },
             child: const Text('Escape'),
           ),
         ),
         
-        const SizedBox(width: Dimensions.spacingM),
+        const SizedBox(width: 16),
         
         Expanded(
           flex: 2,
@@ -374,8 +354,7 @@ class _ActionButtonsSection extends ConsumerWidget {
                           TextButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              ref.read(battleEnemyProvider.notifier).state = 12;
-                              ref.read(battlePrimesProvider.notifier).state = _getInitialPrimes();
+                              ref.read(testEnemyProvider.notifier).state = 12;
                             },
                             child: const Text('OK'),
                           ),

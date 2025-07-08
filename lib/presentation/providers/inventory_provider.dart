@@ -230,7 +230,7 @@ class InventoryNotifier extends StateNotifier<Inventory> {
 
 /// Inventory provider
 final inventoryProvider = StateNotifierProvider<InventoryNotifier, Inventory>((ref) {
-  final repository = ref.read(gameRepositoryProvider);
+  final repository = GameRepository();
   return InventoryNotifier(repository);
 });
 

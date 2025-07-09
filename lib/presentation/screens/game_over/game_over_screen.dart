@@ -137,44 +137,46 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           ],
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(Dimensions.paddingL),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // ゲームオーバーアイコン
-            AnimatedBuilder(
-              animation: _iconController,
-              builder: (context, child) {
-                return Transform.rotate(
-                  angle: _iconRotationAnimation.value * 0.1,
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.error.withOpacity(0.3),
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                        ),
-                      ],
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(Dimensions.paddingM),
+          child: Column(
+            children: [
+              // Top spacing
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              // ゲームオーバーアイコン
+              AnimatedBuilder(
+                animation: _iconController,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _iconRotationAnimation.value * 0.1,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.error.withOpacity(0.3),
+                            blurRadius: 20,
+                            spreadRadius: 5,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        widget.reason == GameOverReason.timeUp
+                            ? Icons.access_time
+                            : Icons.inventory_2,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
-                    child: Icon(
-                      widget.reason == GameOverReason.timeUp
-                          ? Icons.access_time
-                          : Icons.inventory_2,
-                      size: 60,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // ゲームオーバーテキスト
             Text(
@@ -197,19 +199,19 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
               textAlign: TextAlign.center,
             ),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // セッション結果
             if (!session.isPracticeMode)
               _buildSessionResults(session),
             
             if (!session.isPracticeMode)
-              const SizedBox(height: Dimensions.spacingXl),
+              const SizedBox(height: Dimensions.spacingL),
             
             // アドバイス
             _buildAdvice(),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // ボタン
             ResultScreenButtons(
@@ -220,7 +222,11 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
               onRetry: () => _handleRetry(context),
               onPractice: () => goToPractice(context, ref),
             ),
-          ],
+            
+            // Bottom spacing for scroll
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            ],
+          ),
         ),
       ),
     );

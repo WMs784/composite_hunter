@@ -31,8 +31,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     super.initState();
     // Initialize battle state and start timer
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      print('Battle screen initialized');
-      _startTimer();
+      if (mounted) {
+        print('Battle screen initialized');
+        _initializeBattleForStage();
+        _startTimer();
+      }
     });
   }
 
@@ -63,6 +66,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // Stop timer
     _stopTimer();
     
+    // アイテム状態をステージ開始時に復元（ゲームオーバー画面で処理されるため、ここでは更新しない）
+    
     // ゲームオーバー画面に遷移
     _goToGameOver(GameOverReason.timeUp);
   }
@@ -75,8 +80,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     }
     
     // Reset battle state and restart timer
-    ref.read(battleEnemyProvider.notifier).state = 12;
-    ref.read(battleTimerProvider.notifier).state = 90;
+    _initializeBattleForStage();
     
     // Reset used primes
     ref.read(battleSessionProvider.notifier).resetUsedPrimes();
@@ -126,6 +130,64 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       _goToGameOver(GameOverReason.noItems);
     }
   }
+  
+  void _initializeBattleForStage() {
+    final session = ref.read(battleSessionProvider);
+    
+    // ステージに応じた敵と制限時間を設定
+    if (session.isPracticeMode) {
+      // 練習モードはデフォルト設定
+      ref.read(battleEnemyProvider.notifier).state = _generateEnemyForRange(6, 20);
+      ref.read(battleTimerProvider.notifier).state = 30;
+    } else {
+      final stageNumber = session.stageNumber ?? 1;
+      final (enemy, timeLimit) = _getStageSettings(stageNumber);
+      ref.read(battleEnemyProvider.notifier).state = enemy;
+      ref.read(battleTimerProvider.notifier).state = timeLimit;
+    }
+  }
+  
+  (int, int) _getStageSettings(int stageNumber) {
+    switch (stageNumber) {
+      case 1:
+        return (_generateEnemyForRange(6, 20), 30);
+      case 2:
+        return (_generateEnemyForRange(21, 100), 60);
+      case 3:
+        return (_generateEnemyForRange(101, 1000), 90);
+      case 4:
+        return (_generateEnemyForRange(1001, 10000), 120);
+      default:
+        return (_generateEnemyForRange(6, 20), 30);
+    }
+  }
+  
+  int _generateEnemyForRange(int min, int max) {
+    final random = DateTime.now().millisecondsSinceEpoch;
+    int candidate;
+    
+    // 合成数を生成するまで繰り返す
+    do {
+      candidate = min + (random % (max - min + 1));
+    } while (_isPrime(candidate) || candidate <= 1);
+    
+    return candidate;
+  }
+  
+  void _generateNewEnemy() {
+    final session = ref.read(battleSessionProvider);
+    
+    if (session.isPracticeMode) {
+      // 練習モードはデフォルト設定
+      ref.read(battleEnemyProvider.notifier).state = _generateEnemyForRange(6, 20);
+      ref.read(battleTimerProvider.notifier).state = 30;
+    } else {
+      final stageNumber = session.stageNumber ?? 1;
+      final (enemy, timeLimit) = _getStageSettings(stageNumber);
+      ref.read(battleEnemyProvider.notifier).state = enemy;
+      ref.read(battleTimerProvider.notifier).state = timeLimit;
+    }
+  }
 
   void _restartBattle() {
     print('Restarting battle');
@@ -137,8 +199,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     }
     
     // Reset battle
-    ref.read(battleEnemyProvider.notifier).state = 12;
-    ref.read(battleTimerProvider.notifier).state = 90;
+    _initializeBattleForStage();
     
     // Reset used primes for current battle
     ref.read(battleSessionProvider.notifier).resetUsedPrimes();
@@ -238,6 +299,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               _ActionButtonsSection(
                 onRestartTimer: _startTimer,
                 onStopTimer: _stopTimer,
+                onGenerateNewEnemy: _generateNewEnemy,
               ),
             ],
           ),
@@ -330,39 +392,51 @@ class _TimerSection extends ConsumerWidget {
     final formattedTime = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
 
     Color timerColor = AppColors.timerNormal;
+    Color backgroundColor = AppColors.surface;
+    
     if (timer <= 10) {
       timerColor = AppColors.timerCritical;
+      backgroundColor = AppColors.timerCritical.withOpacity(0.1);
     } else if (timer <= 30) {
       timerColor = AppColors.timerWarning;
+      backgroundColor = AppColors.timerWarning.withOpacity(0.1);
     }
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      height: Dimensions.timerDisplayHeight,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.outline),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Dimensions.paddingM,
+        vertical: Dimensions.paddingS,
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              formattedTime,
-              style: AppTextStyles.timerDisplay.copyWith(
-                color: timerColor,
-              ),
-            ),
-            const SizedBox(height: Dimensions.spacingXs),
-            Text(
-              'Time Remaining',
-              style: AppTextStyles.labelSmall.copyWith(
-                color: AppColors.onSurfaceVariant,
-              ),
-            ),
-          ],
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(Dimensions.radiusM),
+        border: Border.all(
+          color: timer <= 10 ? timerColor : AppColors.outline,
+          width: timer <= 10 ? 2.0 : 1.0,
         ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 300),
+            style: AppTextStyles.timerDisplay.copyWith(
+              color: timerColor,
+              fontSize: timer <= 10 ? 32 : 28,
+              fontWeight: timer <= 10 ? FontWeight.w900 : FontWeight.bold,
+            ),
+            child: Text(formattedTime),
+          ),
+          const SizedBox(height: Dimensions.spacingXs),
+          Text(
+            'Time Remaining',
+            style: AppTextStyles.labelSmall.copyWith(
+              color: AppColors.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -574,10 +648,12 @@ class _PrimeButton extends StatelessWidget {
 class _ActionButtonsSection extends ConsumerWidget {
   final VoidCallback onRestartTimer;
   final VoidCallback onStopTimer;
+  final VoidCallback onGenerateNewEnemy;
   
   const _ActionButtonsSection({
     required this.onRestartTimer,
     required this.onStopTimer,
+    required this.onGenerateNewEnemy,
   });
 
   @override
@@ -600,11 +676,23 @@ class _ActionButtonsSection extends ConsumerWidget {
               
               // Record escape in session
               ref.read(battleSessionProvider.notifier).recordEscape();
-              // Reset battle
-              ref.read(battleEnemyProvider.notifier).state = 12;
-              ref.read(battleTimerProvider.notifier).state = 90;
-              // Restart timer
+              
+              // Reset used primes for current battle
+              ref.read(battleSessionProvider.notifier).resetUsedPrimes();
+              
+              // Generate new enemy with proper settings (includes time reset)
+              onGenerateNewEnemy();
+              
+              // Restart timer with full time
               onRestartTimer();
+              
+              // Show feedback
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Escaped - items and time restored'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
             },
             child: const Text('Escape'),
           ),
@@ -675,9 +763,10 @@ class _ActionButtonsSection extends ConsumerWidget {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  // Reset used primes for next battle
+                  ref.read(battleSessionProvider.notifier).resetUsedPrimes();
                   // Generate new enemy but don't reset inventory
-                  ref.read(battleEnemyProvider.notifier).state = 12;
-                  ref.read(battleTimerProvider.notifier).state = 90;
+                  onGenerateNewEnemy();
                   // Start new timer for next battle
                   onRestartTimer();
                 },

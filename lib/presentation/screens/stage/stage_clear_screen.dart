@@ -131,34 +131,36 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           ],
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(Dimensions.paddingL),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // 勝利アイコン
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.victoryGreen,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.victoryGreen.withOpacity(0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  ),
-                ],
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(Dimensions.paddingM),
+          child: Column(
+            children: [
+              // Top spacing
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              // 勝利アイコン
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.victoryGreen,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.victoryGreen.withOpacity(0.3),
+                      blurRadius: 20,
+                      spreadRadius: 5,
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.emoji_events,
+                  size: 50,
+                  color: Colors.white,
+                ),
               ),
-              child: const Icon(
-                Icons.emoji_events,
-                size: 60,
-                color: Colors.white,
-              ),
-            ),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // ステージクリアテキスト
             Text(
@@ -183,18 +185,18 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               },
             ),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // 結果詳細
             _buildResultDetails(),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // ボーナス情報
             if (widget.clearResult.isPerfect || widget.clearResult.isNewRecord)
               _buildBonusInfo(),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            const SizedBox(height: Dimensions.spacingL),
             
             // ボタン
             ResultScreenButtons(
@@ -208,7 +210,11 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               onRetry: () => retryStage(context, ref, widget.clearResult.stageNumber),
               onPractice: () => goToPractice(context, ref),
             ),
-          ],
+            
+            // Bottom spacing for scroll
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+            ],
+          ),
         ),
       ),
     );

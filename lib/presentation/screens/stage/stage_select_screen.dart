@@ -7,6 +7,7 @@ import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/stage_progress_provider.dart';
 import '../../providers/inventory_provider.dart';
+import '../battle/battle_screen.dart';
 
 // ステージ情報
 class StageInfo {
@@ -47,7 +48,9 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
     super.initState();
     // ステージ選択画面に入った時点でバトルセッションをリセット
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(battleSessionProvider.notifier).resetSession();
+      if (mounted) {
+        ref.read(battleSessionProvider.notifier).resetSession();
+      }
     });
   }
 
@@ -69,6 +72,11 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
             icon: const Icon(Icons.emoji_events),
             onPressed: () => AppRouter.goToAchievements(context),
             tooltip: 'Achievements',
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => _resetInventory(),
+            tooltip: 'Reset Inventory',
           ),
         ],
       ),
@@ -170,6 +178,74 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
     ref.read(battleSessionProvider.notifier).startPractice(currentInventory);
     // バトル画面に遷移
     AppRouter.goToBattle(context);
+  }
+
+  void _resetInventory() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reset Game Data'),
+        content: const Text('This will reset your inventory and stage progress to initial values. Continue?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              
+              try {
+                // Reset battle session first
+                ref.read(battleSessionProvider.notifier).resetSession();
+                
+                // Reset battle screen providers
+                ref.read(battleEnemyProvider.notifier).state = 12;
+                ref.read(battleTimerProvider.notifier).state = 90;
+                
+                // Reset inventory
+                await ref.read(inventoryProvider.notifier).resetInventory();
+                
+                // Reset stage progress
+                await ref.read(stageProgressProvider.notifier).resetProgress();
+                
+                // Wait a bit for providers to update
+                await Future.delayed(const Duration(milliseconds: 100));
+                
+                // Force UI refresh by triggering a rebuild
+                if (mounted) {
+                  setState(() {});
+                }
+                
+                // Additional delay before showing message
+                await Future.delayed(const Duration(milliseconds: 100));
+                
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Game data reset successfully'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } catch (e) {
+                print('Error during reset: $e');
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error during reset: $e'),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Reset'),
+          ),
+        ],
+      ),
+    );
   }
 }
 

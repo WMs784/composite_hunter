@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'route_names.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/tutorial/tutorial_screen.dart';
+import '../screens/stage/stage_select_screen.dart';
 import '../screens/battle/battle_screen.dart';
+import '../screens/stage/stage_clear_screen.dart';
 import '../screens/inventory/inventory_screen.dart';
 import '../screens/achievement/achievement_screen.dart';
+import '../../domain/entities/stage.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -21,9 +24,22 @@ class AppRouter {
           settings: settings,
         );
 
+      case RouteNames.stageSelect:
+        return MaterialPageRoute(
+          builder: (_) => const StageSelectScreen(),
+          settings: settings,
+        );
+
       case RouteNames.battle:
         return MaterialPageRoute(
           builder: (_) => const BattleScreen(),
+          settings: settings,
+        );
+
+      case RouteNames.stageClear:
+        final clearResult = settings.arguments as StageClearResult;
+        return MaterialPageRoute(
+          builder: (_) => StageClearScreen(clearResult: clearResult),
           settings: settings,
         );
 
@@ -99,6 +115,10 @@ class AppRouter {
   // Specific navigation methods for the app
   static Future<void> goToTutorial(BuildContext context) {
     return pushReplacementNamed(context, RouteNames.tutorial);
+  }
+
+  static Future<void> goToStageSelect(BuildContext context) {
+    return pushReplacementNamed(context, RouteNames.stageSelect);
   }
 
   static Future<void> goToBattle(BuildContext context) {

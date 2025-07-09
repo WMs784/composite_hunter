@@ -5,7 +5,9 @@ class RouteNames {
   // Main screens
   static const String splash = '/';
   static const String tutorial = '/tutorial';
+  static const String stageSelect = '/stage-select';
   static const String battle = '/battle';
+  static const String stageClear = '/stage-clear';
   static const String inventory = '/inventory';
   static const String achievement = '/achievement';
 
@@ -19,7 +21,9 @@ class RouteNames {
   static const List<String> all = [
     splash,
     tutorial,
+    stageSelect,
     battle,
+    stageClear,
     inventory,
     achievement,
     settings,
@@ -41,6 +45,6 @@ class RouteNames {
     if (isFirstLaunch || !isTutorialCompleted) {
       return tutorial;
     }
-    return battle;
+    return stageSelect;
   }
 }

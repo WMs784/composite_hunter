@@ -44,7 +44,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   void _completeTutorial() {
     // TODO: Mark tutorial as completed in preferences
-    AppRouter.goToBattle(context);
+    AppRouter.goToStageSelect(context);
   }
 
   @override

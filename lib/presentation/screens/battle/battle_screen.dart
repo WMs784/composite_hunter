@@ -120,9 +120,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   
   void _checkGameOverConditions() {
     final enemy = ref.read(battleEnemyProvider);
+    final session = ref.read(battleSessionProvider);
     
     // 素数になったら攻撃できないのでゲームオーバーチェックをスキップ
     if (_isPrime(enemy)) return;
+    
+    // 練習モードではアイテム不足でゲームオーバーにならない
+    if (session.isPracticeMode) return;
     
     // 使用可能なアイテムがあるかチェック
     if (!_hasAvailableItems(enemy)) {
@@ -635,12 +639,20 @@ class _PrimeGridSection extends ConsumerWidget {
                       onPressed: () {
                         print('Prime ${prime.value} attack');
                         if (canAttack && prime.count > 0) {
+                          final session = ref.read(battleSessionProvider);
+                          
                           // 敵の数値を更新
                           ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
-                          // インベントリから素数を消費
-                          ref.read(inventoryProvider.notifier).usePrime(prime.value);
+                          
+                          // 練習モードでない場合のみアイテムを消費
+                          if (!session.isPracticeMode) {
+                            // インベントリから素数を消費
+                            ref.read(inventoryProvider.notifier).usePrime(prime.value);
+                          }
+                          
                           // 使用した素数を記録
                           ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
+                          
                           // ゲームオーバー条件をチェック
                           Future.delayed(const Duration(milliseconds: 100), () {
                             onGameOverCheck();
@@ -801,10 +813,15 @@ class _ActionButtonsSection extends ConsumerWidget {
       onStopTimer();
       
       // Correct claim - record victory and give reward
-      final usedPrimes = ref.read(battleSessionProvider).usedPrimesInCurrentBattle;
+      final session = ref.read(battleSessionProvider);
+      final usedPrimes = session.usedPrimesInCurrentBattle;
       ref.read(battleSessionProvider.notifier).recordVictory(enemy);
-      // 完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
-      ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
+      
+      // 練習モードでない場合のみ報酬を獲得
+      if (!session.isPracticeMode) {
+        // 完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
+        ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
+      }
       
       // Check if stage is cleared
       final clearResult = ref.read(battleSessionProvider.notifier).checkClearCondition();
@@ -829,14 +846,21 @@ class _ActionButtonsSection extends ConsumerWidget {
               children: [
                 Text('You defeated the enemy $enemy!'),
                 const SizedBox(height: 8),
-                const Text('Rewards obtained:', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text('• Prime $enemy (final result)'),
-                if (usedPrimes.isNotEmpty) ...[
-                  const Text('• Used primes returned:'),
-                  ...usedPrimes.map((prime) => Text('  - Prime $prime')),
+                if (session.isPracticeMode) ...[
+                  const Text('Practice mode - no items consumed or gained', 
+                    style: TextStyle(fontStyle: FontStyle.italic)),
+                  const SizedBox(height: 8),
+                  const Text('Keep practicing!'),
+                ] else ...[
+                  const Text('Rewards obtained:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('• Prime $enemy (final result)'),
+                  if (usedPrimes.isNotEmpty) ...[
+                    const Text('• Used primes returned:'),
+                    ...usedPrimes.map((prime) => Text('  - Prime $prime')),
+                  ],
+                  const SizedBox(height: 8),
+                  const Text('Continue fighting!'),
                 ],
-                const SizedBox(height: 8),
-                const Text('Continue fighting!'),
               ],
             ),
             actions: [

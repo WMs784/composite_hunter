@@ -45,10 +45,22 @@ class _InventoryScreenState extends State<InventoryScreen>
         title: const Text('Prime Inventory'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
-            Tab(icon: Icon(Icons.inventory), text: 'Inventory'),
-            Tab(icon: Icon(Icons.book), text: 'Collection'),
-            Tab(icon: Icon(Icons.analytics), text: 'Statistics'),
+          indicatorColor: AppColors.primary,
+          labelColor: Colors.white,
+          unselectedLabelColor: AppColors.onSurfaceVariant,
+          tabs: [
+            Tab(
+              icon: Icon(Icons.inventory, color: null), // Use tab bar's color scheme
+              text: 'Inventory',
+            ),
+            Tab(
+              icon: Icon(Icons.book, color: null), // Use tab bar's color scheme
+              text: 'Collection',
+            ),
+            Tab(
+              icon: Icon(Icons.analytics, color: null), // Use tab bar's color scheme
+              text: 'Statistics',
+            ),
           ],
         ),
       ),
@@ -152,15 +164,28 @@ class _InventoryScreenState extends State<InventoryScreen>
                 color: AppColors.onSurfaceVariant,
               ),
             ),
-            trailing: isUnlocked
-                ? Icon(
-                    Icons.check_circle,
-                    color: AppColors.victoryGreen,
-                  )
-                : Icon(
-                    Icons.lock,
-                    color: AppColors.onSurfaceVariant,
-                  ),
+            trailing: Container(
+              padding: const EdgeInsets.all(Dimensions.paddingXs),
+              decoration: BoxDecoration(
+                color: isUnlocked 
+                    ? AppColors.victoryGreen.withOpacity(0.1)
+                    : AppColors.surface,
+                borderRadius: BorderRadius.circular(Dimensions.radiusS),
+                border: Border.all(
+                  color: isUnlocked 
+                      ? AppColors.victoryGreen
+                      : AppColors.outline,
+                  width: 1,
+                ),
+              ),
+              child: Icon(
+                isUnlocked ? Icons.check_circle : Icons.lock,
+                color: isUnlocked 
+                    ? AppColors.victoryGreen
+                    : AppColors.onSurfaceVariant,
+                size: Dimensions.iconS,
+              ),
+            ),
           ),
         );
       },
@@ -267,10 +292,17 @@ class _InventoryScreenState extends State<InventoryScreen>
   Widget _buildSummaryItem(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(
-          icon,
-          color: AppColors.onPrimaryContainer,
-          size: Dimensions.iconM,
+        Container(
+          padding: const EdgeInsets.all(Dimensions.paddingS),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(Dimensions.radiusS),
+          ),
+          child: Icon(
+            icon,
+            color: AppColors.primary,
+            size: Dimensions.iconM,
+          ),
         ),
         const SizedBox(height: Dimensions.spacingXs),
         Text(
@@ -366,6 +398,10 @@ class _InventoryScreenState extends State<InventoryScreen>
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
+                border: Border.all(
+                  color: color.withOpacity(0.3),
+                  width: 1,
+                ),
               ),
               child: Icon(
                 icon,

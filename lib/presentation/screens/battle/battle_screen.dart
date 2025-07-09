@@ -402,11 +402,19 @@ class _TimerSection extends ConsumerWidget {
       backgroundColor = AppColors.timerWarning.withOpacity(0.1);
     }
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final baseFontSize = screenWidth < 350 ? 20.0 : 24.0;
+    final criticalFontSize = screenWidth < 350 ? 24.0 : 28.0;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        horizontal: Dimensions.paddingM,
+      constraints: BoxConstraints(
+        minHeight: 60,
+        maxHeight: 100,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: screenWidth < 350 ? Dimensions.paddingS : Dimensions.paddingM,
         vertical: Dimensions.paddingS,
       ),
       decoration: BoxDecoration(
@@ -419,21 +427,31 @@ class _TimerSection extends ConsumerWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 300),
-            style: AppTextStyles.timerDisplay.copyWith(
-              color: timerColor,
-              fontSize: timer <= 10 ? 32 : 28,
-              fontWeight: timer <= 10 ? FontWeight.w900 : FontWeight.bold,
+          Flexible(
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 300),
+              style: AppTextStyles.timerDisplay.copyWith(
+                color: timerColor,
+                fontSize: timer <= 10 ? criticalFontSize : baseFontSize,
+                fontWeight: timer <= 10 ? FontWeight.w900 : FontWeight.bold,
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(formattedTime),
+              ),
             ),
-            child: Text(formattedTime),
           ),
           const SizedBox(height: Dimensions.spacingXs),
-          Text(
-            'Time Remaining',
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.onSurfaceVariant,
+          Flexible(
+            child: Text(
+              'Time Remaining',
+              style: AppTextStyles.labelSmall.copyWith(
+                color: AppColors.onSurfaceVariant,
+                fontSize: screenWidth < 350 ? 10 : 11,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
@@ -450,17 +468,50 @@ class _EnemySection extends ConsumerWidget {
     final enemy = ref.watch(battleEnemyProvider);
     final isPrime = _isPrime(enemy);
 
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
+    // レスポンシブな敵表示サイズ
+    final enemyDisplaySize = screenWidth < 350 
+        ? Dimensions.enemyDisplaySize * 0.7 
+        : screenHeight < 600 
+            ? Dimensions.enemyDisplaySize * 0.8
+            : Dimensions.enemyDisplaySize;
+    
+    // 敵の数値の桁数に応じたフォントサイズ調整
+    final enemyString = enemy.toString();
+    final baseFontSize = AppTextStyles.enemyValue.fontSize ?? 32;
+    final adjustedFontSize = enemyString.length > 4 
+        ? baseFontSize * 0.8 
+        : enemyString.length > 2 
+            ? baseFontSize * 0.9 
+            : baseFontSize;
+
     return Card(
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(Dimensions.paddingL),
+        constraints: BoxConstraints(
+          minHeight: 150,
+          maxHeight: screenHeight * 0.3,
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth < 350 ? Dimensions.paddingM : Dimensions.paddingL,
+          vertical: screenWidth < 350 ? Dimensions.paddingS : Dimensions.paddingM,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Enemy display
             Container(
-              width: Dimensions.enemyDisplaySize,
-              height: Dimensions.enemyDisplaySize,
+              width: enemyDisplaySize,
+              height: enemyDisplaySize,
+              constraints: BoxConstraints(
+                minWidth: 60,
+                minHeight: 60,
+                maxWidth: screenWidth * 0.35,
+                maxHeight: screenWidth * 0.35,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.enemyNormal,
                 borderRadius: BorderRadius.circular(Dimensions.radiusL),
@@ -473,32 +524,61 @@ class _EnemySection extends ConsumerWidget {
                 ],
               ),
               child: Center(
-                child: Text(
-                  enemy.toString(),
-                  style: AppTextStyles.enemyValue.copyWith(
-                    color: AppColors.onPrimary,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Padding(
+                    padding: const EdgeInsets.all(Dimensions.paddingS),
+                    child: Text(
+                      enemyString,
+                      style: AppTextStyles.enemyValue.copyWith(
+                        color: AppColors.onPrimary,
+                        fontSize: adjustedFontSize,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
             ),
             
-            const SizedBox(height: Dimensions.spacingM),
+            SizedBox(height: screenWidth < 350 ? Dimensions.spacingS : Dimensions.spacingM),
             
-            Text(
-              isPrime ? 'Prime Number' : 'Composite Number',
-              style: AppTextStyles.titleMedium,
+            // Prime/Composite Number タイトル
+            Flexible(
+              child: Text(
+                isPrime ? 'Prime Number' : 'Composite Number',
+                style: AppTextStyles.titleMedium.copyWith(
+                  fontSize: screenWidth < 350 ? 14 : 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
             ),
             
-            const SizedBox(height: Dimensions.spacingS),
+            SizedBox(height: screenWidth < 350 ? Dimensions.spacingXs : Dimensions.spacingS),
             
-            Text(
-              isPrime 
-                ? 'Enemy is defeated! Claim victory!'
-                : 'Attack with prime factors to defeat it!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
+            // 説明文
+            Flexible(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth < 350 ? Dimensions.paddingXs : Dimensions.paddingS,
+                ),
+                child: Text(
+                  isPrime 
+                    ? 'Enemy is defeated! Claim victory!'
+                    : 'Attack with prime factors to defeat it!',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: screenWidth < 350 ? 10 : 11,
+                    height: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
               ),
-              textAlign: TextAlign.center,
             ),
           ],
         ),

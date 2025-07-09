@@ -4,49 +4,51 @@ import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
-import '../../../domain/entities/stage.dart';
-import '../../widgets/animated_stars.dart';
-import '../../providers/stage_progress_provider.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../common/result_screen_base.dart';
 
-class StageClearScreen extends ConsumerStatefulWidget {
-  final StageClearResult clearResult;
+enum GameOverReason {
+  timeUp,
+  noItems,
+}
+
+class GameOverScreen extends ConsumerStatefulWidget with ResultScreenMixin {
+  final GameOverReason reason;
+  final int? stageNumber;
+  final bool isPracticeMode;
   
-  const StageClearScreen({
+  const GameOverScreen({
     super.key,
-    required this.clearResult,
+    required this.reason,
+    this.stageNumber,
+    this.isPracticeMode = false,
   });
 
   @override
-  ConsumerState<StageClearScreen> createState() => _StageClearScreenState();
+  ConsumerState<GameOverScreen> createState() => _GameOverScreenState();
 }
 
-class _StageClearScreenState extends ConsumerState<StageClearScreen>
+class _GameOverScreenState extends ConsumerState<GameOverScreen>
     with TickerProviderStateMixin, ResultScreenMixin {
   late AnimationController _mainController;
-  late AnimationController _starsController;
+  late AnimationController _iconController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _iconRotationAnimation;
   late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
     
-    // Save stage progress
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(stageProgressProvider.notifier).completeStage(widget.clearResult);
-    });
-    
     _mainController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
     
-    _starsController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+    _iconController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
     
@@ -59,11 +61,19 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     ));
     
     _scaleAnimation = Tween<double>(
-      begin: 0.8,
+      begin: 0.5,
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _mainController,
       curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
+    ));
+    
+    _iconRotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _iconController,
+      curve: Curves.easeInOut,
     ));
     
     _slideAnimation = Tween<Offset>(
@@ -76,19 +86,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     
     // アニメーションを開始
     _mainController.forward();
-    
-    // 星のアニメーションを遅らせて開始
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) {
-        _starsController.forward();
-      }
-    });
+    _iconController.repeat();
   }
 
   @override
   void dispose() {
     _mainController.dispose();
-    _starsController.dispose();
+    _iconController.dispose();
     super.dispose();
   }
 
@@ -117,6 +121,8 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
   }
 
   Widget _buildContent(BuildContext context) {
+    final session = ref.watch(battleSessionProvider);
+    
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -125,9 +131,9 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.victoryGreen.withOpacity(0.1),
+            AppColors.error.withOpacity(0.1),
             AppColors.surface,
-            AppColors.primaryContainer.withOpacity(0.1),
+            AppColors.errorContainer.withOpacity(0.1),
           ],
         ),
       ),
@@ -136,35 +142,45 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // 勝利アイコン
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.victoryGreen,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.victoryGreen.withOpacity(0.3),
-                    blurRadius: 20,
-                    spreadRadius: 5,
+            // ゲームオーバーアイコン
+            AnimatedBuilder(
+              animation: _iconController,
+              builder: (context, child) {
+                return Transform.rotate(
+                  angle: _iconRotationAnimation.value * 0.1,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: AppColors.error,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.error.withOpacity(0.3),
+                          blurRadius: 20,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      widget.reason == GameOverReason.timeUp
+                          ? Icons.access_time
+                          : Icons.inventory_2,
+                      size: 60,
+                      color: Colors.white,
+                    ),
                   ),
-                ],
-              ),
-              child: const Icon(
-                Icons.emoji_events,
-                size: 60,
-                color: Colors.white,
-              ),
+                );
+              },
             ),
             
             const SizedBox(height: Dimensions.spacingXl),
             
-            // ステージクリアテキスト
+            // ゲームオーバーテキスト
             Text(
-              'Stage ${widget.clearResult.stageNumber} Clear!',
+              'Game Over',
               style: AppTextStyles.headlineLarge.copyWith(
-                color: AppColors.victoryGreen,
+                color: AppColors.error,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -172,40 +188,36 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             
             const SizedBox(height: Dimensions.spacingM),
             
-            // 星評価
-            AnimatedBuilder(
-              animation: _starsController,
-              builder: (context, child) {
-                return AnimatedStars(
-                  stars: widget.clearResult.stars,
-                  animation: _starsController,
-                );
-              },
+            // 理由の説明
+            Text(
+              _getReasonText(),
+              style: AppTextStyles.titleMedium.copyWith(
+                color: AppColors.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
             ),
             
             const SizedBox(height: Dimensions.spacingXl),
             
-            // 結果詳細
-            _buildResultDetails(),
+            // セッション結果
+            if (!session.isPracticeMode)
+              _buildSessionResults(session),
             
-            const SizedBox(height: Dimensions.spacingXl),
+            if (!session.isPracticeMode)
+              const SizedBox(height: Dimensions.spacingXl),
             
-            // ボーナス情報
-            if (widget.clearResult.isPerfect || widget.clearResult.isNewRecord)
-              _buildBonusInfo(),
+            // アドバイス
+            _buildAdvice(),
             
             const SizedBox(height: Dimensions.spacingXl),
             
             // ボタン
             ResultScreenButtons(
-              stageNumber: widget.clearResult.stageNumber,
-              isPracticeMode: false,
-              isSuccess: true,
-              onNextStage: widget.clearResult.stageNumber < 4 
-                  ? () => goToNextStage(context, ref, widget.clearResult.stageNumber)
-                  : null,
+              stageNumber: widget.stageNumber,
+              isPracticeMode: widget.isPracticeMode,
+              isSuccess: false,
               onStageSelect: () => goToStageSelect(context, ref),
-              onRetry: () => retryStage(context, ref, widget.clearResult.stageNumber),
+              onRetry: () => _handleRetry(context),
               onPractice: () => goToPractice(context, ref),
             ),
           ],
@@ -214,7 +226,16 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildResultDetails() {
+  String _getReasonText() {
+    switch (widget.reason) {
+      case GameOverReason.timeUp:
+        return 'Time ran out!';
+      case GameOverReason.noItems:
+        return 'No available items to attack!';
+    }
+  }
+
+  Widget _buildSessionResults(BattleSessionState session) {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
@@ -226,47 +247,47 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       ),
       child: Column(
         children: [
+          Text(
+            widget.isPracticeMode ? 'Practice Results' : 'Stage ${widget.stageNumber} Results',
+            style: AppTextStyles.titleMedium.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          
+          const SizedBox(height: Dimensions.spacingM),
+          
           _buildResultRow(
             icon: Icons.emoji_events,
             label: 'Victories',
-            value: '${widget.clearResult.victories}',
+            value: '${session.victories}',
             color: AppColors.victoryGreen,
           ),
           
-          const SizedBox(height: Dimensions.spacingM),
+          const SizedBox(height: Dimensions.spacingS),
           
           _buildResultRow(
             icon: Icons.timer,
-            label: 'Total Time',
-            value: _formatDuration(widget.clearResult.totalTime),
+            label: 'Time Played',
+            value: _formatDuration(session.totalTime),
             color: AppColors.primary,
           ),
           
-          const SizedBox(height: Dimensions.spacingM),
-          
-          _buildResultRow(
-            icon: Icons.star,
-            label: 'Score',
-            value: '${widget.clearResult.score}',
-            color: Colors.amber,
-          ),
-          
-          if (widget.clearResult.escapes > 0) ...[
-            const SizedBox(height: Dimensions.spacingM),
+          if (session.escapes > 0) ...[
+            const SizedBox(height: Dimensions.spacingS),
             _buildResultRow(
               icon: Icons.directions_run,
               label: 'Escapes',
-              value: '${widget.clearResult.escapes}',
+              value: '${session.escapes}',
               color: AppColors.timerWarning,
             ),
           ],
           
-          if (widget.clearResult.wrongClaims > 0) ...[
-            const SizedBox(height: Dimensions.spacingM),
+          if (session.wrongClaims > 0) ...[
+            const SizedBox(height: Dimensions.spacingS),
             _buildResultRow(
               icon: Icons.error,
               label: 'Wrong Claims',
-              value: '${widget.clearResult.wrongClaims}',
+              value: '${session.wrongClaims}',
               color: AppColors.error,
             ),
           ],
@@ -284,16 +305,16 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     return Row(
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(Dimensions.radiusM),
+            borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
           child: Icon(
             icon,
             color: color,
-            size: 20,
+            size: 18,
           ),
         ),
         
@@ -302,13 +323,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
         Expanded(
           child: Text(
             label,
-            style: AppTextStyles.bodyLarge,
+            style: AppTextStyles.bodyMedium,
           ),
         ),
         
         Text(
           value,
-          style: AppTextStyles.titleMedium.copyWith(
+          style: AppTextStyles.titleSmall.copyWith(
             color: color,
             fontWeight: FontWeight.bold,
           ),
@@ -317,67 +338,69 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildBonusInfo() {
+  Widget _buildAdvice() {
+    String advice;
+    IconData icon;
+    
+    switch (widget.reason) {
+      case GameOverReason.timeUp:
+        advice = 'Try to attack faster next time!\nFocus on finding prime factors quickly.';
+        icon = Icons.speed;
+        break;
+      case GameOverReason.noItems:
+        advice = 'Collect more prime numbers!\nDefeat enemies to gain new primes.';
+        icon = Icons.inventory;
+        break;
+    }
+    
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.amber.withOpacity(0.1),
-            Colors.amber.withOpacity(0.2),
-          ],
-        ),
+        color: AppColors.primaryContainer.withOpacity(0.3),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: Colors.amber),
+        border: Border.all(
+          color: AppColors.primary.withOpacity(0.3),
+        ),
       ),
       child: Column(
         children: [
           Icon(
-            Icons.celebration,
-            color: Colors.amber,
+            icon,
+            color: AppColors.primary,
             size: 32,
           ),
           
           const SizedBox(height: Dimensions.spacingS),
           
-          if (widget.clearResult.isPerfect) ...[
-            Text(
-              'Perfect Clear!',
-              style: AppTextStyles.titleMedium.copyWith(
-                color: Colors.amber[700],
-                fontWeight: FontWeight.bold,
-              ),
+          Text(
+            'Tip',
+            style: AppTextStyles.titleMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
             ),
-            Text(
-              'No escapes or wrong claims!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: Colors.amber[600],
-              ),
-            ),
-          ],
+          ),
           
-          if (widget.clearResult.isNewRecord) ...[
-            if (widget.clearResult.isPerfect)
-              const SizedBox(height: Dimensions.spacingS),
-            Text(
-              'New Record!',
-              style: AppTextStyles.titleMedium.copyWith(
-                color: Colors.amber[700],
-                fontWeight: FontWeight.bold,
-              ),
+          const SizedBox(height: Dimensions.spacingS),
+          
+          Text(
+            advice,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.onPrimaryContainer,
             ),
-            Text(
-              'Your best performance yet!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: Colors.amber[600],
-              ),
-            ),
-          ],
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
   }
 
+  void _handleRetry(BuildContext context) {
+    if (widget.isPracticeMode) {
+      goToPractice(context, ref);
+    } else if (widget.stageNumber != null) {
+      retryStage(context, ref, widget.stageNumber!);
+    }
+  }
 
   String _formatDuration(Duration duration) {
     final minutes = duration.inMinutes;

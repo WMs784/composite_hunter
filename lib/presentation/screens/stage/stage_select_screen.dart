@@ -6,6 +6,7 @@ import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/stage_progress_provider.dart';
+import '../../providers/inventory_provider.dart';
 
 // ステージ情報
 class StageInfo {
@@ -41,6 +42,15 @@ class StageSelectScreen extends ConsumerStatefulWidget {
 }
 
 class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // ステージ選択画面に入った時点でバトルセッションをリセット
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(battleSessionProvider.notifier).resetSession();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final stages = ref.watch(stageProgressProvider);
@@ -144,16 +154,20 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
   void _startStage(StageInfo stage) {
     print('Starting stage ${stage.stageNumber}: ${stage.title}');
-    // バトルセッションを開始
-    ref.read(battleSessionProvider.notifier).startStage(stage.stageNumber);
+    // 現在のアイテム状態を取得
+    final currentInventory = ref.read(inventoryProvider);
+    // バトルセッションを開始（アイテム状態を保存）
+    ref.read(battleSessionProvider.notifier).startStage(stage.stageNumber, currentInventory);
     // バトル画面に遷移
     AppRouter.goToBattle(context);
   }
 
   void _startPracticeMode() {
     print('Starting practice mode');
-    // 練習モードでバトルセッションを開始
-    ref.read(battleSessionProvider.notifier).startPractice();
+    // 現在のアイテム状態を取得
+    final currentInventory = ref.read(inventoryProvider);
+    // 練習モードでバトルセッションを開始（アイテム状態を保存）
+    ref.read(battleSessionProvider.notifier).startPractice(currentInventory);
     // バトル画面に遷移
     AppRouter.goToBattle(context);
   }

@@ -1,29 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/battle_menu_dialog.dart';
 import '../../providers/battle_session_provider.dart';
+import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
-import '../../../domain/entities/battle_state.dart';
 import '../stage/stage_clear_screen.dart';
-
-// Battle screen initial data
-List<Prime> _getInitialPrimes() => [
-  Prime(value: 2, count: 3, firstObtained: DateTime.now()),
-  Prime(value: 3, count: 2, firstObtained: DateTime.now()),
-  Prime(value: 5, count: 1, firstObtained: DateTime.now()),
-  Prime(value: 7, count: 0, firstObtained: DateTime.now()),
-  Prime(value: 11, count: 0, firstObtained: DateTime.now()),
-  Prime(value: 13, count: 0, firstObtained: DateTime.now()),
-];
+import '../game_over/game_over_screen.dart';
 
 // Simple working providers for battle screen
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
 final battleTimerProvider = StateProvider<int>((ref) => 90);
-final battlePrimesProvider = StateProvider<List<Prime>>((ref) => _getInitialPrimes());
 
 class BattleScreen extends ConsumerStatefulWidget {
   const BattleScreen({super.key});
@@ -33,13 +24,64 @@ class BattleScreen extends ConsumerStatefulWidget {
 }
 
 class _BattleScreenState extends ConsumerState<BattleScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
-    // Initialize battle state
+    // Initialize battle state and start timer
     WidgetsBinding.instance.addPostFrameCallback((_) {
       print('Battle screen initialized');
+      _startTimer();
     });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final currentTime = ref.read(battleTimerProvider);
+      if (currentTime > 0) {
+        ref.read(battleTimerProvider.notifier).state = currentTime - 1;
+      } else {
+        _handleTimeUp();
+        timer.cancel();
+      }
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+  }
+
+  void _handleTimeUp() {
+    // Stop timer
+    _stopTimer();
+    
+    // ゲームオーバー画面に遷移
+    _goToGameOver(GameOverReason.timeUp);
+  }
+
+  void _resetBattle() {
+    // アイテム状態をステージ開始時に復元
+    final session = ref.read(battleSessionProvider);
+    if (session.stageStartInventory != null) {
+      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+    }
+    
+    // Reset battle state and restart timer
+    ref.read(battleEnemyProvider.notifier).state = 12;
+    ref.read(battleTimerProvider.notifier).state = 90;
+    
+    // Reset used primes
+    ref.read(battleSessionProvider.notifier).resetUsedPrimes();
+    
+    _startTimer();
   }
 
   void _showBattleMenu(BuildContext context) {
@@ -51,18 +93,63 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       ),
     );
   }
+  
+  void _goToGameOver(GameOverReason reason) {
+    final session = ref.read(battleSessionProvider);
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameOverScreen(
+          reason: reason,
+          stageNumber: session.stageNumber,
+          isPracticeMode: session.isPracticeMode,
+        ),
+      ),
+    );
+  }
+  
+  bool _hasAvailableItems(int enemy) {
+    final primes = ref.read(inventoryProvider);
+    return primes.any((prime) => prime.count > 0 && enemy % prime.value == 0);
+  }
+  
+  void _checkGameOverConditions() {
+    final enemy = ref.read(battleEnemyProvider);
+    
+    // 素数になったら攻撃できないのでゲームオーバーチェックをスキップ
+    if (_isPrime(enemy)) return;
+    
+    // 使用可能なアイテムがあるかチェック
+    if (!_hasAvailableItems(enemy)) {
+      _stopTimer();
+      _goToGameOver(GameOverReason.noItems);
+    }
+  }
 
   void _restartBattle() {
     print('Restarting battle');
+    
+    // アイテム状態をステージ開始時に復元
+    final session = ref.read(battleSessionProvider);
+    if (session.stageStartInventory != null) {
+      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+    }
+    
     // Reset battle
     ref.read(battleEnemyProvider.notifier).state = 12;
     ref.read(battleTimerProvider.notifier).state = 90;
-    ref.read(battlePrimesProvider.notifier).state = _getInitialPrimes();
+    
+    // Reset used primes for current battle
+    ref.read(battleSessionProvider.notifier).resetUsedPrimes();
+    
+    // Restart timer
+    _startTimer();
     
     // User feedback
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Battle restarted'),
+        content: Text('Battle restarted - items restored'),
         duration: Duration(seconds: 2),
       ),
     );
@@ -70,6 +157,17 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
   void _exitBattle() {
     print('Exiting battle');
+    // Stop timer before exiting
+    _stopTimer();
+    
+    // アイテム状態をステージ開始時に復元
+    final session = ref.read(battleSessionProvider);
+    if (session.stageStartInventory != null) {
+      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+    }
+    
+    // Reset battle session before returning to stage selection
+    ref.read(battleSessionProvider.notifier).resetSession();
     // Return to stage selection screen
     AppRouter.goToStageSelect(context);
   }
@@ -127,15 +225,20 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               const SizedBox(height: Dimensions.spacingL),
               
               // Prime grid
-              const Expanded(
+              Expanded(
                 flex: 3,
-                child: _PrimeGridSection(),
+                child: _PrimeGridSection(
+                  onGameOverCheck: _checkGameOverConditions,
+                ),
               ),
               
               const SizedBox(height: Dimensions.spacingL),
               
               // Action buttons
-              const _ActionButtonsSection(),
+              _ActionButtonsSection(
+                onRestartTimer: _startTimer,
+                onStopTimer: _stopTimer,
+              ),
             ],
           ),
         ),
@@ -331,11 +434,15 @@ class _EnemySection extends ConsumerWidget {
 }
 
 class _PrimeGridSection extends ConsumerWidget {
-  const _PrimeGridSection();
+  final VoidCallback onGameOverCheck;
+  
+  const _PrimeGridSection({
+    required this.onGameOverCheck,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primes = ref.watch(battlePrimesProvider);
+    final primes = ref.watch(inventoryProvider);
     final enemy = ref.watch(battleEnemyProvider);
     
     return Column(
@@ -374,10 +481,16 @@ class _PrimeGridSection extends ConsumerWidget {
                       onPressed: () {
                         print('Prime ${prime.value} attack');
                         if (canAttack && prime.count > 0) {
+                          // 敵の数値を更新
                           ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
-                          final updatedPrimes = [...primes];
-                          updatedPrimes[index] = prime.copyWith(count: prime.count - 1);
-                          ref.read(battlePrimesProvider.notifier).state = updatedPrimes;
+                          // インベントリから素数を消費
+                          ref.read(inventoryProvider.notifier).usePrime(prime.value);
+                          // 使用した素数を記録
+                          ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
+                          // ゲームオーバー条件をチェック
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            onGameOverCheck();
+                          });
                         }
                       },
                     );
@@ -459,7 +572,13 @@ class _PrimeButton extends StatelessWidget {
 }
 
 class _ActionButtonsSection extends ConsumerWidget {
-  const _ActionButtonsSection();
+  final VoidCallback onRestartTimer;
+  final VoidCallback onStopTimer;
+  
+  const _ActionButtonsSection({
+    required this.onRestartTimer,
+    required this.onStopTimer,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -472,11 +591,20 @@ class _ActionButtonsSection extends ConsumerWidget {
           child: OutlinedButton(
             onPressed: () {
               print('Escape button pressed');
+              
+              // アイテム状態をステージ開始時に復元
+              final session = ref.read(battleSessionProvider);
+              if (session.stageStartInventory != null) {
+                ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+              }
+              
               // Record escape in session
               ref.read(battleSessionProvider.notifier).recordEscape();
               // Reset battle
               ref.read(battleEnemyProvider.notifier).state = 12;
-              ref.read(battlePrimesProvider.notifier).state = _getInitialPrimes();
+              ref.read(battleTimerProvider.notifier).state = 90;
+              // Restart timer
+              onRestartTimer();
             },
             child: const Text('Escape'),
           ),
@@ -488,7 +616,7 @@ class _ActionButtonsSection extends ConsumerWidget {
           flex: 2,
           child: ElevatedButton(
             onPressed: canClaimVictory
-                ? () => _claimVictory(context, ref, enemy)
+                ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer)
                 : null,
             child: const Text('Claim Victory!'),
           ),
@@ -497,12 +625,18 @@ class _ActionButtonsSection extends ConsumerWidget {
     );
   }
   
-  void _claimVictory(BuildContext context, WidgetRef ref, int enemy) {
+  void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer) {
     print('Claim Victory button pressed');
     
     if (_isPrime(enemy)) {
-      // Correct claim - record victory
+      // Stop timer during victory processing
+      onStopTimer();
+      
+      // Correct claim - record victory and give reward
+      final usedPrimes = ref.read(battleSessionProvider).usedPrimesInCurrentBattle;
       ref.read(battleSessionProvider.notifier).recordVictory(enemy);
+      // 完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
+      ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
       
       // Check if stage is cleared
       final clearResult = ref.read(battleSessionProvider.notifier).checkClearCondition();
@@ -521,13 +655,31 @@ class _ActionButtonsSection extends ConsumerWidget {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Victory!'),
-            content: Text('You defeated the enemy $enemy! Continue fighting!'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('You defeated the enemy $enemy!'),
+                const SizedBox(height: 8),
+                const Text('Rewards obtained:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('• Prime $enemy (final result)'),
+                if (usedPrimes.isNotEmpty) ...[
+                  const Text('• Used primes returned:'),
+                  ...usedPrimes.map((prime) => Text('  - Prime $prime')),
+                ],
+                const SizedBox(height: 8),
+                const Text('Continue fighting!'),
+              ],
+            ),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
+                  // Generate new enemy but don't reset inventory
                   ref.read(battleEnemyProvider.notifier).state = 12;
-                  ref.read(battlePrimesProvider.notifier).state = _getInitialPrimes();
+                  ref.read(battleTimerProvider.notifier).state = 90;
+                  // Start new timer for next battle
+                  onRestartTimer();
                 },
                 child: const Text('Continue'),
               ),

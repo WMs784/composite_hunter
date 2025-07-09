@@ -12,7 +12,8 @@
       "Bash(flutter test:*)",
       "Bash(flutter:*)",
       "Bash(adb shell am start:*)",
-      "Bash(adb shell:*)"
+      "Bash(adb shell:*)",
+      "Bash(touch:*)"
     ],
     "deny": []
   }

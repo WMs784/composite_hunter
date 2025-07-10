@@ -6,6 +6,7 @@ import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/battle_menu_dialog.dart';
+import '../../widgets/monster_widget.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
@@ -506,43 +507,12 @@ class _EnemySection extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Enemy display
-            Container(
-              width: enemyDisplaySize,
-              height: enemyDisplaySize,
-              constraints: BoxConstraints(
-                minWidth: 60,
-                minHeight: 60,
-                maxWidth: screenWidth * 0.35,
-                maxHeight: screenWidth * 0.35,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.enemyNormal,
-                borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Padding(
-                    padding: const EdgeInsets.all(Dimensions.paddingS),
-                    child: Text(
-                      enemyString,
-                      style: AppTextStyles.enemyValue.copyWith(
-                        color: AppColors.onPrimary,
-                        fontSize: adjustedFontSize,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
+            // Monster display
+            MonsterWidget(
+              number: enemy,
+              isPrime: isPrime,
+              size: enemyDisplaySize.clamp(80.0, 200.0),
+              isAnimated: true,
             ),
             
             SizedBox(height: screenWidth < 350 ? Dimensions.spacingS : Dimensions.spacingM),

@@ -10,8 +10,6 @@ import '../../providers/stage_progress_provider.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../common/result_screen_base.dart';
-import '../../../flutter_gen/gen_l10n/app_localizations.dart';
-import '../game_over/game_over_screen.dart'; // For LocalizedResultScreenButtons
 
 class StageClearScreen extends ConsumerStatefulWidget {
   final StageClearResult clearResult;
@@ -119,8 +117,6 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
   }
 
   Widget _buildContent(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -168,7 +164,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             
             // ステージクリアテキスト
             Text(
-              l10n.stageClear(widget.clearResult.stageNumber.toString()),
+              'Stage ${widget.clearResult.stageNumber} Clear!',
               style: AppTextStyles.headlineLarge.copyWith(
                 color: AppColors.victoryGreen,
                 fontWeight: FontWeight.bold,
@@ -192,18 +188,18 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             const SizedBox(height: Dimensions.spacingL),
             
             // 結果詳細
-            _buildResultDetails(l10n),
+            _buildResultDetails(),
             
             const SizedBox(height: Dimensions.spacingL),
             
             // ボーナス情報
             if (widget.clearResult.isPerfect || widget.clearResult.isNewRecord)
-              _buildBonusInfo(l10n),
+              _buildBonusInfo(),
             
             const SizedBox(height: Dimensions.spacingL),
             
             // ボタン
-            LocalizedResultScreenButtons(
+            ResultScreenButtons(
               stageNumber: widget.clearResult.stageNumber,
               isPracticeMode: false,
               isSuccess: true,
@@ -224,7 +220,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildResultDetails(AppLocalizations l10n) {
+  Widget _buildResultDetails() {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
@@ -238,7 +234,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
         children: [
           _buildResultRow(
             icon: Icons.emoji_events,
-            label: l10n.victories,
+            label: 'Victories',
             value: '${widget.clearResult.victories}',
             color: AppColors.victoryGreen,
           ),
@@ -247,7 +243,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           
           _buildResultRow(
             icon: Icons.timer,
-            label: l10n.totalTime,
+            label: 'Total Time',
             value: _formatDuration(widget.clearResult.totalTime),
             color: AppColors.primary,
           ),
@@ -256,7 +252,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           
           _buildResultRow(
             icon: Icons.star,
-            label: l10n.score,
+            label: 'Score',
             value: '${widget.clearResult.score}',
             color: Colors.amber,
           ),
@@ -265,7 +261,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             const SizedBox(height: Dimensions.spacingM),
             _buildResultRow(
               icon: Icons.directions_run,
-              label: l10n.escapes,
+              label: 'Escapes',
               value: '${widget.clearResult.escapes}',
               color: AppColors.timerWarning,
             ),
@@ -275,7 +271,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             const SizedBox(height: Dimensions.spacingM),
             _buildResultRow(
               icon: Icons.error,
-              label: l10n.wrongClaims,
+              label: 'Wrong Claims',
               value: '${widget.clearResult.wrongClaims}',
               color: AppColors.error,
             ),
@@ -327,7 +323,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildBonusInfo(AppLocalizations l10n) {
+  Widget _buildBonusInfo() {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
@@ -352,14 +348,14 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           
           if (widget.clearResult.isPerfect) ...[
             Text(
-              l10n.perfectClear,
+              'Perfect Clear!',
               style: AppTextStyles.titleMedium.copyWith(
                 color: Colors.amber[700],
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              l10n.noEscapesOrWrongClaims,
+              'No escapes or wrong claims!',
               style: AppTextStyles.bodySmall.copyWith(
                 color: Colors.amber[600],
               ),
@@ -370,14 +366,14 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             if (widget.clearResult.isPerfect)
               const SizedBox(height: Dimensions.spacingS),
             Text(
-              l10n.newRecord,
+              'New Record!',
               style: AppTextStyles.titleMedium.copyWith(
                 color: Colors.amber[700],
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              l10n.bestPerformance,
+              'Your best performance yet!',
               style: AppTextStyles.bodySmall.copyWith(
                 color: Colors.amber[600],
               ),
@@ -388,9 +384,11 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
+
   String _formatDuration(Duration duration) {
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
     return '${minutes}:${seconds.toString().padLeft(2, '0')}';
   }
+
 }

@@ -11,7 +11,7 @@ import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
 import '../stage/stage_clear_screen.dart';
 import '../game_over/game_over_screen.dart';
-import '../../../flutter_gen/gen_l10n/app_localizations.dart';
+// import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 // Simple working providers for battle screen
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
@@ -67,8 +67,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // Stop timer
     _stopTimer();
     
-    // アイテム状態をステージ開始時に復元
-    _restoreInventoryWithAnimation();
+    // アイテム状態をステージ開始時に復元（ゲームオーバー画面で処理されるため、ここでは更新しない）
     
     // ゲームオーバー画面に遷移
     _goToGameOver(GameOverReason.timeUp);
@@ -76,7 +75,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
   void _resetBattle() {
     // アイテム状態をステージ開始時に復元
-    _restoreInventoryWithAnimation();
+    final session = ref.read(battleSessionProvider);
+    if (session.stageStartInventory != null) {
+      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+    }
     
     // Reset battle state and restart timer
     _initializeBattleForStage();
@@ -113,7 +115,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
   
   bool _hasAvailableItems(int enemy) {
-    final primes = ref.read(battleInventoryProvider);
+    final primes = ref.read(inventoryProvider);
     return primes.any((prime) => prime.count > 0 && enemy % prime.value == 0);
   }
   
@@ -130,10 +132,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // 使用可能なアイテムがあるかチェック
     if (!_hasAvailableItems(enemy)) {
       _stopTimer();
-      
-      // アイテム不足時もアイテム状態を復元
-      _restoreInventoryWithAnimation();
-      
       _goToGameOver(GameOverReason.noItems);
     }
   }
@@ -200,7 +198,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     print('Restarting battle');
     
     // アイテム状態をステージ開始時に復元
-    _restoreInventoryWithAnimation();
+    final session = ref.read(battleSessionProvider);
+    if (session.stageStartInventory != null) {
+      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+    }
     
     // Reset battle
     _initializeBattleForStage();
@@ -212,10 +213,9 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _startTimer();
     
     // User feedback
-    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(l10n.battleRestarted),
+        content: const Text('Battle restarted - items restored'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -227,183 +227,27 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _stopTimer();
     
     // アイテム状態をステージ開始時に復元
-    _restoreInventoryWithAnimation();
+    final session = ref.read(battleSessionProvider);
+    if (session.stageStartInventory != null) {
+      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+    }
     
     // Reset battle session before returning to stage selection
     ref.read(battleSessionProvider.notifier).resetSession();
     // Return to stage selection screen
     AppRouter.goToStageSelect(context);
   }
-  
-  /// アイテム復元処理（アニメーション付き）
-  Future<void> _restoreInventoryWithAnimation() async {
-    final session = ref.read(battleSessionProvider);
-    if (session.stageStartInventory != null) {
-      // 復元アニメーション開始
-      _playRestoreAnimation();
-      
-      // アイテム状態を復元
-      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
-      
-      print('Inventory restored: ${session.stageStartInventory!.length} items');
-    }
-  }
-  
-  /// 復元アニメーション（視覚的フィードバック）
-  Future<void> _playRestoreAnimation() async {
-    // 簡単な視覚的フィードバック
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: const [
-            Icon(Icons.restore, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Items restored to starting state'),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        duration: const Duration(seconds: 1),
-      ),
-    );
-    
-    // 短時間の遅延でアニメーション効果を演出
-    await Future.delayed(const Duration(milliseconds: 300));
-  }
-  
-  /// 無効攻撃時の教育的フィードバック
-  void _showInvalidAttackFeedback(BuildContext context, int prime, int enemy) {
-    // まず素因数を計算
-    final factors = _getFactors(enemy);
-    final factorsText = factors.isNotEmpty ? factors.join(' × ') : 'No factors found';
-    
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              Icons.info_outline,
-              color: AppColors.timerWarning,
-              size: 24,
-            ),
-            const SizedBox(width: 8),
-            const Text('Attack Failed!'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Prime $prime cannot attack enemy $enemy.',
-              style: AppTextStyles.bodyMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text(
-              'Why?',
-              style: AppTextStyles.titleSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '$enemy is not divisible by $prime.',
-              style: AppTextStyles.bodySmall,
-            ),
-            if (enemy % prime != 0) ...[
-              const SizedBox(height: 4),
-              Text(
-                '$enemy ÷ $prime = ${enemy / prime} (not a whole number)',
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            const Text(
-              'Enemy\'s prime factors:',
-              style: AppTextStyles.titleSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '$enemy = $factorsText',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Try using one of these factors instead!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it!'),
-          ),
-        ],
-      ),
-    );
-    
-    // 振動フィードバック（無効攻撃を示す）
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(Icons.block, color: Colors.white),
-            const SizedBox(width: 8),
-            Text('Prime $prime wasted! $enemy ÷ $prime is not a whole number.'),
-          ],
-        ),
-        backgroundColor: AppColors.error,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-  
-  /// 素因数分解を実行
-  List<int> _getFactors(int n) {
-    List<int> factors = [];
-    int temp = n;
-    
-    // 2で割り切れる限り割る
-    while (temp % 2 == 0) {
-      factors.add(2);
-      temp ~/= 2;
-    }
-    
-    // 3以上の奇数で割る
-    for (int i = 3; i * i <= temp; i += 2) {
-      while (temp % i == 0) {
-        factors.add(i);
-        temp ~/= i;
-      }
-    }
-    
-    // tempが素数の場合
-    if (temp > 2) {
-      factors.add(temp);
-    }
-    
-    return factors;
-  }
 
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
         title: Text(session.isPracticeMode 
-            ? l10n.practiceMode
-            : l10n.stage(session.stageNumber?.toString() ?? '?')),
+            ? // l10n.practiceMode
+            : // l10n.stage(session.stageNumber?.toString() ?? '?')),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _showBattleMenu(context),
@@ -452,7 +296,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
                 flex: 3,
                 child: _PrimeGridSection(
                   onGameOverCheck: _checkGameOverConditions,
-                  onInvalidAttack: _showInvalidAttackFeedback,
                 ),
               ),
               
@@ -463,7 +306,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
                 onRestartTimer: _startTimer,
                 onStopTimer: _stopTimer,
                 onGenerateNewEnemy: _generateNewEnemy,
-                onRestoreInventory: _restoreInventoryWithAnimation,
               ),
             ],
           ),
@@ -479,7 +321,6 @@ class _SessionProgressSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
     
     if (session.stageNumber == null || session.isPracticeMode) {
       return const SizedBox.shrink();
@@ -505,7 +346,7 @@ class _SessionProgressSection extends ConsumerWidget {
           
           Expanded(
             child: Text(
-              '${l10n.victories}: ${session.victories}',
+              'Victories: ${session.victories}',
               style: AppTextStyles.labelLarge.copyWith(
                 color: AppColors.onPrimaryContainer,
               ),
@@ -555,7 +396,7 @@ class _TimerSection extends ConsumerWidget {
     final minutes = timer ~/ 60;
     final seconds = timer % 60;
     final formattedTime = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
 
     Color timerColor = AppColors.timerNormal;
     Color backgroundColor = AppColors.surface;
@@ -575,7 +416,7 @@ class _TimerSection extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      constraints: const BoxConstraints(
+      constraints: BoxConstraints(
         minHeight: 60,
         maxHeight: 100,
       ),
@@ -612,7 +453,7 @@ class _TimerSection extends ConsumerWidget {
           const SizedBox(height: Dimensions.spacingXs),
           Flexible(
             child: Text(
-              l10n.timeRemaining,
+              // l10n.timeRemaining,
               style: AppTextStyles.labelSmall.copyWith(
                 color: AppColors.onSurfaceVariant,
                 fontSize: screenWidth < 350 ? 10 : 11,
@@ -633,7 +474,7 @@ class _EnemySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final isPrime = _isPrime(enemy);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -713,7 +554,7 @@ class _EnemySection extends ConsumerWidget {
             // Prime/Composite Number タイトル
             Flexible(
               child: Text(
-                isPrime ? l10n.primeNumber : l10n.compositeNumber,
+                isPrime ? // l10n.primeNumber : // l10n.compositeNumber,
                 style: AppTextStyles.titleMedium.copyWith(
                   fontSize: screenWidth < 350 ? 14 : 16,
                   fontWeight: FontWeight.w600,
@@ -734,8 +575,8 @@ class _EnemySection extends ConsumerWidget {
                 ),
                 child: Text(
                   isPrime 
-                    ? l10n.enemyDefeated
-                    : l10n.attackWithPrimeFactors,
+                    ? // l10n.enemyDefeated
+                    : // l10n.attackWithPrimeFactors,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.onSurfaceVariant,
                     fontSize: screenWidth < 350 ? 10 : 11,
@@ -756,24 +597,22 @@ class _EnemySection extends ConsumerWidget {
 
 class _PrimeGridSection extends ConsumerWidget {
   final VoidCallback onGameOverCheck;
-  final void Function(BuildContext, int, int) onInvalidAttack;
   
   const _PrimeGridSection({
     required this.onGameOverCheck,
-    required this.onInvalidAttack,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primes = ref.watch(battleInventoryProvider);
+    final primes = ref.watch(inventoryProvider);
     final enemy = ref.watch(battleEnemyProvider);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.yourPrimeNumbers,
+          // l10n.yourPrimeNumbers,
           style: AppTextStyles.titleMedium,
         ),
         
@@ -783,7 +622,7 @@ class _PrimeGridSection extends ConsumerWidget {
           child: primes.isEmpty
               ? Center(
                   child: Text(
-                    l10n.noPrimesAvailable,
+                    // l10n.noPrimesAvailable,
                     style: const TextStyle(fontSize: 16),
                   ),
                 )
@@ -803,40 +642,26 @@ class _PrimeGridSection extends ConsumerWidget {
                       prime: prime,
                       canAttack: canAttack,
                       onPressed: () {
-                        print('Prime ${prime.value} attack attempt on enemy $enemy');
-                        if (prime.count > 0) {
+                        print('Prime ${prime.value} attack');
+                        if (canAttack && prime.count > 0) {
                           final session = ref.read(battleSessionProvider);
                           
-                          if (canAttack) {
-                            // 有効な攻撃：敵の数値を更新
-                            print('Valid attack: $enemy ÷ ${prime.value} = ${enemy ~/ prime.value}');
-                            ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
-                            
-                            // 練習モードでない場合のみアイテムを消費
-                            if (!session.isPracticeMode) {
-                              ref.read(inventoryProvider.notifier).usePrime(prime.value);
-                            }
-                            
-                            // 使用した素数を記録
-                            ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
-                            
-                            // ゲームオーバー条件をチェック
-                            Future.delayed(const Duration(milliseconds: 100), () {
-                              onGameOverCheck();
-                            });
-                          } else {
-                            // 無効な攻撃：教育的フィードバックを提供
-                            print('Invalid attack: $enemy is not divisible by ${prime.value}');
-                            onInvalidAttack(context, prime.value, enemy);
-                            
-                            // アイテムは消費するが敵にダメージなし
-                            if (!session.isPracticeMode) {
-                              ref.read(inventoryProvider.notifier).usePrime(prime.value);
-                            }
-                            
-                            // 無効攻撃も記録（学習データとして）
-                            ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
+                          // 敵の数値を更新
+                          ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
+                          
+                          // 練習モードでない場合のみアイテムを消費
+                          if (!session.isPracticeMode) {
+                            // インベントリから素数を消費
+                            ref.read(inventoryProvider.notifier).usePrime(prime.value);
                           }
+                          
+                          // 使用した素数を記録
+                          ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
+                          
+                          // ゲームオーバー条件をチェック
+                          Future.delayed(const Duration(milliseconds: 100), () {
+                            onGameOverCheck();
+                          });
                         }
                       },
                     );
@@ -861,13 +686,10 @@ class _PrimeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAvailable = prime.count > 0;
-    final isEffective = canAttack && prime.count > 0;
+    final isAvailable = prime.count > 0 && canAttack;
     
     return Material(
-      color: isAvailable 
-          ? (isEffective ? AppColors.primeAvailable : AppColors.primaryContainer)
-          : AppColors.primeUnavailable,
+      color: isAvailable ? AppColors.primeAvailable : AppColors.primeUnavailable,
       borderRadius: BorderRadius.circular(Dimensions.radiusM),
       child: InkWell(
         onTap: isAvailable ? onPressed : null,
@@ -876,32 +698,17 @@ class _PrimeButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
             border: Border.all(
-              color: isAvailable 
-                  ? (isEffective ? AppColors.primary : AppColors.timerWarning)
-                  : AppColors.outline,
+              color: isAvailable ? AppColors.primary : AppColors.outline,
               width: 2,
             ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // 効果的/非効果的のインジケーター
-              if (isAvailable) ...[
-                Icon(
-                  isEffective ? Icons.check_circle : Icons.help_outline,
-                  color: isEffective ? AppColors.primary : AppColors.timerWarning,
-                  size: 16,
-                ),
-                const SizedBox(height: 2),
-              ],
-              
               Text(
                 prime.value.toString(),
                 style: AppTextStyles.primeValue.copyWith(
-                  color: isAvailable 
-                      ? (isEffective ? AppColors.onPrimary : AppColors.onSurfaceVariant)
-                      : AppColors.onSurfaceVariant,
-                  fontWeight: isEffective ? FontWeight.bold : FontWeight.normal,
+                  color: isAvailable ? AppColors.onPrimary : AppColors.onSurfaceVariant,
                 ),
               ),
               
@@ -914,7 +721,7 @@ class _PrimeButton extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isAvailable 
-                      ? (isEffective ? AppColors.primaryContainer : AppColors.surfaceVariant)
+                      ? AppColors.primaryContainer 
                       : AppColors.surfaceVariant,
                   borderRadius: BorderRadius.circular(Dimensions.radiusS),
                 ),
@@ -922,7 +729,7 @@ class _PrimeButton extends StatelessWidget {
                   'x${prime.count}',
                   style: AppTextStyles.primeCount.copyWith(
                     color: isAvailable 
-                        ? (isEffective ? AppColors.onPrimaryContainer : AppColors.onSurfaceVariant)
+                        ? AppColors.onPrimaryContainer 
                         : AppColors.onSurfaceVariant,
                   ),
                 ),
@@ -939,20 +746,18 @@ class _ActionButtonsSection extends ConsumerWidget {
   final VoidCallback onRestartTimer;
   final VoidCallback onStopTimer;
   final VoidCallback onGenerateNewEnemy;
-  final VoidCallback onRestoreInventory;
   
   const _ActionButtonsSection({
     required this.onRestartTimer,
     required this.onStopTimer,
     required this.onGenerateNewEnemy,
-    required this.onRestoreInventory,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final canClaimVictory = _isPrime(enemy);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     return Row(
       children: [
@@ -962,7 +767,10 @@ class _ActionButtonsSection extends ConsumerWidget {
               print('Escape button pressed');
               
               // アイテム状態をステージ開始時に復元
-              onRestoreInventory();
+              final session = ref.read(battleSessionProvider);
+              if (session.stageStartInventory != null) {
+                ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+              }
               
               // Record escape in session
               ref.read(battleSessionProvider.notifier).recordEscape();
@@ -979,12 +787,12 @@ class _ActionButtonsSection extends ConsumerWidget {
               // Show feedback
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(l10n.escapedItemsRestored),
+                  content: Text(// l10n.escapedItemsRestored),
                   duration: const Duration(seconds: 2),
                 ),
               );
             },
-            child: Text(l10n.escape),
+            child: Text(// l10n.escape),
           ),
         ),
         
@@ -996,7 +804,7 @@ class _ActionButtonsSection extends ConsumerWidget {
             onPressed: canClaimVictory
                 ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer)
                 : null,
-            child: Text(l10n.claimVictory),
+            child: Text(// l10n.claimVictory),
           ),
         ),
       ],
@@ -1005,7 +813,7 @@ class _ActionButtonsSection extends ConsumerWidget {
   
   void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer) {
     print('Claim Victory button pressed');
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     if (_isPrime(enemy)) {
       // Stop timer during victory processing
@@ -1020,10 +828,6 @@ class _ActionButtonsSection extends ConsumerWidget {
       if (!session.isPracticeMode) {
         // 完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
         ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
-        
-        print('Victory reward: final prime $enemy + used primes ${usedPrimes.join(", ")}');
-      } else {
-        print('Practice mode: no items consumed or gained');
       }
       
       // Check if stage is cleared
@@ -1042,27 +846,27 @@ class _ActionButtonsSection extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(l10n.victory),
+            title: Text(// l10n.victory),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.youDefeatedEnemy(enemy.toString())),
+                Text(// l10n.youDefeatedEnemy(enemy.toString())),
                 const SizedBox(height: 8),
                 if (session.isPracticeMode) ...[
-                  Text(l10n.practiceModeNoItems, 
+                  Text(// l10n.practiceModeNoItems, 
                     style: const TextStyle(fontStyle: FontStyle.italic)),
                   const SizedBox(height: 8),
-                  Text(l10n.keepPracticing),
+                  Text(// l10n.keepPracticing),
                 ] else ...[
-                  Text(l10n.rewardsObtained, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text('• ${l10n.finalPrime(enemy.toString())}'),
+                  Text(// l10n.rewardsObtained, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text('• ${// l10n.finalPrime(enemy.toString())}'),
                   if (usedPrimes.isNotEmpty) ...[
-                    Text('• ${l10n.usedPrimesReturned}'),
+                    Text('• ${// l10n.usedPrimesReturned}'),
                     ...usedPrimes.map((prime) => Text('  - Prime $prime')),
                   ],
                   const SizedBox(height: 8),
-                  Text(l10n.continueFighting),
+                  Text(// l10n.continueFighting),
                 ],
               ],
             ),
@@ -1077,7 +881,7 @@ class _ActionButtonsSection extends ConsumerWidget {
                   // Start new timer for next battle
                   onRestartTimer();
                 },
-                child: Text(l10n.continueAction),
+                child: Text(// l10n.continueAction),
               ),
             ],
           ),
@@ -1090,12 +894,12 @@ class _ActionButtonsSection extends ConsumerWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(l10n.wrongClaim),
-          content: Text(l10n.stillComposite(enemy.toString())),
+          title: Text(// l10n.wrongClaim),
+          content: Text(// l10n.stillComposite(enemy.toString())),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.continueAction),
+              child: Text(// l10n.continueAction),
             ),
           ],
         ),

@@ -2,33 +2,36 @@ import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
+import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 class AchievementScreen extends StatelessWidget {
   const AchievementScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Achievements'),
+        title: Text(l10n.achievements),
       ),
       body: ListView(
         padding: const EdgeInsets.all(Dimensions.paddingM),
         children: [
-          _buildProgressSummary(),
+          _buildProgressSummary(l10n),
           
           const SizedBox(height: Dimensions.spacingL),
           
           Text(
-            'Battle Achievements',
+            l10n.battleAchievements,
             style: AppTextStyles.titleLarge,
           ),
           
           const SizedBox(height: Dimensions.spacingM),
           
           _buildAchievementItem(
-            title: 'First Victory',
-            description: 'Win your first battle',
+            title: l10n.firstVictory,
+            description: l10n.firstVictoryDesc,
             icon: Icons.emoji_events,
             isUnlocked: true,
             progress: 1,
@@ -36,8 +39,8 @@ class AchievementScreen extends StatelessWidget {
           ),
           
           _buildAchievementItem(
-            title: 'Prime Hunter',
-            description: 'Win 10 battles',
+            title: l10n.primeHunter,
+            description: l10n.primeHunterDesc,
             icon: Icons.gps_fixed,
             isUnlocked: true,
             progress: 10,
@@ -45,8 +48,8 @@ class AchievementScreen extends StatelessWidget {
           ),
           
           _buildAchievementItem(
-            title: 'Composite Crusher',
-            description: 'Win 50 battles',
+            title: l10n.compositeCrusher,
+            description: l10n.compositeCrusherDesc,
             icon: Icons.military_tech,
             isUnlocked: false,
             progress: 23,
@@ -56,15 +59,15 @@ class AchievementScreen extends StatelessWidget {
           const SizedBox(height: Dimensions.spacingL),
           
           Text(
-            'Speed Achievements',
+            l10n.speedAchievements,
             style: AppTextStyles.titleLarge,
           ),
           
           const SizedBox(height: Dimensions.spacingM),
           
           _buildAchievementItem(
-            title: 'Lightning Fast',
-            description: 'Win a battle in under 10 seconds',
+            title: l10n.lightningFast,
+            description: l10n.lightningFastDesc,
             icon: Icons.flash_on,
             isUnlocked: false,
             progress: 0,
@@ -72,8 +75,8 @@ class AchievementScreen extends StatelessWidget {
           ),
           
           _buildAchievementItem(
-            title: 'Speed Demon',
-            description: 'Win 5 battles in under 15 seconds each',
+            title: l10n.speedDemon,
+            description: l10n.speedDemonDesc,
             icon: Icons.rocket_launch,
             isUnlocked: false,
             progress: 2,
@@ -83,15 +86,15 @@ class AchievementScreen extends StatelessWidget {
           const SizedBox(height: Dimensions.spacingL),
           
           Text(
-            'Special Achievements',
+            l10n.specialAchievements,
             style: AppTextStyles.titleLarge,
           ),
           
           const SizedBox(height: Dimensions.spacingM),
           
           _buildAchievementItem(
-            title: 'Power Hunter',
-            description: 'Defeat 10 power enemies',
+            title: l10n.powerHunter,
+            description: l10n.powerHunterDesc,
             icon: Icons.auto_awesome,
             isUnlocked: false,
             progress: 3,
@@ -99,8 +102,8 @@ class AchievementScreen extends StatelessWidget {
           ),
           
           _buildAchievementItem(
-            title: 'Perfect Victory',
-            description: 'Win without any wrong claims or escapes',
+            title: l10n.perfectVictory,
+            description: l10n.perfectVictoryDesc,
             icon: Icons.verified,
             isUnlocked: true,
             progress: 1,
@@ -108,8 +111,8 @@ class AchievementScreen extends StatelessWidget {
           ),
           
           _buildAchievementItem(
-            title: 'Prime Collector',
-            description: 'Collect 25 different prime numbers',
+            title: l10n.primeCollector,
+            description: l10n.primeCollectorDesc,
             icon: Icons.collections,
             isUnlocked: false,
             progress: 8,
@@ -120,7 +123,7 @@ class AchievementScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressSummary() {
+  Widget _buildProgressSummary(AppLocalizations l10n) {
     const totalAchievements = 8;
     const unlockedAchievements = 3;
     const progress = unlockedAchievements / totalAchievements;
@@ -144,12 +147,12 @@ class AchievementScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Achievement Progress',
+                        l10n.achievementProgress,
                         style: AppTextStyles.titleLarge,
                       ),
                       const SizedBox(height: Dimensions.spacingXs),
                       Text(
-                        '$unlockedAchievements of $totalAchievements unlocked',
+                        l10n.achievementsUnlocked(unlockedAchievements.toString(), totalAchievements.toString()),
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.onSurfaceVariant,
                         ),

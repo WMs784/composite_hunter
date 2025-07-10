@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 class InventoryScreen extends StatefulWidget {
   const InventoryScreen({super.key});
@@ -41,11 +40,9 @@ class _InventoryScreenState extends State<InventoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.primeInventory),
+        title: const Text('Prime Inventory'),
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.primary,
@@ -54,15 +51,15 @@ class _InventoryScreenState extends State<InventoryScreen>
           tabs: [
             Tab(
               icon: Icon(Icons.inventory, color: null), // Use tab bar's color scheme
-              text: l10n.inventory,
+              text: 'Inventory',
             ),
             Tab(
               icon: Icon(Icons.book, color: null), // Use tab bar's color scheme
-              text: l10n.collection,
+              text: 'Collection',
             ),
             Tab(
               icon: Icon(Icons.analytics, color: null), // Use tab bar's color scheme
-              text: l10n.statistics,
+              text: 'Statistics',
             ),
           ],
         ),
@@ -79,7 +76,6 @@ class _InventoryScreenState extends State<InventoryScreen>
   }
 
   Widget _buildInventoryTab() {
-    final l10n = AppLocalizations.of(context)!;
     final availablePrimes = _primes.where((p) => p['count'] > 0).toList();
     
     return Column(
@@ -96,17 +92,17 @@ class _InventoryScreenState extends State<InventoryScreen>
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSummaryItem(
-                l10n.totalPrimes,
+                'Total Primes',
                 _primes.fold(0, (sum, p) => sum + (p['count'] as int)).toString(),
                 Icons.numbers,
               ),
               _buildSummaryItem(
-                l10n.unique,
+                'Unique',
                 availablePrimes.length.toString(),
                 Icons.category,
               ),
               _buildSummaryItem(
-                l10n.available,
+                'Available',
                 availablePrimes.length.toString(),
                 Icons.check_circle,
               ),
@@ -121,7 +117,7 @@ class _InventoryScreenState extends State<InventoryScreen>
             itemCount: _primes.length,
             itemBuilder: (context, index) {
               final prime = _primes[index];
-              return _buildPrimeItem(prime, l10n);
+              return _buildPrimeItem(prime);
             },
           ),
         ),
@@ -130,8 +126,6 @@ class _InventoryScreenState extends State<InventoryScreen>
   }
 
   Widget _buildCollectionTab() {
-    final l10n = AppLocalizations.of(context)!;
-    
     return ListView.builder(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       itemCount: _primes.length,
@@ -155,7 +149,7 @@ class _InventoryScreenState extends State<InventoryScreen>
               ),
             ),
             title: Text(
-              l10n.primeWithValue(prime['value'].toString()),
+              'Prime ${prime['value']}',
               style: AppTextStyles.titleMedium.copyWith(
                 color: isUnlocked 
                     ? AppColors.onSurface 
@@ -164,8 +158,8 @@ class _InventoryScreenState extends State<InventoryScreen>
             ),
             subtitle: Text(
               isUnlocked 
-                  ? l10n.firstObtained(l10n.daysAgo('2'))
-                  : l10n.notYetDiscovered,
+                  ? 'First obtained: 2 days ago'
+                  : 'Not yet discovered',
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.onSurfaceVariant,
               ),
@@ -199,7 +193,6 @@ class _InventoryScreenState extends State<InventoryScreen>
   }
 
   Widget _buildStatisticsTab() {
-    final l10n = AppLocalizations.of(context)!;
     final totalUsage = _primes.fold(0, (sum, p) => sum + (p['usage'] as int));
     final mostUsed = _primes.reduce((a, b) => 
         a['usage'] > b['usage'] ? a : b);
@@ -210,16 +203,16 @@ class _InventoryScreenState extends State<InventoryScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            l10n.usageStatistics,
+            'Usage Statistics',
             style: AppTextStyles.headlineSmall,
           ),
           
           const SizedBox(height: Dimensions.spacingL),
           
           _buildStatCard(
-            l10n.totalUsage,
+            'Total Usage',
             totalUsage.toString(),
-            l10n.attacksMade,
+            'attacks made',
             Icons.gps_fixed,
             AppColors.primary,
           ),
@@ -227,9 +220,9 @@ class _InventoryScreenState extends State<InventoryScreen>
           const SizedBox(height: Dimensions.spacingM),
           
           _buildStatCard(
-            l10n.mostUsedPrime,
+            'Most Used Prime',
             mostUsed['value'].toString(),
-            l10n.timesUsed(mostUsed['usage'].toString()),
+            '${mostUsed['usage']} times',
             Icons.star,
             AppColors.victoryGreen,
           ),
@@ -237,7 +230,7 @@ class _InventoryScreenState extends State<InventoryScreen>
           const SizedBox(height: Dimensions.spacingL),
           
           Text(
-            l10n.primeUsageChart,
+            'Prime Usage Chart',
             style: AppTextStyles.titleMedium,
           ),
           
@@ -329,7 +322,7 @@ class _InventoryScreenState extends State<InventoryScreen>
     );
   }
 
-  Widget _buildPrimeItem(Map<String, dynamic> prime, AppLocalizations l10n) {
+  Widget _buildPrimeItem(Map<String, dynamic> prime) {
     final isAvailable = prime['count'] > 0;
     
     return Card(
@@ -353,11 +346,11 @@ class _InventoryScreenState extends State<InventoryScreen>
           ),
         ),
         title: Text(
-          l10n.primeWithValue(prime['value'].toString()),
+          'Prime ${prime['value']}',
           style: AppTextStyles.titleMedium,
         ),
         subtitle: Text(
-          l10n.usedTimes(prime['usage'].toString()),
+          'Used ${prime['usage']} times',
           style: AppTextStyles.bodySmall.copyWith(
             color: AppColors.onSurfaceVariant,
           ),

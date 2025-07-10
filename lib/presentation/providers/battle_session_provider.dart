@@ -70,6 +70,21 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
     );
   }
   
+  /// 選択されたアイテムでステージバトルを開始
+  void startStageWithSelectedItems(int stageNumber, List<Prime> selectedInventory) {
+    state = BattleSessionState(
+      stageNumber: stageNumber,
+      isPracticeMode: false,
+      sessionStartTime: DateTime.now(),
+      stageStartInventory: List.from(selectedInventory), // 選択されたアイテム状態をコピーして保存
+    );
+    
+    print('Started stage $stageNumber with ${selectedInventory.length} selected items');
+    for (final prime in selectedInventory) {
+      print('  - Prime ${prime.value}: ${prime.count} available');
+    }
+  }
+  
   /// 練習モードを開始
   void startPractice(List<Prime> currentInventory) {
     state = BattleSessionState(

@@ -38,7 +38,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
       
       // Generate enemy based on current state
       final enemy = _enemyGenerator.generateEnemy(
-        inventory.primes,
+        inventory,
         gameState.player.level,
       );
 
@@ -225,7 +225,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
     await _playAttackAnimation(usedPrime.value);
 
     // Use the prime from inventory
-    await _ref.read(inventoryProvider.notifier).usePrime(usedPrime);
+    _ref.read(inventoryProvider.notifier).usePrime(usedPrime.value);
 
     // Update battle state
     state = state.nextTurn(usedPrime).copyWith(currentEnemy: newEnemy);
@@ -237,7 +237,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
     await _playAttackAnimation(usedPrime.value);
 
     // Use the prime from inventory
-    await _ref.read(inventoryProvider.notifier).usePrime(usedPrime);
+    _ref.read(inventoryProvider.notifier).usePrime(usedPrime.value);
 
     // Update battle state - enemy is now prime, ready for victory claim
     state = state.nextTurn(usedPrime).copyWith(currentEnemy: newEnemy);
@@ -249,12 +249,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
     await _playVictoryAnimation();
 
     // Add reward to inventory
-    final reward = Prime(
-      value: rewardPrime,
-      count: 1,
-      firstObtained: DateTime.now(),
-    );
-    await _ref.read(inventoryProvider.notifier).addPrime(reward);
+    _ref.read(inventoryProvider.notifier).addPrime(rewardPrime);
 
     // Update battle state
     state = state.endBattle(BattleStatus.victory, claim: victoryClaim);
@@ -283,12 +278,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
 
     // Add multiple rewards to inventory
     for (int i = 0; i < rewardCount; i++) {
-      final reward = Prime(
-        value: rewardPrime,
-        count: 1,
-        firstObtained: DateTime.now(),
-      );
-      await _ref.read(inventoryProvider.notifier).addPrime(reward);
+      _ref.read(inventoryProvider.notifier).addPrime(rewardPrime);
     }
 
     // Update battle state
@@ -497,14 +487,14 @@ final canAttackProvider = Provider.family<bool, Prime>((ref, prime) {
   if (!battleState.isInProgress) return false;
   if (battleState.timerState?.isExpired == true) return false;
   
-  return BattleEngine.canAttack(battleState.currentEnemy!, prime, inventory.primes);
+  return BattleEngine.canAttack(battleState.currentEnemy!, prime, inventory);
 });
 
 final availableAttacksProvider = Provider<List<Prime>>((ref) {
   final battleState = ref.watch(battleProvider);
   final inventory = ref.watch(inventoryProvider);
   
-  return battleState.getAvailableAttacks(inventory.primes);
+  return battleState.getAvailableAttacks(inventory);
 });
 
 final battleDifficultyProvider = Provider<int>((ref) {
@@ -515,7 +505,7 @@ final battleDifficultyProvider = Provider<int>((ref) {
   
   return BattleEngine.calculateBattleDifficulty(
     battleState.currentEnemy!,
-    inventory.primes,
+    inventory,
   );
 });
 
@@ -527,6 +517,6 @@ final optimalAttacksProvider = Provider<List<Prime>>((ref) {
   
   return BattleEngine.suggestOptimalAttacks(
     battleState.currentEnemy!,
-    inventory.primes,
+    inventory,
   );
 });

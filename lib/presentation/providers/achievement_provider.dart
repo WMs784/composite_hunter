@@ -408,7 +408,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
             title: 'Combo Reward',
             description: 'Temporary achievement for combo reward processing',
             category: AchievementCategory.battle,
-            type: AchievementType.progressive,
+            type: AchievementType.cumulative,
             targetValue: 1,
             currentProgress: 1,
             isUnlocked: true,

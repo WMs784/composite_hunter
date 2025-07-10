@@ -8,7 +8,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show loading state
   void showLoading({String? message}) {
-    Logger.debug('Showing loading state', message: message);
+    Logger.debug('Showing loading state: ${message ?? "no message"}');
     state = state.copyWith(
       isLoading: true,
       loadingMessage: message,
@@ -26,7 +26,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show error dialog
   void showError(String message, {String? title}) {
-    Logger.debug('Showing error dialog', message: message);
+    Logger.debug('Showing error dialog: $message');
     state = state.copyWith(
       showErrorDialog: true,
       errorMessage: message,
@@ -46,7 +46,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show success message
   void showSuccess(String message, {Duration? duration}) {
-    Logger.debug('Showing success message', message: message);
+    Logger.debug('Showing success message: $message');
     state = state.copyWith(
       showSuccessMessage: true,
       successMessage: message,
@@ -71,7 +71,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show info message
   void showInfo(String message, {Duration? duration}) {
-    Logger.debug('Showing info message', message: message);
+    Logger.debug('Showing info message: $message');
     state = state.copyWith(
       showInfoMessage: true,
       infoMessage: message,
@@ -101,7 +101,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
     required String cancelText,
     String? title,
   }) {
-    Logger.debug('Showing confirmation dialog', message: message);
+    Logger.debug('Showing confirmation dialog: $message');
     state = state.copyWith(
       showConfirmationDialog: true,
       confirmationMessage: message,
@@ -125,7 +125,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show tutorial overlay
   void showTutorial(String tutorialKey, String content) {
-    Logger.debug('Showing tutorial', message: tutorialKey);
+    Logger.debug('Showing tutorial: $tutorialKey');
     state = state.copyWith(
       showTutorialOverlay: true,
       tutorialKey: tutorialKey,
@@ -145,7 +145,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show achievement notification
   void showAchievementUnlocked(String achievementTitle, String description) {
-    Logger.debug('Showing achievement notification', message: achievementTitle);
+    Logger.debug('Showing achievement notification: $achievementTitle');
     state = state.copyWith(
       showAchievementNotification: true,
       achievementTitle: achievementTitle,
@@ -280,7 +280,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Set current screen
   void setCurrentScreen(String screenName) {
-    Logger.debug('Setting current screen', message: screenName);
+    Logger.debug('Setting current screen: $screenName');
     state = state.copyWith(currentScreen: screenName);
   }
 

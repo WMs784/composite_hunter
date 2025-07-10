@@ -25,4 +25,7 @@ class GameConstants {
   // Experience and levels
   static const int baseExperiencePerLevel = 100;
   static const double experienceMultiplier = 1.2;
+  static const int baseVictoryExperience = 10;
+  static const int powerEnemyBonusExperience = 20;
+  static const int tutorialCompletionExperience = 50;
 }

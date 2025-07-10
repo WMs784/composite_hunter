@@ -4,6 +4,7 @@ import '../../domain/entities/player.dart';
 import '../../domain/entities/achievement.dart';
 import '../../data/repositories/game_repository.dart';
 import '../../data/mappers/game_mapper.dart';
+import '../../data/datasources/shared_preferences_service.dart';
 import '../../core/constants/game_constants.dart';
 import '../../core/utils/logger.dart';
 
@@ -21,23 +22,21 @@ class GameNotifier extends StateNotifier<GameState> {
     try {
       Logger.info('Loading game state');
       
-      final gameData = await _repository.loadGameData();
-      final player = Player(
-        level: gameData.playerLevel,
-        experience: gameData.experience,
-        totalBattles: gameData.totalBattles,
-        totalVictories: gameData.totalVictories,
-        totalEscapes: gameData.totalEscapes,
-        totalTimeOuts: gameData.totalTimeOuts,
-        totalPowerEnemiesDefeated: gameData.totalPowerEnemiesDefeated,
-        createdAt: gameData.createdAt,
-        lastPlayedAt: gameData.lastPlayedAt,
-      );
+      final playerId = await _repository.getCurrentOrCreatePlayer();
+      final player = await _repository.getPlayer(playerId);
+      
+      if (player == null) {
+        throw Exception('Failed to load or create player');
+      }
 
+      // Check tutorial completion from preferences
+      final prefsService = SharedPreferencesService();
+      final tutorialCompleted = await prefsService.isTutorialCompleted();
+      
       state = state.copyWith(
         player: player,
         isInitialized: true,
-        tutorialCompleted: gameData.tutorialCompleted,
+        tutorialCompleted: tutorialCompleted,
       );
 
       Logger.info('Game state loaded successfully');
@@ -81,7 +80,7 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Record a victory and update player stats
   Future<void> recordVictory() async {
     try {
-      Logger.logGame('Recording victory');
+      Logger.debug('Recording victory');
       
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
@@ -102,10 +101,7 @@ class GameNotifier extends StateNotifier<GameState> {
         _triggerLevelUpEvent(newLevel);
       }
 
-      Logger.logGame('Victory recorded', data: {
-        'newLevel': newLevel,
-        'experience': finalPlayer.experience,
-      });
+      Logger.debug('Victory recorded: level=$newLevel, experience=${finalPlayer.experience}');
     } catch (e, stackTrace) {
       Logger.error('Failed to record victory', e, stackTrace);
     }
@@ -114,7 +110,7 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Record power enemy victory with bonus rewards
   Future<void> recordPowerEnemyVictory() async {
     try {
-      Logger.logGame('Recording power enemy victory');
+      Logger.debug('Recording power enemy victory');
       
       final bonusExperience = GameConstants.powerEnemyBonusExperience;
       final updatedPlayer = state.player.copyWith(
@@ -137,7 +133,7 @@ class GameNotifier extends StateNotifier<GameState> {
         _triggerLevelUpEvent(newLevel);
       }
 
-      Logger.logGame('Power enemy victory recorded');
+      Logger.debug('Power enemy victory recorded');
     } catch (e, stackTrace) {
       Logger.error('Failed to record power enemy victory', e, stackTrace);
     }
@@ -146,7 +142,7 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Record an escape
   Future<void> recordEscape() async {
     try {
-      Logger.logGame('Recording escape');
+      Logger.debug('Recording escape');
       
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
@@ -157,7 +153,7 @@ class GameNotifier extends StateNotifier<GameState> {
       state = state.copyWith(player: updatedPlayer);
       await _saveGameState();
 
-      Logger.logGame('Escape recorded');
+      Logger.debug('Escape recorded');
     } catch (e, stackTrace) {
       Logger.error('Failed to record escape', e, stackTrace);
     }
@@ -166,7 +162,7 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Record a timeout
   Future<void> recordTimeOut() async {
     try {
-      Logger.logGame('Recording timeout');
+      Logger.debug('Recording timeout');
       
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
@@ -177,7 +173,7 @@ class GameNotifier extends StateNotifier<GameState> {
       state = state.copyWith(player: updatedPlayer);
       await _saveGameState();
 
-      Logger.logGame('Timeout recorded');
+      Logger.debug('Timeout recorded');
     } catch (e, stackTrace) {
       Logger.error('Failed to record timeout', e, stackTrace);
     }
@@ -186,7 +182,7 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Complete tutorial
   Future<void> completeTutorial() async {
     try {
-      Logger.logGame('Completing tutorial');
+      Logger.debug('Completing tutorial');
       
       state = state.copyWith(tutorialCompleted: true);
       await _repository.completeTutorial();
@@ -202,7 +198,7 @@ class GameNotifier extends StateNotifier<GameState> {
       state = state.copyWith(player: finalPlayer);
       await _saveGameState();
 
-      Logger.logGame('Tutorial completed');
+      Logger.debug('Tutorial completed');
     } catch (e, stackTrace) {
       Logger.error('Failed to complete tutorial', e, stackTrace);
     }
@@ -211,7 +207,7 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Add experience points
   Future<void> addExperience(int experience) async {
     try {
-      Logger.logGame('Adding experience', data: {'experience': experience});
+      Logger.debug('Adding experience: $experience');
       
       final updatedPlayer = state.player.copyWith(
         experience: state.player.experience + experience,
@@ -230,7 +226,7 @@ class GameNotifier extends StateNotifier<GameState> {
         _triggerLevelUpEvent(newLevel);
       }
 
-      Logger.logGame('Experience added');
+      Logger.debug('Experience added');
     } catch (e, stackTrace) {
       Logger.error('Failed to add experience', e, stackTrace);
     }
@@ -238,22 +234,22 @@ class GameNotifier extends StateNotifier<GameState> {
 
   /// Calculate level from experience
   int _calculateLevel(int experience) {
-    // Level formula: level = floor(sqrt(experience / 100)) + 1
+    // Level formula: level = floor(experience / 100) + 1
     // This creates a progressively slower leveling curve
-    return (experience / GameConstants.experiencePerLevel).floor() + 1;
+    return (experience / GameConstants.baseExperiencePerLevel).floor() + 1;
   }
 
   /// Calculate experience needed for next level
   int getExperienceForNextLevel() {
     final currentLevel = state.player.level;
-    final nextLevelExperience = (currentLevel) * GameConstants.experiencePerLevel;
+    final nextLevelExperience = (currentLevel) * GameConstants.baseExperiencePerLevel;
     return nextLevelExperience - state.player.experience;
   }
 
   /// Get experience progress as percentage for current level
   double getLevelProgress() {
-    final currentLevelExp = (state.player.level - 1) * GameConstants.experiencePerLevel;
-    final nextLevelExp = state.player.level * GameConstants.experiencePerLevel;
+    final currentLevelExp = (state.player.level - 1) * GameConstants.baseExperiencePerLevel;
+    final nextLevelExp = state.player.level * GameConstants.baseExperiencePerLevel;
     final currentExp = state.player.experience;
     
     if (currentExp >= nextLevelExp) return 1.0;
@@ -279,28 +275,21 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Trigger level up event
   void _triggerLevelUpEvent(int newLevel) {
     // TODO: Show level up animation/dialog
-    Logger.logGame('Level up!', data: {'newLevel': newLevel});
+    Logger.debug('Level up to level: $newLevel');
   }
 
   /// Save current game state
   Future<void> _saveGameState() async {
     try {
-      final gameData = _mapper.gameDataToModel(
-        playerLevel: state.player.level,
-        experience: state.player.experience,
-        totalBattles: state.player.totalBattles,
-        totalVictories: state.player.totalVictories,
-        totalEscapes: state.player.totalEscapes,
-        totalTimeOuts: state.player.totalTimeOuts,
-        totalPowerEnemiesDefeated: state.player.totalPowerEnemiesDefeated,
-        inventory: [], // Inventory is managed separately
-        battleHistory: [], // Battle history is managed separately
-        tutorialCompleted: state.tutorialCompleted,
-        createdAt: state.player.createdAt,
-        lastPlayedAt: state.player.lastPlayedAt,
-      );
-
-      await _repository.saveGameData(gameData);
+      // Update player in repository
+      final playerId = await _repository.getCurrentOrCreatePlayer();
+      await _repository.updatePlayer(playerId, state.player);
+      
+      // Save tutorial completion to preferences
+      if (state.tutorialCompleted) {
+        final prefsService = SharedPreferencesService();
+        await prefsService.setTutorialCompleted();
+      }
     } catch (e, stackTrace) {
       Logger.error('Failed to save game state', e, stackTrace);
     }
@@ -309,12 +298,12 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Reset game progress (for testing or new game)
   Future<void> resetGame() async {
     try {
-      Logger.logGame('Resetting game');
+      Logger.debug('Resetting game');
       
       await _repository.clearAllData();
       await _initializeNewGame();
       
-      Logger.logGame('Game reset completed');
+      Logger.debug('Game reset completed');
     } catch (e, stackTrace) {
       Logger.error('Failed to reset game', e, stackTrace);
     }
@@ -429,11 +418,11 @@ final totalPowerEnemiesDefeatedProvider = Provider<int>((ref) {
 });
 
 final playerCreatedAtProvider = Provider<DateTime>((ref) {
-  return ref.watch(playerProvider).createdAt;
+  return ref.watch(playerProvider).createdAt ?? DateTime.now();
 });
 
 final playerLastPlayedAtProvider = Provider<DateTime>((ref) {
-  return ref.watch(playerProvider).lastPlayedAt;
+  return ref.watch(playerProvider).lastPlayedAt ?? DateTime.now();
 });
 
 /// Player performance providers

@@ -141,6 +141,7 @@ class AppRouter {
     return pushNamed(context, RouteNames.achievement);
   }
 
+
   static Future<void> goToBattleFromAnywhere(BuildContext context) {
     return pushNamedAndRemoveUntil(
       context,

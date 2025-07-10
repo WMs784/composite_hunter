@@ -196,6 +196,20 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     }
   }
 
+  void _generateNewEnemyWithoutTimeReset() {
+    final session = ref.read(battleSessionProvider);
+    
+    if (session.isPracticeMode) {
+      // 練習モードは敵のみ生成、タイマーはそのまま
+      ref.read(battleEnemyProvider.notifier).state = _generateEnemyForRange(6, 20);
+    } else {
+      final stageNumber = session.stageNumber ?? 1;
+      final (enemy, _) = _getStageSettings(stageNumber);
+      ref.read(battleEnemyProvider.notifier).state = enemy;
+      // タイマーはリセットしない
+    }
+  }
+
   void _restartBattle() {
     print('Restarting battle');
     
@@ -394,6 +408,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     return factors;
   }
 
+
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(battleSessionProvider);
@@ -463,6 +478,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
                 onRestartTimer: _startTimer,
                 onStopTimer: _stopTimer,
                 onGenerateNewEnemy: _generateNewEnemy,
+                onGenerateNewEnemyWithoutTimeReset: _generateNewEnemyWithoutTimeReset,
                 onRestoreInventory: _restoreInventoryWithAnimation,
               ),
             ],
@@ -939,12 +955,14 @@ class _ActionButtonsSection extends ConsumerWidget {
   final VoidCallback onRestartTimer;
   final VoidCallback onStopTimer;
   final VoidCallback onGenerateNewEnemy;
+  final VoidCallback onGenerateNewEnemyWithoutTimeReset;
   final VoidCallback onRestoreInventory;
   
   const _ActionButtonsSection({
     required this.onRestartTimer,
     required this.onStopTimer,
     required this.onGenerateNewEnemy,
+    required this.onGenerateNewEnemyWithoutTimeReset,
     required this.onRestoreInventory,
   });
 
@@ -961,25 +979,22 @@ class _ActionButtonsSection extends ConsumerWidget {
             onPressed: () {
               print('Escape button pressed');
               
-              // アイテム状態をステージ開始時に復元
-              onRestoreInventory();
-              
               // Record escape in session
               ref.read(battleSessionProvider.notifier).recordEscape();
               
-              // Reset used primes for current battle
-              ref.read(battleSessionProvider.notifier).resetUsedPrimes();
+              // Apply time penalty (reduce timer by 10 seconds)
+              final currentTime = ref.read(battleTimerProvider);
+              final newTime = (currentTime - 10).clamp(1, currentTime); // 最低1秒は残す
+              ref.read(battleTimerProvider.notifier).state = newTime;
               
-              // Generate new enemy with proper settings (includes time reset)
-              onGenerateNewEnemy();
-              
-              // Restart timer with full time
-              onRestartTimer();
+              // Generate new enemy without resetting timer or items
+              onGenerateNewEnemyWithoutTimeReset();
               
               // Show feedback
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(l10n.escapedItemsRestored),
+                  content: Text('逃走しました。時間が10秒減少しました。'),
+                  backgroundColor: Colors.orange,
                   duration: const Duration(seconds: 2),
                 ),
               );
@@ -994,7 +1009,7 @@ class _ActionButtonsSection extends ConsumerWidget {
           flex: 2,
           child: ElevatedButton(
             onPressed: canClaimVictory
-                ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer)
+                ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer, onGenerateNewEnemy)
                 : null,
             child: Text(l10n.claimVictory),
           ),
@@ -1003,7 +1018,7 @@ class _ActionButtonsSection extends ConsumerWidget {
     );
   }
   
-  void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer) {
+  void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer, VoidCallback onGenerateNewEnemy) {
     print('Claim Victory button pressed');
     final l10n = AppLocalizations.of(context)!;
     
@@ -1030,58 +1045,28 @@ class _ActionButtonsSection extends ConsumerWidget {
       final clearResult = ref.read(battleSessionProvider.notifier).checkClearCondition();
       
       if (clearResult != null) {
-        // Stage cleared!
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StageClearScreen(clearResult: clearResult),
-          ),
-        );
-      } else {
-        // Continue to next enemy
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.victory),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l10n.youDefeatedEnemy(enemy.toString())),
-                const SizedBox(height: 8),
-                if (session.isPracticeMode) ...[
-                  Text(l10n.practiceModeNoItems, 
-                    style: const TextStyle(fontStyle: FontStyle.italic)),
-                  const SizedBox(height: 8),
-                  Text(l10n.keepPracticing),
-                ] else ...[
-                  Text(l10n.rewardsObtained, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text('• ${l10n.finalPrime(enemy.toString())}'),
-                  if (usedPrimes.isNotEmpty) ...[
-                    Text('• ${l10n.usedPrimesReturned}'),
-                    ...usedPrimes.map((prime) => Text('  - Prime $prime')),
-                  ],
-                  const SizedBox(height: 8),
-                  Text(l10n.continueFighting),
-                ],
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // Reset used primes for next battle
-                  ref.read(battleSessionProvider.notifier).resetUsedPrimes();
-                  // Generate new enemy but don't reset inventory
-                  onGenerateNewEnemy();
-                  // Start new timer for next battle
-                  onRestartTimer();
-                },
-                child: Text(l10n.continueAction),
+        // Stage cleared! Stop timer and navigate safely
+        onStopTimer();
+        
+        // Delay navigation to ensure current frame completes
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StageClearScreen(clearResult: clearResult),
               ),
-            ],
-          ),
-        );
+            );
+          }
+        });
+      } else {
+        // Continue to next enemy automatically without popup
+        // Reset used primes for next battle
+        ref.read(battleSessionProvider.notifier).resetUsedPrimes();
+        // Generate new enemy but don't reset inventory
+        onGenerateNewEnemy();
+        // Start new timer for next battle
+        onRestartTimer();
       }
     } else {
       // Wrong claim - record error

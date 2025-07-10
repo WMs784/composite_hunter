@@ -33,8 +33,9 @@ class AnimatedStars extends StatelessWidget {
           animation: starAnimation,
           builder: (context, child) {
             final isActive = index < stars;
-            final scale = isActive ? starAnimation.value : 0.8;
-            final opacity = isActive ? starAnimation.value : 0.3;
+            // Clamp animation values to prevent layout errors
+            final scale = isActive ? starAnimation.value.clamp(0.0, 2.0) : 0.8;
+            final opacity = isActive ? starAnimation.value.clamp(0.0, 1.0) : 0.3;
             
             return Transform.scale(
               scale: scale,

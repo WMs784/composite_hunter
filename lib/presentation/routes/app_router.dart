@@ -30,6 +30,7 @@ class AppRouter {
           settings: settings,
         );
 
+
       case RouteNames.battle:
         return MaterialPageRoute(
           builder: (_) => const BattleScreen(),
@@ -132,6 +133,7 @@ class AppRouter {
   static Future<void> goToAchievements(BuildContext context) {
     return pushNamed(context, RouteNames.achievement);
   }
+
 
   static Future<void> goToBattleFromAnywhere(BuildContext context) {
     return pushNamedAndRemoveUntil(

@@ -37,11 +37,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
   void initState() {
     super.initState();
     
-    // Save stage progress
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(stageProgressProvider.notifier).completeStage(widget.clearResult);
-    });
-    
+    // Initialize animation controllers first
     _mainController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -76,19 +72,32 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
     ));
     
-    // アニメーションを開始
-    _mainController.forward();
-    
-    // 星のアニメーションを遅らせて開始
-    Future.delayed(const Duration(milliseconds: 600), () {
+    // Save stage progress and start animations after widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        _starsController.forward();
+        // Save stage progress
+        ref.read(stageProgressProvider.notifier).completeStage(widget.clearResult);
+        
+        // Start main animation
+        _mainController.forward();
+        
+        // Start star animation after delay
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (mounted && _starsController.isCompleted == false) {
+            _starsController.forward();
+          }
+        });
       }
     });
   }
 
   @override
   void dispose() {
+    // Stop animations before disposing
+    _mainController.stop();
+    _starsController.stop();
+    
+    // Dispose controllers
     _mainController.dispose();
     _starsController.dispose();
     super.dispose();
@@ -102,12 +111,16 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
         child: AnimatedBuilder(
           animation: _mainController,
           builder: (context, child) {
-            return FadeTransition(
-              opacity: _fadeAnimation,
-              child: ScaleTransition(
-                scale: _scaleAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
+            // Prevent layout errors during animation by ensuring valid animation values
+            final fadeValue = _fadeAnimation.value.clamp(0.0, 1.0);
+            final scaleValue = _scaleAnimation.value.clamp(0.1, 2.0);
+            
+            return Opacity(
+              opacity: fadeValue,
+              child: Transform.scale(
+                scale: scaleValue,
+                child: Transform.translate(
+                  offset: _slideAnimation.value * MediaQuery.of(context).size.height,
                   child: _buildContent(context),
                 ),
               ),
@@ -182,6 +195,24 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             AnimatedBuilder(
               animation: _starsController,
               builder: (context, child) {
+                // Ensure animation is mounted and valid before building stars
+                if (!mounted || !_starsController.isAnimating && _starsController.value == 0.0) {
+                  return Container(
+                    height: 60,
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(widget.clearResult.stars, (index) {
+                          return const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 32,
+                          );
+                        }),
+                      ),
+                    ),
+                  );
+                }
                 return AnimatedStars(
                   stars: widget.clearResult.stars,
                   animation: _starsController,

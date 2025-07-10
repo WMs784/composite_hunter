@@ -3,6 +3,7 @@ import '../entities/enemy.dart';
 import '../entities/timer_state.dart';
 import '../entities/penalty_state.dart';
 import 'prime_calculator.dart';
+import 'timer_manager.dart';
 import '../../core/constants/timer_constants.dart';
 import '../../core/utils/logger.dart';
 
@@ -10,14 +11,12 @@ import '../../core/utils/logger.dart';
 class VictoryValidator {
   /// Validate a victory claim against the actual enemy value
   static VictoryValidationResult validateVictoryClaim(int claimedValue) {
-    Logger.logBattle('Validating victory claim', data: {
-      'claimedValue': claimedValue,
-    });
+    Logger.debug('Validating victory claim for value: $claimedValue');
 
     final isPrime = PrimeCalculator.isPrime(claimedValue);
     
     if (isPrime) {
-      Logger.logBattle('Victory claim valid');
+      Logger.debug('Victory claim valid');
       return VictoryValidationResult(
         isValid: true,
         claimedValue: claimedValue,
@@ -26,7 +25,7 @@ class VictoryValidator {
         message: 'Correct! You found the prime $claimedValue!',
       );
     } else {
-      Logger.logBattle('Victory claim invalid - not prime');
+      Logger.debug('Victory claim invalid - not prime');
       final penalty = TimePenalty(
         seconds: TimerConstants.wrongVictoryClaimPenalty,
         type: PenaltyType.wrongVictoryClaim,
@@ -55,10 +54,7 @@ class VictoryValidator {
     // Timer must be active and not expired
     if (!timerState.isActive || timerState.isExpired) return false;
     
-    Logger.logBattle('Victory can be claimed', data: {
-      'enemyValue': enemy.currentValue,
-      'timeRemaining': timerState.remainingSeconds,
-    });
+    Logger.debug('Victory can be claimed for enemy ${enemy.currentValue} with ${timerState.remainingSeconds}s remaining');
     
     return true;
   }
@@ -66,10 +62,7 @@ class VictoryValidator {
   /// Validate that the claimed value matches the actual enemy value
   static VictoryValidationResult validateExactClaim(int claimedValue, int actualValue) {
     if (claimedValue != actualValue) {
-      Logger.logBattle('Victory claim mismatch', data: {
-        'claimed': claimedValue,
-        'actual': actualValue,
-      });
+      Logger.debug('Victory claim mismatch: claimed $claimedValue but actual is $actualValue');
 
       final penalty = TimePenalty(
         seconds: TimerConstants.wrongVictoryClaimPenalty,
@@ -131,7 +124,7 @@ class VictoryValidator {
     // Speed bonus (faster completion = higher score)
     final baseTime = TimerManager.getBaseTimeForEnemy(originalEnemy);
     final timeBonus = ((baseTime - timeUsed) / baseTime * 50).round();
-    baseScore += timeBonus.clamp(0, 50);
+    baseScore = (baseScore + timeBonus).clamp(0, baseScore + 50);
     
     // Penalty deductions
     for (final penalty in penalties) {

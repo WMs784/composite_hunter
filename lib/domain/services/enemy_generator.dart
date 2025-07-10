@@ -12,25 +12,20 @@ class EnemyGenerator {
 
   /// Generate an enemy appropriate for the player's level and inventory
   Enemy generateEnemy(List<Prime> playerInventory, int playerLevel) {
-    Logger.logEnemy('Generating enemy', data: {
-      'playerLevel': playerLevel,
-      'inventorySize': playerInventory.length,
-    });
+    Logger.debug('Generating enemy for player level $playerLevel with ${playerInventory.length} primes');
 
     // 10% chance to generate a power enemy
     if (_random.nextDouble() < GameConstants.powerEnemySpawnRate) {
       final powerEnemy = _generatePowerEnemy(playerInventory, playerLevel);
       if (powerEnemy != null) {
-        Logger.logEnemy('Generated power enemy', 
-            value: powerEnemy.currentValue, type: 'power');
+        Logger.debug('Generated power enemy with value ${powerEnemy.currentValue}');
         return powerEnemy;
       }
     }
 
     // Generate normal enemy
     final normalEnemy = _generateNormalEnemy(playerInventory, playerLevel);
-    Logger.logEnemy('Generated normal enemy', 
-        value: normalEnemy.currentValue, type: normalEnemy.type.name);
+    Logger.debug('Generated normal enemy with value ${normalEnemy.currentValue} of type ${normalEnemy.type.name}');
     return normalEnemy;
   }
 

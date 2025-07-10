@@ -27,11 +27,7 @@ class PowerEnemyDetector {
     final base = factors.first;
     final exponent = factors.length;
     
-    Logger.logEnemy('Analyzed power enemy', data: {
-      'value': value,
-      'base': base,
-      'exponent': exponent,
-    });
+    Logger.debug('Analyzed power enemy: $value = $base^$exponent');
     
     return PowerEnemyInfo(
       base: base,
@@ -57,11 +53,7 @@ class PowerEnemyDetector {
       throw ArgumentError('Power enemy value too large: $value');
     }
     
-    Logger.logEnemy('Created power enemy', data: {
-      'base': base,
-      'exponent': exponent,
-      'value': value,
-    });
+    Logger.debug('Created power enemy: $base^$exponent = $value');
     
     return Enemy(
       currentValue: value,

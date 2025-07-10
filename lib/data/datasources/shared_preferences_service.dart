@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/utils/logger.dart';
-import '../../core/exceptions/data_exception.dart' as core_exceptions;
 
 /// Service for managing shared preferences data
 class SharedPreferencesService {
@@ -66,10 +64,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final isFirst = prefs.getBool(_keyFirstLaunch) ?? true;
-      Logger.info('First launch check: $isFirst');
+      print('First launch check: $isFirst');
       return isFirst;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to check first launch', e, stackTrace);
+    } catch (e) {
+      print('Failed to check first launch: $e');
       return true; // Default to first launch on error
     }
   }
@@ -79,10 +77,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keyFirstLaunch, false);
-      Logger.info('First launch marked as completed');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set first launch completed', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set first launch completed: $e');
+      print('First launch marked as completed');
+    } catch (e) {
+      print('Failed to set first launch completed: $e');
+      throw Exception('Failed to set first launch completed: $e');
     }
   }
 
@@ -91,10 +89,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final isCompleted = prefs.getBool(_keyTutorialCompleted) ?? false;
-      Logger.info('Tutorial completion check: $isCompleted');
+      print('Tutorial completion check: $isCompleted');
       return isCompleted;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to check tutorial completion', e, stackTrace);
+    } catch (e) {
+      print('Failed to check tutorial completion: $e');
       return false; // Default to not completed on error
     }
   }
@@ -104,10 +102,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keyTutorialCompleted, true);
-      Logger.info('Tutorial marked as completed');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set tutorial completed', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set tutorial completed: $e');
+      print('Tutorial marked as completed');
+    } catch (e) {
+      print('Failed to set tutorial completed: $e');
+      throw Exception('Failed to set tutorial completed: $e');
     }
   }
 
@@ -118,8 +116,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getInt(_keyCurrentPlayerId);
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get current player ID', e, stackTrace);
+    } catch (e) {
+      print('Failed to get current player ID: $e');
       return null;
     }
   }
@@ -129,10 +127,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setInt(_keyCurrentPlayerId, playerId);
-      Logger.info('Current player ID set to: $playerId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set current player ID', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set current player ID: $e');
+      print('Current player ID set to: $playerId');
+    } catch (e) {
+      print('Failed to set current player ID: $e');
+      throw Exception('Failed to set current player ID: $e');
     }
   }
 
@@ -141,8 +139,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getInt(_keyPlayerLevel) ?? 1;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get player level', e, stackTrace);
+    } catch (e) {
+      print('Failed to get player level: $e');
       return 1; // Default level
     }
   }
@@ -152,10 +150,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setInt(_keyPlayerLevel, level);
-      Logger.info('Player level set to: $level');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set player level', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set player level: $e');
+      print('Player level set to: $level');
+    } catch (e) {
+      print('Failed to set player level: $e');
+      throw Exception('Failed to set player level: $e');
     }
   }
 
@@ -164,8 +162,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getInt(_keyTotalBattles) ?? 0;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get total battles', e, stackTrace);
+    } catch (e) {
+      print('Failed to get total battles: $e');
       return 0;
     }
   }
@@ -175,10 +173,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setInt(_keyTotalBattles, battles);
-      Logger.info('Total battles set to: $battles');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set total battles', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set total battles: $e');
+      print('Total battles set to: $battles');
+    } catch (e) {
+      print('Failed to set total battles: $e');
+      throw Exception('Failed to set total battles: $e');
     }
   }
 
@@ -187,8 +185,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getInt(_keyTotalVictories) ?? 0;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get total victories', e, stackTrace);
+    } catch (e) {
+      print('Failed to get total victories: $e');
       return 0;
     }
   }
@@ -198,10 +196,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setInt(_keyTotalVictories, victories);
-      Logger.info('Total victories set to: $victories');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set total victories', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set total victories: $e');
+      print('Total victories set to: $victories');
+    } catch (e) {
+      print('Failed to set total victories: $e');
+      throw Exception('Failed to set total victories: $e');
     }
   }
 
@@ -212,8 +210,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getString(_keyGameDifficulty) ?? 'normal';
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get game difficulty', e, stackTrace);
+    } catch (e) {
+      print('Failed to get game difficulty: $e');
       return 'normal';
     }
   }
@@ -223,10 +221,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setString(_keyGameDifficulty, difficulty);
-      Logger.info('Game difficulty set to: $difficulty');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set game difficulty', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set game difficulty: $e');
+      print('Game difficulty set to: $difficulty');
+    } catch (e) {
+      print('Failed to set game difficulty: $e');
+      throw Exception('Failed to set game difficulty: $e');
     }
   }
 
@@ -235,8 +233,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getString(_keyGameLanguage) ?? 'japanese';
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get game language', e, stackTrace);
+    } catch (e) {
+      print('Failed to get game language: $e');
       return 'japanese';
     }
   }
@@ -246,10 +244,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setString(_keyGameLanguage, language);
-      Logger.info('Game language set to: $language');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set game language', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set game language: $e');
+      print('Game language set to: $language');
+    } catch (e) {
+      print('Failed to set game language: $e');
+      throw Exception('Failed to set game language: $e');
     }
   }
 
@@ -260,8 +258,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getBool(_keySoundEffects) ?? true;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get sound effects setting', e, stackTrace);
+    } catch (e) {
+      print('Failed to get sound effects setting: $e');
       return true;
     }
   }
@@ -271,10 +269,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keySoundEffects, enabled);
-      Logger.info('Sound effects set to: $enabled');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set sound effects', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set sound effects: $e');
+      print('Sound effects set to: $enabled');
+    } catch (e) {
+      print('Failed to set sound effects: $e');
+      throw Exception('Failed to set sound effects: $e');
     }
   }
 
@@ -283,8 +281,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getBool(_keyBackgroundMusic) ?? true;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get background music setting', e, stackTrace);
+    } catch (e) {
+      print('Failed to get background music setting: $e');
       return true;
     }
   }
@@ -294,10 +292,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keyBackgroundMusic, enabled);
-      Logger.info('Background music set to: $enabled');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set background music', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set background music: $e');
+      print('Background music set to: $enabled');
+    } catch (e) {
+      print('Failed to set background music: $e');
+      throw Exception('Failed to set background music: $e');
     }
   }
 
@@ -306,8 +304,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getDouble(_keySoundVolume) ?? 0.8;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get sound volume', e, stackTrace);
+    } catch (e) {
+      print('Failed to get sound volume: $e');
       return 0.8;
     }
   }
@@ -317,10 +315,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setDouble(_keySoundVolume, volume.clamp(0.0, 1.0));
-      Logger.info('Sound volume set to: $volume');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set sound volume', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set sound volume: $e');
+      print('Sound volume set to: $volume');
+    } catch (e) {
+      print('Failed to set sound volume: $e');
+      throw Exception('Failed to set sound volume: $e');
     }
   }
 
@@ -329,8 +327,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getDouble(_keyMusicVolume) ?? 0.6;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get music volume', e, stackTrace);
+    } catch (e) {
+      print('Failed to get music volume: $e');
       return 0.6;
     }
   }
@@ -340,10 +338,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setDouble(_keyMusicVolume, volume.clamp(0.0, 1.0));
-      Logger.info('Music volume set to: $volume');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set music volume', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set music volume: $e');
+      print('Music volume set to: $volume');
+    } catch (e) {
+      print('Failed to set music volume: $e');
+      throw Exception('Failed to set music volume: $e');
     }
   }
 
@@ -352,8 +350,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getBool(_keyVibration) ?? true;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get vibration setting', e, stackTrace);
+    } catch (e) {
+      print('Failed to get vibration setting: $e');
       return true;
     }
   }
@@ -363,10 +361,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keyVibration, enabled);
-      Logger.info('Vibration set to: $enabled');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set vibration', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set vibration: $e');
+      print('Vibration set to: $enabled');
+    } catch (e) {
+      print('Failed to set vibration: $e');
+      throw Exception('Failed to set vibration: $e');
     }
   }
 
@@ -377,8 +375,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getBool(_keyDarkMode) ?? false;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get dark mode setting', e, stackTrace);
+    } catch (e) {
+      print('Failed to get dark mode setting: $e');
       return false;
     }
   }
@@ -388,10 +386,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keyDarkMode, enabled);
-      Logger.info('Dark mode set to: $enabled');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set dark mode', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set dark mode: $e');
+      print('Dark mode set to: $enabled');
+    } catch (e) {
+      print('Failed to set dark mode: $e');
+      throw Exception('Failed to set dark mode: $e');
     }
   }
 
@@ -400,8 +398,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getBool(_keyAnimations) ?? true;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get animations setting', e, stackTrace);
+    } catch (e) {
+      print('Failed to get animations setting: $e');
       return true;
     }
   }
@@ -411,10 +409,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setBool(_keyAnimations, enabled);
-      Logger.info('Animations set to: $enabled');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set animations', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set animations: $e');
+      print('Animations set to: $enabled');
+    } catch (e) {
+      print('Failed to set animations: $e');
+      throw Exception('Failed to set animations: $e');
     }
   }
 
@@ -423,8 +421,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.getDouble(_keyAnimationSpeed) ?? 1.0;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get animation speed', e, stackTrace);
+    } catch (e) {
+      print('Failed to get animation speed: $e');
       return 1.0;
     }
   }
@@ -434,10 +432,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.setDouble(_keyAnimationSpeed, speed.clamp(0.5, 2.0));
-      Logger.info('Animation speed set to: $speed');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set animation speed', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set animation speed: $e');
+      print('Animation speed set to: $speed');
+    } catch (e) {
+      print('Failed to set animation speed: $e');
+      throw Exception('Failed to set animation speed: $e');
     }
   }
 
@@ -448,10 +446,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.clear();
-      Logger.info('All preferences cleared');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to clear preferences', e, stackTrace);
-      throw core_exceptions.DataException('Failed to clear preferences: $e');
+      print('All preferences cleared');
+    } catch (e) {
+      print('Failed to clear preferences: $e');
+      throw Exception('Failed to clear preferences: $e');
     }
   }
 
@@ -468,9 +466,9 @@ class SharedPreferencesService {
       }
       
       return prefsMap;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get all preferences', e, stackTrace);
-      throw core_exceptions.DataException('Failed to get all preferences: $e');
+    } catch (e) {
+      print('Failed to get all preferences: $e');
+      throw Exception('Failed to get all preferences: $e');
     }
   }
 
@@ -479,8 +477,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.containsKey(key);
-    } catch (e, stackTrace) {
-      Logger.error('Failed to check preference key', e, stackTrace);
+    } catch (e) {
+      print('Failed to check preference key: $e');
       return false;
     }
   }
@@ -490,10 +488,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       await prefs.remove(key);
-      Logger.info('Preference removed: $key');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to remove preference', e, stackTrace);
-      throw core_exceptions.DataException('Failed to remove preference: $e');
+      print('Preference removed: $key');
+    } catch (e) {
+      print('Failed to remove preference: $e');
+      throw Exception('Failed to remove preference: $e');
     }
   }
 
@@ -502,8 +500,8 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       return prefs.get(key) as T?;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get custom setting $key', e, stackTrace);
+    } catch (e) {
+      print('Failed to get custom setting $key: $e');
       return null;
     }
   }
@@ -528,10 +526,10 @@ class SharedPreferencesService {
         await prefs.setString(key, jsonEncode(value));
       }
       
-      Logger.info('Custom setting set: $key = $value');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set custom setting $key', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set custom setting: $e');
+      print('Custom setting set: $key = $value');
+    } catch (e) {
+      print('Failed to set custom setting $key: $e');
+      throw Exception('Failed to set custom setting: $e');
     }
   }
 
@@ -540,9 +538,9 @@ class SharedPreferencesService {
     try {
       final allPrefs = await getAllPreferences();
       return jsonEncode(allPrefs);
-    } catch (e, stackTrace) {
-      Logger.error('Failed to export preferences', e, stackTrace);
-      throw core_exceptions.DataException('Failed to export preferences: $e');
+    } catch (e) {
+      print('Failed to export preferences: $e');
+      throw Exception('Failed to export preferences: $e');
     }
   }
 
@@ -569,10 +567,10 @@ class SharedPreferencesService {
         }
       }
       
-      Logger.info('Preferences imported successfully');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to import preferences', e, stackTrace);
-      throw core_exceptions.DataException('Failed to import preferences: $e');
+      print('Preferences imported successfully');
+    } catch (e) {
+      print('Failed to import preferences: $e');
+      throw Exception('Failed to import preferences: $e');
     }
   }
 
@@ -583,11 +581,11 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final result = await prefs.setBool(key, value);
-      Logger.debug('Set bool: $key = $value');
+      print('Set bool: $key = $value');
       return result;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set bool $key', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set boolean preference: $e');
+    } catch (e) {
+      print('Failed to set bool $key: $e');
+      throw Exception('Failed to set boolean preference: $e');
     }
   }
 
@@ -595,10 +593,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final value = prefs.getBool(key) ?? defaultValue;
-      Logger.debug('Get bool: $key = $value');
+      print('Get bool: $key = $value');
       return value;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get bool $key', e, stackTrace);
+    } catch (e) {
+      print('Failed to get bool $key: $e');
       return defaultValue;
     }
   }
@@ -607,11 +605,11 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final result = await prefs.setInt(key, value);
-      Logger.debug('Set int: $key = $value');
+      print('Set int: $key = $value');
       return result;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set int $key', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set integer preference: $e');
+    } catch (e) {
+      print('Failed to set int $key: $e');
+      throw Exception('Failed to set integer preference: $e');
     }
   }
 
@@ -619,10 +617,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final value = prefs.getInt(key) ?? defaultValue;
-      Logger.debug('Get int: $key = $value');
+      print('Get int: $key = $value');
       return value;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get int $key', e, stackTrace);
+    } catch (e) {
+      print('Failed to get int $key: $e');
       return defaultValue;
     }
   }
@@ -631,11 +629,11 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final result = await prefs.setString(key, value);
-      Logger.debug('Set string: $key = $value');
+      print('Set string: $key = $value');
       return result;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set string $key', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set string preference: $e');
+    } catch (e) {
+      print('Failed to set string $key: $e');
+      throw Exception('Failed to set string preference: $e');
     }
   }
 
@@ -643,10 +641,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final value = prefs.getString(key);
-      Logger.debug('Get string: $key = $value');
+      print('Get string: $key = $value');
       return value;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get string $key', e, stackTrace);
+    } catch (e) {
+      print('Failed to get string $key: $e');
       return null;
     }
   }
@@ -655,9 +653,9 @@ class SharedPreferencesService {
     try {
       final jsonString = jsonEncode(value);
       return await setString(key, jsonString);
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set JSON $key', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set JSON preference: $e');
+    } catch (e) {
+      print('Failed to set JSON $key: $e');
+      throw Exception('Failed to set JSON preference: $e');
     }
   }
 
@@ -667,8 +665,8 @@ class SharedPreferencesService {
       if (jsonString == null) return null;
       
       return jsonDecode(jsonString) as Map<String, dynamic>;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get JSON $key', e, stackTrace);
+    } catch (e) {
+      print('Failed to get JSON $key: $e');
       return null;
     }
   }
@@ -677,11 +675,11 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final result = await prefs.setStringList(key, value);
-      Logger.debug('Set string list: $key = $value');
+      print('Set string list: $key = $value');
       return result;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set string list $key', e, stackTrace);
-      throw core_exceptions.DataException('Failed to set string list preference: $e');
+    } catch (e) {
+      print('Failed to set string list $key: $e');
+      throw Exception('Failed to set string list preference: $e');
     }
   }
 
@@ -689,10 +687,10 @@ class SharedPreferencesService {
     try {
       final prefs = await _preferences;
       final value = prefs.getStringList(key) ?? [];
-      Logger.debug('Get string list: $key = $value');
+      print('Get string list: $key = $value');
       return value;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get string list $key', e, stackTrace);
+    } catch (e) {
+      print('Failed to get string list $key: $e');
       return [];
     }
   }

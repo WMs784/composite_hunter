@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'database_schema.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/exceptions/data_exception.dart' as core_exceptions;
-import '../../core/utils/logger.dart';
 
 /// Local SQLite database implementation for Composite Hunter
 class LocalDatabase {
@@ -25,7 +21,7 @@ class LocalDatabase {
       final databasesPath = await getDatabasesPath();
       final path = join(databasesPath, DatabaseSchema.databaseName);
 
-      Logger.info('Initializing database at: $path');
+      print('Initializing database at: $path');
 
       return await openDatabase(
         path,
@@ -34,21 +30,21 @@ class LocalDatabase {
         onUpgrade: _onUpgrade,
         onConfigure: _onConfigure,
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to initialize database', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to initialize database: $e');
+    } catch (e) {
+      print('Failed to initialize database: $e');
+      throw Exception('Failed to initialize database: $e');
     }
   }
 
   Future<void> _onConfigure(Database db) async {
     // Enable foreign key constraints
     await db.execute('PRAGMA foreign_keys = ON');
-    Logger.info('Foreign key constraints enabled');
+    print('Foreign key constraints enabled');
   }
 
   Future<void> _onCreate(Database db, int version) async {
     try {
-      Logger.info('Creating database tables for version $version');
+      print('Creating database tables for version $version');
 
       // Create all tables
       for (final statement in DatabaseSchema.allTableCreationStatements) {
@@ -73,15 +69,15 @@ class LocalDatabase {
       // Insert default achievements
       await _insertDefaultAchievements(db);
 
-      Logger.info('Database tables, indexes, views, and triggers created successfully');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to create database tables', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to create database tables: $e');
+      print('Database tables, indexes, views, and triggers created successfully');
+    } catch (e) {
+      print('Failed to create database tables: $e');
+      throw Exception('Failed to create database tables: $e');
     }
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    Logger.info('Upgrading database from version $oldVersion to $newVersion');
+    print('Upgrading database from version $oldVersion to $newVersion');
     
     try {
       // Handle database migrations here
@@ -89,10 +85,10 @@ class LocalDatabase {
         // Future migration logic
       }
       
-      Logger.info('Database upgrade completed');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to upgrade database', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to upgrade database: $e');
+      print('Database upgrade completed');
+    } catch (e) {
+      print('Failed to upgrade database: $e');
+      throw Exception('Failed to upgrade database: $e');
     }
   }
 
@@ -111,10 +107,10 @@ class LocalDatabase {
         );
       }
       
-      Logger.info('Default achievements inserted');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to insert default achievements', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to insert default achievements: $e');
+      print('Default achievements inserted');
+    } catch (e) {
+      print('Failed to insert default achievements: $e');
+      throw Exception('Failed to insert default achievements: $e');
     }
   }
 
@@ -133,11 +129,11 @@ class LocalDatabase {
       // Initialize player achievements
       await _initializePlayerAchievements(db, playerId);
       
-      Logger.info('Player created with ID: $playerId');
+      print('Player created with ID: $playerId');
       return playerId;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to create player', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to create player: $e');
+    } catch (e) {
+      print('Failed to create player: $e');
+      throw Exception('Failed to create player: $e');
     }
   }
 
@@ -151,9 +147,9 @@ class LocalDatabase {
         whereArgs: [playerId],
       );
       return results.isNotEmpty ? results.first : null;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get player: $e');
+    } catch (e) {
+      print('Failed to get player $playerId: $e');
+      throw Exception('Failed to get player: $e');
     }
   }
 
@@ -167,10 +163,10 @@ class LocalDatabase {
         where: 'id = ?',
         whereArgs: [playerId],
       );
-      Logger.info('Player $playerId updated');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to update player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to update player: $e');
+      print('Player $playerId updated');
+    } catch (e) {
+      print('Failed to update player $playerId: $e');
+      throw Exception('Failed to update player: $e');
     }
   }
 
@@ -184,9 +180,9 @@ class LocalDatabase {
         whereArgs: [playerId],
       );
       return results.isNotEmpty ? results.first : null;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get player stats for $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get player stats: $e');
+    } catch (e) {
+      print('Failed to get player stats for $playerId: $e');
+      throw Exception('Failed to get player stats: $e');
     }
   }
 
@@ -208,10 +204,10 @@ class LocalDatabase {
         );
       }
       
-      Logger.info('Player achievements initialized for player $playerId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to initialize player achievements', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to initialize player achievements: $e');
+      print('Player achievements initialized for player $playerId');
+    } catch (e) {
+      print('Failed to initialize player achievements: $e');
+      throw Exception('Failed to initialize player achievements: $e');
     }
   }
 
@@ -226,10 +222,10 @@ class LocalDatabase {
         {...primeData, 'player_id': playerId},
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      Logger.info('Prime ${primeData['value']} updated for player $playerId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to insert/update prime', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to insert/update prime: $e');
+      print('Prime ${primeData['value']} updated for player $playerId');
+    } catch (e) {
+      print('Failed to insert/update prime: $e');
+      throw Exception('Failed to insert/update prime: $e');
     }
   }
 
@@ -243,9 +239,9 @@ class LocalDatabase {
         whereArgs: [playerId],
         orderBy: 'value ASC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get primes for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get player primes: $e');
+    } catch (e) {
+      print('Failed to get primes for player $playerId: $e');
+      throw Exception('Failed to get player primes: $e');
     }
   }
 
@@ -259,9 +255,9 @@ class LocalDatabase {
         whereArgs: [playerId, primeValue],
       );
       return results.isNotEmpty ? results.first : null;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get prime $primeValue for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get player prime: $e');
+    } catch (e) {
+      print('Failed to get prime $primeValue for player $playerId: $e');
+      throw Exception('Failed to get player prime: $e');
     }
   }
 
@@ -274,10 +270,10 @@ class LocalDatabase {
         where: 'player_id = ? AND value = ?',
         whereArgs: [playerId, primeValue],
       );
-      Logger.info('Prime $primeValue deleted for player $playerId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to delete prime $primeValue for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to delete player prime: $e');
+      print('Prime $primeValue deleted for player $playerId');
+    } catch (e) {
+      print('Failed to delete prime $primeValue for player $playerId: $e');
+      throw Exception('Failed to delete player prime: $e');
     }
   }
 
@@ -292,11 +288,11 @@ class LocalDatabase {
         enemyData,
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
-      Logger.info('Enemy created with ID: $enemyId');
+      print('Enemy created with ID: $enemyId');
       return enemyId;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to create enemy', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to create enemy: $e');
+    } catch (e) {
+      print('Failed to create enemy: $e');
+      throw Exception('Failed to create enemy: $e');
     }
   }
 
@@ -310,9 +306,9 @@ class LocalDatabase {
         whereArgs: [enemyId],
       );
       return results.isNotEmpty ? results.first : null;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get enemy $enemyId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get enemy: $e');
+    } catch (e) {
+      print('Failed to get enemy $enemyId: $e');
+      throw Exception('Failed to get enemy: $e');
     }
   }
 
@@ -326,9 +322,9 @@ class LocalDatabase {
         whereArgs: [enemyType],
         orderBy: 'created_at DESC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get enemies by type $enemyType', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get enemies by type: $e');
+    } catch (e) {
+      print('Failed to get enemies by type $enemyType: $e');
+      throw Exception('Failed to get enemies by type: $e');
     }
   }
 
@@ -341,9 +337,9 @@ class LocalDatabase {
         where: 'is_power_enemy = 1',
         orderBy: 'created_at DESC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get power enemies', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get power enemies: $e');
+    } catch (e) {
+      print('Failed to get power enemies: $e');
+      throw Exception('Failed to get power enemies: $e');
     }
   }
 
@@ -358,11 +354,11 @@ class LocalDatabase {
         battleData,
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
-      Logger.info('Battle started with ID: $battleId');
+      print('Battle started with ID: $battleId');
       return battleId;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to start battle', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to start battle: $e');
+    } catch (e) {
+      print('Failed to start battle: $e');
+      throw Exception('Failed to start battle: $e');
     }
   }
 
@@ -376,10 +372,10 @@ class LocalDatabase {
         where: 'id = ?',
         whereArgs: [battleId],
       );
-      Logger.info('Battle $battleId updated');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to update battle $battleId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to update battle: $e');
+      print('Battle $battleId updated');
+    } catch (e) {
+      print('Failed to update battle $battleId: $e');
+      throw Exception('Failed to update battle: $e');
     }
   }
 
@@ -393,9 +389,9 @@ class LocalDatabase {
         whereArgs: [battleId],
       );
       return results.isNotEmpty ? results.first : null;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get battle $battleId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get battle: $e');
+    } catch (e) {
+      print('Failed to get battle $battleId: $e');
+      throw Exception('Failed to get battle: $e');
     }
   }
 
@@ -410,9 +406,9 @@ class LocalDatabase {
         orderBy: 'started_at DESC',
         limit: limit,
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get battle history for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get battle history: $e');
+    } catch (e) {
+      print('Failed to get battle history for player $playerId: $e');
+      throw Exception('Failed to get battle history: $e');
     }
   }
 
@@ -425,10 +421,10 @@ class LocalDatabase {
         {...actionData, 'battle_id': battleId},
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
-      Logger.info('Battle action added for battle $battleId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to add battle action', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to add battle action: $e');
+      print('Battle action added for battle $battleId');
+    } catch (e) {
+      print('Failed to add battle action: $e');
+      throw Exception('Failed to add battle action: $e');
     }
   }
 
@@ -442,9 +438,9 @@ class LocalDatabase {
         whereArgs: [battleId],
         orderBy: 'turn_number ASC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get battle actions for battle $battleId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get battle actions: $e');
+    } catch (e) {
+      print('Failed to get battle actions for battle $battleId: $e');
+      throw Exception('Failed to get battle actions: $e');
     }
   }
 
@@ -458,9 +454,9 @@ class LocalDatabase {
         DatabaseSchema.achievementsTable,
         orderBy: 'category ASC, target_value ASC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get all achievements', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get all achievements: $e');
+    } catch (e) {
+      print('Failed to get all achievements: $e');
+      throw Exception('Failed to get all achievements: $e');
     }
   }
 
@@ -474,9 +470,9 @@ class LocalDatabase {
         whereArgs: [playerId],
         orderBy: 'category ASC, target_value ASC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get achievement progress for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get achievement progress: $e');
+    } catch (e) {
+      print('Failed to get achievement progress for player $playerId: $e');
+      throw Exception('Failed to get achievement progress: $e');
     }
   }
 
@@ -508,10 +504,10 @@ class LocalDatabase {
         whereArgs: [playerId, achievementId],
       );
       
-      Logger.info('Achievement progress updated for player $playerId, achievement $achievementId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to update achievement progress', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to update achievement progress: $e');
+      print('Achievement progress updated for player $playerId, achievement $achievementId');
+    } catch (e) {
+      print('Failed to update achievement progress: $e');
+      throw Exception('Failed to update achievement progress: $e');
     }
   }
 
@@ -525,9 +521,9 @@ class LocalDatabase {
         whereArgs: [playerId],
         orderBy: 'unlocked_at DESC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get unlocked achievements for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get unlocked achievements: $e');
+    } catch (e) {
+      print('Failed to get unlocked achievements for player $playerId: $e');
+      throw Exception('Failed to get unlocked achievements: $e');
     }
   }
 
@@ -548,10 +544,10 @@ class LocalDatabase {
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      Logger.info('Game setting $key set for player $playerId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to set game setting $key for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to set game setting: $e');
+      print('Game setting $key set for player $playerId');
+    } catch (e) {
+      print('Failed to set game setting $key for player $playerId: $e');
+      throw Exception('Failed to set game setting: $e');
     }
   }
 
@@ -565,9 +561,9 @@ class LocalDatabase {
         whereArgs: [playerId, key],
       );
       return results.isNotEmpty ? results.first : null;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get game setting $key for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get game setting: $e');
+    } catch (e) {
+      print('Failed to get game setting $key for player $playerId: $e');
+      throw Exception('Failed to get game setting: $e');
     }
   }
 
@@ -581,9 +577,9 @@ class LocalDatabase {
         whereArgs: [playerId],
         orderBy: 'setting_key ASC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get game settings for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get game settings: $e');
+    } catch (e) {
+      print('Failed to get game settings for player $playerId: $e');
+      throw Exception('Failed to get game settings: $e');
     }
   }
 
@@ -601,11 +597,11 @@ class LocalDatabase {
         },
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
-      Logger.info('Game session started with ID: $sessionId');
+      print('Game session started with ID: $sessionId');
       return sessionId;
-    } catch (e, stackTrace) {
-      Logger.error('Failed to start game session', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to start game session: $e');
+    } catch (e) {
+      print('Failed to start game session: $e');
+      throw Exception('Failed to start game session: $e');
     }
   }
 
@@ -622,10 +618,10 @@ class LocalDatabase {
         where: 'id = ?',
         whereArgs: [sessionId],
       );
-      Logger.info('Game session $sessionId ended');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to end game session $sessionId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to end game session: $e');
+      print('Game session $sessionId ended');
+    } catch (e) {
+      print('Failed to end game session $sessionId: $e');
+      throw Exception('Failed to end game session: $e');
     }
   }
 
@@ -640,9 +636,9 @@ class LocalDatabase {
         orderBy: 'session_start DESC',
         limit: limit,
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get game sessions for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get game sessions: $e');
+    } catch (e) {
+      print('Failed to get game sessions for player $playerId: $e');
+      throw Exception('Failed to get game sessions: $e');
     }
   }
 
@@ -665,10 +661,10 @@ class LocalDatabase {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       
-      Logger.info('Daily statistics updated for player $playerId');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to update daily statistics for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to update daily statistics: $e');
+      print('Daily statistics updated for player $playerId');
+    } catch (e) {
+      print('Failed to update daily statistics for player $playerId: $e');
+      throw Exception('Failed to update daily statistics: $e');
     }
   }
 
@@ -689,9 +685,9 @@ class LocalDatabase {
         whereArgs: [playerId, startTimestamp, endTimestamp],
         orderBy: 'stat_date ASC',
       );
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get statistics for player $playerId', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get player statistics: $e');
+    } catch (e) {
+      print('Failed to get statistics for player $playerId: $e');
+      throw Exception('Failed to get player statistics: $e');
     }
   }
 
@@ -702,9 +698,9 @@ class LocalDatabase {
     try {
       final db = await database;
       return await db.rawQuery(query, arguments);
-    } catch (e, stackTrace) {
-      Logger.error('Failed to execute raw query', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to execute raw query: $e');
+    } catch (e) {
+      print('Failed to execute raw query: $e');
+      throw Exception('Failed to execute raw query: $e');
     }
   }
 
@@ -713,9 +709,9 @@ class LocalDatabase {
     try {
       final db = await database;
       return await db.transaction(action);
-    } catch (e, stackTrace) {
-      Logger.error('Failed to execute transaction', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to execute transaction: $e');
+    } catch (e) {
+      print('Failed to execute transaction: $e');
+      throw Exception('Failed to execute transaction: $e');
     }
   }
 
@@ -736,10 +732,10 @@ class LocalDatabase {
         await txn.delete(DatabaseSchema.playersTable);
         // Don't delete achievements table as it contains static data
       });
-      Logger.info('All data cleared successfully');
-    } catch (e, stackTrace) {
-      Logger.error('Failed to clear all data', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to clear all data: $e');
+      print('All data cleared successfully');
+    } catch (e) {
+      print('Failed to clear all data: $e');
+      throw Exception('Failed to clear all data: $e');
     }
   }
 
@@ -757,9 +753,9 @@ class LocalDatabase {
         'tables': tables.map((t) => t['name']).toList(),
         'path': db.path,
       };
-    } catch (e, stackTrace) {
-      Logger.error('Failed to get database info', e, stackTrace);
-      throw core_exceptions.DatabaseException('Failed to get database info: $e');
+    } catch (e) {
+      print('Failed to get database info: $e');
+      throw Exception('Failed to get database info: $e');
     }
   }
 
@@ -769,7 +765,7 @@ class LocalDatabase {
     if (db != null) {
       await db.close();
       _database = null;
-      Logger.info('Database connection closed');
+      print('Database connection closed');
     }
   }
 
@@ -780,7 +776,7 @@ class LocalDatabase {
       await db.rawQuery('SELECT 1');
       return true;
     } catch (e) {
-      Logger.error('Database health check failed', e);
+      print('Database health check failed: $e');
       return false;
     }
   }

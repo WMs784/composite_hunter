@@ -248,7 +248,8 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   /// Update all achievement progress based on current game state
   void _updateAllProgress() {
     final player = _ref.read(playerProvider);
-    final inventory = _ref.read(inventoryProvider);
+    final inventoryList = _ref.read(inventoryProvider);
+    final inventory = Inventory(primes: inventoryList);
     
     state = state.map((achievement) {
       final updatedProgress = _calculateProgress(achievement, player, inventory);
@@ -370,7 +371,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
 
       if (shouldUnlock && !achievement.isUnlocked) {
         newlyUnlocked.add(updated);
-        Logger.logAchievement('Achievement unlocked', achievement: achievement.id);
+        Logger.debug('Achievement unlocked: ${achievement.id}');
       }
 
       return updated;
@@ -391,11 +392,31 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
     reward.when(
       experience: (exp) async {
         await _ref.read(gameProvider.notifier).addExperience(exp);
-        Logger.logAchievement('Experience reward awarded', data: {'exp': exp});
+        Logger.debug('Experience reward awarded: $exp');
       },
       prime: (value, count) async {
-        await _ref.read(inventoryProvider.notifier).grantPrimeReward(value, count: count);
-        Logger.logAchievement('Prime reward awarded', data: {'prime': value, 'count': count});
+        for (int i = 0; i < count; i++) {
+          _ref.read(inventoryProvider.notifier).addPrime(value);
+        }
+        Logger.debug('Prime reward awarded: $value x$count');
+      },
+      combo: (rewards) async {
+        for (final reward in rewards) {
+          // Create a minimal achievement for recursive reward processing
+          final tempAchievement = Achievement(
+            id: 'temp_combo_${DateTime.now().millisecondsSinceEpoch}',
+            title: 'Combo Reward',
+            description: 'Temporary achievement for combo reward processing',
+            category: AchievementCategory.battle,
+            type: AchievementType.progressive,
+            targetValue: 1,
+            currentProgress: 1,
+            isUnlocked: true,
+            reward: reward,
+          );
+          await _awardReward(tempAchievement);
+        }
+        Logger.debug('Combo reward awarded with ${rewards.length} rewards');
       },
     );
   }

@@ -11,7 +11,7 @@ import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
 import '../stage/stage_clear_screen.dart';
 import '../game_over/game_over_screen.dart';
-import '../../../flutter_gen/gen_l10n/app_localizations.dart';
+// import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 // Simple working providers for battle screen
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
@@ -213,10 +213,9 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _startTimer();
     
     // User feedback
-    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(l10n.battleRestarted),
+        content: const Text('Battle restarted - items restored'),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -242,13 +241,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
         title: Text(session.isPracticeMode 
-            ? l10n.practiceMode
-            : l10n.stage(session.stageNumber?.toString() ?? '?')),
+            ? // l10n.practiceMode
+            : // l10n.stage(session.stageNumber?.toString() ?? '?')),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _showBattleMenu(context),
@@ -322,7 +321,6 @@ class _SessionProgressSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
     
     if (session.stageNumber == null || session.isPracticeMode) {
       return const SizedBox.shrink();
@@ -348,7 +346,7 @@ class _SessionProgressSection extends ConsumerWidget {
           
           Expanded(
             child: Text(
-              '${l10n.victories}: ${session.victories}',
+              'Victories: ${session.victories}',
               style: AppTextStyles.labelLarge.copyWith(
                 color: AppColors.onPrimaryContainer,
               ),
@@ -398,7 +396,7 @@ class _TimerSection extends ConsumerWidget {
     final minutes = timer ~/ 60;
     final seconds = timer % 60;
     final formattedTime = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
 
     Color timerColor = AppColors.timerNormal;
     Color backgroundColor = AppColors.surface;
@@ -418,7 +416,7 @@ class _TimerSection extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      constraints: const BoxConstraints(
+      constraints: BoxConstraints(
         minHeight: 60,
         maxHeight: 100,
       ),
@@ -455,7 +453,7 @@ class _TimerSection extends ConsumerWidget {
           const SizedBox(height: Dimensions.spacingXs),
           Flexible(
             child: Text(
-              l10n.timeRemaining,
+              // l10n.timeRemaining,
               style: AppTextStyles.labelSmall.copyWith(
                 color: AppColors.onSurfaceVariant,
                 fontSize: screenWidth < 350 ? 10 : 11,
@@ -476,7 +474,7 @@ class _EnemySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final isPrime = _isPrime(enemy);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -556,7 +554,7 @@ class _EnemySection extends ConsumerWidget {
             // Prime/Composite Number タイトル
             Flexible(
               child: Text(
-                isPrime ? l10n.primeNumber : l10n.compositeNumber,
+                isPrime ? // l10n.primeNumber : // l10n.compositeNumber,
                 style: AppTextStyles.titleMedium.copyWith(
                   fontSize: screenWidth < 350 ? 14 : 16,
                   fontWeight: FontWeight.w600,
@@ -577,8 +575,8 @@ class _EnemySection extends ConsumerWidget {
                 ),
                 child: Text(
                   isPrime 
-                    ? l10n.enemyDefeated
-                    : l10n.attackWithPrimeFactors,
+                    ? // l10n.enemyDefeated
+                    : // l10n.attackWithPrimeFactors,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.onSurfaceVariant,
                     fontSize: screenWidth < 350 ? 10 : 11,
@@ -608,13 +606,13 @@ class _PrimeGridSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final primes = ref.watch(inventoryProvider);
     final enemy = ref.watch(battleEnemyProvider);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.yourPrimeNumbers,
+          // l10n.yourPrimeNumbers,
           style: AppTextStyles.titleMedium,
         ),
         
@@ -624,7 +622,7 @@ class _PrimeGridSection extends ConsumerWidget {
           child: primes.isEmpty
               ? Center(
                   child: Text(
-                    l10n.noPrimesAvailable,
+                    // l10n.noPrimesAvailable,
                     style: const TextStyle(fontSize: 16),
                   ),
                 )
@@ -759,7 +757,7 @@ class _ActionButtonsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final canClaimVictory = _isPrime(enemy);
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     return Row(
       children: [
@@ -789,12 +787,12 @@ class _ActionButtonsSection extends ConsumerWidget {
               // Show feedback
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(l10n.escapedItemsRestored),
+                  content: Text(// l10n.escapedItemsRestored),
                   duration: const Duration(seconds: 2),
                 ),
               );
             },
-            child: Text(l10n.escape),
+            child: Text(// l10n.escape),
           ),
         ),
         
@@ -806,7 +804,7 @@ class _ActionButtonsSection extends ConsumerWidget {
             onPressed: canClaimVictory
                 ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer)
                 : null,
-            child: Text(l10n.claimVictory),
+            child: Text(// l10n.claimVictory),
           ),
         ),
       ],
@@ -815,7 +813,7 @@ class _ActionButtonsSection extends ConsumerWidget {
   
   void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer) {
     print('Claim Victory button pressed');
-    final l10n = AppLocalizations.of(context)!;
+    // final l10n = AppLocalizations.of(context)!;
     
     if (_isPrime(enemy)) {
       // Stop timer during victory processing
@@ -848,27 +846,27 @@ class _ActionButtonsSection extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(l10n.victory),
+            title: Text(// l10n.victory),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.youDefeatedEnemy(enemy.toString())),
+                Text(// l10n.youDefeatedEnemy(enemy.toString())),
                 const SizedBox(height: 8),
                 if (session.isPracticeMode) ...[
-                  Text(l10n.practiceModeNoItems, 
+                  Text(// l10n.practiceModeNoItems, 
                     style: const TextStyle(fontStyle: FontStyle.italic)),
                   const SizedBox(height: 8),
-                  Text(l10n.keepPracticing),
+                  Text(// l10n.keepPracticing),
                 ] else ...[
-                  Text(l10n.rewardsObtained, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text('• ${l10n.finalPrime(enemy.toString())}'),
+                  Text(// l10n.rewardsObtained, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text('• ${// l10n.finalPrime(enemy.toString())}'),
                   if (usedPrimes.isNotEmpty) ...[
-                    Text('• ${l10n.usedPrimesReturned}'),
+                    Text('• ${// l10n.usedPrimesReturned}'),
                     ...usedPrimes.map((prime) => Text('  - Prime $prime')),
                   ],
                   const SizedBox(height: 8),
-                  Text(l10n.continueFighting),
+                  Text(// l10n.continueFighting),
                 ],
               ],
             ),
@@ -883,7 +881,7 @@ class _ActionButtonsSection extends ConsumerWidget {
                   // Start new timer for next battle
                   onRestartTimer();
                 },
-                child: Text(l10n.continueAction),
+                child: Text(// l10n.continueAction),
               ),
             ],
           ),
@@ -896,12 +894,12 @@ class _ActionButtonsSection extends ConsumerWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(l10n.wrongClaim),
-          content: Text(l10n.stillComposite(enemy.toString())),
+          title: Text(// l10n.wrongClaim),
+          content: Text(// l10n.stillComposite(enemy.toString())),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.continueAction),
+              child: Text(// l10n.continueAction),
             ),
           ],
         ),

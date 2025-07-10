@@ -3,6 +3,7 @@ import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
+import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 class TutorialScreen extends StatefulWidget {
   const TutorialScreen({super.key});
@@ -49,6 +50,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -66,17 +69,17 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   });
                 },
                 children: [
-                  _buildWelcomePage(),
-                  _buildBasicConceptPage(),
-                  _buildAttackMechanicsPage(),
-                  _buildVictoryConditionPage(),
-                  _buildTimerAndPenaltiesPage(),
+                  _buildWelcomePage(l10n),
+                  _buildBasicConceptPage(l10n),
+                  _buildAttackMechanicsPage(l10n),
+                  _buildVictoryConditionPage(l10n),
+                  _buildTimerAndPenaltiesPage(l10n),
                 ],
               ),
             ),
             
             // Navigation buttons
-            _buildNavigationButtons(),
+            _buildNavigationButtons(l10n),
           ],
         ),
       ),
@@ -105,57 +108,58 @@ class _TutorialScreenState extends State<TutorialScreen> {
     );
   }
 
-  Widget _buildWelcomePage() {
+  Widget _buildWelcomePage(AppLocalizations l10n) {
     return _TutorialPage(
-      title: 'Welcome to\nComposite Hunter!',
-      content: 'Learn prime factorization through exciting battles with composite numbers.',
+      title: l10n.tutorialWelcomeTitle,
+      content: l10n.tutorialWelcomeContent,
       icon: Icons.calculate,
       iconColor: AppColors.primary,
     );
   }
 
-  Widget _buildBasicConceptPage() {
+  Widget _buildBasicConceptPage(AppLocalizations l10n) {
     return _TutorialPage(
-      title: 'Prime vs Composite',
-      content: 'Prime numbers (2, 3, 5, 7...) can only be divided by 1 and themselves.\n\nComposite numbers (4, 6, 8, 9...) can be divided by other numbers.',
+      title: l10n.tutorialBasicTitle,
+      content: l10n.tutorialBasicContent,
       icon: Icons.numbers,
       iconColor: AppColors.secondary,
-      example: '12 = 2 × 2 × 3',
+      example: l10n.tutorialBasicExample,
     );
   }
 
-  Widget _buildAttackMechanicsPage() {
+  Widget _buildAttackMechanicsPage(AppLocalizations l10n) {
     return _TutorialPage(
-      title: 'Attack with Primes',
-      content: 'Use your prime numbers to attack composite enemies.\n\nIf a prime divides the enemy, the enemy\'s value becomes smaller!',
+      title: l10n.tutorialAttackTitle,
+      content: l10n.tutorialAttackContent,
       icon: Icons.gps_fixed,
       iconColor: AppColors.victoryGreen,
-      example: '12 ÷ 2 = 6\n6 ÷ 2 = 3\n3 is prime!',
+      example: l10n.tutorialAttackExample,
     );
   }
 
-  Widget _buildVictoryConditionPage() {
+  Widget _buildVictoryConditionPage(AppLocalizations l10n) {
     return _TutorialPage(
-      title: 'Claim Victory',
-      content: 'When you reduce an enemy to a prime number, press "Claim Victory!"\n\nBe careful - wrong claims cost you time!',
+      title: l10n.tutorialVictoryTitle,
+      content: l10n.tutorialVictoryContent,
       icon: Icons.emoji_events,
       iconColor: AppColors.victoryGreen,
-      example: 'Enemy becomes prime?\nClaim Victory! ✓',
+      example: l10n.tutorialVictoryExample,
     );
   }
 
-  Widget _buildTimerAndPenaltiesPage() {
+  Widget _buildTimerAndPenaltiesPage(AppLocalizations l10n) {
     return _TutorialPage(
-      title: 'Time Pressure',
-      content: 'Each battle has a time limit!\n\n• Escaping: -10 seconds next battle\n• Wrong claim: -10 seconds immediately\n• Timeout: -10 seconds next battle',
+      title: l10n.tutorialTimerTitle,
+      content: l10n.tutorialTimerContent,
       icon: Icons.timer,
       iconColor: AppColors.timerWarning,
-      example: 'Fight smart and fast!',
+      example: l10n.tutorialTimerExample,
+      readyMessage: l10n.tutorialReadyMessage,
       isLastPage: true,
     );
   }
 
-  Widget _buildNavigationButtons() {
+  Widget _buildNavigationButtons(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       child: Row(
@@ -164,7 +168,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
             Expanded(
               child: OutlinedButton(
                 onPressed: _previousPage,
-                child: const Text('Previous'),
+                child: Text(l10n.previous),
               ),
             ),
           
@@ -176,7 +180,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
             child: ElevatedButton(
               onPressed: _nextPage,
               child: Text(
-                _currentPage == _totalPages - 1 ? 'Start Playing!' : 'Next',
+                _currentPage == _totalPages - 1 ? l10n.startPlaying : l10n.next,
               ),
             ),
           ),
@@ -192,6 +196,7 @@ class _TutorialPage extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final String? example;
+  final String? readyMessage;
   final bool isLastPage;
 
   const _TutorialPage({
@@ -200,6 +205,7 @@ class _TutorialPage extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     this.example,
+    this.readyMessage,
     this.isLastPage = false,
   });
 
@@ -282,7 +288,7 @@ class _TutorialPage extends StatelessWidget {
                   ),
                   const SizedBox(width: Dimensions.spacingS),
                   Text(
-                    'Ready to hunt some composite numbers?',
+                    readyMessage ?? 'Ready to hunt some composite numbers?',
                     style: AppTextStyles.labelLarge.copyWith(
                       color: AppColors.victoryGreen,
                     ),

@@ -1,0 +1,680 @@
+{
+  "@@locale": "en",
+  "appTitle": "Composite Hunter",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "practiceMode": "Practice Mode",
+  "@practiceMode": {
+    "description": "Practice mode label"
+  },
+  
+  "stage": "Stage {number}",
+  "@stage": {
+    "description": "Stage label with number",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "inventory": "Inventory",
+  "@inventory": {
+    "description": "Inventory screen title"
+  },
+  
+  "collection": "Collection",
+  "@collection": {
+    "description": "Collection tab title"
+  },
+  
+  "statistics": "Statistics",
+  "@statistics": {
+    "description": "Statistics tab title"
+  },
+  
+  "primeInventory": "Prime Inventory",
+  "@primeInventory": {
+    "description": "Prime inventory screen title"
+  },
+  
+  "timeRemaining": "Time Remaining",
+  "@timeRemaining": {
+    "description": "Timer label"
+  },
+  
+  "primeNumber": "Prime Number",
+  "@primeNumber": {
+    "description": "Prime number label"
+  },
+  
+  "compositeNumber": "Composite Number",
+  "@compositeNumber": {
+    "description": "Composite number label"
+  },
+  
+  "enemyDefeated": "Enemy is defeated! Claim victory!",
+  "@enemyDefeated": {
+    "description": "Message when enemy becomes prime"
+  },
+  
+  "attackWithPrimeFactors": "Attack with prime factors to defeat it!",
+  "@attackWithPrimeFactors": {
+    "description": "Instructions for attacking composite numbers"
+  },
+  
+  "yourPrimeNumbers": "Your Prime Numbers",
+  "@yourPrimeNumbers": {
+    "description": "Prime numbers section title"
+  },
+  
+  "noPrimesAvailable": "No primes available for attack",
+  "@noPrimesAvailable": {
+    "description": "Message when no primes are available"
+  },
+  
+  "escape": "Escape",
+  "@escape": {
+    "description": "Escape button label"
+  },
+  
+  "claimVictory": "Claim Victory!",
+  "@claimVictory": {
+    "description": "Claim victory button label"
+  },
+  
+  "victory": "Victory!",
+  "@victory": {
+    "description": "Victory dialog title"
+  },
+  
+  "youDefeatedEnemy": "You defeated the enemy {enemy}!",
+  "@youDefeatedEnemy": {
+    "description": "Victory message with enemy number",
+    "placeholders": {
+      "enemy": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "practiceModeNoItems": "Practice mode - no items consumed or gained",
+  "@practiceModeNoItems": {
+    "description": "Practice mode message"
+  },
+  
+  "keepPracticing": "Keep practicing!",
+  "@keepPracticing": {
+    "description": "Encouragement message for practice mode"
+  },
+  
+  "rewardsObtained": "Rewards obtained:",
+  "@rewardsObtained": {
+    "description": "Rewards section title"
+  },
+  
+  "finalPrime": "Prime {prime} (final result)",
+  "@finalPrime": {
+    "description": "Final prime reward",
+    "placeholders": {
+      "prime": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "usedPrimesReturned": "Used primes returned:",
+  "@usedPrimesReturned": {
+    "description": "Used primes returned label"
+  },
+  
+  "continueFighting": "Continue fighting!",
+  "@continueFighting": {
+    "description": "Continue message"
+  },
+  
+  "continueAction": "Continue",
+  "@continueAction": {
+    "description": "Continue button label"
+  },
+  
+  "wrongClaim": "Wrong Claim!",
+  "@wrongClaim": {
+    "description": "Wrong claim dialog title"
+  },
+  
+  "stillComposite": "{number} is still a composite number. Keep attacking!",
+  "@stillComposite": {
+    "description": "Wrong claim message",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "gameOver": "Game Over",
+  "@gameOver": {
+    "description": "Game over screen title"
+  },
+  
+  "timeRanOut": "Time ran out!",
+  "@timeRanOut": {
+    "description": "Time up game over reason"
+  },
+  
+  "noAvailableItems": "No available items to attack!",
+  "@noAvailableItems": {
+    "description": "No items game over reason"
+  },
+  
+  "victories": "Victories",
+  "@victories": {
+    "description": "Victories label"
+  },
+  
+  "timePlayed": "Time Played",
+  "@timePlayed": {
+    "description": "Time played label"
+  },
+  
+  "escapes": "Escapes",
+  "@escapes": {
+    "description": "Escapes label"
+  },
+  
+  "wrongClaims": "Wrong Claims",
+  "@wrongClaims": {
+    "description": "Wrong claims label"
+  },
+  
+  "tip": "Tip",
+  "@tip": {
+    "description": "Tip section title"
+  },
+  
+  "attackFasterTip": "Try to attack faster next time!\nFocus on finding prime factors quickly.",
+  "@attackFasterTip": {
+    "description": "Time up advice"
+  },
+  
+  "collectMorePrimesTip": "Collect more prime numbers!\nDefeat enemies to gain new primes.",
+  "@collectMorePrimesTip": {
+    "description": "No items advice"
+  },
+  
+  "stageClear": "Stage {number} Clear!",
+  "@stageClear": {
+    "description": "Stage clear title",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "totalTime": "Total Time",
+  "@totalTime": {
+    "description": "Total time label"
+  },
+  
+  "score": "Score",
+  "@score": {
+    "description": "Score label"
+  },
+  
+  "perfectClear": "Perfect Clear!",
+  "@perfectClear": {
+    "description": "Perfect clear bonus"
+  },
+  
+  "noEscapesOrWrongClaims": "No escapes or wrong claims!",
+  "@noEscapesOrWrongClaims": {
+    "description": "Perfect clear description"
+  },
+  
+  "newRecord": "New Record!",
+  "@newRecord": {
+    "description": "New record bonus"
+  },
+  
+  "bestPerformance": "Your best performance yet!",
+  "@bestPerformance": {
+    "description": "New record description"
+  },
+  
+  "escapedItemsRestored": "Escaped - items and time restored",
+  "@escapedItemsRestored": {
+    "description": "Escape feedback message"
+  },
+  
+  "battleRestarted": "Battle restarted - items restored",
+  "@battleRestarted": {
+    "description": "Restart feedback message"
+  },
+  
+  "practiceResults": "Practice Results",
+  "@practiceResults": {
+    "description": "Practice mode results title"
+  },
+  
+  "stageResults": "Stage {number} Results",
+  "@stageResults": {
+    "description": "Stage results title",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "nextStage": "Next Stage",
+  "@nextStage": {
+    "description": "Next stage button label"
+  },
+  
+  "stageSelect": "Stage Select",
+  "@stageSelect": {
+    "description": "Stage select button label"
+  },
+  
+  "playAgain": "Play Again",
+  "@playAgain": {
+    "description": "Play again button label"
+  },
+  
+  "tryAgain": "Try Again",
+  "@tryAgain": {
+    "description": "Try again button label"
+  },
+  
+  "totalPrimes": "Total Primes",
+  "@totalPrimes": {
+    "description": "Total primes count label"
+  },
+  
+  "unique": "Unique",
+  "@unique": {
+    "description": "Unique primes count label"
+  },
+  
+  "available": "Available",
+  "@available": {
+    "description": "Available primes count label"
+  },
+  
+  "primeWithValue": "Prime {number}",
+  "@primeWithValue": {
+    "description": "Prime number with value",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "firstObtained": "First obtained: {time}",
+  "@firstObtained": {
+    "description": "When prime was first obtained",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "notYetDiscovered": "Not yet discovered",
+  "@notYetDiscovered": {
+    "description": "Prime not yet discovered message"
+  },
+  
+  "usageStatistics": "Usage Statistics",
+  "@usageStatistics": {
+    "description": "Usage statistics section title"
+  },
+  
+  "totalUsage": "Total Usage",
+  "@totalUsage": {
+    "description": "Total usage label"
+  },
+  
+  "attacksMade": "attacks made",
+  "@attacksMade": {
+    "description": "Attacks made subtitle"
+  },
+  
+  "mostUsedPrime": "Most Used Prime",
+  "@mostUsedPrime": {
+    "description": "Most used prime label"
+  },
+  
+  "timesUsed": "{count} times",
+  "@timesUsed": {
+    "description": "Usage count",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "primeUsageChart": "Prime Usage Chart",
+  "@primeUsageChart": {
+    "description": "Prime usage chart title"
+  },
+  
+  "usedTimes": "Used {count} times",
+  "@usedTimes": {
+    "description": "Prime usage count",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "daysAgo": "{count} days ago",
+  "@daysAgo": {
+    "description": "Time ago format",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "chooseChallenge": "Choose your challenge stage",
+  "@chooseChallenge": {
+    "description": "Stage selection subtitle"
+  },
+  
+  "resetGameData": "Reset Game Data",
+  "@resetGameData": {
+    "description": "Reset dialog title"
+  },
+  
+  "resetConfirmation": "This will reset your inventory and stage progress to initial values. Continue?",
+  "@resetConfirmation": {
+    "description": "Reset confirmation message"
+  },
+  
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  
+  "reset": "Reset",
+  "@reset": {
+    "description": "Reset button"
+  },
+  
+  "gameDataResetSuccess": "Game data reset successfully",
+  "@gameDataResetSuccess": {
+    "description": "Reset success message"
+  },
+  
+  "errorDuringReset": "Error during reset: {error}",
+  "@errorDuringReset": {
+    "description": "Reset error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "resetInventory": "Reset Inventory",
+  "@resetInventory": {
+    "description": "Reset inventory tooltip"
+  },
+  
+  "achievements": "Achievements",
+  "@achievements": {
+    "description": "Achievements tooltip"
+  },
+  
+  "stage1Title": "Basic Battle",
+  "@stage1Title": {
+    "description": "Stage 1 title"
+  },
+  
+  "stage1Description": "Fight small composite numbers and learn prime factorization",
+  "@stage1Description": {
+    "description": "Stage 1 description"
+  },
+  
+  "stage2Title": "Intermediate Challenge",
+  "@stage2Title": {
+    "description": "Stage 2 title"
+  },
+  
+  "stage2Description": "Face medium composite numbers with strategic attacks",
+  "@stage2Description": {
+    "description": "Stage 2 description"
+  },
+  
+  "stage3Title": "Advanced Path",
+  "@stage3Title": {
+    "description": "Stage 3 title"
+  },
+  
+  "stage3Description": "Engage in serious battles with large composite numbers",
+  "@stage3Description": {
+    "description": "Stage 3 description"
+  },
+  
+  "stage4Title": "Expert Mode",
+  "@stage4Title": {
+    "description": "Stage 4 title"
+  },
+  
+  "stage4Description": "Ultimate challenge for advanced players",
+  "@stage4Description": {
+    "description": "Stage 4 description"
+  },
+  
+  "achievementProgress": "Achievement Progress",
+  "@achievementProgress": {
+    "description": "Achievement progress title"
+  },
+  
+  "achievementsUnlocked": "{unlocked} of {total} unlocked",
+  "@achievementsUnlocked": {
+    "description": "Achievements unlocked count",
+    "placeholders": {
+      "unlocked": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "battleAchievements": "Battle Achievements",
+  "@battleAchievements": {
+    "description": "Battle achievements section title"
+  },
+  
+  "speedAchievements": "Speed Achievements",
+  "@speedAchievements": {
+    "description": "Speed achievements section title"
+  },
+  
+  "specialAchievements": "Special Achievements",
+  "@specialAchievements": {
+    "description": "Special achievements section title"
+  },
+  
+  "firstVictory": "First Victory",
+  "@firstVictory": {
+    "description": "First victory achievement title"
+  },
+  
+  "firstVictoryDesc": "Win your first battle",
+  "@firstVictoryDesc": {
+    "description": "First victory achievement description"
+  },
+  
+  "primeHunter": "Prime Hunter",
+  "@primeHunter": {
+    "description": "Prime hunter achievement title"
+  },
+  
+  "primeHunterDesc": "Win 10 battles",
+  "@primeHunterDesc": {
+    "description": "Prime hunter achievement description"
+  },
+  
+  "compositeCrusher": "Composite Crusher",
+  "@compositeCrusher": {
+    "description": "Composite crusher achievement title"
+  },
+  
+  "compositeCrusherDesc": "Win 50 battles",
+  "@compositeCrusherDesc": {
+    "description": "Composite crusher achievement description"
+  },
+  
+  "lightningFast": "Lightning Fast",
+  "@lightningFast": {
+    "description": "Lightning fast achievement title"
+  },
+  
+  "lightningFastDesc": "Win a battle in under 10 seconds",
+  "@lightningFastDesc": {
+    "description": "Lightning fast achievement description"
+  },
+  
+  "speedDemon": "Speed Demon",
+  "@speedDemon": {
+    "description": "Speed demon achievement title"
+  },
+  
+  "speedDemonDesc": "Win 5 battles in under 15 seconds each",
+  "@speedDemonDesc": {
+    "description": "Speed demon achievement description"
+  },
+  
+  "powerHunter": "Power Hunter",
+  "@powerHunter": {
+    "description": "Power hunter achievement title"
+  },
+  
+  "powerHunterDesc": "Defeat 10 power enemies",
+  "@powerHunterDesc": {
+    "description": "Power hunter achievement description"
+  },
+  
+  "perfectVictory": "Perfect Victory",
+  "@perfectVictory": {
+    "description": "Perfect victory achievement title"
+  },
+  
+  "perfectVictoryDesc": "Win without any wrong claims or escapes",
+  "@perfectVictoryDesc": {
+    "description": "Perfect victory achievement description"
+  },
+  
+  "primeCollector": "Prime Collector",
+  "@primeCollector": {
+    "description": "Prime collector achievement title"
+  },
+  
+  "primeCollectorDesc": "Collect 25 different prime numbers",
+  "@primeCollectorDesc": {
+    "description": "Prime collector achievement description"
+  },
+  
+  "tutorialWelcomeTitle": "Welcome to\nComposite Hunter!",
+  "@tutorialWelcomeTitle": {
+    "description": "Tutorial welcome page title"
+  },
+  
+  "tutorialWelcomeContent": "Learn prime factorization through exciting battles with composite numbers.",
+  "@tutorialWelcomeContent": {
+    "description": "Tutorial welcome page content"
+  },
+  
+  "tutorialBasicTitle": "Prime vs Composite",
+  "@tutorialBasicTitle": {
+    "description": "Tutorial basic concepts page title"
+  },
+  
+  "tutorialBasicContent": "Prime numbers (2, 3, 5, 7...) can only be divided by 1 and themselves.\n\nComposite numbers (4, 6, 8, 9...) can be divided by other numbers.",
+  "@tutorialBasicContent": {
+    "description": "Tutorial basic concepts page content"
+  },
+  
+  "tutorialBasicExample": "12 = 2 × 2 × 3",
+  "@tutorialBasicExample": {
+    "description": "Tutorial basic concepts example"
+  },
+  
+  "tutorialAttackTitle": "Attack with Primes",
+  "@tutorialAttackTitle": {
+    "description": "Tutorial attack mechanics page title"
+  },
+  
+  "tutorialAttackContent": "Use your prime numbers to attack composite enemies.\n\nIf a prime divides the enemy, the enemy's value becomes smaller!",
+  "@tutorialAttackContent": {
+    "description": "Tutorial attack mechanics page content"
+  },
+  
+  "tutorialAttackExample": "12 ÷ 2 = 6\n6 ÷ 2 = 3\n3 is prime!",
+  "@tutorialAttackExample": {
+    "description": "Tutorial attack mechanics example"
+  },
+  
+  "tutorialVictoryTitle": "Claim Victory",
+  "@tutorialVictoryTitle": {
+    "description": "Tutorial victory condition page title"
+  },
+  
+  "tutorialVictoryContent": "When you reduce an enemy to a prime number, press \"Claim Victory!\"\n\nBe careful - wrong claims cost you time!",
+  "@tutorialVictoryContent": {
+    "description": "Tutorial victory condition page content"
+  },
+  
+  "tutorialVictoryExample": "Enemy becomes prime?\nClaim Victory! ✓",
+  "@tutorialVictoryExample": {
+    "description": "Tutorial victory condition example"
+  },
+  
+  "tutorialTimerTitle": "Time Pressure",
+  "@tutorialTimerTitle": {
+    "description": "Tutorial timer and penalties page title"
+  },
+  
+  "tutorialTimerContent": "Each battle has a time limit!\n\n• Escaping: -10 seconds next battle\n• Wrong claim: -10 seconds immediately\n• Timeout: -10 seconds next battle",
+  "@tutorialTimerContent": {
+    "description": "Tutorial timer and penalties page content"
+  },
+  
+  "tutorialTimerExample": "Fight smart and fast!",
+  "@tutorialTimerExample": {
+    "description": "Tutorial timer and penalties example"
+  },
+  
+  "tutorialReadyMessage": "Ready to hunt some composite numbers?",
+  "@tutorialReadyMessage": {
+    "description": "Tutorial ready message on last page"
+  },
+  
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous button"
+  },
+  
+  "next": "Next",
+  "@next": {
+    "description": "Next button"
+  },
+  
+  "startPlaying": "Start Playing!",
+  "@startPlaying": {
+    "description": "Start playing button"
+  }
+}

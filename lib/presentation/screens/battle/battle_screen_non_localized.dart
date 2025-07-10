@@ -11,7 +11,6 @@ import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
 import '../stage/stage_clear_screen.dart';
 import '../game_over/game_over_screen.dart';
-import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 // Simple working providers for battle screen
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
@@ -213,11 +212,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _startTimer();
     
     // User feedback
-    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.battleRestarted),
-        duration: const Duration(seconds: 2),
+      const SnackBar(
+        content: Text('Battle restarted - items restored'),
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -242,13 +240,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
       appBar: AppBar(
         title: Text(session.isPracticeMode 
-            ? l10n.practiceMode
-            : l10n.stage(session.stageNumber?.toString() ?? '?')),
+            ? 'Practice Mode'
+            : 'Stage ${session.stageNumber?.toString() ?? '?'}'),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _showBattleMenu(context),
@@ -322,7 +319,6 @@ class _SessionProgressSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
     
     if (session.stageNumber == null || session.isPracticeMode) {
       return const SizedBox.shrink();
@@ -348,7 +344,7 @@ class _SessionProgressSection extends ConsumerWidget {
           
           Expanded(
             child: Text(
-              '${l10n.victories}: ${session.victories}',
+              'Victories: ${session.victories}',
               style: AppTextStyles.labelLarge.copyWith(
                 color: AppColors.onPrimaryContainer,
               ),
@@ -398,7 +394,6 @@ class _TimerSection extends ConsumerWidget {
     final minutes = timer ~/ 60;
     final seconds = timer % 60;
     final formattedTime = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-    final l10n = AppLocalizations.of(context)!;
 
     Color timerColor = AppColors.timerNormal;
     Color backgroundColor = AppColors.surface;
@@ -455,7 +450,7 @@ class _TimerSection extends ConsumerWidget {
           const SizedBox(height: Dimensions.spacingXs),
           Flexible(
             child: Text(
-              l10n.timeRemaining,
+              'Time Remaining',
               style: AppTextStyles.labelSmall.copyWith(
                 color: AppColors.onSurfaceVariant,
                 fontSize: screenWidth < 350 ? 10 : 11,
@@ -476,7 +471,6 @@ class _EnemySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final isPrime = _isPrime(enemy);
-    final l10n = AppLocalizations.of(context)!;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -556,7 +550,7 @@ class _EnemySection extends ConsumerWidget {
             // Prime/Composite Number タイトル
             Flexible(
               child: Text(
-                isPrime ? l10n.primeNumber : l10n.compositeNumber,
+                isPrime ? 'Prime Number' : 'Composite Number',
                 style: AppTextStyles.titleMedium.copyWith(
                   fontSize: screenWidth < 350 ? 14 : 16,
                   fontWeight: FontWeight.w600,
@@ -577,8 +571,8 @@ class _EnemySection extends ConsumerWidget {
                 ),
                 child: Text(
                   isPrime 
-                    ? l10n.enemyDefeated
-                    : l10n.attackWithPrimeFactors,
+                    ? 'Enemy is defeated! Claim victory!'
+                    : 'Attack with prime factors to defeat it!',
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.onSurfaceVariant,
                     fontSize: screenWidth < 350 ? 10 : 11,
@@ -608,13 +602,12 @@ class _PrimeGridSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final primes = ref.watch(inventoryProvider);
     final enemy = ref.watch(battleEnemyProvider);
-    final l10n = AppLocalizations.of(context)!;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.yourPrimeNumbers,
+          'Your Prime Numbers',
           style: AppTextStyles.titleMedium,
         ),
         
@@ -622,10 +615,10 @@ class _PrimeGridSection extends ConsumerWidget {
         
         Expanded(
           child: primes.isEmpty
-              ? Center(
+              ? const Center(
                   child: Text(
-                    l10n.noPrimesAvailable,
-                    style: const TextStyle(fontSize: 16),
+                    'No primes available for attack',
+                    style: TextStyle(fontSize: 16),
                   ),
                 )
               : GridView.builder(
@@ -759,7 +752,6 @@ class _ActionButtonsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final canClaimVictory = _isPrime(enemy);
-    final l10n = AppLocalizations.of(context)!;
     
     return Row(
       children: [
@@ -788,13 +780,13 @@ class _ActionButtonsSection extends ConsumerWidget {
               
               // Show feedback
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.escapedItemsRestored),
-                  duration: const Duration(seconds: 2),
+                const SnackBar(
+                  content: Text('Escaped - items and time restored'),
+                  duration: Duration(seconds: 2),
                 ),
               );
             },
-            child: Text(l10n.escape),
+            child: const Text('Escape'),
           ),
         ),
         
@@ -806,7 +798,7 @@ class _ActionButtonsSection extends ConsumerWidget {
             onPressed: canClaimVictory
                 ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer)
                 : null,
-            child: Text(l10n.claimVictory),
+            child: const Text('Claim Victory!'),
           ),
         ),
       ],
@@ -815,7 +807,6 @@ class _ActionButtonsSection extends ConsumerWidget {
   
   void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer) {
     print('Claim Victory button pressed');
-    final l10n = AppLocalizations.of(context)!;
     
     if (_isPrime(enemy)) {
       // Stop timer during victory processing
@@ -848,27 +839,27 @@ class _ActionButtonsSection extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text(l10n.victory),
+            title: const Text('Victory!'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.youDefeatedEnemy(enemy.toString())),
+                Text('You defeated the enemy $enemy!'),
                 const SizedBox(height: 8),
                 if (session.isPracticeMode) ...[
-                  Text(l10n.practiceModeNoItems, 
-                    style: const TextStyle(fontStyle: FontStyle.italic)),
+                  const Text('Practice mode - no items consumed or gained', 
+                    style: TextStyle(fontStyle: FontStyle.italic)),
                   const SizedBox(height: 8),
-                  Text(l10n.keepPracticing),
+                  const Text('Keep practicing!'),
                 ] else ...[
-                  Text(l10n.rewardsObtained, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text('• ${l10n.finalPrime(enemy.toString())}'),
+                  const Text('Rewards obtained:', style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('• Prime $enemy (final result)'),
                   if (usedPrimes.isNotEmpty) ...[
-                    Text('• ${l10n.usedPrimesReturned}'),
+                    const Text('• Used primes returned:'),
                     ...usedPrimes.map((prime) => Text('  - Prime $prime')),
                   ],
                   const SizedBox(height: 8),
-                  Text(l10n.continueFighting),
+                  const Text('Continue fighting!'),
                 ],
               ],
             ),
@@ -883,7 +874,7 @@ class _ActionButtonsSection extends ConsumerWidget {
                   // Start new timer for next battle
                   onRestartTimer();
                 },
-                child: Text(l10n.continueAction),
+                child: const Text('Continue'),
               ),
             ],
           ),
@@ -896,12 +887,12 @@ class _ActionButtonsSection extends ConsumerWidget {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text(l10n.wrongClaim),
-          content: Text(l10n.stillComposite(enemy.toString())),
+          title: const Text('Wrong Claim!'),
+          content: Text('$enemy is still a composite number. Keep attacking!'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.continueAction),
+              child: const Text('Continue'),
             ),
           ],
         ),

@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by Flutter for Composite Hunter.
+  
+*/
+
+CFBundleDisplayName = "合成数ハンター";
+CFBundleName = "合成数ハンター";

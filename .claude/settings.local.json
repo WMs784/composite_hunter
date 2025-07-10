@@ -13,7 +13,11 @@
       "Bash(flutter:*)",
       "Bash(adb shell am start:*)",
       "Bash(adb shell:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(rg:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

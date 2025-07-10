@@ -33,40 +33,7 @@ class StageInfo {
     required this.isCompleted,
     required this.stars,
   });
-
-  // 国際化対応のためのローカライズされたタイトルを取得
-  String getLocalizedTitle(AppLocalizations l10n) {
-    switch (stageNumber) {
-      case 1:
-        return l10n.stage1Title;
-      case 2:
-        return l10n.stage2Title;
-      case 3:
-        return l10n.stage3Title;
-      case 4:
-        return l10n.stage4Title;
-      default:
-        return title;
-    }
-  }
-
-  // 国際化対応のためのローカライズされた説明を取得
-  String getLocalizedDescription(AppLocalizations l10n) {
-    switch (stageNumber) {
-      case 1:
-        return l10n.stage1Description;
-      case 2:
-        return l10n.stage2Description;
-      case 3:
-        return l10n.stage3Description;
-      case 4:
-        return l10n.stage4Description;
-      default:
-        return description;
-    }
-  }
 }
-
 
 class StageSelectScreen extends ConsumerStatefulWidget {
   const StageSelectScreen({super.key});
@@ -165,7 +132,6 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                       padding: const EdgeInsets.only(bottom: Dimensions.spacingM),
                       child: _StageCard(
                         stage: stage,
-                        l10n: l10n,
                         onTap: stage.isUnlocked
                             ? () => _startStage(stage)
                             : null,
@@ -288,12 +254,10 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
 class _StageCard extends StatelessWidget {
   final StageInfo stage;
-  final AppLocalizations l10n;
   final VoidCallback? onTap;
 
   const _StageCard({
     required this.stage,
-    required this.l10n,
     this.onTap,
   });
 
@@ -356,7 +320,7 @@ class _StageCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            stage.getLocalizedTitle(l10n),
+                            stage.title,
                             style: AppTextStyles.titleMedium.copyWith(
                               color: isLocked 
                                   ? AppColors.onSurfaceVariant
@@ -371,7 +335,7 @@ class _StageCard extends StatelessWidget {
                     const SizedBox(height: Dimensions.spacingXs),
                     
                     Text(
-                      stage.getLocalizedDescription(l10n),
+                      stage.description,
                       style: AppTextStyles.bodySmall.copyWith(
                         color: isLocked 
                             ? AppColors.onSurfaceVariant.withOpacity(0.7)

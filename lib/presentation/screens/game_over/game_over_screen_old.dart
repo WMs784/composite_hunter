@@ -7,7 +7,6 @@ import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../common/result_screen_base.dart';
-import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 enum GameOverReason {
   timeUp,
@@ -123,7 +122,6 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
 
   Widget _buildContent(BuildContext context) {
     final session = ref.watch(battleSessionProvider);
-    final l10n = AppLocalizations.of(context)!;
     
     return Container(
       width: double.infinity,
@@ -182,7 +180,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             
             // ゲームオーバーテキスト
             Text(
-              l10n.gameOver,
+              'Game Over',
               style: AppTextStyles.headlineLarge.copyWith(
                 color: AppColors.error,
                 fontWeight: FontWeight.bold,
@@ -194,7 +192,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             
             // 理由の説明
             Text(
-              _getReasonText(l10n),
+              _getReasonText(),
               style: AppTextStyles.titleMedium.copyWith(
                 color: AppColors.onSurfaceVariant,
               ),
@@ -205,18 +203,18 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             
             // セッション結果
             if (!session.isPracticeMode)
-              _buildSessionResults(session, l10n),
+              _buildSessionResults(session),
             
             if (!session.isPracticeMode)
               const SizedBox(height: Dimensions.spacingL),
             
             // アドバイス
-            _buildAdvice(l10n),
+            _buildAdvice(),
             
             const SizedBox(height: Dimensions.spacingL),
             
             // ボタン
-            LocalizedResultScreenButtons(
+            ResultScreenButtons(
               stageNumber: widget.stageNumber,
               isPracticeMode: widget.isPracticeMode,
               isSuccess: false,
@@ -234,16 +232,16 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     );
   }
 
-  String _getReasonText(AppLocalizations l10n) {
+  String _getReasonText() {
     switch (widget.reason) {
       case GameOverReason.timeUp:
-        return l10n.timeRanOut;
+        return 'Time ran out!';
       case GameOverReason.noItems:
-        return l10n.noAvailableItems;
+        return 'No available items to attack!';
     }
   }
 
-  Widget _buildSessionResults(BattleSessionState session, AppLocalizations l10n) {
+  Widget _buildSessionResults(BattleSessionState session) {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
@@ -256,9 +254,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
       child: Column(
         children: [
           Text(
-            widget.isPracticeMode 
-                ? l10n.practiceResults 
-                : l10n.stageResults(widget.stageNumber?.toString() ?? '?'),
+            widget.isPracticeMode ? 'Practice Results' : 'Stage ${widget.stageNumber} Results',
             style: AppTextStyles.titleMedium.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -268,7 +264,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           
           _buildResultRow(
             icon: Icons.emoji_events,
-            label: l10n.victories,
+            label: 'Victories',
             value: '${session.victories}',
             color: AppColors.victoryGreen,
           ),
@@ -277,7 +273,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           
           _buildResultRow(
             icon: Icons.timer,
-            label: l10n.timePlayed,
+            label: 'Time Played',
             value: _formatDuration(session.totalTime),
             color: AppColors.primary,
           ),
@@ -286,7 +282,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             const SizedBox(height: Dimensions.spacingS),
             _buildResultRow(
               icon: Icons.directions_run,
-              label: l10n.escapes,
+              label: 'Escapes',
               value: '${session.escapes}',
               color: AppColors.timerWarning,
             ),
@@ -296,7 +292,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             const SizedBox(height: Dimensions.spacingS),
             _buildResultRow(
               icon: Icons.error,
-              label: l10n.wrongClaims,
+              label: 'Wrong Claims',
               value: '${session.wrongClaims}',
               color: AppColors.error,
             ),
@@ -348,17 +344,17 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     );
   }
 
-  Widget _buildAdvice(AppLocalizations l10n) {
+  Widget _buildAdvice() {
     String advice;
     IconData icon;
     
     switch (widget.reason) {
       case GameOverReason.timeUp:
-        advice = l10n.attackFasterTip;
+        advice = 'Try to attack faster next time!\nFocus on finding prime factors quickly.';
         icon = Icons.speed;
         break;
       case GameOverReason.noItems:
-        advice = l10n.collectMorePrimesTip;
+        advice = 'Collect more prime numbers!\nDefeat enemies to gain new primes.';
         icon = Icons.inventory;
         break;
     }
@@ -383,7 +379,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           const SizedBox(height: Dimensions.spacingS),
           
           Text(
-            l10n.tip,
+            'Tip',
             style: AppTextStyles.titleMedium.copyWith(
               color: AppColors.primary,
               fontWeight: FontWeight.bold,
@@ -417,91 +413,5 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     final seconds = duration.inSeconds % 60;
     return '${minutes}:${seconds.toString().padLeft(2, '0')}';
   }
-}
 
-/// Localized version of ResultScreenButtons
-class LocalizedResultScreenButtons extends StatelessWidget {
-  final int? stageNumber;
-  final bool isPracticeMode;
-  final bool isSuccess;
-  final VoidCallback? onNextStage;
-  final VoidCallback onStageSelect;
-  final VoidCallback onRetry;
-  final VoidCallback onPractice;
-
-  const LocalizedResultScreenButtons({
-    super.key,
-    this.stageNumber,
-    this.isPracticeMode = false,
-    this.isSuccess = false,
-    this.onNextStage,
-    required this.onStageSelect,
-    required this.onRetry,
-    required this.onPractice,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    
-    return Column(
-      children: [
-        // 次のステージボタン（成功時かつ最終ステージでない場合のみ）
-        if (isSuccess && !isPracticeMode && stageNumber != null && stageNumber! < 4 && onNextStage != null)
-          Column(
-            children: [
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: onNextStage,
-                  icon: const Icon(Icons.arrow_forward),
-                  label: Text(l10n.nextStage),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
-                  ),
-                ),
-              ),
-              const SizedBox(height: Dimensions.spacingM),
-            ],
-          ),
-        
-        // ステージ選択に戻るボタン
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: onStageSelect,
-            icon: const Icon(Icons.list),
-            label: Text(l10n.stageSelect),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: Dimensions.spacingM),
-        
-        // 再挑戦ボタン
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: onRetry,
-            icon: const Icon(Icons.refresh),
-            label: Text(isSuccess ? l10n.playAgain : l10n.tryAgain),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: Dimensions.spacingS),
-        
-        // 練習モードボタン
-        TextButton.icon(
-          onPressed: onPractice,
-          icon: const Icon(Icons.school),
-          label: Text(l10n.practiceMode),
-        ),
-      ],
-    );
-  }
 }

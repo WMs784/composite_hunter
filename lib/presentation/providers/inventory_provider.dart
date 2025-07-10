@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../domain/entities/prime.dart';
+import 'battle_session_provider.dart';
 
 /// プレイヤーのアイテム（素数）インベントリを管理するプロバイダー
 class InventoryNotifier extends StateNotifier<List<Prime>> {
@@ -182,3 +183,19 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
 final inventoryProvider = StateNotifierProvider<InventoryNotifier, List<Prime>>(
   (ref) => InventoryNotifier(),
 );
+
+/// バトル用インベントリプロバイダー（ステージ選択時は選択されたアイテムのみ）
+final battleInventoryProvider = Provider<List<Prime>>((ref) {
+  final battleSession = ref.watch(battleSessionProvider);
+  final mainInventory = ref.watch(inventoryProvider);
+  
+  // ステージモードで選択されたアイテムがある場合はそれを使用
+  if (!battleSession.isPracticeMode && 
+      battleSession.stageStartInventory != null && 
+      battleSession.stageStartInventory!.isNotEmpty) {
+    return battleSession.stageStartInventory!;
+  }
+  
+  // それ以外は通常のインベントリを使用
+  return mainInventory;
+});

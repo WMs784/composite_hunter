@@ -3,6 +3,7 @@ import 'route_names.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/tutorial/tutorial_screen.dart';
 import '../screens/stage/stage_select_screen.dart';
+import '../screens/stage/stage_item_selection_screen.dart';
 import '../screens/battle/battle_screen.dart';
 import '../screens/stage/stage_clear_screen.dart';
 import '../screens/inventory/inventory_screen.dart';
@@ -30,6 +31,12 @@ class AppRouter {
           settings: settings,
         );
 
+      case RouteNames.stageItemSelection:
+        final stage = settings.arguments as StageInfo;
+        return MaterialPageRoute(
+          builder: (_) => StageItemSelectionScreen(stage: stage),
+          settings: settings,
+        );
 
       case RouteNames.battle:
         return MaterialPageRoute(
@@ -141,6 +148,10 @@ class AppRouter {
       RouteNames.battle,
       (route) => false, // Remove all previous routes
     );
+  }
+
+  static Future<void> goToStageItemSelection(BuildContext context, StageInfo stage) {
+    return pushNamed(context, RouteNames.stageItemSelection, arguments: stage);
   }
 }
 

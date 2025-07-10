@@ -23,7 +23,7 @@ jobs:
 
       - name: Analyze project source (ignore warnings and info)
         run: |
-          OUTPUT=$(flutter analyze)
+          OUTPUT=$(flutter analyze || true)
           echo "$OUTPUT"
           if echo "$OUTPUT" | grep -q "error •"; then
             echo "❌ Analyzer found errors"

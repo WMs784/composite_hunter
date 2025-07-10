@@ -162,12 +162,8 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
   void _startStage(StageInfo stage) {
     print('Starting stage ${stage.stageNumber}: ${stage.title}');
-    // 現在のアイテム状態を取得
-    final currentInventory = ref.read(inventoryProvider);
-    // バトルセッションを開始（アイテム状態を保存）
-    ref.read(battleSessionProvider.notifier).startStage(stage.stageNumber, currentInventory);
-    // バトル画面に遷移
-    AppRouter.goToBattle(context);
+    // アイテム選択画面に遷移
+    AppRouter.goToStageItemSelection(context, stage);
   }
 
   void _startPracticeMode() {

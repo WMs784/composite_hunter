@@ -53,13 +53,13 @@
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 データフロー図（制限時間・勝利判定含む）
+### 1.2 データフロー図（現在の実装ベース）
 ```
-User Action → Widget → Provider → Business Logic → Data Layer
-     ↑                     ↓                         │
-     └── UI Update ← Timer/Victory State ←───────────┘
-                     ↓
-               Penalty/Reward
+User Action → StageSelect → BattleSession → Battle → Inventory Update
+     ↑             ↓            ↓           ↓            │
+     └── Navigation ← Session State ← Timer/Victory ←───┘
+                     ↓            ↓
+               Item Backup → Item Restore
 ```
 
 ## 2. 状態管理戦略
@@ -1209,19 +1209,144 @@ class BattleResult with _$BattleResult {
 
 ## 5. 重要な設計判断
 
-### 5.1 制限時間システムの実装戦略
-- **StreamProvider**: リアルタイムタイマー更新
-- **ペナルティ累積**: 逃走・誤判定でのペナルティ管理
-- **状態同期**: タイマーと戦闘状態の密結合
+### 5.1 アイテム消費ロジックの実装戦略（現在の実装ベース）
 
-### 5.2 勝利判定システムの設計
-- **ユーザー主導**: システム自動判定を排除
-- **教育重視**: 間違いから学ぶ仕組み
-- **即座フィードバック**: ペナルティの視覚的表現
+#### 練習モードでの非消費システム
+```dart
+// 現在の実装：練習モードでは素数を消費しない
+if (!session.isPracticeMode) {
+  // インベントリから素数を消費
+  ref.read(inventoryProvider.notifier).usePrime(prime.value);
+}
+```
 
-### 5.3 累乗敵システムの統合
-- **検出アルゴリズム**: 効率的な累乗判定
-- **報酬システム**: バランス調整された特別報酬
-- **視覚的区別**: UI/UXでの明確な差別化
+#### ステージ挑戦でのアイテム状態管理
+```dart
+// 戦闘開始時にアイテム状態を保存
+final session = ref.read(battleSessionProvider);
+if (session.stageStartInventory != null) {
+  ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+}
+```
 
-この設計により、要件定義書で定義された全ての新機能（制限時間、勝利判定、累乗敵、ペナルティシステム）を効率的に実装でき、高い保守性とテスト容易性を維持できます。
+#### 復元システムの設計
+- **戦闘開始前**: アイテム状態のスナップショット保存
+- **戦闘中**: 通常通りアイテム消費
+- **戦闘終了**: エスケープ・タイムアウト時にアイテム状態復元
+- **勝利時**: 消費したアイテムと勝利報酬の獲得
+
+### 5.2 現在の実装における状態管理
+
+#### BattleSessionProvider による状態管理
+```dart
+class BattleSessionProvider {
+  List<Prime>? stageStartInventory; // 戦闘開始時のアイテム状態
+  List<int> usedPrimesInCurrentBattle; // 現在の戦闘で使用した素数
+  bool isPracticeMode; // 練習モード判定
+}
+```
+
+#### アイテム復元のタイミング
+1. **エスケープ時**: `_exitBattle()`, `escape()`
+2. **タイムアウト時**: `_handleTimeUp()`
+3. **戦闘再開時**: `_restartBattle()`
+4. **勝利時**: 使用素数の返却 + 勝利報酬
+
+### 5.3 ステージ挑戦前画面の設計（計画）
+
+#### 既存のStageSelectScreen拡張
+```dart
+class StageInfo {
+  final int stageNumber;
+  final String title;
+  final String description;
+  final int enemyRangeMin;
+  final int enemyRangeMax;
+  final int timeLimit;
+  final bool isUnlocked;
+  final bool isCompleted;
+  final int stars;
+}
+```
+
+#### 今後実装予定の機能
+- ステージ詳細情報の表示
+- 推奨素数の表示
+- 難易度指標の表示
+- 報酬プレビュー
+
+### 5.4 教育的価値を重視した設計方針
+
+#### 非消費型戦闘の教育効果
+- **試行錯誤の促進**: アイテム枯渇の心配なく実験可能
+- **戦略学習**: 最適な素数選択の学習
+- **数学理解**: 素因数分解の理解促進
+
+#### 練習モードと本格モードの差別化
+- **練習モード**: 完全非消費、学習重視
+- **本格モード**: 戦略性重視、リソース管理
+
+## 6. 現在の実装における設計判断の総括
+
+### 6.1 簡素化されたアーキテクチャの利点
+
+#### 開発効率の向上
+- **要件定義書**の理想的な設計から**実装可能**な範囲に調整
+- 複雑な持ち込みシステムを**シンプルな状態管理**に変更
+- コアとなる**教育機能**は完全に保持
+
+#### 教育的価値の維持
+- **練習モード**: 完全非消費で試行錯誤を促進
+- **本格モード**: 適度な戦略性とリソース管理
+- **復元システム**: 失敗時のペナルティを教育的に活用
+
+#### 保守性の確保
+- **StateProvider**と**StateNotifierProvider**による分かりやすい状態管理
+- **BattleSessionProvider**による戦闘状態の一元管理
+- **復元ロジック**の明確な分離
+
+### 6.2 実装上の工夫
+
+#### アイテム消費ロジック
+```dart
+// 練習モードでは消費しない
+if (!session.isPracticeMode) {
+  ref.read(inventoryProvider.notifier).usePrime(prime.value);
+}
+```
+
+#### 状態復元システム
+```dart
+// 戦闘開始時にスナップショット保存
+ref.read(battleSessionProvider.notifier).startStage(stage.stageNumber, currentInventory);
+
+// 必要時に復元
+if (session.stageStartInventory != null) {
+  ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+}
+```
+
+#### 国際化対応
+- **ARB ファイル**による多言語対応
+- **AppLocalizations**による動的言語切り替え
+- **MonsterWidget**による視覚的魅力の向上
+
+### 6.3 今後の拡張可能性
+
+この簡素化された実装により、以下の拡張が容易になります：
+
+1. **新しいステージ**の追加
+2. **追加の敵タイプ**の実装
+3. **より複雑な戦略システム**への発展
+4. **マルチプレイヤー機能**の追加
+
+### 6.4 教育効果の最大化
+
+実装された機能により以下の教育効果が達成されます：
+
+- **素因数分解の理解**: 実際の計算を通じた学習
+- **戦略的思考**: 限られたリソースでの最適解探索
+- **試行錯誤の促進**: 失敗しても復元できる安心感
+- **数学への興味**: ゲーム要素による動機付け
+
+この簡素化された実装により、コアとなる教育機能を維持しながら、開発・保守コストを最小限に抑え、実際に動作する高品質な教育アプリケーションを提供することができます。

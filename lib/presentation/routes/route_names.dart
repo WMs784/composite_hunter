@@ -6,6 +6,7 @@ class RouteNames {
   static const String splash = '/';
   static const String tutorial = '/tutorial';
   static const String stageSelect = '/stage-select';
+  static const String stageItemSelection = '/stage-item-selection';
   static const String battle = '/battle';
   static const String stageClear = '/stage-clear';
   static const String inventory = '/inventory';
@@ -22,6 +23,7 @@ class RouteNames {
     splash,
     tutorial,
     stageSelect,
+    stageItemSelection,
     battle,
     stageClear,
     inventory,

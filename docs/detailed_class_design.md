@@ -526,7 +526,7 @@ flowchart TD
     P --> R[currentValue素数 × 1個報酬]
 ```
 
-## 4. UI画面遷移図
+## 4. UI画面遷移図（現在の実装ベース）
 
 ### 4.1 全体画面遷移
 
@@ -535,31 +535,41 @@ stateDiagram-v2
     [*] --> SplashScreen : アプリ起動
     
     SplashScreen --> TutorialScreen : 初回起動
-    SplashScreen --> BattleScreen : 通常起動
+    SplashScreen --> StageSelectScreen : 通常起動
     
-    TutorialScreen --> BattleScreen : チュートリアル完了
+    TutorialScreen --> StageSelectScreen : チュートリアル完了
     
+    StageSelectScreen --> BattleScreen : ステージ選択
+    StageSelectScreen --> BattleScreen : 練習モード選択
+    StageSelectScreen --> InventoryScreen : インベントリタップ
+    StageSelectScreen --> AchievementScreen : 実績タップ
+    
+    BattleScreen --> StageSelectScreen : 戻るボタン
     BattleScreen --> InventoryScreen : インベントリタップ
     BattleScreen --> AchievementScreen : 実績タップ
-    BattleScreen --> BattleResultDialog : 戦闘終了
+    BattleScreen --> StageClearScreen : ステージクリア
+    BattleScreen --> GameOverScreen : ゲームオーバー
     
-    InventoryScreen --> BattleScreen : 戻るボタン
-    AchievementScreen --> BattleScreen : 戻るボタン
+    StageClearScreen --> StageSelectScreen : 戻る
+    GameOverScreen --> StageSelectScreen : 戻る
     
-    BattleResultDialog --> BattleScreen : 継続ボタン
+    InventoryScreen --> StageSelectScreen : 戻るボタン
+    AchievementScreen --> StageSelectScreen : 戻るボタン
     
     state BattleScreen {
-        [*] --> WaitingState
-        WaitingState --> FightingState : 戦闘開始
-        FightingState --> AwaitingVictoryState : 敵が素数に
+        [*] --> InitializingState
+        InitializingState --> FightingState : 戦闘開始
         FightingState --> FightingState : 攻撃継続
+        FightingState --> VictoryState : 勝利宣言成功
         FightingState --> EscapeState : 逃走選択
         FightingState --> TimeOutState : 時間切れ
-        AwaitingVictoryState --> VictoryState : 正しい勝利宣言
-        AwaitingVictoryState --> FightingState : 間違った勝利宣言
-        VictoryState --> WaitingState : 次の戦闘
-        EscapeState --> WaitingState : 次の戦闘（ペナルティ）
-        TimeOutState --> WaitingState : 次の戦闘（ペナルティ）
+        FightingState --> GameOverState : アイテム不足
+        VictoryState --> InitializingState : 次の敵（継続）
+        VictoryState --> ClearedState : ステージクリア
+        EscapeState --> InitializingState : 次の敵（ペナルティ）
+        TimeOutState --> InitializingState : 次の敵（ペナルティ）
+        GameOverState --> [*] : ゲームオーバー画面
+        ClearedState --> [*] : ステージクリア画面
     }
 ```
 
@@ -736,4 +746,404 @@ sequenceDiagram
     end
 ```
 
-この詳細設計書により、各クラスの実装指針と相互作用が明確になり、開発時の指針として活用できます。
+## 6. ステージ挑戦前画面の設計（現在の実装ベース）
+
+### 6.1 StageSelectScreen クラス
+
+```dart
+class StageSelectScreen extends ConsumerStatefulWidget {
+  // ステージ選択画面の実装
+  
+  /// ステージ情報の表示
+  Widget _buildStageCard(StageInfo stage) {
+    return Card(
+      child: InkWell(
+        onTap: stage.isUnlocked ? () => _goToItemSelection(stage) : null,
+        child: StageCardContent(stage: stage),
+      ),
+    );
+  }
+  
+  /// アイテム選択画面へ遷移
+  void _goToItemSelection(StageInfo stage) {
+    AppRouter.goToStageItemSelection(context, stage);
+  }
+  
+  /// 練習モード開始（アイテム選択なし）
+  void _startPracticeMode() {
+    final currentInventory = ref.read(inventoryProvider);
+    ref.read(battleSessionProvider.notifier).startPractice(currentInventory);
+    AppRouter.goToBattle(context);
+  }
+}
+```
+
+### 6.2 StageItemSelectionScreen クラス（新規実装）
+
+```dart
+class StageItemSelectionScreen extends ConsumerStatefulWidget {
+  final StageInfo stage;
+  
+  const StageItemSelectionScreen({
+    super.key,
+    required this.stage,
+  });
+  
+  @override
+  ConsumerState<StageItemSelectionScreen> createState() => _StageItemSelectionScreenState();
+}
+
+class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScreen> {
+  Set<int> selectedPrimeValues = {};
+  
+  /// ステージ別アイテム制限数を取得
+  int get maxSelectableItems {
+    switch (widget.stage.stageNumber) {
+      case 1: return 3;  // 初心者向け：3個まで
+      case 2: return 5;  // 中級者向け：5個まで
+      case 3: return 7;  // 上級者向け：7個まで  
+      case 4: return 10; // 最上級者向け：10個まで
+      default: return 5;
+    }
+  }
+  
+  /// アイテム選択/選択解除の処理
+  void _toggleItemSelection(int primeValue) {
+    setState(() {
+      if (selectedPrimeValues.contains(primeValue)) {
+        selectedPrimeValues.remove(primeValue);
+      } else if (selectedPrimeValues.length < maxSelectableItems) {
+        selectedPrimeValues.add(primeValue);
+      }
+    });
+  }
+  
+  /// 選択されたアイテムでバトル開始
+  void _startBattleWithSelectedItems() {
+    // 選択されたアイテムで一時的なインベントリを作成
+    final selectedInventory = _createSelectedInventory();
+    
+    // バトルセッションを開始（選択されたアイテムのみ）
+    ref.read(battleSessionProvider.notifier).startStageWithSelectedItems(
+      widget.stage.stageNumber,
+      selectedInventory,
+    );
+    
+    // バトル画面に遷移
+    AppRouter.goToBattle(context);
+  }
+  
+  /// 選択されたアイテムからインベントリを作成
+  List<Prime> _createSelectedInventory() {
+    final allPrimes = ref.read(inventoryProvider);
+    return allPrimes.where((prime) => 
+      selectedPrimeValues.contains(prime.value) && prime.count > 0
+    ).toList();
+  }
+}
+```
+
+### 6.2 StageInfo エンティティ（現在の実装）
+
+```dart
+class StageInfo {
+  final int stageNumber;
+  final String title;
+  final String description;
+  final int enemyRangeMin;        // 敵数値の最小値
+  final int enemyRangeMax;        // 敵数値の最大値
+  final int timeLimit;            // 制限時間
+  final bool isUnlocked;          // アンロック状態
+  final bool isCompleted;         // クリア状態
+  final int stars;                // 獲得星数
+  
+  /// ステージ挑戦可能性の判定
+  bool canChallenge(List<Prime> inventory) {
+    return isUnlocked && inventory.isNotEmpty;
+  }
+  
+  /// ローカライズされたタイトル取得
+  String getLocalizedTitle(AppLocalizations l10n) {
+    switch (stageNumber) {
+      case 1: return l10n.stage1Title;
+      case 2: return l10n.stage2Title;
+      case 3: return l10n.stage3Title;
+      case 4: return l10n.stage4Title;
+      default: return title;
+    }
+  }
+}
+```
+
+### 6.3 ステージ挑戦前の状態管理フロー（アイテム選択画面追加）
+
+```mermaid
+flowchart TD
+    A[ユーザーがステージ選択] --> B[StageSelectScreen]
+    B --> C[ステージ情報表示]
+    C --> D{ステージアンロック状態}
+    
+    D -->|アンロック済み| E[ステージカードタップ可能]
+    D -->|ロック中| F[ステージカード無効化]
+    
+    E --> G[_goToItemSelection実行]
+    G --> H[StageItemSelectionScreen遷移]
+    H --> I[所持アイテム一覧表示]
+    I --> J[ステージ制限数表示]
+    J --> K[アイテム選択UI]
+    
+    K --> L{選択完了？}
+    L -->|未選択| M[選択継続]
+    L -->|選択完了| N[_startBattleWithSelectedItems実行]
+    
+    M --> K
+    N --> O[選択アイテムでインベントリ作成]
+    O --> P[BattleSessionProvider.startStageWithSelectedItems]
+    P --> Q[選択アイテム状態スナップショット保存]
+    Q --> R[戦闘画面遷移]
+    
+    F --> S[ロック表示]
+    
+    T[練習モードボタン] --> U[_startPracticeMode実行]
+    U --> V[BattleSessionProvider.startPractice]
+    V --> W[練習モードフラグ設定]
+    W --> R
+```
+
+### 6.4 アイテム選択画面の詳細仕様
+
+#### 6.4.1 ステージ別制限数（素数の総個数）
+```dart
+Map<int, int> stageItemLimits = {
+  1: 8,  // ステージ1：初心者向け、8個までの素数を選択
+  2: 15, // ステージ2：中級者向け、15個までの素数を選択
+  3: 25, // ステージ3：上級者向け、25個までの素数を選択
+  4: 40, // ステージ4：最上級者向け、40個までの素数を選択
+};
+```
+
+**重要な変更点：**
+- 制限対象：素数の種類数 → 素数の総個数
+- 例：Prime(value: 2, count: 5)の場合、5個分としてカウント
+- プレイヤーは各素数から何個取るかを選択可能
+
+#### 6.4.2 UI状態管理（個数ベース選択）
+```dart
+class ItemSelectionState {
+  final Map<int, int> selectedCounts; // prime value -> selected count
+  final int maxSelectableCount;       // 最大選択可能な総個数
+  final List<Prime> availableItems;
+  
+  int get totalSelectedCount => selectedCounts.values.fold(0, (sum, count) => sum + count);
+  bool get hasReachedLimit => totalSelectedCount >= maxSelectableCount;
+  bool get hasMinimumSelection => totalSelectedCount >= 1;
+  int get remainingCount => maxSelectableCount - totalSelectedCount;
+  
+  ItemSelectionState copyWith({
+    Map<int, int>? selectedCounts,
+    int? maxSelectableCount,
+    List<Prime>? availableItems,
+  }) {
+    return ItemSelectionState(
+      selectedCounts: selectedCounts ?? this.selectedCounts,
+      maxSelectableCount: maxSelectableCount ?? this.maxSelectableCount,
+      availableItems: availableItems ?? this.availableItems,
+    );
+  }
+}
+```
+
+#### 6.4.3 教育的配慮
+- **選択制限の可視化**: 現在選択数/最大選択数を常に表示
+- **戦略的思考の促進**: 制限された選択肢での最適解を考えさせる
+- **段階的難易度**: ステージが進むにつれて選択肢が増加
+- **失敗からの学習**: 選択ミスによる失敗も学習機会として提供
+
+## 7. 無効攻撃システムの設計（教育強化機能）
+
+### 7.1 基本方針
+従来は「正しくない素数では攻撃できない」仕様でしたが、教育効果を高めるため「正しくない素数でも攻撃可能だが効果なし」に変更。
+
+### 7.2 無効攻撃の動作
+
+#### 7.2.1 攻撃可能条件
+```dart
+// 従来の条件
+bool canAttack = (enemy % prime == 0) && (prime.count > 0);
+
+// 新しい条件
+bool canAttack = prime.count > 0; // 所持数があれば常に攻撃可能
+bool isEffective = (enemy % prime == 0) && (prime.count > 0); // 効果的かどうかは別判定
+```
+
+#### 7.2.2 攻撃処理フロー
+```mermaid
+flowchart TD
+    A[プレイヤーが素数ボタンを押下] --> B{所持数 > 0？}
+    B -->|No| C[攻撃不可]
+    B -->|Yes| D{enemy % prime == 0？}
+    
+    D -->|Yes| E[有効攻撃]
+    D -->|No| F[無効攻撃]
+    
+    E --> G[敵の数値を更新]
+    E --> H[アイテムを消費]
+    E --> I[使用記録]
+    
+    F --> J[教育的フィードバック表示]
+    F --> K[アイテムを消費]
+    F --> L[無効攻撃記録]
+    
+    G --> M[ゲームオーバー条件チェック]
+    J --> N[ダイアログ表示]
+    N --> O[素因数分解の説明]
+```
+
+### 7.3 教育的フィードバック機能
+
+#### 7.3.1 フィードバック内容
+1. **即座の視覚的フィードバック**
+   - SnackBar: "Prime X wasted! Enemy ÷ X is not a whole number."
+   - 色: エラー色（赤）
+
+2. **詳細な教育ダイアログ**
+   - タイトル: "Attack Failed!"
+   - 説明: なぜ攻撃が失敗したか
+   - 数学的解説: 「X ÷ Y = Z.abc (not a whole number)」
+   - 敵の素因数分解表示: 「Enemy = 2 × 3 × 5」
+   - 推奨行動: "Try using one of these factors instead!"
+
+#### 7.3.2 UI視覚的区別
+```dart
+// 素数ボタンの状態表示
+enum PrimeButtonState {
+  unavailable,  // 所持数0：グレーアウト
+  ineffective,  // 所持数あり・無効：警告色（オレンジ）+ ？アイコン
+  effective,    // 所持数あり・有効：通常色（青/緑）+ ✓アイコン
+}
+```
+
+#### 7.3.3 学習効果測定
+```dart
+class BattleAnalytics {
+  int validAttacks = 0;
+  int invalidAttacks = 0;
+  Map<int, int> invalidAttacksByPrime = {}; // どの素数で間違いやすいか
+  
+  double get attackAccuracy => validAttacks / (validAttacks + invalidAttacks);
+  List<int> get problematicPrimes => invalidAttacksByPrime.entries
+      .where((e) => e.value > 2)
+      .map((e) => e.key)
+      .toList();
+}
+```
+
+## 7. アイテム消費ロジックの詳細設計（現在の実装ベース）
+
+### 7.1 BattleSessionProvider クラス
+
+```dart
+class BattleSessionProvider extends StateNotifier<BattleSession> {
+  /// ステージ戦闘開始
+  void startStage(int stageNumber, Inventory currentInventory) {
+    state = state.copyWith(
+      stageNumber: stageNumber,
+      isPracticeMode: false,
+      stageStartInventory: currentInventory.primes, // スナップショット保存
+      victories: 0,
+      escapes: 0,
+      wrongClaims: 0,
+      usedPrimesInCurrentBattle: [],
+    );
+  }
+  
+  /// 練習モード開始
+  void startPractice(Inventory currentInventory) {
+    state = state.copyWith(
+      stageNumber: null,
+      isPracticeMode: true,
+      stageStartInventory: currentInventory.primes,
+      victories: 0,
+      escapes: 0,
+      wrongClaims: 0,
+      usedPrimesInCurrentBattle: [],
+    );
+  }
+  
+  /// アイテム状態復元
+  void restoreInventory() {
+    if (state.stageStartInventory != null) {
+      // インベントリプロバイダーに復元指示
+    }
+  }
+}
+```
+
+### 7.2 アイテム消費・復元フロー
+
+```mermaid
+flowchart TD
+    A[戦闘開始] --> B[アイテム状態スナップショット]
+    B --> C[戦闘実行]
+    
+    C --> D{練習モード？}
+    D -->|Yes| E[アイテム消費なし]
+    D -->|No| F[アイテム通常消費]
+    
+    E --> G[戦闘継続]
+    F --> G
+    
+    G --> H{戦闘結果}
+    H -->|勝利| I[勝利報酬獲得]
+    H -->|エスケープ| J[アイテム状態復元]
+    H -->|タイムアウト| J
+    H -->|ゲームオーバー| J
+    
+    I --> K[次の戦闘 or ステージクリア]
+    J --> L[復元アニメーション]
+    L --> M[新しい戦闘開始]
+    
+    M --> B
+```
+
+### 7.3 実装における教育的配慮
+
+#### 練習モードの非消費設計
+```dart
+// 戦闘中のアイテム使用処理
+if (canAttack && prime.count > 0) {
+  final session = ref.read(battleSessionProvider);
+  
+  // 敵の数値を更新
+  ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
+  
+  // 練習モードでない場合のみアイテムを消費
+  if (!session.isPracticeMode) {
+    ref.read(inventoryProvider.notifier).usePrime(prime.value);
+  }
+  
+  // 使用した素数を記録（復元用）
+  ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
+}
+```
+
+#### 復元システムの実装
+```dart
+// エスケープ時の復元処理
+void _escapeButton() {
+  // アイテム状態をステージ開始時に復元
+  final session = ref.read(battleSessionProvider);
+  if (session.stageStartInventory != null) {
+    ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+  }
+  
+  // 使用素数記録をリセット
+  ref.read(battleSessionProvider.notifier).resetUsedPrimes();
+  
+  // 新しい敵を生成して戦闘継続
+  _generateNewEnemy();
+  _restartTimer();
+}
+```
+
+この詳細設計書により、現在の実装における各クラスの実装指針と相互作用が明確になり、開発時の指針として活用できます。簡素化されたアーキテクチャにより、教育的価値を保ちながら開発・保守コストを最小限に抑えることができます。

@@ -190,18 +190,52 @@ final inventoryProvider = StateNotifierProvider<InventoryNotifier, List<Prime>>(
   (ref) => InventoryNotifier(),
 );
 
-/// バトル用インベントリプロバイダー（ステージ選択時は選択されたアイテムのみ）
+/// バトル用インベントリプロバイダー（リアルタイム更新対応）
 final battleInventoryProvider = Provider<List<Prime>>((ref) {
   final battleSession = ref.watch(battleSessionProvider);
   final mainInventory = ref.watch(inventoryProvider);
   
-  // ステージモードで選択されたアイテムがある場合はそれを使用
+  // ステージモードの場合、メインインベントリが更新されても反映する
+  // ただし、初期選択されたアイテムの制約は保持する
   if (!battleSession.isPracticeMode && 
       battleSession.stageStartInventory != null && 
       battleSession.stageStartInventory!.isNotEmpty) {
-    return battleSession.stageStartInventory!;
+    
+    // ステージ開始時のアイテムを基準に、現在のメインインベントリの状態を取得
+    final List<Prime> battleInventory = [];
+    
+    for (final startPrime in battleSession.stageStartInventory!) {
+      // メインインベントリから対応するアイテムを取得
+      final currentPrime = mainInventory.firstWhere(
+        (p) => p.value == startPrime.value,
+        orElse: () => Prime(
+          value: startPrime.value, 
+          count: 0, 
+          firstObtained: startPrime.firstObtained
+        ),
+      );
+      
+      // バトル中に獲得したアイテムも含めて使用可能にする
+      battleInventory.add(Prime(
+        value: startPrime.value,
+        count: currentPrime.count, // 現在の個数（バトル中の獲得も含む）
+        firstObtained: startPrime.firstObtained,
+      ));
+    }
+    
+    // バトル中に新しく獲得した素数も追加
+    for (final mainPrime in mainInventory) {
+      final isNewPrime = !battleSession.stageStartInventory!
+          .any((sp) => sp.value == mainPrime.value);
+      
+      if (isNewPrime && mainPrime.count > 0) {
+        battleInventory.add(mainPrime);
+      }
+    }
+    
+    return battleInventory;
   }
   
-  // それ以外は通常のインベントリを使用
+  // 練習モードまたはステージ選択なしの場合は通常のインベントリを使用
   return mainInventory;
 });

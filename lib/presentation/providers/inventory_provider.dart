@@ -75,7 +75,10 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
     }).toList();
     
     state = updatedInventory;
-    _saveInventory();
+    // 非同期保存（エラーハンドリング付き）
+    _saveInventory().catchError((error) {
+      print('Failed to save inventory after using prime: $error');
+    });
   }
 
   /// 素数を獲得（加算）
@@ -103,7 +106,10 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
       state = [...state, newPrime];
     }
     
-    _saveInventory();
+    // 非同期保存（エラーハンドリング付き）
+    _saveInventory().catchError((error) {
+      print('Failed to save inventory after adding prime: $error');
+    });
   }
 
   /// 指定した素数の所持数を取得

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
+import 'dart:math';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
@@ -49,13 +50,24 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      final currentTime = ref.read(battleTimerProvider);
-      if (currentTime > 0) {
-        ref.read(battleTimerProvider.notifier).state = currentTime - 1;
-      } else {
-        _handleTimeUp();
+      // mountedチェックを追加
+      if (!mounted) {
         timer.cancel();
+        return;
       }
+      
+      // 安全な状態更新のためにPostFrameCallbackを使用
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final currentTime = ref.read(battleTimerProvider);
+          if (currentTime > 0) {
+            ref.read(battleTimerProvider.notifier).state = currentTime - 1;
+          } else {
+            _handleTimeUp();
+            timer.cancel();
+          }
+        }
+      });
     });
   }
 
@@ -170,15 +182,47 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
   
   int _generateEnemyForRange(int min, int max) {
-    final random = DateTime.now().millisecondsSinceEpoch;
+    final random = Random();
     int candidate;
+    int attempts = 0;
+    const maxAttempts = 100; // 無限ループを防ぐ
     
-    // 合成数を生成するまで繰り返す
+    // 合成数を生成するまで繰り返す（最大試行回数制限付き）
     do {
-      candidate = min + (random % (max - min + 1));
+      candidate = min + random.nextInt(max - min + 1);
+      attempts++;
+      
+      if (attempts >= maxAttempts) {
+        // フォールバック：既知の合成数を返す
+        return _getFallbackComposite(min, max);
+      }
     } while (_isPrime(candidate) || candidate <= 1);
     
     return candidate;
+  }
+  
+  /// フォールバック用の合成数を取得
+  int _getFallbackComposite(int min, int max) {
+    // 範囲に応じて既知の合成数を返す
+    final composites = <int>[4, 6, 8, 9, 10, 12, 14, 15, 16, 18, 20, 21, 22, 24, 25, 26, 27, 28, 30, 32, 33, 34, 35, 36, 38, 39, 40, 42, 44, 45, 46, 48, 49, 50, 51, 52, 54, 55, 56, 57, 58, 60, 62, 63, 64, 65, 66, 68, 69, 70, 72, 74, 75, 76, 77, 78, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 94, 95, 96, 98, 99, 100];
+    
+    // 範囲内の合成数を探す
+    final validComposites = composites.where((c) => c >= min && c <= max).toList();
+    
+    if (validComposites.isNotEmpty) {
+      final random = Random();
+      return validComposites[random.nextInt(validComposites.length)];
+    }
+    
+    // 範囲内に適切な合成数がない場合、最小の合成数を生成
+    for (int i = min >= 4 ? min : 4; i <= max; i++) {
+      if (!_isPrime(i)) {
+        return i;
+      }
+    }
+    
+    // 最後の手段：確実に合成数である値を返す
+    return min >= 4 ? min : 4;
   }
   
   void _generateNewEnemy() {
@@ -838,8 +882,8 @@ class _PrimeGridSection extends ConsumerWidget {
                             // 使用した素数を記録
                             ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
                             
-                            // ゲームオーバー条件をチェック
-                            Future.delayed(const Duration(milliseconds: 100), () {
+                            // ゲームオーバー条件をチェック（少し遅延してUI更新を確実に）
+                            Future.delayed(const Duration(milliseconds: 200), () {
                               onGameOverCheck();
                             });
                           } else {
@@ -1011,7 +1055,12 @@ class _ActionButtonsSection extends ConsumerWidget {
           flex: 2,
           child: ElevatedButton(
             onPressed: canClaimVictory
-                ? () => _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer, onGenerateNewEnemy)
+                ? () {
+                    // 複数回の連続クリックを防ぐ
+                    if (context.mounted) {
+                      _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer, onGenerateNewEnemy);
+                    }
+                  }
                 : null,
             child: Text(l10n.claimVictory),
           ),

@@ -3,12 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
 import '../../../domain/entities/stage.dart';
 import '../../widgets/animated_stars.dart';
 import '../../providers/stage_progress_provider.dart';
-import '../../providers/battle_session_provider.dart';
-import '../../providers/inventory_provider.dart';
 import '../common/result_screen_base.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import '../game_over/game_over_screen.dart'; // For LocalizedResultScreenButtons

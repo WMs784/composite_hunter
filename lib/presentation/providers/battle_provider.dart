@@ -8,7 +8,6 @@ import '../../domain/entities/victory_claim.dart';
 import '../../domain/services/battle_engine.dart';
 import '../../domain/services/enemy_generator.dart';
 import '../../domain/services/timer_manager.dart';
-import '../../domain/services/victory_validator.dart';
 import 'inventory_provider.dart';
 import 'game_provider.dart';
 import '../../core/utils/logger.dart';

@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 class MathUtils {
   /// Generate primes up to n using Sieve of Eratosthenes
@@ -81,19 +80,6 @@ class MathUtils {
   static int generateComposite(List<int> primeFactors) {
     if (primeFactors.isEmpty) return 1;
     return primeFactors.reduce((a, b) => a * b);
-  }
-  
-  /// Check if a number is a perfect power
-  static bool isPerfectPower(int n) {
-    if (n < 2) return false;
-    
-    for (int exp = 2; exp <= (math.log(n) / math.log(2)).floor(); exp++) {
-      final base = math.pow(n, 1.0 / exp).round();
-      if (math.pow(base, exp).round() == n) {
-        return true;
-      }
-    }
-    return false;
   }
   
   /// Get the difficulty rating for a number based on its size and complexity

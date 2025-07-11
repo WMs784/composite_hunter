@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/game_state.dart';
 import '../../domain/entities/player.dart';
-import '../../domain/entities/achievement.dart';
 import '../../data/repositories/game_repository.dart';
 import '../../data/mappers/game_mapper.dart';
 import '../../data/datasources/shared_preferences_service.dart';

@@ -1,6 +1,4 @@
 import 'dart:convert';
-import '../models/game_data_model.dart';
-import '../models/prime_model.dart';
 import '../models/battle_result_model.dart';
 import '../models/enemy_model.dart';
 import '../datasources/local_database.dart';

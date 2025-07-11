@@ -18,6 +18,17 @@ import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
 final battleTimerProvider = StateProvider<int>((ref) => 90);
 
+// Recently acquired primes (for visual feedback)
+final recentlyAcquiredPrimesProvider = StateProvider<Map<int, DateTime>>((ref) => {});
+
+// Debug provider to track timer updates
+final timerDebugProvider = Provider<String>((ref) {
+  final timer = ref.watch(battleTimerProvider);
+  final debugInfo = 'Timer: $timer (${DateTime.now().millisecondsSinceEpoch})';
+  print('Timer provider update: $debugInfo');
+  return debugInfo;
+});
+
 class BattleScreen extends ConsumerStatefulWidget {
   const BattleScreen({super.key});
 
@@ -49,25 +60,28 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
   void _startTimer() {
     _timer?.cancel();
+    final initialTime = ref.read(battleTimerProvider);
+    print('Starting timer with initial time: $initialTime');
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       // mountedチェックを追加
       if (!mounted) {
+        print('Widget not mounted, cancelling timer');
         timer.cancel();
         return;
       }
       
-      // 安全な状態更新のためにPostFrameCallbackを使用
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          final currentTime = ref.read(battleTimerProvider);
-          if (currentTime > 0) {
-            ref.read(battleTimerProvider.notifier).state = currentTime - 1;
-          } else {
-            _handleTimeUp();
-            timer.cancel();
-          }
-        }
-      });
+      // 直接的な状態更新
+      final currentTime = ref.read(battleTimerProvider);
+      print('Timer callback executed - currentTime: $currentTime, mounted: $mounted');
+      if (currentTime > 0) {
+        final newTime = currentTime - 1;
+        ref.read(battleTimerProvider.notifier).state = newTime;
+        print('Timer updated: $currentTime -> $newTime');
+      } else {
+        print('Timer reached 0, handling time up');
+        _handleTimeUp();
+        timer.cancel();
+      }
     });
   }
 
@@ -156,13 +170,16 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // ステージに応じた敵と制限時間を設定
     if (session.isPracticeMode) {
       // 練習モードはデフォルト設定
-      ref.read(battleEnemyProvider.notifier).state = _generateEnemyForRange(6, 20);
+      final enemy = _generateEnemyForRange(6, 20);
+      ref.read(battleEnemyProvider.notifier).state = enemy;
       ref.read(battleTimerProvider.notifier).state = 30;
+      print('Practice mode initialized - Enemy: $enemy, Timer: 30');
     } else {
       final stageNumber = session.stageNumber ?? 1;
       final (enemy, timeLimit) = _getStageSettings(stageNumber);
       ref.read(battleEnemyProvider.notifier).state = enemy;
       ref.read(battleTimerProvider.notifier).state = timeLimit;
+      print('Stage $stageNumber initialized - Enemy: $enemy, Timer: $timeLimit');
     }
   }
   
@@ -327,6 +344,33 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // 短時間の遅延でアニメーション効果を演出
     await Future.delayed(const Duration(milliseconds: 300));
   }
+  
+  
+  /// 最近獲得した素数を追跡（視覚的フィードバック用）
+  void _trackRecentlyAcquiredPrimes(WidgetRef ref, List<int> primes) {
+    final now = DateTime.now();
+    final currentMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
+    
+    // Add new primes with current timestamp
+    for (final prime in primes) {
+      currentMap[prime] = now;
+    }
+    
+    // Clean up old entries (older than 2 seconds)
+    currentMap.removeWhere((key, timestamp) => 
+        now.difference(timestamp).inSeconds > 2);
+    
+    ref.read(recentlyAcquiredPrimesProvider.notifier).state = currentMap;
+    
+    // Schedule cleanup after 2 seconds
+    Future.delayed(const Duration(seconds: 2), () {
+      final updatedMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
+      updatedMap.removeWhere((key, timestamp) => 
+          DateTime.now().difference(timestamp).inSeconds > 2);
+      ref.read(recentlyAcquiredPrimesProvider.notifier).state = updatedMap;
+    });
+  }
+
   
   /// 無効攻撃時の教育的フィードバック
   void _showInvalidAttackFeedback(BuildContext context, int prime, int enemy) {
@@ -496,6 +540,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               // Timer display
               const _TimerSection(),
               
+              // Debug info
+              Consumer(builder: (context, ref, child) {
+                final debugInfo = ref.watch(timerDebugProvider);
+                return Text(debugInfo, style: TextStyle(fontSize: 10, color: Colors.grey));
+              }),
+              
               const SizedBox(height: Dimensions.spacingL),
               
               // Enemy display
@@ -616,6 +666,9 @@ class _TimerSection extends ConsumerWidget {
     final seconds = timer % 60;
     final formattedTime = '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     final l10n = AppLocalizations.of(context)!;
+    
+    // Debug: Print timer value on each rebuild
+    print('Timer UI rebuild: $timer ($formattedTime) at ${DateTime.now().millisecondsSinceEpoch}');
 
     Color timerColor = AppColors.timerNormal;
     Color backgroundColor = AppColors.surface;
@@ -859,15 +912,14 @@ class _PrimeGridSection extends ConsumerWidget {
                   itemCount: primes.length,
                   itemBuilder: (context, index) {
                     final prime = primes[index];
-                    final canAttack = enemy % prime.value == 0;
                     
                     return _PrimeButton(
                       prime: prime,
-                      canAttack: canAttack,
                       onPressed: () {
                         print('Prime ${prime.value} attack attempt on enemy $enemy');
                         if (prime.count > 0) {
                           final session = ref.read(battleSessionProvider);
+                          final canAttack = enemy % prime.value == 0;
                           
                           if (canAttack) {
                             // 有効な攻撃：敵の数値を更新
@@ -910,26 +962,25 @@ class _PrimeGridSection extends ConsumerWidget {
   }
 }
 
-class _PrimeButton extends StatelessWidget {
+class _PrimeButton extends ConsumerWidget {
   final Prime prime;
-  final bool canAttack;
   final VoidCallback? onPressed;
 
   const _PrimeButton({
     required this.prime,
-    required this.canAttack,
     this.onPressed,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isAvailable = prime.count > 0;
-    final isEffective = canAttack && prime.count > 0;
+    final recentlyAcquired = ref.watch(recentlyAcquiredPrimesProvider);
+    final isRecentlyAcquired = recentlyAcquired.containsKey(prime.value);
     
     return Material(
       color: isAvailable 
-          ? (isEffective ? AppColors.primeAvailable : AppColors.primaryContainer)
-          : AppColors.primeUnavailable,
+          ? AppColors.primeAvailable.withOpacity(0.1)
+          : AppColors.primeUnavailable.withOpacity(0.3),
       borderRadius: BorderRadius.circular(Dimensions.radiusM),
       child: InkWell(
         onTap: isAvailable ? onPressed : null,
@@ -939,56 +990,90 @@ class _PrimeButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
             border: Border.all(
               color: isAvailable 
-                  ? (isEffective ? AppColors.primary : AppColors.timerWarning)
-                  : AppColors.outline,
+                  ? AppColors.primeAvailable
+                  : AppColors.primeUnavailable,
               width: 2,
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              // 効果的/非効果的のインジケーター
-              if (isAvailable) ...[
-                Icon(
-                  isEffective ? Icons.check_circle : Icons.help_outline,
-                  color: isEffective ? AppColors.primary : AppColors.timerWarning,
-                  size: 16,
-                ),
-                const SizedBox(height: 2),
-              ],
-              
-              Text(
-                prime.value.toString(),
-                style: AppTextStyles.primeValue.copyWith(
-                  color: isAvailable 
-                      ? (isEffective ? AppColors.onPrimary : AppColors.onSurfaceVariant)
-                      : AppColors.onSurfaceVariant,
-                  fontWeight: isEffective ? FontWeight.bold : FontWeight.normal,
-                ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  
+                  Text(
+                    prime.value.toString(),
+                    style: AppTextStyles.primeValue.copyWith(
+                      color: isAvailable 
+                          ? AppColors.primeAvailable
+                          : AppColors.primeUnavailable,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  
+                  const SizedBox(height: Dimensions.spacingXs),
+                  
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: Dimensions.paddingS,
+                      vertical: Dimensions.paddingXs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isAvailable 
+                          ? AppColors.primeAvailable.withOpacity(0.2)
+                          : AppColors.surface,
+                      borderRadius: BorderRadius.circular(Dimensions.radiusS),
+                      border: Border.all(
+                        color: isAvailable 
+                            ? AppColors.primeAvailable
+                            : AppColors.primeUnavailable,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      'x${prime.count}',
+                      style: AppTextStyles.primeCount.copyWith(
+                        color: isAvailable 
+                            ? AppColors.primeAvailable
+                            : AppColors.primeUnavailable,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               
-              const SizedBox(height: Dimensions.spacingXs),
-              
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingS,
-                  vertical: Dimensions.paddingXs,
-                ),
-                decoration: BoxDecoration(
-                  color: isAvailable 
-                      ? (isEffective ? AppColors.primaryContainer : AppColors.surfaceVariant)
-                      : AppColors.surfaceVariant,
-                  borderRadius: BorderRadius.circular(Dimensions.radiusS),
-                ),
-                child: Text(
-                  'x${prime.count}',
-                  style: AppTextStyles.primeCount.copyWith(
-                    color: isAvailable 
-                        ? (isEffective ? AppColors.onPrimaryContainer : AppColors.onSurfaceVariant)
-                        : AppColors.onSurfaceVariant,
+              // Recently acquired indicator
+              if (isRecentlyAcquired)
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.victoryGreen,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.victoryGreen.withOpacity(0.5),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      '+1',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -1082,14 +1167,34 @@ class _ActionButtonsSection extends ConsumerWidget {
       final usedPrimes = session.usedPrimesInCurrentBattle;
       ref.read(battleSessionProvider.notifier).recordVictory(enemy);
       
-      // 練習モードでない場合のみ報酬を獲得
+      // 最終素数を報酬として獲得
       if (!session.isPracticeMode) {
-        // 完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
+        // ステージモード：完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
         ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
+        print('Stage mode victory reward: final prime $enemy + used primes ${usedPrimes.join(", ")}');
         
-        print('Victory reward: final prime $enemy + used primes ${usedPrimes.join(", ")}');
+        // Track recently acquired primes for visual feedback
+        final now = DateTime.now();
+        final currentMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
+        for (final prime in [enemy, ...usedPrimes]) {
+          currentMap[prime] = now;
+        }
+        currentMap.removeWhere((key, timestamp) => 
+            now.difference(timestamp).inSeconds > 2);
+        ref.read(recentlyAcquiredPrimesProvider.notifier).state = currentMap;
+        
       } else {
-        print('Practice mode: no items consumed or gained');
+        // 練習モード：最終素数のみ獲得（アイテムは消費されない）
+        ref.read(inventoryProvider.notifier).addPrime(enemy);
+        print('Practice mode victory reward: final prime $enemy');
+        
+        // Track recently acquired prime for visual feedback
+        final now = DateTime.now();
+        final currentMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
+        currentMap[enemy] = now;
+        currentMap.removeWhere((key, timestamp) => 
+            now.difference(timestamp).inSeconds > 2);
+        ref.read(recentlyAcquiredPrimesProvider.notifier).state = currentMap;
       }
       
       // Check if stage is cleared
@@ -1118,6 +1223,8 @@ class _ActionButtonsSection extends ConsumerWidget {
         onGenerateNewEnemy();
         // Start new timer for next battle
         onRestartTimer();
+        
+        // No intrusive feedback - let the player continue seamlessly
       }
     } else {
       // Wrong claim - record error

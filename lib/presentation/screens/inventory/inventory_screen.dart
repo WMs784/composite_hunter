@@ -1,31 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
+import '../../providers/inventory_provider.dart';
+import '../../providers/prime_usage_provider.dart';
+import '../../../domain/entities/prime.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
-class InventoryScreen extends StatefulWidget {
+class InventoryScreen extends ConsumerStatefulWidget {
   const InventoryScreen({super.key});
 
   @override
-  State<InventoryScreen> createState() => _InventoryScreenState();
+  ConsumerState<InventoryScreen> createState() => _InventoryScreenState();
 }
 
-class _InventoryScreenState extends State<InventoryScreen>
+class _InventoryScreenState extends ConsumerState<InventoryScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
-  // Sample data - will be replaced with actual data
-  final List<Map<String, dynamic>> _primes = [
-    {'value': 2, 'count': 5, 'usage': 25},
-    {'value': 3, 'count': 3, 'usage': 18},
-    {'value': 5, 'count': 2, 'usage': 12},
-    {'value': 7, 'count': 1, 'usage': 8},
-    {'value': 11, 'count': 1, 'usage': 5},
-    {'value': 13, 'count': 0, 'usage': 3},
-    {'value': 17, 'count': 1, 'usage': 2},
-    {'value': 19, 'count': 0, 'usage': 1},
-  ];
 
   @override
   void initState() {
@@ -80,7 +72,9 @@ class _InventoryScreenState extends State<InventoryScreen>
 
   Widget _buildInventoryTab() {
     final l10n = AppLocalizations.of(context)!;
-    final availablePrimes = _primes.where((p) => p['count'] > 0).toList();
+    final inventory = ref.watch(inventoryProvider);
+    final usageStats = ref.watch(primeUsageProvider);
+    final availablePrimes = inventory.where((p) => p.count > 0).toList();
     
     return Column(
       children: [
@@ -97,12 +91,12 @@ class _InventoryScreenState extends State<InventoryScreen>
             children: [
               _buildSummaryItem(
                 l10n.totalPrimes,
-                _primes.fold(0, (sum, p) => sum + (p['count'] as int)).toString(),
+                inventory.fold(0, (sum, p) => sum + p.count).toString(),
                 Icons.numbers,
               ),
               _buildSummaryItem(
                 l10n.unique,
-                availablePrimes.length.toString(),
+                inventory.length.toString(),
                 Icons.category,
               ),
               _buildSummaryItem(
@@ -118,10 +112,11 @@ class _InventoryScreenState extends State<InventoryScreen>
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: Dimensions.paddingM),
-            itemCount: _primes.length,
+            itemCount: inventory.length,
             itemBuilder: (context, index) {
-              final prime = _primes[index];
-              return _buildPrimeItem(prime, l10n);
+              final prime = inventory[index];
+              final usage = usageStats[prime.value] ?? 0;
+              return _buildPrimeItem(prime, usage, l10n);
             },
           ),
         ),
@@ -131,13 +126,17 @@ class _InventoryScreenState extends State<InventoryScreen>
 
   Widget _buildCollectionTab() {
     final l10n = AppLocalizations.of(context)!;
+    final inventory = ref.watch(inventoryProvider);
+    final usageStats = ref.watch(primeUsageProvider);
     
     return ListView.builder(
       padding: const EdgeInsets.all(Dimensions.paddingM),
-      itemCount: _primes.length,
+      itemCount: inventory.length,
       itemBuilder: (context, index) {
-        final prime = _primes[index];
-        final isUnlocked = prime['usage'] > 0;
+        final prime = inventory[index];
+        final usage = usageStats[prime.value] ?? 0;
+        final isUnlocked = usage > 0 || prime.count > 0;
+        final daysSinceObtained = DateTime.now().difference(prime.firstObtained).inDays;
         
         return Card(
           child: ListTile(
@@ -146,7 +145,7 @@ class _InventoryScreenState extends State<InventoryScreen>
                   ? AppColors.primary 
                   : AppColors.surfaceVariant,
               child: Text(
-                prime['value'].toString(),
+                prime.value.toString(),
                 style: AppTextStyles.labelLarge.copyWith(
                   color: isUnlocked 
                       ? AppColors.onPrimary 
@@ -155,7 +154,7 @@ class _InventoryScreenState extends State<InventoryScreen>
               ),
             ),
             title: Text(
-              l10n.primeWithValue(prime['value'].toString()),
+              l10n.primeWithValue(prime.value.toString()),
               style: AppTextStyles.titleMedium.copyWith(
                 color: isUnlocked 
                     ? AppColors.onSurface 
@@ -164,7 +163,7 @@ class _InventoryScreenState extends State<InventoryScreen>
             ),
             subtitle: Text(
               isUnlocked 
-                  ? l10n.firstObtained(l10n.daysAgo('2'))
+                  ? l10n.firstObtained(l10n.daysAgo(daysSinceObtained.toString()))
                   : l10n.notYetDiscovered,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.onSurfaceVariant,
@@ -200,9 +199,11 @@ class _InventoryScreenState extends State<InventoryScreen>
 
   Widget _buildStatisticsTab() {
     final l10n = AppLocalizations.of(context)!;
-    final totalUsage = _primes.fold(0, (sum, p) => sum + (p['usage'] as int));
-    final mostUsed = _primes.reduce((a, b) => 
-        a['usage'] > b['usage'] ? a : b);
+    final inventory = ref.watch(inventoryProvider);
+    final usageStats = ref.watch(primeUsageProvider);
+    final usageNotifier = ref.read(primeUsageProvider.notifier);
+    final totalUsage = usageNotifier.totalUsage;
+    final mostUsedPrime = usageNotifier.mostUsedPrime;
     
     return Padding(
       padding: const EdgeInsets.all(Dimensions.paddingM),
@@ -226,13 +227,22 @@ class _InventoryScreenState extends State<InventoryScreen>
           
           const SizedBox(height: Dimensions.spacingM),
           
-          _buildStatCard(
-            l10n.mostUsedPrime,
-            mostUsed['value'].toString(),
-            l10n.timesUsed(mostUsed['usage'].toString()),
-            Icons.star,
-            AppColors.victoryGreen,
-          ),
+          if (mostUsedPrime != null)
+            _buildStatCard(
+              l10n.mostUsedPrime,
+              mostUsedPrime.toString(),
+              l10n.timesUsed(usageStats[mostUsedPrime].toString()),
+              Icons.star,
+              AppColors.victoryGreen,
+            )
+          else
+            _buildStatCard(
+              l10n.mostUsedPrime,
+              '-',
+              l10n.timesUsed('0'),
+              Icons.star,
+              AppColors.victoryGreen,
+            ),
           
           const SizedBox(height: Dimensions.spacingL),
           
@@ -245,10 +255,10 @@ class _InventoryScreenState extends State<InventoryScreen>
           
           Expanded(
             child: ListView.builder(
-              itemCount: _primes.length,
+              itemCount: inventory.length,
               itemBuilder: (context, index) {
-                final prime = _primes[index];
-                final usage = prime['usage'] as int;
+                final prime = inventory[index];
+                final usage = usageStats[prime.value] ?? 0;
                 final percentage = totalUsage > 0 ? usage / totalUsage : 0.0;
                 
                 return Padding(
@@ -258,7 +268,7 @@ class _InventoryScreenState extends State<InventoryScreen>
                       SizedBox(
                         width: 30,
                         child: Text(
-                          prime['value'].toString(),
+                          prime.value.toString(),
                           style: AppTextStyles.labelMedium,
                         ),
                       ),
@@ -329,8 +339,8 @@ class _InventoryScreenState extends State<InventoryScreen>
     );
   }
 
-  Widget _buildPrimeItem(Map<String, dynamic> prime, AppLocalizations l10n) {
-    final isAvailable = prime['count'] > 0;
+  Widget _buildPrimeItem(Prime prime, int usage, AppLocalizations l10n) {
+    final isAvailable = prime.count > 0;
     
     return Card(
       margin: const EdgeInsets.symmetric(vertical: Dimensions.spacingXs),
@@ -344,7 +354,7 @@ class _InventoryScreenState extends State<InventoryScreen>
           ),
           child: Center(
             child: Text(
-              prime['value'].toString(),
+              prime.value.toString(),
               style: AppTextStyles.titleMedium.copyWith(
                 color: isAvailable ? AppColors.onPrimary : AppColors.onSurfaceVariant,
                 fontWeight: FontWeight.bold,
@@ -353,11 +363,11 @@ class _InventoryScreenState extends State<InventoryScreen>
           ),
         ),
         title: Text(
-          l10n.primeWithValue(prime['value'].toString()),
+          l10n.primeWithValue(prime.value.toString()),
           style: AppTextStyles.titleMedium,
         ),
         subtitle: Text(
-          l10n.usedTimes(prime['usage'].toString()),
+          l10n.usedTimes(usage.toString()),
           style: AppTextStyles.bodySmall.copyWith(
             color: AppColors.onSurfaceVariant,
           ),
@@ -374,7 +384,7 @@ class _InventoryScreenState extends State<InventoryScreen>
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
           child: Text(
-            'x${prime['count']}',
+            'x${prime.count}',
             style: AppTextStyles.labelLarge.copyWith(
               color: isAvailable 
                   ? AppColors.onPrimaryContainer 

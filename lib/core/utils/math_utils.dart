@@ -36,6 +36,8 @@ class MathUtils {
   
   /// Get prime factorization of a number
   static List<int> factorize(int n) {
+    if (n < 2) return [];
+    
     final factors = <int>[];
     
     // Handle 2 separately

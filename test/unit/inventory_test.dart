@@ -113,7 +113,7 @@ void main() {
         final updated = emptyInventory.addPrime(newPrime);
         
         expect(updated.uniqueCount, 1);
-        expect(updated.totalCount, 2);
+        expect(updated.totalCount, 1); // 11 is a large prime, clamped to maxLargePrimeCount
         expect(updated.getPrime(11), isNotNull);
       });
 
@@ -247,8 +247,8 @@ void main() {
         
         expect(stats.totalPrimes, 6);
         expect(stats.uniquePrimes, 4);
-        expect(stats.smallPrimes, 3); // 2, 3, 5, 7 (all <= 10)
-        expect(stats.largePrimes, 1); // None in this sample
+        expect(stats.smallPrimes, 4); // 2, 3, 5, 7 (all <= 10)
+        expect(stats.largePrimes, 0); // None in this sample
         expect(stats.mostUsedPrime?.value, 2);
         expect(stats.averageUsage, 2.25); // (5 + 3 + 1 + 0) / 4
       });

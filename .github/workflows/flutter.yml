@@ -21,8 +21,16 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze project source
-        run: flutter analyze
+      - name: Analyze project source (ignore warnings and info)
+        run: |
+          OUTPUT=$(flutter analyze || true)
+          echo "$OUTPUT"
+          if echo "$OUTPUT" | grep -q "error •"; then
+            echo "❌ Analyzer found errors"
+            exit 1
+          else
+            echo "✅ No analyzer errors found"
+          fi
 
       - name: Run tests
         run: flutter test

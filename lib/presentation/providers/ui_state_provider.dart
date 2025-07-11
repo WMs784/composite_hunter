@@ -8,7 +8,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show loading state
   void showLoading({String? message}) {
-    Logger.logUI('Showing loading state', message: message);
+    Logger.debug('Showing loading state: ${message ?? "no message"}');
     state = state.copyWith(
       isLoading: true,
       loadingMessage: message,
@@ -17,7 +17,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide loading state
   void hideLoading() {
-    Logger.logUI('Hiding loading state');
+    Logger.debug('Hiding loading state');
     state = state.copyWith(
       isLoading: false,
       loadingMessage: null,
@@ -26,7 +26,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show error dialog
   void showError(String message, {String? title}) {
-    Logger.logUI('Showing error dialog', message: message);
+    Logger.debug('Showing error dialog: $message');
     state = state.copyWith(
       showErrorDialog: true,
       errorMessage: message,
@@ -36,7 +36,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide error dialog
   void hideError() {
-    Logger.logUI('Hiding error dialog');
+    Logger.debug('Hiding error dialog');
     state = state.copyWith(
       showErrorDialog: false,
       errorMessage: null,
@@ -46,7 +46,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show success message
   void showSuccess(String message, {Duration? duration}) {
-    Logger.logUI('Showing success message', message: message);
+    Logger.debug('Showing success message: $message');
     state = state.copyWith(
       showSuccessMessage: true,
       successMessage: message,
@@ -62,7 +62,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide success message
   void hideSuccess() {
-    Logger.logUI('Hiding success message');
+    Logger.debug('Hiding success message');
     state = state.copyWith(
       showSuccessMessage: false,
       successMessage: null,
@@ -71,7 +71,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show info message
   void showInfo(String message, {Duration? duration}) {
-    Logger.logUI('Showing info message', message: message);
+    Logger.debug('Showing info message: $message');
     state = state.copyWith(
       showInfoMessage: true,
       infoMessage: message,
@@ -87,7 +87,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide info message
   void hideInfo() {
-    Logger.logUI('Hiding info message');
+    Logger.debug('Hiding info message');
     state = state.copyWith(
       showInfoMessage: false,
       infoMessage: null,
@@ -101,7 +101,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
     required String cancelText,
     String? title,
   }) {
-    Logger.logUI('Showing confirmation dialog', message: message);
+    Logger.debug('Showing confirmation dialog: $message');
     state = state.copyWith(
       showConfirmationDialog: true,
       confirmationMessage: message,
@@ -113,7 +113,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide confirmation dialog
   void hideConfirmation() {
-    Logger.logUI('Hiding confirmation dialog');
+    Logger.debug('Hiding confirmation dialog');
     state = state.copyWith(
       showConfirmationDialog: false,
       confirmationMessage: null,
@@ -125,7 +125,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show tutorial overlay
   void showTutorial(String tutorialKey, String content) {
-    Logger.logUI('Showing tutorial', message: tutorialKey);
+    Logger.debug('Showing tutorial: $tutorialKey');
     state = state.copyWith(
       showTutorialOverlay: true,
       tutorialKey: tutorialKey,
@@ -135,7 +135,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide tutorial overlay
   void hideTutorial() {
-    Logger.logUI('Hiding tutorial');
+    Logger.debug('Hiding tutorial');
     state = state.copyWith(
       showTutorialOverlay: false,
       tutorialKey: null,
@@ -145,7 +145,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show achievement notification
   void showAchievementUnlocked(String achievementTitle, String description) {
-    Logger.logUI('Showing achievement notification', message: achievementTitle);
+    Logger.debug('Showing achievement notification: $achievementTitle');
     state = state.copyWith(
       showAchievementNotification: true,
       achievementTitle: achievementTitle,
@@ -162,7 +162,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide achievement notification
   void hideAchievementNotification() {
-    Logger.logUI('Hiding achievement notification');
+    Logger.debug('Hiding achievement notification');
     state = state.copyWith(
       showAchievementNotification: false,
       achievementTitle: null,
@@ -172,7 +172,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show level up notification
   void showLevelUp(int newLevel) {
-    Logger.logUI('Showing level up notification', data: {'level': newLevel});
+    Logger.debug('Showing level up notification for level: $newLevel');
     state = state.copyWith(
       showLevelUpNotification: true,
       levelUpNewLevel: newLevel,
@@ -188,7 +188,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide level up notification
   void hideLevelUp() {
-    Logger.logUI('Hiding level up notification');
+    Logger.debug('Hiding level up notification');
     state = state.copyWith(
       showLevelUpNotification: false,
       levelUpNewLevel: null,
@@ -202,10 +202,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
     required String message,
     List<String>? rewards,
   }) {
-    Logger.logUI('Showing battle result', data: {
-      'victory': isVictory,
-      'score': score,
-    });
+    Logger.debug('Showing battle result: victory=$isVictory, score=$score');
     state = state.copyWith(
       showBattleResultScreen: true,
       battleResultIsVictory: isVictory,
@@ -217,7 +214,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Hide battle result screen
   void hideBattleResult() {
-    Logger.logUI('Hiding battle result');
+    Logger.debug('Hiding battle result');
     state = state.copyWith(
       showBattleResultScreen: false,
       battleResultIsVictory: null,
@@ -229,119 +226,119 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Show settings screen
   void showSettings() {
-    Logger.logUI('Showing settings');
+    Logger.debug('Showing settings');
     state = state.copyWith(showSettingsScreen: true);
   }
 
   /// Hide settings screen
   void hideSettings() {
-    Logger.logUI('Hiding settings');
+    Logger.debug('Hiding settings');
     state = state.copyWith(showSettingsScreen: false);
   }
 
   /// Show inventory screen
   void showInventory() {
-    Logger.logUI('Showing inventory');
+    Logger.debug('Showing inventory');
     state = state.copyWith(showInventoryScreen: true);
   }
 
   /// Hide inventory screen
   void hideInventory() {
-    Logger.logUI('Hiding inventory');
+    Logger.debug('Hiding inventory');
     state = state.copyWith(showInventoryScreen: false);
   }
 
   /// Show achievement screen
   void showAchievements() {
-    Logger.logUI('Showing achievements');
+    Logger.debug('Showing achievements');
     state = state.copyWith(showAchievementScreen: true);
   }
 
   /// Hide achievement screen
   void hideAchievements() {
-    Logger.logUI('Hiding achievements');
+    Logger.debug('Hiding achievements');
     state = state.copyWith(showAchievementScreen: false);
   }
 
   /// Show statistics screen
   void showStatistics() {
-    Logger.logUI('Showing statistics');
+    Logger.debug('Showing statistics');
     state = state.copyWith(showStatisticsScreen: true);
   }
 
   /// Hide statistics screen
   void hideStatistics() {
-    Logger.logUI('Hiding statistics');
+    Logger.debug('Hiding statistics');
     state = state.copyWith(showStatisticsScreen: false);
   }
 
   /// Set bottom navigation index
   void setBottomNavIndex(int index) {
-    Logger.logUI('Setting bottom nav index', data: {'index': index});
+    Logger.debug('Setting bottom nav index: $index');
     state = state.copyWith(bottomNavIndex: index);
   }
 
   /// Set current screen
   void setCurrentScreen(String screenName) {
-    Logger.logUI('Setting current screen', message: screenName);
+    Logger.debug('Setting current screen: $screenName');
     state = state.copyWith(currentScreen: screenName);
   }
 
   /// Toggle debug mode
   void toggleDebugMode() {
     final newDebugMode = !state.isDebugMode;
-    Logger.logUI('Toggling debug mode', data: {'enabled': newDebugMode});
+    Logger.debug('Toggling debug mode: $newDebugMode');
     state = state.copyWith(isDebugMode: newDebugMode);
   }
 
   /// Set theme mode
   void setThemeMode(ThemeMode mode) {
-    Logger.logUI('Setting theme mode', data: {'mode': mode.name});
+    Logger.debug('Setting theme mode: ${mode.name}');
     state = state.copyWith(themeMode: mode);
   }
 
   /// Toggle sound effects
   void toggleSoundEffects() {
     final newSoundEnabled = !state.soundEffectsEnabled;
-    Logger.logUI('Toggling sound effects', data: {'enabled': newSoundEnabled});
+    Logger.debug('Toggling sound effects: $newSoundEnabled');
     state = state.copyWith(soundEffectsEnabled: newSoundEnabled);
   }
 
   /// Toggle music
   void toggleMusic() {
     final newMusicEnabled = !state.musicEnabled;
-    Logger.logUI('Toggling music', data: {'enabled': newMusicEnabled});
+    Logger.debug('Toggling music: $newMusicEnabled');
     state = state.copyWith(musicEnabled: newMusicEnabled);
   }
 
   /// Set sound volume
   void setSoundVolume(double volume) {
-    Logger.logUI('Setting sound volume', data: {'volume': volume});
+    Logger.debug('Setting sound volume: $volume');
     state = state.copyWith(soundVolume: volume.clamp(0.0, 1.0));
   }
 
   /// Set music volume
   void setMusicVolume(double volume) {
-    Logger.logUI('Setting music volume', data: {'volume': volume});
+    Logger.debug('Setting music volume: $volume');
     state = state.copyWith(musicVolume: volume.clamp(0.0, 1.0));
   }
 
   /// Toggle haptic feedback
   void toggleHapticFeedback() {
     final newHapticEnabled = !state.hapticFeedbackEnabled;
-    Logger.logUI('Toggling haptic feedback', data: {'enabled': newHapticEnabled});
+    Logger.debug('Toggling haptic feedback: $newHapticEnabled');
     state = state.copyWith(hapticFeedbackEnabled: newHapticEnabled);
   }
 
   /// Set animation speed
   void setAnimationSpeed(double speed) {
-    Logger.logUI('Setting animation speed', data: {'speed': speed});
+    Logger.debug('Setting animation speed: $speed');
     state = state.copyWith(animationSpeed: speed.clamp(0.5, 2.0));
   }
 
   /// Reset all notifications
   void clearAllNotifications() {
-    Logger.logUI('Clearing all notifications');
+    Logger.debug('Clearing all notifications');
     state = state.copyWith(
       showSuccessMessage: false,
       showInfoMessage: false,
@@ -357,7 +354,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Reset all dialogs
   void clearAllDialogs() {
-    Logger.logUI('Clearing all dialogs');
+    Logger.debug('Clearing all dialogs');
     state = state.copyWith(
       showErrorDialog: false,
       showConfirmationDialog: false,
@@ -375,7 +372,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Reset all screens
   void clearAllScreens() {
-    Logger.logUI('Clearing all screens');
+    Logger.debug('Clearing all screens');
     state = state.copyWith(
       showBattleResultScreen: false,
       showSettingsScreen: false,
@@ -391,7 +388,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
 
   /// Reset to default state
   void resetToDefault() {
-    Logger.logUI('Resetting UI state to default');
+    Logger.debug('Resetting UI state to default');
     state = const UiState();
   }
 }
@@ -594,9 +591,3 @@ final hasActiveScreenProvider = Provider<bool>((ref) {
          uiState.showStatisticsScreen;
 });
 
-/// Theme mode enumeration
-enum ThemeMode {
-  system,
-  light,
-  dark,
-}

@@ -674,17 +674,18 @@ class _EnemySection extends ConsumerWidget {
       child: Container(
         width: double.infinity,
         constraints: BoxConstraints(
-          minHeight: 150,
-          maxHeight: screenHeight * 0.3,
+          minHeight: 120,
+          maxHeight: screenHeight * 0.25,
         ),
         padding: EdgeInsets.symmetric(
-          horizontal: screenWidth < 350 ? Dimensions.paddingM : Dimensions.paddingL,
-          vertical: screenWidth < 350 ? Dimensions.paddingS : Dimensions.paddingM,
+          horizontal: screenWidth < 350 ? Dimensions.paddingS : Dimensions.paddingM,
+          vertical: screenWidth < 350 ? Dimensions.paddingXs : Dimensions.paddingS,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
             // Enemy display
             Container(
               width: enemyDisplaySize,
@@ -724,7 +725,7 @@ class _EnemySection extends ConsumerWidget {
               ),
             ),
             
-            SizedBox(height: screenWidth < 350 ? Dimensions.spacingS : Dimensions.spacingM),
+            SizedBox(height: screenWidth < 350 ? Dimensions.spacingXs : Dimensions.spacingS),
             
             // Prime/Composite Number タイトル
             Flexible(
@@ -740,7 +741,7 @@ class _EnemySection extends ConsumerWidget {
               ),
             ),
             
-            SizedBox(height: screenWidth < 350 ? Dimensions.spacingXs : Dimensions.spacingS),
+            SizedBox(height: screenWidth < 350 ? 2 : Dimensions.spacingXs),
             
             // 説明文
             Flexible(
@@ -764,6 +765,7 @@ class _EnemySection extends ConsumerWidget {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

@@ -71,8 +71,15 @@ class Inventory with _$Inventory {
       
       return copyWith(primes: updatedPrimes);
     } else {
-      // New prime, add to inventory
-      return copyWith(primes: [...primes, newPrime]);
+      // New prime, add to inventory with limits applied
+      final maxCount = newPrime.isSmallPrime 
+          ? GameConstants.maxSmallPrimeCount 
+          : GameConstants.maxLargePrimeCount;
+      
+      final clampedCount = newPrime.count.clamp(0, maxCount);
+      final clampedPrime = newPrime.copyWith(count: clampedCount);
+      
+      return copyWith(primes: [...primes, clampedPrime]);
     }
   }
 

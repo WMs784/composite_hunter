@@ -3,7 +3,6 @@ import '../entities/prime.dart';
 import '../entities/victory_claim.dart';
 import '../entities/penalty_state.dart';
 import '../../core/constants/timer_constants.dart';
-import '../../core/exceptions/game_exception.dart';
 import '../../core/utils/logger.dart';
 
 /// Core battle logic engine

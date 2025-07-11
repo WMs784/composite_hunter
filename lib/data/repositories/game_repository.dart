@@ -1,7 +1,6 @@
 import 'dart:convert';
-import '../models/game_data_model.dart';
-import '../models/prime_model.dart';
 import '../models/battle_result_model.dart';
+import '../models/enemy_model.dart';
 import '../datasources/local_database.dart';
 import '../datasources/shared_preferences_service.dart';
 import '../mappers/game_mapper.dart';
@@ -425,9 +424,14 @@ class GameRepository {
         switch (battleResult) {
           case 'victory':
             return BattleResultModel.victory(
-              defeatedEnemy: null, // You'd need to reconstruct the enemy
-              rewardPrime: enemyValue, // Simplified
-              completedAt: completedAt ?? DateTime.now().millisecondsSinceEpoch,
+              defeatedEnemy: EnemyModel(
+                currentValue: enemyValue,
+                originalValue: enemyValue,
+                type: EnemyType.small, // Default type
+                primeFactors: [],
+              ),
+              rewardPrime: enemyValue,
+              completedAt: DateTime.fromMillisecondsSinceEpoch(completedAt ?? DateTime.now().millisecondsSinceEpoch),
               battleDuration: duration,
             );
           case 'defeat':

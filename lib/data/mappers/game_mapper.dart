@@ -1,15 +1,16 @@
 import '../models/prime_model.dart';
-import '../models/enemy_model.dart';
+import '../models/enemy_model.dart' as model;
 import '../models/battle_result_model.dart';
 import '../models/timer_state_model.dart';
-import '../models/penalty_record_model.dart';
+import '../models/penalty_record_model.dart' as penalty_model;
 import '../models/game_data_model.dart';
 import '../../domain/entities/prime.dart';
-import '../../domain/entities/enemy.dart';
+import '../../domain/entities/enemy.dart' as entity;
 import '../../domain/entities/timer_state.dart';
-import '../../domain/entities/penalty_state.dart';
+import '../../domain/entities/penalty_state.dart' as penalty_entity;
 import '../../domain/entities/battle_state.dart';
 import '../../domain/entities/inventory.dart';
+import '../../domain/entities/victory_claim.dart';
 import '../../domain/services/battle_engine.dart';
 
 /// Mapper between data models and domain entities
@@ -35,8 +36,8 @@ class GameMapper {
   }
 
   // Enemy mappings
-  Enemy enemyModelToDomain(EnemyModel model) {
-    return Enemy(
+  entity.Enemy enemyModelToDomain(model.EnemyModel model) {
+    return entity.Enemy(
       currentValue: model.currentValue,
       originalValue: model.originalValue,
       type: _mapEnemyType(model.type),
@@ -47,8 +48,8 @@ class GameMapper {
     );
   }
 
-  EnemyModel enemyToModel(Enemy enemy) {
-    return EnemyModel(
+  model.EnemyModel enemyToModel(entity.Enemy enemy) {
+    return model.EnemyModel(
       currentValue: enemy.currentValue,
       originalValue: enemy.originalValue,
       type: _mapEnemyTypeToModel(enemy.type),
@@ -62,7 +63,7 @@ class GameMapper {
   // Timer state mappings
   TimerState timerStateModelToDomain(TimerStateModel model) {
     final penalties = model.penalties
-        .map((p) => TimePenalty(
+        .map((p) => penalty_entity.TimePenalty(
               seconds: p.seconds,
               type: _mapPenaltyType(p.type),
               appliedAt: p.appliedAt,
@@ -81,7 +82,7 @@ class GameMapper {
 
   TimerStateModel timerStateToModel(TimerState state) {
     final penalties = state.penalties
-        .map((p) => PenaltyRecordModel(
+        .map((p) => penalty_model.PenaltyRecordModel(
               seconds: p.seconds,
               type: _mapPenaltyTypeToModel(p.type),
               appliedAt: p.appliedAt,
@@ -121,7 +122,7 @@ class GameMapper {
         usedPrime: primeModelToDomain(prime),
       ),
       wrongClaim: (penalty, enemy) => BattleResult.wrongClaim(
-        penalty: TimePenalty(
+        penalty: penalty_entity.TimePenalty(
           seconds: penalty.seconds,
           type: _mapPenaltyType(penalty.type),
           appliedAt: penalty.appliedAt,
@@ -131,7 +132,7 @@ class GameMapper {
         victoryClaim: VictoryClaim.incorrect(claimedValue: enemy.currentValue),
       ),
       escape: (penalty, escapedAt) => BattleResult.escape(
-        penalty: TimePenalty(
+        penalty: penalty_entity.TimePenalty(
           seconds: penalty.seconds,
           type: _mapPenaltyType(penalty.type),
           appliedAt: penalty.appliedAt,
@@ -139,7 +140,7 @@ class GameMapper {
         ),
       ),
       timeOut: (penalty, timedOutAt) => BattleResult.timeOut(
-        penalty: TimePenalty(
+        penalty: penalty_entity.TimePenalty(
           seconds: penalty.seconds,
           type: _mapPenaltyType(penalty.type),
           appliedAt: penalty.appliedAt,
@@ -174,7 +175,7 @@ class GameMapper {
         usedPrime: primeToModel(prime),
       ),
       wrongClaim: (penalty, enemy, claim) => BattleResultModel.wrongClaim(
-        penalty: PenaltyRecordModel(
+        penalty: penalty_model.PenaltyRecordModel(
           seconds: penalty.seconds,
           type: _mapPenaltyTypeToModel(penalty.type),
           appliedAt: penalty.appliedAt,
@@ -183,7 +184,7 @@ class GameMapper {
         currentEnemy: enemyToModel(enemy),
       ),
       escape: (penalty) => BattleResultModel.escape(
-        penalty: PenaltyRecordModel(
+        penalty: penalty_model.PenaltyRecordModel(
           seconds: penalty.seconds,
           type: _mapPenaltyTypeToModel(penalty.type),
           appliedAt: penalty.appliedAt,
@@ -192,7 +193,7 @@ class GameMapper {
         escapedAt: penalty.appliedAt,
       ),
       timeOut: (penalty) => BattleResultModel.timeOut(
-        penalty: PenaltyRecordModel(
+        penalty: penalty_model.PenaltyRecordModel(
           seconds: penalty.seconds,
           type: _mapPenaltyTypeToModel(penalty.type),
           appliedAt: penalty.appliedAt,
@@ -249,55 +250,55 @@ class GameMapper {
   }
 
   // Helper methods for enum mapping
-  EnemyType _mapEnemyType(EnemyTypeModel type) {
+  entity.EnemyType _mapEnemyType(model.EnemyType type) {
     switch (type) {
-      case EnemyTypeModel.small:
-        return EnemyType.small;
-      case EnemyTypeModel.medium:
-        return EnemyType.medium;
-      case EnemyTypeModel.large:
-        return EnemyType.large;
-      case EnemyTypeModel.power:
-        return EnemyType.power;
-      case EnemyTypeModel.special:
-        return EnemyType.special;
+      case model.EnemyType.small:
+        return entity.EnemyType.small;
+      case model.EnemyType.medium:
+        return entity.EnemyType.medium;
+      case model.EnemyType.large:
+        return entity.EnemyType.large;
+      case model.EnemyType.power:
+        return entity.EnemyType.power;
+      case model.EnemyType.special:
+        return entity.EnemyType.special;
     }
   }
 
-  EnemyTypeModel _mapEnemyTypeToModel(EnemyType type) {
+  model.EnemyType _mapEnemyTypeToModel(entity.EnemyType type) {
     switch (type) {
-      case EnemyType.small:
-        return EnemyTypeModel.small;
-      case EnemyType.medium:
-        return EnemyTypeModel.medium;
-      case EnemyType.large:
-        return EnemyTypeModel.large;
-      case EnemyType.power:
-        return EnemyTypeModel.power;
-      case EnemyType.special:
-        return EnemyTypeModel.special;
+      case entity.EnemyType.small:
+        return model.EnemyType.small;
+      case entity.EnemyType.medium:
+        return model.EnemyType.medium;
+      case entity.EnemyType.large:
+        return model.EnemyType.large;
+      case entity.EnemyType.power:
+        return model.EnemyType.power;
+      case entity.EnemyType.special:
+        return model.EnemyType.special;
     }
   }
 
-  PenaltyType _mapPenaltyType(PenaltyTypeModel type) {
+  penalty_entity.PenaltyType _mapPenaltyType(penalty_model.PenaltyType type) {
     switch (type) {
-      case PenaltyTypeModel.escape:
-        return PenaltyType.escape;
-      case PenaltyTypeModel.wrongVictoryClaim:
-        return PenaltyType.wrongVictoryClaim;
-      case PenaltyTypeModel.timeOut:
-        return PenaltyType.timeOut;
+      case penalty_model.PenaltyType.escape:
+        return penalty_entity.PenaltyType.escape;
+      case penalty_model.PenaltyType.wrongVictoryClaim:
+        return penalty_entity.PenaltyType.wrongVictoryClaim;
+      case penalty_model.PenaltyType.timeOut:
+        return penalty_entity.PenaltyType.timeOut;
     }
   }
 
-  PenaltyTypeModel _mapPenaltyTypeToModel(PenaltyType type) {
+  penalty_model.PenaltyType _mapPenaltyTypeToModel(penalty_entity.PenaltyType type) {
     switch (type) {
-      case PenaltyType.escape:
-        return PenaltyTypeModel.escape;
-      case PenaltyType.wrongVictoryClaim:
-        return PenaltyTypeModel.wrongVictoryClaim;
-      case PenaltyType.timeOut:
-        return PenaltyTypeModel.timeOut;
+      case penalty_entity.PenaltyType.escape:
+        return penalty_model.PenaltyType.escape;
+      case penalty_entity.PenaltyType.wrongVictoryClaim:
+        return penalty_model.PenaltyType.wrongVictoryClaim;
+      case penalty_entity.PenaltyType.timeOut:
+        return penalty_model.PenaltyType.timeOut;
     }
   }
 
@@ -329,7 +330,7 @@ class GameMapper {
   BattleState battleStateFromJson(Map<String, dynamic> json) {
     return BattleState(
       currentEnemy: json['currentEnemy'] != null 
-          ? enemyModelToDomain(EnemyModel.fromJson(json['currentEnemy']))
+          ? enemyModelToDomain(model.EnemyModel.fromJson(json['currentEnemy']))
           : null,
       usedPrimes: (json['usedPrimes'] as List)
           .map((p) => primeModelToDomain(PrimeModel.fromJson(p)))
@@ -352,9 +353,9 @@ class GameMapper {
             )
           : null,
       battlePenalties: (json['battlePenalties'] as List)
-          .map((p) => TimePenalty(
+          .map((p) => penalty_entity.TimePenalty(
                 seconds: p['seconds'],
-                type: PenaltyType.values.firstWhere((t) => t.name == p['type']),
+                type: penalty_entity.PenaltyType.values.firstWhere((t) => t.name == p['type']),
                 appliedAt: DateTime.parse(p['appliedAt']),
                 reason: p['reason'],
               ))
@@ -363,6 +364,3 @@ class GameMapper {
   }
 }
 
-// Add type alias for model enums to avoid confusion
-typedef EnemyTypeModel = EnemyType;
-typedef PenaltyTypeModel = PenaltyType;

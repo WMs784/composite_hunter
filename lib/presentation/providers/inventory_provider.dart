@@ -233,9 +233,14 @@ final battleInventoryProvider = Provider<List<Prime>>((ref) {
       }
     }
     
+    // ソートして表示順序を統一
+    battleInventory.sort((a, b) => a.value.compareTo(b.value));
+    
     return battleInventory;
   }
   
   // 練習モードまたはステージ選択なしの場合は通常のインベントリを使用
-  return mainInventory;
+  final sortedInventory = List<Prime>.from(mainInventory);
+  sortedInventory.sort((a, b) => a.value.compareTo(b.value));
+  return sortedInventory;
 });

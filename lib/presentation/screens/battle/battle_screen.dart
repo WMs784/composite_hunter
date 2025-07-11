@@ -9,6 +9,7 @@ import '../../routes/app_router.dart';
 import '../../widgets/battle_menu_dialog.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
+import '../../providers/prime_usage_provider.dart';
 import '../../../domain/entities/prime.dart';
 import '../stage/stage_clear_screen.dart';
 import '../game_over/game_over_screen.dart';
@@ -931,6 +932,9 @@ class _PrimeGridSection extends ConsumerWidget {
                               ref.read(inventoryProvider.notifier).usePrime(prime.value);
                             }
                             
+                            // 使用統計を記録
+                            ref.read(primeUsageProvider.notifier).recordPrimeUsage(prime.value);
+                            
                             // 使用した素数を記録
                             ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
                             
@@ -947,6 +951,9 @@ class _PrimeGridSection extends ConsumerWidget {
                             if (!session.isPracticeMode) {
                               ref.read(inventoryProvider.notifier).usePrime(prime.value);
                             }
+                            
+                            // 使用統計を記録（無効攻撃でも）
+                            ref.read(primeUsageProvider.notifier).recordPrimeUsage(prime.value);
                             
                             // 無効攻撃も記録（学習データとして）
                             ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);

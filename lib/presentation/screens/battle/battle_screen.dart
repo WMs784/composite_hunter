@@ -920,7 +920,7 @@ class _PrimeGridSection extends ConsumerWidget {
                         print('Prime ${prime.value} attack attempt on enemy $enemy');
                         if (prime.count > 0) {
                           final session = ref.read(battleSessionProvider);
-                          final canAttack = enemy % prime.value == 0;
+                          final canAttack = enemy % prime.value == 0 && !_isPrime(enemy);
                           
                           if (canAttack) {
                             // 有効な攻撃：敵の数値を更新
@@ -1166,9 +1166,6 @@ class _ActionButtonsSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     
     if (_isPrime(enemy)) {
-      // Stop timer during victory processing
-      onStopTimer();
-      
       // Correct claim - record victory and give reward
       final session = ref.read(battleSessionProvider);
       final usedPrimes = session.usedPrimesInCurrentBattle;
@@ -1242,7 +1239,7 @@ class _ActionButtonsSection extends ConsumerWidget {
         // Continue to next enemy automatically without popup
         // Reset used primes for next battle
         ref.read(battleSessionProvider.notifier).resetUsedPrimes();
-        // Generate new enemy but don't reset timer (continuous timer)
+        // Generate new enemy and continue timer
         onGenerateNewEnemyWithoutTimeReset();
         
         // No intrusive feedback - let the player continue seamlessly

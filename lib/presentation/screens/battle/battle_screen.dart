@@ -1180,6 +1180,14 @@ class _ActionButtonsSection extends ConsumerWidget {
         ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
         print('Stage mode victory reward: final prime $enemy + used primes ${usedPrimes.join(", ")}');
         
+        // インベントリ更新後の状態をデバッグ出力
+        Future.delayed(const Duration(milliseconds: 100), () {
+          final updatedInventory = ref.read(inventoryProvider);
+          final battleInventory = ref.read(battleInventoryProvider);
+          print('Main inventory after reward: ${updatedInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
+          print('Battle inventory after reward: ${battleInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
+        });
+        
         // Track recently acquired primes for visual feedback
         final now = DateTime.now();
         final currentMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
@@ -1194,6 +1202,14 @@ class _ActionButtonsSection extends ConsumerWidget {
         // 練習モード：最終素数のみ獲得（アイテムは消費されない）
         ref.read(inventoryProvider.notifier).addPrime(enemy);
         print('Practice mode victory reward: final prime $enemy');
+        
+        // インベントリ更新後の状態をデバッグ出力
+        Future.delayed(const Duration(milliseconds: 100), () {
+          final updatedInventory = ref.read(inventoryProvider);
+          final battleInventory = ref.read(battleInventoryProvider);
+          print('Main inventory after reward: ${updatedInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
+          print('Battle inventory after reward: ${battleInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
+        });
         
         // Track recently acquired prime for visual feedback
         final now = DateTime.now();
@@ -1226,10 +1242,8 @@ class _ActionButtonsSection extends ConsumerWidget {
         // Continue to next enemy automatically without popup
         // Reset used primes for next battle
         ref.read(battleSessionProvider.notifier).resetUsedPrimes();
-        // Generate new enemy but don't reset inventory
-        onGenerateNewEnemy();
-        // Start new timer for next battle
-        onRestartTimer();
+        // Generate new enemy but don't reset timer (continuous timer)
+        onGenerateNewEnemyWithoutTimeReset();
         
         // No intrusive feedback - let the player continue seamlessly
       }

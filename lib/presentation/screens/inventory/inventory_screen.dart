@@ -341,6 +341,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
 
   Widget _buildPrimeItem(Prime prime, int usage, AppLocalizations l10n) {
     final isAvailable = prime.count > 0;
+    final isRecentlyObtained = DateTime.now().difference(prime.firstObtained).inMinutes < 5;
     
     return Card(
       margin: const EdgeInsets.symmetric(vertical: Dimensions.spacingXs),
@@ -351,15 +352,41 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           decoration: BoxDecoration(
             color: isAvailable ? AppColors.primary : AppColors.surfaceVariant,
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
+            border: isRecentlyObtained ? Border.all(
+              color: AppColors.victoryGreen,
+              width: 2,
+            ) : null,
           ),
-          child: Center(
-            child: Text(
-              prime.value.toString(),
-              style: AppTextStyles.titleMedium.copyWith(
-                color: isAvailable ? AppColors.onPrimary : AppColors.onSurfaceVariant,
-                fontWeight: FontWeight.bold,
+          child: Stack(
+            children: [
+              Center(
+                child: Text(
+                  prime.value.toString(),
+                  style: AppTextStyles.titleMedium.copyWith(
+                    color: isAvailable ? AppColors.onPrimary : AppColors.onSurfaceVariant,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
+              if (isRecentlyObtained)
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: AppColors.victoryGreen,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Icon(
+                      Icons.star,
+                      color: Colors.white,
+                      size: 8,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         title: Text(

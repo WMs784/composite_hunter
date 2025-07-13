@@ -232,9 +232,9 @@ flutter run
 ## 👥 貢献者
 
 ### 開発チーム
-- **プロジェクトリード**: [Your Name]
-- **技術アーキテクト**: [Contributor Name]
-- **UI/UXデザイナー**: [Designer Name]
+- **プロジェクトリード**: WMs784
+- **技術アーキテクト**: WMs784
+- **UI/UXデザイナー**: WMs784
 
 ### 謝辞
 このプロジェクトは以下のオープンソースプロジェクトを利用しています：
@@ -250,4 +250,4 @@ flutter run
 
 ---
 
-© 2024 Composite Hunter Development Team. All rights reserved.
+© 2025 Composite Hunter Development Team. All rights reserved.

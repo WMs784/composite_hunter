@@ -29,4 +29,4 @@ title: 合成数ハンター - Composite Hunter
 
 ---
 
-© 2024 Composite Hunter Development Team. All rights reserved.
+© 2025 Composite Hunter Development Team. All rights reserved.

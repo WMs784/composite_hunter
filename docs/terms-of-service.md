@@ -130,7 +130,7 @@ description: 合成数ハンターアプリの利用規約について説明し�
 本規約に関するご質問がございましたら、以下の方法でお問い合わせください：
 
 ### GitHub Issues
-[プロジェクトのIssuesページ](https://github.com/[username]/composite_hunter/issues)で「terms」ラベルを付けてご質問ください。
+[プロジェクトのIssuesページ](https://github.com/WMs784/composite_hunter/issues)で「terms」ラベルを付けてご質問ください。
 
 ## 付録
 

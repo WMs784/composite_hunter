@@ -4,7 +4,7 @@ import '../theme/colors.dart';
 class AnimatedStars extends StatelessWidget {
   final int stars;
   final Animation<double> animation;
-  
+
   const AnimatedStars({
     super.key,
     required this.stars,
@@ -28,15 +28,16 @@ class AnimatedStars extends StatelessWidget {
             curve: Curves.elasticOut,
           ),
         ));
-        
+
         return AnimatedBuilder(
           animation: starAnimation,
           builder: (context, child) {
             final isActive = index < stars;
             // Clamp animation values to prevent layout errors
             final scale = isActive ? starAnimation.value.clamp(0.0, 2.0) : 0.8;
-            final opacity = isActive ? starAnimation.value.clamp(0.0, 1.0) : 0.3;
-            
+            final opacity =
+                isActive ? starAnimation.value.clamp(0.0, 1.0) : 0.3;
+
             return Transform.scale(
               scale: scale,
               child: Opacity(

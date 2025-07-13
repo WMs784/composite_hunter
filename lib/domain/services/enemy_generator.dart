@@ -12,42 +12,43 @@ class EnemyGenerator {
 
   /// Generate an enemy appropriate for the player's level and inventory
   Enemy generateEnemy(List<Prime> playerInventory, int playerLevel) {
-    Logger.debug('Generating enemy for player level $playerLevel with ${playerInventory.length} primes');
+    Logger.debug(
+        'Generating enemy for player level $playerLevel with ${playerInventory.length} primes');
 
     // 10% chance to generate a power enemy
     if (_random.nextDouble() < GameConstants.powerEnemySpawnRate) {
       final powerEnemy = _generatePowerEnemy(playerInventory, playerLevel);
       if (powerEnemy != null) {
-        Logger.debug('Generated power enemy with value ${powerEnemy.currentValue}');
+        Logger.debug(
+            'Generated power enemy with value ${powerEnemy.currentValue}');
         return powerEnemy;
       }
     }
 
     // Generate normal enemy
     final normalEnemy = _generateNormalEnemy(playerInventory, playerLevel);
-    Logger.debug('Generated normal enemy with value ${normalEnemy.currentValue} of type ${normalEnemy.type.name}');
+    Logger.debug(
+        'Generated normal enemy with value ${normalEnemy.currentValue} of type ${normalEnemy.type.name}');
     return normalEnemy;
   }
 
   /// Generate a power enemy (prime^exponent)
   Enemy? _generatePowerEnemy(List<Prime> playerInventory, int playerLevel) {
     final availablePrimes = _getAvailablePrimes(playerInventory);
-    
+
     if (availablePrimes.isEmpty) {
       return null; // Can't generate power enemy without available primes
     }
 
     // Select a prime base from player's inventory
     final basePrime = availablePrimes[_random.nextInt(availablePrimes.length)];
-    
+
     // Determine exponent based on player level
-    final maxExponent = math.min(
-      GameConstants.maxPowerExponent, 
-      GameConstants.minPowerExponent + (playerLevel ~/ 5)
-    );
-    final exponent = GameConstants.minPowerExponent + 
-                    _random.nextInt(maxExponent - GameConstants.minPowerExponent + 1);
-    
+    final maxExponent = math.min(GameConstants.maxPowerExponent,
+        GameConstants.minPowerExponent + (playerLevel ~/ 5));
+    final exponent = GameConstants.minPowerExponent +
+        _random.nextInt(maxExponent - GameConstants.minPowerExponent + 1);
+
     return PowerEnemyDetector.createPowerEnemy(basePrime, exponent);
   }
 
@@ -55,10 +56,10 @@ class EnemyGenerator {
   Enemy _generateNormalEnemy(List<Prime> playerInventory, int playerLevel) {
     final availablePrimes = _getAvailablePrimes(playerInventory);
     final targetDifficulty = _calculateTargetDifficulty(playerLevel);
-    
+
     int enemyValue;
     EnemyType enemyType;
-    
+
     if (targetDifficulty < 10) {
       enemyValue = _generateSmallEnemy(availablePrimes);
       enemyType = EnemyType.small;
@@ -69,7 +70,7 @@ class EnemyGenerator {
       enemyValue = _generateLargeEnemy(availablePrimes);
       enemyType = EnemyType.large;
     }
-    
+
     return Enemy(
       currentValue: enemyValue,
       originalValue: enemyValue,
@@ -84,26 +85,27 @@ class EnemyGenerator {
     if (availablePrimes.length < 2) {
       return _fallbackSmallEnemy();
     }
-    
+
     // Generate 2-3 factor composite numbers
     final factorCount = 2 + _random.nextInt(2); // 2 or 3 factors
     int result = 1;
-    
+
     for (int i = 0; i < factorCount; i++) {
       final prime = availablePrimes[_random.nextInt(availablePrimes.length)];
       final newResult = result * prime;
-      
+
       if (newResult > GameConstants.smallEnemyMax) {
         break;
       }
       result = newResult;
     }
-    
+
     // Ensure result is in valid range
-    if (result < GameConstants.smallEnemyMin || result > GameConstants.smallEnemyMax) {
+    if (result < GameConstants.smallEnemyMin ||
+        result > GameConstants.smallEnemyMax) {
       return _fallbackSmallEnemy();
     }
-    
+
     return result;
   }
 
@@ -112,26 +114,27 @@ class EnemyGenerator {
     if (availablePrimes.length < 2) {
       return _fallbackMediumEnemy();
     }
-    
+
     // Generate 3-4 factor composite numbers
     final factorCount = 3 + _random.nextInt(2); // 3 or 4 factors
     int result = 1;
-    
+
     for (int i = 0; i < factorCount; i++) {
       final prime = availablePrimes[_random.nextInt(availablePrimes.length)];
       final newResult = result * prime;
-      
+
       if (newResult > GameConstants.mediumEnemyMax) {
         break;
       }
       result = newResult;
     }
-    
+
     // Ensure result is in valid range
-    if (result < GameConstants.mediumEnemyMin || result > GameConstants.mediumEnemyMax) {
+    if (result < GameConstants.mediumEnemyMin ||
+        result > GameConstants.mediumEnemyMax) {
       return _fallbackMediumEnemy();
     }
-    
+
     return result;
   }
 
@@ -140,26 +143,27 @@ class EnemyGenerator {
     if (availablePrimes.length < 3) {
       return _fallbackLargeEnemy();
     }
-    
+
     // Generate 4-6 factor composite numbers
     final factorCount = 4 + _random.nextInt(3); // 4, 5, or 6 factors
     int result = 1;
-    
+
     for (int i = 0; i < factorCount; i++) {
       final prime = availablePrimes[_random.nextInt(availablePrimes.length)];
       final newResult = result * prime;
-      
+
       if (newResult > GameConstants.largeEnemyMax) {
         break;
       }
       result = newResult;
     }
-    
+
     // Ensure result is in valid range
-    if (result < GameConstants.largeEnemyMin || result > GameConstants.largeEnemyMax) {
+    if (result < GameConstants.largeEnemyMin ||
+        result > GameConstants.largeEnemyMax) {
       return _fallbackLargeEnemy();
     }
-    
+
     return result;
   }
 
@@ -186,7 +190,23 @@ class EnemyGenerator {
 
   int _fallbackMediumEnemy() {
     // Generate from common medium composites
-    final mediumComposites = [21, 24, 25, 27, 28, 30, 32, 35, 36, 40, 42, 45, 48, 49, 50];
+    final mediumComposites = [
+      21,
+      24,
+      25,
+      27,
+      28,
+      30,
+      32,
+      35,
+      36,
+      40,
+      42,
+      45,
+      48,
+      49,
+      50
+    ];
     return mediumComposites[_random.nextInt(mediumComposites.length)];
   }
 
@@ -194,19 +214,17 @@ class EnemyGenerator {
     // Generate from large composite range
     int value;
     do {
-      value = GameConstants.largeEnemyMin + 
-              _random.nextInt(GameConstants.largeEnemyMax - GameConstants.largeEnemyMin + 1);
+      value = GameConstants.largeEnemyMin +
+          _random.nextInt(
+              GameConstants.largeEnemyMax - GameConstants.largeEnemyMin + 1);
     } while (PrimeCalculator.isPrime(value));
-    
+
     return value;
   }
 
   /// Generate an enemy with specific difficulty constraints
   Enemy generateEnemyWithDifficulty(
-    List<Prime> playerInventory, 
-    int playerLevel, 
-    EnemyType targetType
-  ) {
+      List<Prime> playerInventory, int playerLevel, EnemyType targetType) {
     switch (targetType) {
       case EnemyType.small:
         final value = _generateSmallEnemy(_getAvailablePrimes(playerInventory));
@@ -216,16 +234,17 @@ class EnemyGenerator {
           type: EnemyType.small,
           primeFactors: PrimeCalculator.factorize(value),
         );
-        
+
       case EnemyType.medium:
-        final value = _generateMediumEnemy(_getAvailablePrimes(playerInventory));
+        final value =
+            _generateMediumEnemy(_getAvailablePrimes(playerInventory));
         return Enemy(
           currentValue: value,
           originalValue: value,
           type: EnemyType.medium,
           primeFactors: PrimeCalculator.factorize(value),
         );
-        
+
       case EnemyType.large:
         final value = _generateLargeEnemy(_getAvailablePrimes(playerInventory));
         return Enemy(
@@ -234,11 +253,12 @@ class EnemyGenerator {
           type: EnemyType.large,
           primeFactors: PrimeCalculator.factorize(value),
         );
-        
+
       case EnemyType.power:
         return _generatePowerEnemy(playerInventory, playerLevel) ??
-               generateEnemyWithDifficulty(playerInventory, playerLevel, EnemyType.small);
-        
+            generateEnemyWithDifficulty(
+                playerInventory, playerLevel, EnemyType.small);
+
       case EnemyType.special:
         // Generate a special enemy with unique characteristics
         return _generateSpecialEnemy(playerInventory, playerLevel);
@@ -248,23 +268,23 @@ class EnemyGenerator {
   /// Generate a special enemy with unique properties
   Enemy _generateSpecialEnemy(List<Prime> playerInventory, int playerLevel) {
     final availablePrimes = _getAvailablePrimes(playerInventory);
-    
+
     // Special enemies have many prime factors or are very large
     int value = 1;
     final factorCount = 5 + _random.nextInt(3); // 5-7 factors
-    
+
     for (int i = 0; i < factorCount && value < 2000; i++) {
       if (availablePrimes.isNotEmpty) {
         final prime = availablePrimes[_random.nextInt(availablePrimes.length)];
         value *= prime;
       }
     }
-    
+
     // Ensure it's a reasonable size
     if (value > 2000 || value < 100) {
       value = 210; // 2 × 3 × 5 × 7
     }
-    
+
     return Enemy(
       currentValue: value,
       originalValue: value,
@@ -276,7 +296,7 @@ class EnemyGenerator {
   /// Get difficulty rating for a generated enemy
   int getEnemyDifficulty(Enemy enemy, List<Prime> playerInventory) {
     int difficulty = 0;
-    
+
     // Base difficulty from enemy size
     switch (enemy.type) {
       case EnemyType.small:
@@ -295,12 +315,13 @@ class EnemyGenerator {
         difficulty += 7;
         break;
     }
-    
+
     // Adjust based on available attacks
     final availableAttacks = playerInventory
-        .where((prime) => prime.isAvailable && enemy.canBeAttackedBy(prime.value))
+        .where(
+            (prime) => prime.isAvailable && enemy.canBeAttackedBy(prime.value))
         .length;
-    
+
     if (availableAttacks == 0) {
       difficulty += 10; // Impossible
     } else if (availableAttacks == 1) {
@@ -308,11 +329,11 @@ class EnemyGenerator {
     } else if (availableAttacks >= 4) {
       difficulty -= 1; // Many options
     }
-    
+
     // Factor in number of distinct prime factors
     final distinctFactors = enemy.primeFactors.toSet().length;
     difficulty += distinctFactors;
-    
+
     return difficulty.clamp(1, 15);
   }
 }

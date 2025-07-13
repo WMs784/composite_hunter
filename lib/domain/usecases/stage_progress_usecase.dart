@@ -13,46 +13,49 @@ class StageProgressUsecase {
     required List<int> defeatedEnemies,
   }) {
     final condition = StageConfig.getCondition(stageNumber);
-    
+
     // 失敗条件チェック
-    if (escapes > condition.maxEscapes || wrongClaims > condition.maxWrongClaims) {
+    if (escapes > condition.maxEscapes ||
+        wrongClaims > condition.maxWrongClaims) {
       return null; // ステージ失敗
     }
-    
+
     // 制限時間チェック
     if (totalTime.inSeconds > condition.timeLimit) {
       return null; // 時間切れ
     }
-    
+
     // クリア条件チェック
     bool isCleared = false;
-    
+
     switch (condition.clearType) {
       case StageClearType.victories:
         isCleared = victories >= condition.requiredVictories;
         break;
-        
+
       case StageClearType.consecutiveVictories:
         // 連続勝利の場合、逃走や誤判定があると失敗
-        isCleared = victories >= condition.requiredVictories && 
-                   escapes == 0 && wrongClaims == 0;
+        isCleared = victories >= condition.requiredVictories &&
+            escapes == 0 &&
+            wrongClaims == 0;
         break;
-        
+
       case StageClearType.timedVictories:
         isCleared = victories >= condition.requiredVictories &&
-                   totalTime.inSeconds <= condition.timeLimit;
+            totalTime.inSeconds <= condition.timeLimit;
         break;
-        
+
       case StageClearType.perfectVictories:
         isCleared = victories >= condition.requiredVictories &&
-                   escapes == 0 && wrongClaims == 0;
+            escapes == 0 &&
+            wrongClaims == 0;
         break;
     }
-    
+
     if (!isCleared) {
       return null;
     }
-    
+
     // クリア結果を作成
     final isPerfect = escapes == 0 && wrongClaims == 0;
     final stars = StarRating.calculateStars(
@@ -63,7 +66,7 @@ class StageProgressUsecase {
       timeLimit: Duration(seconds: condition.timeLimit),
       isPerfect: isPerfect,
     );
-    
+
     final score = _calculateScore(
       victories: victories,
       escapes: escapes,
@@ -72,7 +75,7 @@ class StageProgressUsecase {
       stars: stars,
       defeatedEnemies: defeatedEnemies,
     );
-    
+
     return StageClearResult(
       stageNumber: stageNumber,
       isCleared: true,
@@ -87,7 +90,7 @@ class StageProgressUsecase {
       isNewRecord: false, // TODO: 過去のスコアと比較
     );
   }
-  
+
   /// スコア計算
   static int _calculateScore({
     required int victories,
@@ -98,16 +101,16 @@ class StageProgressUsecase {
     required List<int> defeatedEnemies,
   }) {
     int baseScore = victories * 100;
-    
+
     // 時間ボーナス（早くクリアするほど高得点）
     int timeBonus = math.max(0, 300 - totalTime.inSeconds) * 2;
-    
+
     // 星ボーナス
     int starBonus = stars * 200;
-    
+
     // パーフェクトボーナス
     int perfectBonus = (escapes == 0 && wrongClaims == 0) ? 500 : 0;
-    
+
     // 敵の難易度ボーナス
     int enemyBonus = defeatedEnemies.fold(0, (sum, enemy) {
       if (enemy > 1000) return sum + 50;
@@ -115,10 +118,17 @@ class StageProgressUsecase {
       if (enemy > 20) return sum + 20;
       return sum + 10;
     });
-    
+
     // ペナルティ
     int penalty = (escapes * 50) + (wrongClaims * 30);
-    
-    return math.max(0, baseScore + timeBonus + starBonus + perfectBonus + enemyBonus - penalty);
+
+    return math.max(
+        0,
+        baseScore +
+            timeBonus +
+            starBonus +
+            perfectBonus +
+            enemyBonus -
+            penalty);
   }
 }

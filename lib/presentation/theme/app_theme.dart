@@ -36,7 +36,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
-          side: BorderSide(color: AppColors.primary),
+          side: const BorderSide(color: AppColors.primary),
           padding: const EdgeInsets.symmetric(
             horizontal: Dimensions.paddingL,
             vertical: Dimensions.paddingM,

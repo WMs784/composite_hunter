@@ -67,10 +67,10 @@ class PenaltyState with _$PenaltyState {
   PenaltyState addPenalty(TimePenalty penalty) {
     final newPenalties = [...activePenalties, penalty];
     final newTotal = totalPenaltySeconds + penalty.seconds;
-    
+
     int newConsecutiveEscapes = consecutiveEscapes;
     int newConsecutiveWrongClaims = consecutiveWrongClaims;
-    
+
     switch (penalty.type) {
       case PenaltyType.escape:
         newConsecutiveEscapes++;
@@ -84,7 +84,7 @@ class PenaltyState with _$PenaltyState {
         // Timeout doesn't affect streaks
         break;
     }
-    
+
     return copyWith(
       activePenalties: newPenalties,
       totalPenaltySeconds: newTotal,

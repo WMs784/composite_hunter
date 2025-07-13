@@ -36,7 +36,7 @@ class BattleMenuDialog extends StatelessWidget {
             // ヘッダー
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.menu,
                   color: AppColors.primary,
                   size: 28,
@@ -57,9 +57,9 @@ class BattleMenuDialog extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: Dimensions.spacingL),
-            
+
             // メニューオプション
             _MenuOption(
               icon: Icons.refresh,
@@ -71,9 +71,9 @@ class BattleMenuDialog extends StatelessWidget {
                 onRestart?.call();
               },
             ),
-            
+
             const SizedBox(height: Dimensions.spacingM),
-            
+
             _MenuOption(
               icon: Icons.exit_to_app,
               title: 'Exit',
@@ -84,16 +84,17 @@ class BattleMenuDialog extends StatelessWidget {
                 _showExitConfirmation(context);
               },
             ),
-            
+
             const SizedBox(height: Dimensions.spacingL),
-            
+
             // Cancel button
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
                 ),
                 child: const Text('Back'),
               ),
@@ -109,7 +110,8 @@ class BattleMenuDialog extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Exit Battle?'),
-        content: const Text('Your current progress will not be saved. Are you sure you want to exit?'),
+        content: const Text(
+            'Your current progress will not be saved. Are you sure you want to exit?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -172,9 +174,7 @@ class _MenuOption extends StatelessWidget {
                 size: 24,
               ),
             ),
-            
             const SizedBox(width: Dimensions.spacingM),
-            
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,8 +195,7 @@ class _MenuOption extends StatelessWidget {
                 ],
               ),
             ),
-            
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               color: AppColors.onSurfaceVariant,
               size: 16,

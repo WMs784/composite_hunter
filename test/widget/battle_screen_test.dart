@@ -18,10 +18,10 @@ void main() {
         overrides: [
           inventoryProvider.overrideWith((ref) => InventoryNotifier()),
           battleProvider.overrideWith((ref) => BattleNotifier(
-            EnemyGenerator(),
-            TimerManager(),
-            ref,
-          )),
+                EnemyGenerator(),
+                TimerManager(),
+                ref,
+              )),
           battleSessionProvider.overrideWith((ref) => BattleSessionNotifier()),
         ],
         child: MaterialApp(
@@ -43,14 +43,14 @@ void main() {
 
     testWidgets('should build without errors', (tester) async {
       await tester.pumpWidget(createTestableWidget(const BattleScreen()));
-      
+
       // Simply verify that the widget can be created without errors
       expect(find.byType(BattleScreen), findsOneWidget);
     });
 
     testWidgets('should have proper provider setup', (tester) async {
       await tester.pumpWidget(createTestableWidget(const BattleScreen()));
-      
+
       // Check that the MaterialApp is created properly
       expect(find.byType(MaterialApp), findsOneWidget);
       expect(find.byType(ProviderScope), findsOneWidget);
@@ -58,7 +58,7 @@ void main() {
 
     testWidgets('should use correct theme', (tester) async {
       await tester.pumpWidget(createTestableWidget(const BattleScreen()));
-      
+
       // Check that the app uses the correct theme
       final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
       expect(materialApp.theme, isNotNull);

@@ -20,7 +20,7 @@ class AchievementScreen extends ConsumerWidget {
     final completionPercentage = ref.watch(achievementCompletionProvider);
     final totalCount = ref.watch(totalAchievementsProvider);
     final unlockedCount = ref.watch(unlockedCountProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.achievements),
@@ -28,54 +28,55 @@ class AchievementScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(Dimensions.paddingM),
         children: [
-          _buildProgressSummary(l10n, completionPercentage, unlockedCount, totalCount),
-          
+          _buildProgressSummary(
+              l10n, completionPercentage, unlockedCount, totalCount),
           const SizedBox(height: Dimensions.spacingL),
-          
           if (battleAchievements.isNotEmpty) ...[
             Text(
               l10n.battleAchievements,
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: Dimensions.spacingM),
-            ...battleAchievements.map((achievement) => _buildAchievementItem(achievement)),
+            ...battleAchievements
+                .map((achievement) => _buildAchievementItem(achievement)),
             const SizedBox(height: Dimensions.spacingL),
           ],
-          
           if (speedAchievements.isNotEmpty) ...[
             Text(
               l10n.speedAchievements,
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: Dimensions.spacingM),
-            ...speedAchievements.map((achievement) => _buildAchievementItem(achievement)),
+            ...speedAchievements
+                .map((achievement) => _buildAchievementItem(achievement)),
             const SizedBox(height: Dimensions.spacingL),
           ],
-          
           if (collectionAchievements.isNotEmpty) ...[
             Text(
               l10n.primeCollector, // 適切な既存のローカライゼーションキーを使用
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: Dimensions.spacingM),
-            ...collectionAchievements.map((achievement) => _buildAchievementItem(achievement)),
+            ...collectionAchievements
+                .map((achievement) => _buildAchievementItem(achievement)),
             const SizedBox(height: Dimensions.spacingL),
           ],
-          
           if (specialAchievements.isNotEmpty) ...[
             Text(
               l10n.specialAchievements,
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: Dimensions.spacingM),
-            ...specialAchievements.map((achievement) => _buildAchievementItem(achievement)),
+            ...specialAchievements
+                .map((achievement) => _buildAchievementItem(achievement)),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildProgressSummary(AppLocalizations l10n, double progress, int unlockedCount, int totalCount) {
+  Widget _buildProgressSummary(AppLocalizations l10n, double progress,
+      int unlockedCount, int totalCount) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(Dimensions.paddingL),
@@ -84,7 +85,7 @@ class AchievementScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.emoji_events,
                   color: AppColors.victoryGreen,
                   size: Dimensions.iconL,
@@ -100,7 +101,8 @@ class AchievementScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: Dimensions.spacingXs),
                       Text(
-                        l10n.achievementsUnlocked(unlockedCount.toString(), totalCount.toString()),
+                        l10n.achievementsUnlocked(
+                            unlockedCount.toString(), totalCount.toString()),
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.onSurfaceVariant,
                         ),
@@ -117,13 +119,11 @@ class AchievementScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            
             const SizedBox(height: Dimensions.spacingM),
-            
             LinearProgressIndicator(
               value: progress,
               backgroundColor: AppColors.surfaceVariant,
-              valueColor: AlwaysStoppedAnimation<Color>(
+              valueColor: const AlwaysStoppedAnimation<Color>(
                 AppColors.victoryGreen,
               ),
             ),
@@ -134,11 +134,11 @@ class AchievementScreen extends ConsumerWidget {
   }
 
   Widget _buildAchievementItem(Achievement achievement) {
-    final progressValue = achievement.targetValue > 0 
-        ? achievement.currentProgress / achievement.targetValue 
+    final progressValue = achievement.targetValue > 0
+        ? achievement.currentProgress / achievement.targetValue
         : 0.0;
     final icon = _getIconForAchievement(achievement);
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: Dimensions.spacingXs),
       child: Padding(
@@ -150,25 +150,25 @@ class AchievementScreen extends ConsumerWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: achievement.isUnlocked 
+                color: achievement.isUnlocked
                     ? AppColors.victoryGreen.withOpacity(0.1)
                     : AppColors.surfaceVariant,
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
-                border: achievement.isUnlocked 
+                border: achievement.isUnlocked
                     ? Border.all(color: AppColors.victoryGreen, width: 2)
                     : null,
               ),
               child: Icon(
                 icon,
-                color: achievement.isUnlocked 
-                    ? AppColors.victoryGreen 
+                color: achievement.isUnlocked
+                    ? AppColors.victoryGreen
                     : AppColors.onSurfaceVariant,
                 size: Dimensions.iconL,
               ),
             ),
-            
+
             const SizedBox(width: Dimensions.spacingM),
-            
+
             // Achievement details
             Expanded(
               child: Column(
@@ -177,31 +177,27 @@ class AchievementScreen extends ConsumerWidget {
                   Text(
                     achievement.title,
                     style: AppTextStyles.titleMedium.copyWith(
-                      color: achievement.isUnlocked 
-                          ? AppColors.onSurface 
+                      color: achievement.isUnlocked
+                          ? AppColors.onSurface
                           : AppColors.onSurfaceVariant,
                     ),
                   ),
-                  
                   const SizedBox(height: Dimensions.spacingXs),
-                  
                   Text(
                     achievement.description,
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.onSurfaceVariant,
                     ),
                   ),
-                  
                   if (!achievement.isUnlocked) ...[
                     const SizedBox(height: Dimensions.spacingS),
-                    
                     Row(
                       children: [
                         Expanded(
                           child: LinearProgressIndicator(
                             value: progressValue,
                             backgroundColor: AppColors.surfaceVariant,
-                            valueColor: AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               AppColors.primary,
                             ),
                           ),
@@ -219,7 +215,7 @@ class AchievementScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            
+
             // Status indicator
             if (achievement.isUnlocked)
               Container(
@@ -228,7 +224,7 @@ class AchievementScreen extends ConsumerWidget {
                   color: AppColors.victoryGreen,
                   borderRadius: BorderRadius.circular(Dimensions.radiusRound),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.check,
                   color: AppColors.onPrimary,
                   size: Dimensions.iconS,
@@ -241,7 +237,7 @@ class AchievementScreen extends ConsumerWidget {
                   color: AppColors.surfaceVariant,
                   borderRadius: BorderRadius.circular(Dimensions.radiusRound),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.lock,
                   color: AppColors.onSurfaceVariant,
                   size: Dimensions.iconS,

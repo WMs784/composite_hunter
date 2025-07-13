@@ -40,7 +40,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enemyDefeated => 'Enemy is defeated! Claim victory!';
 
   @override
-  String get attackWithPrimeFactors => 'Attack with prime factors to defeat it!';
+  String get attackWithPrimeFactors =>
+      'Attack with prime factors to defeat it!';
 
   @override
   String get yourPrimeNumbers => 'Your Prime Numbers';
@@ -63,7 +64,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get practiceModeNoItems => 'Practice mode - no items consumed or gained';
+  String get practiceModeNoItems =>
+      'Practice mode - no items consumed or gained';
 
   @override
   String get keepPracticing => 'Keep practicing!';
@@ -118,10 +120,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tip => 'Tip';
 
   @override
-  String get attackFasterTip => 'Try to attack faster next time!\nFocus on finding prime factors quickly.';
+  String get attackFasterTip =>
+      'Try to attack faster next time!\nFocus on finding prime factors quickly.';
 
   @override
-  String get collectMorePrimesTip => 'Collect more prime numbers!\nDefeat enemies to gain new primes.';
+  String get collectMorePrimesTip =>
+      'Collect more prime numbers!\nDefeat enemies to gain new primes.';
 
   @override
   String stageClear(String number) {
@@ -231,7 +235,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetGameData => 'Reset Game Data';
 
   @override
-  String get resetConfirmation => 'This will reset your inventory and stage progress to initial values. Continue?';
+  String get resetConfirmation =>
+      'This will reset your inventory and stage progress to initial values. Continue?';
 
   @override
   String get cancel => 'Cancel';
@@ -257,19 +262,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stage1Title => 'Basic Battle';
 
   @override
-  String get stage1Description => 'Fight small composite numbers and learn prime factorization';
+  String get stage1Description =>
+      'Fight small composite numbers and learn prime factorization';
 
   @override
   String get stage2Title => 'Intermediate Challenge';
 
   @override
-  String get stage2Description => 'Face medium composite numbers with strategic attacks';
+  String get stage2Description =>
+      'Face medium composite numbers with strategic attacks';
 
   @override
   String get stage3Title => 'Advanced Path';
 
   @override
-  String get stage3Description => 'Engage in serious battles with large composite numbers';
+  String get stage3Description =>
+      'Engage in serious battles with large composite numbers';
 
   @override
   String get stage4Title => 'Expert Mode';
@@ -346,13 +354,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorialWelcomeTitle => 'Welcome to\nComposite Hunter!';
 
   @override
-  String get tutorialWelcomeContent => 'Learn prime factorization through exciting battles with composite numbers.';
+  String get tutorialWelcomeContent =>
+      'Learn prime factorization through exciting battles with composite numbers.';
 
   @override
   String get tutorialBasicTitle => 'Prime vs Composite';
 
   @override
-  String get tutorialBasicContent => 'Prime numbers (2, 3, 5, 7...) can only be divided by 1 and themselves.\n\nComposite numbers (4, 6, 8, 9...) can be divided by other numbers.';
+  String get tutorialBasicContent =>
+      'Prime numbers (2, 3, 5, 7...) can only be divided by 1 and themselves.\n\nComposite numbers (4, 6, 8, 9...) can be divided by other numbers.';
 
   @override
   String get tutorialBasicExample => '12 = 2 × 2 × 3';
@@ -361,7 +371,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorialAttackTitle => 'Attack with Primes';
 
   @override
-  String get tutorialAttackContent => 'Use your prime numbers to attack composite enemies.\n\nIf a prime divides the enemy, the enemy\'s value becomes smaller!';
+  String get tutorialAttackContent =>
+      'Use your prime numbers to attack composite enemies.\n\nIf a prime divides the enemy, the enemy\'s value becomes smaller!';
 
   @override
   String get tutorialAttackExample => '12 ÷ 2 = 6\n6 ÷ 2 = 3\n3 is prime!';
@@ -370,7 +381,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorialVictoryTitle => 'Claim Victory';
 
   @override
-  String get tutorialVictoryContent => 'When you reduce an enemy to a prime number, press \"Claim Victory!\"\n\nBe careful - wrong claims cost you time!';
+  String get tutorialVictoryContent =>
+      'When you reduce an enemy to a prime number, press \"Claim Victory!\"\n\nBe careful - wrong claims cost you time!';
 
   @override
   String get tutorialVictoryExample => 'Enemy becomes prime?\nClaim Victory! ✓';
@@ -379,7 +391,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorialTimerTitle => 'Time Pressure';
 
   @override
-  String get tutorialTimerContent => 'Each battle has a time limit!\n\n• Escaping: -10 seconds next battle\n• Wrong claim: -10 seconds immediately\n• Timeout: -10 seconds next battle';
+  String get tutorialTimerContent =>
+      'Each battle has a time limit!\n\n• Escaping: -10 seconds next battle\n• Wrong claim: -10 seconds immediately\n• Timeout: -10 seconds next battle';
 
   @override
   String get tutorialTimerExample => 'Fight smart and fast!';

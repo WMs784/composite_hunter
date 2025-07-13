@@ -52,10 +52,10 @@ class AppColors {
   static const Color primeAvailable = Color(0xFF4CAF50);
   static const Color primeUnavailable = Color(0xFF9E9E9E);
   static const Color primeSelected = Color(0xFF2196F3);
-  
+
   static const Color enemyNormal = Color(0xFF795548);
   static const Color enemyPower = Color(0xFFE91E63);
-  
+
   static const Color victoryGreen = Color(0xFF4CAF50);
   static const Color defeatRed = Color(0xFFF44336);
 

@@ -23,7 +23,7 @@ class Enemy with _$Enemy {
   bool canBeAttackedBy(int prime) {
     // Cannot attack if enemy is already defeated (prime number)
     if (isDefeated) return false;
-    
+
     return currentValue % prime == 0;
   }
 
@@ -44,10 +44,12 @@ class Enemy with _$Enemy {
   bool get isDefeated => MathUtils.isPrime(currentValue);
 
   /// Get the reward count for power enemies
-  int get powerRewardCount => isPowerEnemy && powerExponent != null ? powerExponent! : 1;
+  int get powerRewardCount =>
+      isPowerEnemy && powerExponent != null ? powerExponent! : 1;
 
   /// Get the reward prime for power enemies
-  int get powerRewardPrime => isPowerEnemy && powerBase != null ? powerBase! : currentValue;
+  int get powerRewardPrime =>
+      isPowerEnemy && powerBase != null ? powerBase! : currentValue;
 
   /// Check if this enemy is a composite number
   bool get isComposite => currentValue > 1 && !currentValue.isPrime;
@@ -58,10 +60,10 @@ class Enemy with _$Enemy {
   /// Get a list of available attacks (primes that can divide current value)
   List<int> get availableAttacks {
     if (isDefeated) return [];
-    
+
     final factors = <int>[];
     int n = currentValue;
-    
+
     // Find all prime factors of current value
     for (int i = 2; i * i <= n; i++) {
       if (n % i == 0) {
@@ -71,9 +73,9 @@ class Enemy with _$Enemy {
         }
       }
     }
-    
+
     if (n > 1) factors.add(n);
-    
+
     return factors;
   }
 

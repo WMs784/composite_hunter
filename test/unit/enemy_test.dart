@@ -6,7 +6,7 @@ void main() {
   group('Enemy Tests', () {
     group('canBeAttackedBy', () {
       test('should return true for valid prime factors', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -20,7 +20,7 @@ void main() {
       });
 
       test('should return false for invalid attacks', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 15,
           originalValue: 15,
           type: EnemyType.small,
@@ -35,7 +35,7 @@ void main() {
 
     group('attack', () {
       test('should reduce enemy value correctly', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -43,14 +43,14 @@ void main() {
         );
 
         final attackedEnemy = enemy.attack(2);
-        
+
         expect(attackedEnemy.currentValue, 6);
         expect(attackedEnemy.originalValue, 12); // Should remain unchanged
         expect(attackedEnemy.type, EnemyType.small);
       });
 
       test('should throw exception for invalid attacks', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 15,
           originalValue: 15,
           type: EnemyType.small,
@@ -62,7 +62,7 @@ void main() {
       });
 
       test('should preserve enemy properties after attack', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 20,
           originalValue: 20,
           type: EnemyType.small,
@@ -71,7 +71,7 @@ void main() {
         );
 
         final attackedEnemy = enemy.attack(4);
-        
+
         expect(attackedEnemy.currentValue, 5);
         expect(attackedEnemy.originalValue, 20);
         expect(attackedEnemy.type, EnemyType.small);
@@ -82,7 +82,7 @@ void main() {
 
     group('isDefeated', () {
       test('should return true when enemy value is prime', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 7,
           originalValue: 14,
           type: EnemyType.small,
@@ -93,7 +93,7 @@ void main() {
       });
 
       test('should return false when enemy value is composite', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -104,7 +104,7 @@ void main() {
       });
 
       test('should return false for value 1', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 1,
           originalValue: 2,
           type: EnemyType.small,
@@ -117,7 +117,7 @@ void main() {
 
     group('Power Enemy Properties', () {
       test('should calculate power rewards correctly', () {
-        final powerEnemy = Enemy(
+        const powerEnemy = Enemy(
           currentValue: 8,
           originalValue: 8,
           type: EnemyType.power,
@@ -132,7 +132,7 @@ void main() {
       });
 
       test('should return default values for non-power enemies', () {
-        final normalEnemy = Enemy(
+        const normalEnemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -147,7 +147,7 @@ void main() {
 
     group('availableAttacks', () {
       test('should return correct prime factors for composite numbers', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 30,
           originalValue: 30,
           type: EnemyType.medium,
@@ -159,7 +159,7 @@ void main() {
       });
 
       test('should return empty list for defeated enemies', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 7,
           originalValue: 14,
           type: EnemyType.small,
@@ -170,7 +170,7 @@ void main() {
       });
 
       test('should return unique prime factors only', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -179,27 +179,28 @@ void main() {
 
         final attacks = enemy.availableAttacks;
         expect(attacks, containsAll([2, 3]));
-        expect(attacks.where((p) => p == 2).length, 1); // Should appear only once
+        expect(
+            attacks.where((p) => p == 2).length, 1); // Should appear only once
       });
     });
 
     group('size', () {
       test('should categorize enemy sizes correctly', () {
-        final smallEnemy = Enemy(
+        const smallEnemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
           primeFactors: [2, 2, 3],
         );
 
-        final mediumEnemy = Enemy(
+        const mediumEnemy = Enemy(
           currentValue: 50,
           originalValue: 50,
           type: EnemyType.medium,
           primeFactors: [2, 5, 5],
         );
 
-        final largeEnemy = Enemy(
+        const largeEnemy = Enemy(
           currentValue: 200,
           originalValue: 200,
           type: EnemyType.large,
@@ -214,7 +215,7 @@ void main() {
 
     group('displayInfo', () {
       test('should show power notation for power enemies', () {
-        final powerEnemy = Enemy(
+        const powerEnemy = Enemy(
           currentValue: 8,
           originalValue: 8,
           type: EnemyType.power,
@@ -228,7 +229,7 @@ void main() {
       });
 
       test('should show value only for normal enemies', () {
-        final normalEnemy = Enemy(
+        const normalEnemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -241,7 +242,7 @@ void main() {
 
     group('isComposite', () {
       test('should return true for composite numbers', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -252,7 +253,7 @@ void main() {
       });
 
       test('should return false for prime numbers', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 7,
           originalValue: 14,
           type: EnemyType.small,
@@ -263,7 +264,7 @@ void main() {
       });
 
       test('should return false for 1', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 1,
           originalValue: 2,
           type: EnemyType.small,

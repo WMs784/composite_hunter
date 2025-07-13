@@ -7,7 +7,7 @@ void main() {
   group('Prime Enemy Attack Tests', () {
     test('should prevent attack when enemy becomes prime', () {
       // Create a composite enemy (6 = 2 * 3)
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 6,
         originalValue: 6,
         type: EnemyType.small,
@@ -26,7 +26,7 @@ void main() {
 
     test('should return error when attempting to attack prime enemy', () {
       // Create a prime enemy
-      final primeEnemy = Enemy(
+      const primeEnemy = Enemy(
         currentValue: 7,
         originalValue: 14,
         type: EnemyType.small,
@@ -41,9 +41,10 @@ void main() {
       expect(result, isA<BattleError>());
     });
 
-    test('should allow attack on composite enemy even with same prime factor', () {
+    test('should allow attack on composite enemy even with same prime factor',
+        () {
       // Create a composite enemy (12 = 2^2 * 3)
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 12,
         originalValue: 12,
         type: EnemyType.small,
@@ -62,7 +63,7 @@ void main() {
 
     test('should prevent attack when enemy value is 1', () {
       // Create enemy with value 1 (neither prime nor composite)
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 1,
         originalValue: 6,
         type: EnemyType.small,
@@ -76,7 +77,7 @@ void main() {
 
     test('battle engine should handle prime enemy attack correctly', () {
       // Start with composite enemy
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 10,
         originalValue: 10,
         type: EnemyType.small,
@@ -86,10 +87,10 @@ void main() {
       // Attack with 2, reducing to 5 (prime)
       final prime2 = Prime(value: 2, count: 1, firstObtained: DateTime.now());
       final result1 = BattleEngine.executeAttack(enemy, prime2);
-      
+
       // Should be awaiting victory claim
       expect(result1, isA<BattleAwaitingVictoryClaim>());
-      
+
       final newEnemy = (result1 as BattleAwaitingVictoryClaim).newEnemy;
       expect(newEnemy.currentValue, equals(5));
       expect(newEnemy.isDefeated, isTrue);
@@ -97,7 +98,7 @@ void main() {
       // Now try to attack the prime enemy (5) with prime 5
       final prime5 = Prime(value: 5, count: 1, firstObtained: DateTime.now());
       final result2 = BattleEngine.executeAttack(newEnemy, prime5);
-      
+
       // Should return error
       expect(result2, isA<BattleError>());
     });

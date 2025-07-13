@@ -20,10 +20,10 @@ class PrimeCalculator {
   /// Check if a number is a power of a prime (e.g., 8 = 2^3, 9 = 3^2)
   static bool isPowerOfPrime(int number) {
     if (number < 2) return false;
-    
+
     final factors = factorize(number);
     if (factors.isEmpty || factors.length == 1) return false;
-    
+
     // Check if all factors are the same
     final firstFactor = factors.first;
     return factors.every((factor) => factor == firstFactor);
@@ -32,7 +32,7 @@ class PrimeCalculator {
   /// Get the base and exponent if number is a power of prime
   static ({int base, int exponent})? getPowerInfo(int number) {
     if (!isPowerOfPrime(number)) return null;
-    
+
     final factors = factorize(number);
     return (base: factors.first, exponent: factors.length);
   }
@@ -49,7 +49,7 @@ class PrimeCalculator {
   /// Get the previous prime number before the given number
   static int? getPreviousPrime(int number) {
     if (number <= 2) return null;
-    
+
     int candidate = number - 1;
     while (candidate >= 2) {
       if (isPrime(candidate)) {
@@ -68,7 +68,7 @@ class PrimeCalculator {
   /// Get all prime numbers in a range
   static List<int> getPrimesInRange(int start, int end) {
     if (start > end) return [];
-    
+
     final primes = <int>[];
     for (int i = start; i <= end; i++) {
       if (isPrime(i)) {

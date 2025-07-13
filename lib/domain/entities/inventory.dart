@@ -19,19 +19,19 @@ class Inventory with _$Inventory {
   int get uniqueCount => primes.length;
 
   /// Get only available primes (count > 0)
-  List<Prime> get availablePrimes => 
+  List<Prime> get availablePrimes =>
       primes.where((prime) => prime.isAvailable).toList();
 
   /// Get primes sorted by value
-  List<Prime> get sortedByValue => 
+  List<Prime> get sortedByValue =>
       [...primes]..sort((a, b) => a.value.compareTo(b.value));
 
   /// Get primes sorted by count (highest first)
-  List<Prime> get sortedByCount => 
+  List<Prime> get sortedByCount =>
       [...primes]..sort((a, b) => b.count.compareTo(a.count));
 
   /// Get primes sorted by usage frequency
-  List<Prime> get sortedByUsage => 
+  List<Prime> get sortedByUsage =>
       [...primes]..sort((a, b) => b.usageCount.compareTo(a.usageCount));
 
   /// Get a specific prime by value
@@ -55,30 +55,31 @@ class Inventory with _$Inventory {
   /// Add a prime to the inventory
   Inventory addPrime(Prime newPrime) {
     final existingPrime = getPrime(newPrime.value);
-    
+
     if (existingPrime != null) {
       // Prime already exists, increase count
-      final maxCount = newPrime.isSmallPrime 
-          ? GameConstants.maxSmallPrimeCount 
+      final maxCount = newPrime.isSmallPrime
+          ? GameConstants.maxSmallPrimeCount
           : GameConstants.maxLargePrimeCount;
-      
-      final newCount = (existingPrime.count + newPrime.count).clamp(0, maxCount);
+
+      final newCount =
+          (existingPrime.count + newPrime.count).clamp(0, maxCount);
       final updatedPrime = existingPrime.copyWith(count: newCount);
-      
+
       final updatedPrimes = primes
           .map((prime) => prime.value == newPrime.value ? updatedPrime : prime)
           .toList();
-      
+
       return copyWith(primes: updatedPrimes);
     } else {
       // New prime, add to inventory with limits applied
-      final maxCount = newPrime.isSmallPrime 
-          ? GameConstants.maxSmallPrimeCount 
+      final maxCount = newPrime.isSmallPrime
+          ? GameConstants.maxSmallPrimeCount
           : GameConstants.maxLargePrimeCount;
-      
+
       final clampedCount = newPrime.count.clamp(0, maxCount);
       final clampedPrime = newPrime.copyWith(count: clampedCount);
-      
+
       return copyWith(primes: [...primes, clampedPrime]);
     }
   }
@@ -86,35 +87,34 @@ class Inventory with _$Inventory {
   /// Use a prime (decrease count by 1)
   Inventory usePrime(Prime primeToUse) {
     final existingPrime = getPrime(primeToUse.value);
-    
+
     if (existingPrime == null || !existingPrime.isAvailable) {
       throw StateError('Prime ${primeToUse.value} is not available');
     }
-    
+
     final updatedPrime = existingPrime.decreaseCount().increaseUsage();
     List<Prime> updatedPrimes;
-    
+
     if (updatedPrime.count == 0) {
       // Remove prime if count reaches 0
-      updatedPrimes = primes
-          .where((prime) => prime.value != primeToUse.value)
-          .toList();
+      updatedPrimes =
+          primes.where((prime) => prime.value != primeToUse.value).toList();
     } else {
       // Update the prime
       updatedPrimes = primes
-          .map((prime) => prime.value == primeToUse.value ? updatedPrime : prime)
+          .map(
+              (prime) => prime.value == primeToUse.value ? updatedPrime : prime)
           .toList();
     }
-    
+
     return copyWith(primes: updatedPrimes);
   }
 
   /// Remove a prime completely from inventory
   Inventory removePrime(int value) {
-    final updatedPrimes = primes
-        .where((prime) => prime.value != value)
-        .toList();
-    
+    final updatedPrimes =
+        primes.where((prime) => prime.value != value).toList();
+
     return copyWith(primes: updatedPrimes);
   }
 
@@ -132,11 +132,11 @@ class Inventory with _$Inventory {
       uniquePrimes: uniqueCount,
       smallPrimes: primes.where((p) => p.isSmallPrime).length,
       largePrimes: primes.where((p) => !p.isSmallPrime).length,
-      mostUsedPrime: primes.isEmpty 
-          ? null 
+      mostUsedPrime: primes.isEmpty
+          ? null
           : primes.reduce((a, b) => a.usageCount > b.usageCount ? a : b),
-      averageUsage: primes.isEmpty 
-          ? 0.0 
+      averageUsage: primes.isEmpty
+          ? 0.0
           : primes.fold(0, (sum, p) => sum + p.usageCount) / primes.length,
     );
   }
@@ -149,7 +149,7 @@ class Inventory with _$Inventory {
 
   @override
   String toString() {
-    return 'Inventory(${uniqueCount} unique primes, ${totalCount} total)';
+    return 'Inventory($uniqueCount unique primes, $totalCount total)';
   }
 }
 

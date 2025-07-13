@@ -8,18 +8,21 @@ import '../../providers/inventory_provider.dart';
 /// 結果画面共通のボタン機能
 mixin ResultScreenMixin {
   /// 次のステージに進む
-  void goToNextStage(BuildContext context, WidgetRef ref, int currentStageNumber) {
+  void goToNextStage(
+      BuildContext context, WidgetRef ref, int currentStageNumber) {
     final nextStageNumber = currentStageNumber + 1;
-    
+
     // バトルセッションをリセット
     ref.read(battleSessionProvider.notifier).resetSession();
-    
+
     // 現在のアイテム状態を取得
     final currentInventory = ref.read(inventoryProvider);
-    
+
     // 次のステージを開始
-    ref.read(battleSessionProvider.notifier).startStage(nextStageNumber, currentInventory);
-    
+    ref
+        .read(battleSessionProvider.notifier)
+        .startStage(nextStageNumber, currentInventory);
+
     // 現在の画面を閉じてバトル画面に遷移
     Navigator.pop(context);
     AppRouter.goToBattle(context);
@@ -30,12 +33,14 @@ mixin ResultScreenMixin {
     // アイテム状態を復元
     final session = ref.read(battleSessionProvider);
     if (session.stageStartInventory != null) {
-      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+      ref
+          .read(inventoryProvider.notifier)
+          .restoreInventory(session.stageStartInventory!);
     }
-    
+
     // バトルセッションをリセット
     ref.read(battleSessionProvider.notifier).resetSession();
-    
+
     // 現在の画面を閉じてステージ選択画面に戻る
     Navigator.pop(context);
     AppRouter.goToStageSelect(context);
@@ -46,18 +51,22 @@ mixin ResultScreenMixin {
     // アイテム状態を復元
     final session = ref.read(battleSessionProvider);
     if (session.stageStartInventory != null) {
-      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+      ref
+          .read(inventoryProvider.notifier)
+          .restoreInventory(session.stageStartInventory!);
     }
-    
+
     // バトルセッションをリセット
     ref.read(battleSessionProvider.notifier).resetSession();
-    
+
     // 現在のアイテム状態を取得
     final currentInventory = ref.read(inventoryProvider);
-    
+
     // 同じステージを再開
-    ref.read(battleSessionProvider.notifier).startStage(stageNumber, currentInventory);
-    
+    ref
+        .read(battleSessionProvider.notifier)
+        .startStage(stageNumber, currentInventory);
+
     // 現在の画面を閉じてバトル画面に遷移
     Navigator.pop(context);
     AppRouter.goToBattle(context);
@@ -68,16 +77,18 @@ mixin ResultScreenMixin {
     // アイテム状態を復元
     final session = ref.read(battleSessionProvider);
     if (session.stageStartInventory != null) {
-      ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
+      ref
+          .read(inventoryProvider.notifier)
+          .restoreInventory(session.stageStartInventory!);
     }
-    
+
     // バトルセッションをリセット
     ref.read(battleSessionProvider.notifier).resetSession();
-    
+
     // 練習モードを開始
     final currentInventory = ref.read(inventoryProvider);
     ref.read(battleSessionProvider.notifier).startPractice(currentInventory);
-    
+
     // 現在の画面を閉じてバトル画面に戻る
     Navigator.pop(context);
     AppRouter.goToBattle(context);
@@ -110,7 +121,11 @@ class ResultScreenButtons extends StatelessWidget {
     return Column(
       children: [
         // 次のステージボタン（成功時かつ最終ステージでない場合のみ）
-        if (isSuccess && !isPracticeMode && stageNumber != null && stageNumber! < 4 && onNextStage != null)
+        if (isSuccess &&
+            !isPracticeMode &&
+            stageNumber != null &&
+            stageNumber! < 4 &&
+            onNextStage != null)
           Column(
             children: [
               SizedBox(
@@ -120,14 +135,15 @@ class ResultScreenButtons extends StatelessWidget {
                   icon: const Icon(Icons.arrow_forward),
                   label: const Text('Next Stage'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: Dimensions.paddingM),
                   ),
                 ),
               ),
               const SizedBox(height: Dimensions.spacingM),
             ],
           ),
-        
+
         // ステージ選択に戻るボタン
         SizedBox(
           width: double.infinity,
@@ -136,13 +152,14 @@ class ResultScreenButtons extends StatelessWidget {
             icon: const Icon(Icons.list),
             label: const Text('Stage Select'),
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+              padding:
+                  const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
             ),
           ),
         ),
-        
+
         const SizedBox(height: Dimensions.spacingM),
-        
+
         // 再挑戦ボタン
         SizedBox(
           width: double.infinity,
@@ -151,13 +168,14 @@ class ResultScreenButtons extends StatelessWidget {
             icon: const Icon(Icons.refresh),
             label: Text(isSuccess ? 'Play Again' : 'Try Again'),
             style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+              padding:
+                  const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
             ),
           ),
         ),
-        
+
         const SizedBox(height: Dimensions.spacingS),
-        
+
         // 練習モードボタン
         TextButton.icon(
           onPressed: onPractice,

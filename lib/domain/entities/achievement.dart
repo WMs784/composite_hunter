@@ -41,12 +41,12 @@ enum AchievementCategory {
 
 /// Achievement types
 enum AchievementType {
-  milestone,    // One-time achievements
-  cumulative,   // Count-based achievements
-  streak,       // Consecutive achievements
-  percentage,   // Percentage-based achievements
-  time,         // Time-based achievements
-  secret,       // Hidden achievements
+  milestone, // One-time achievements
+  cumulative, // Count-based achievements
+  streak, // Consecutive achievements
+  percentage, // Percentage-based achievements
+  time, // Time-based achievements
+  secret, // Hidden achievements
 }
 
 /// Achievement rarity levels
@@ -63,7 +63,8 @@ enum AchievementRarity {
 class AchievementReward with _$AchievementReward {
   const factory AchievementReward.experience(int amount) = ExperienceReward;
   const factory AchievementReward.prime(int value, int count) = PrimeReward;
-  const factory AchievementReward.combo(List<AchievementReward> rewards) = ComboReward;
+  const factory AchievementReward.combo(List<AchievementReward> rewards) =
+      ComboReward;
 }
 
 /// Achievement progress tracker
@@ -106,17 +107,17 @@ extension AchievementExtensions on Achievement {
     if (targetValue == 0) return 0.0;
     return (currentProgress / targetValue).clamp(0.0, 1.0);
   }
-  
+
   /// Check if achievement is completed
   bool get isCompleted {
     return currentProgress >= targetValue;
   }
-  
+
   /// Check if achievement is in progress
   bool get isInProgress {
     return currentProgress > 0 && !isCompleted;
   }
-  
+
   /// Get progress display text
   String get progressText {
     if (type == AchievementType.percentage) {
@@ -124,20 +125,20 @@ extension AchievementExtensions on Achievement {
     }
     return '$currentProgress/$targetValue';
   }
-  
+
   /// Get time since unlock
   Duration? get timeSinceUnlock {
     if (unlockedAt == null) return null;
     return DateTime.now().difference(unlockedAt!);
   }
-  
+
   /// Check if recently unlocked (within last hour)
   bool get isRecentlyUnlocked {
     final timeSince = timeSinceUnlock;
     if (timeSince == null) return false;
     return timeSince.inHours < 1;
   }
-  
+
   /// Get rarity display color
   String get rarityColor {
     switch (rarity) {
@@ -153,7 +154,7 @@ extension AchievementExtensions on Achievement {
         return '#FF9800';
     }
   }
-  
+
   /// Get category display name
   String get categoryDisplayName {
     switch (category) {
@@ -179,7 +180,7 @@ extension AchievementExtensions on Achievement {
         return 'Milestone';
     }
   }
-  
+
   /// Get type display name
   String get typeDisplayName {
     switch (type) {
@@ -197,7 +198,7 @@ extension AchievementExtensions on Achievement {
         return 'Secret';
     }
   }
-  
+
   /// Get reward display text
   String get rewardDisplayText {
     return reward.when(
@@ -206,27 +207,32 @@ extension AchievementExtensions on Achievement {
       combo: (rewards) => '${rewards.length} Rewards',
     );
   }
-  
+
   /// Check if achievement should be displayed
   bool get shouldDisplay {
     return !isHidden || isUnlocked;
   }
-  
+
   /// Check if achievement has prerequisites
   bool get hasPrerequisites {
     return prerequisites != null && prerequisites!.isNotEmpty;
   }
-  
+
   /// Get difficulty level based on target value and rarity
   int get difficultyLevel {
     var difficulty = 1;
-    
+
     // Base difficulty from target value
-    if (targetValue >= 1000) difficulty += 4;
-    else if (targetValue >= 100) difficulty += 3;
-    else if (targetValue >= 50) difficulty += 2;
-    else if (targetValue >= 10) difficulty += 1;
-    
+    if (targetValue >= 1000) {
+      difficulty += 4;
+    } else if (targetValue >= 100) {
+      difficulty += 3;
+    } else if (targetValue >= 50) {
+      difficulty += 2;
+    } else if (targetValue >= 10) {
+      difficulty += 1;
+    }
+
     // Additional difficulty from rarity
     switch (rarity) {
       case AchievementRarity.common:
@@ -244,10 +250,10 @@ extension AchievementExtensions on Achievement {
         difficulty += 4;
         break;
     }
-    
+
     return difficulty.clamp(1, 10);
   }
-  
+
   /// Get estimated time to complete
   Duration get estimatedTimeToComplete {
     switch (category) {
@@ -256,7 +262,7 @@ extension AchievementExtensions on Achievement {
         return Duration(minutes: (targetValue - currentProgress) * 2);
       case AchievementCategory.speed:
         // Speed achievements are quick
-        return Duration(minutes: 30);
+        return const Duration(minutes: 30);
       case AchievementCategory.collection:
         // Collection takes time
         return Duration(hours: (targetValue - currentProgress) * 2);
@@ -264,7 +270,7 @@ extension AchievementExtensions on Achievement {
         // Level-based progression
         return Duration(hours: (targetValue - currentProgress) * 10);
       default:
-        return Duration(hours: 1);
+        return const Duration(hours: 1);
     }
   }
 }

@@ -30,6 +30,7 @@ flutter analyze
 
 # Format code
 flutter format .
+dart format .
 
 # Run tests
 flutter test

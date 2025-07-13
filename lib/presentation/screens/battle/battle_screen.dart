@@ -793,6 +793,7 @@ class _EnemySection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final isPrime = _isPrime(enemy);
+    final session = ref.watch(battleSessionProvider);
     final l10n = AppLocalizations.of(context)!;
 
     final screenWidth = MediaQuery.of(context).size.width;
@@ -827,95 +828,138 @@ class _EnemySection extends ConsumerWidget {
           vertical:
               screenWidth < 350 ? Dimensions.paddingXs : Dimensions.paddingS,
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Enemy display
-              Container(
-                width: enemyDisplaySize,
-                height: enemyDisplaySize,
-                constraints: BoxConstraints(
-                  minWidth: 60,
-                  minHeight: 60,
-                  maxWidth: screenWidth * 0.35,
-                  maxHeight: screenWidth * 0.35,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.enemyNormal,
-                  borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+        child: session.isPracticeMode
+            ? SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Enemy display
+                    Container(
+                      width: enemyDisplaySize,
+                      height: enemyDisplaySize,
+                      constraints: BoxConstraints(
+                        minWidth: 60,
+                        minHeight: 60,
+                        maxWidth: screenWidth * 0.35,
+                        maxHeight: screenWidth * 0.35,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.enemyNormal,
+                        borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Padding(
+                            padding: const EdgeInsets.all(Dimensions.paddingS),
+                            child: Text(
+                              enemyString,
+                              style: AppTextStyles.enemyValue.copyWith(
+                                color: AppColors.onPrimary,
+                                fontSize: adjustedFontSize,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(
+                        height: screenWidth < 350
+                            ? Dimensions.spacingXs
+                            : Dimensions.spacingS),
+
+                    // Prime/Composite Number タイトル（練習モードのみ表示）
+                    Flexible(
+                      child: Text(
+                        isPrime ? l10n.primeNumber : l10n.compositeNumber,
+                        style: AppTextStyles.titleMedium.copyWith(
+                          fontSize: screenWidth < 350 ? 14 : 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+
+                    SizedBox(
+                        height: screenWidth < 350 ? 2 : Dimensions.spacingXs),
+
+                    // 説明文（練習モードのみ表示）
+                    Flexible(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth < 350
+                              ? Dimensions.paddingXs
+                              : Dimensions.paddingS,
+                        ),
+                        child: Text(
+                          isPrime
+                              ? l10n.enemyDefeated
+                              : l10n.attackWithPrimeFactors,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.onSurfaceVariant,
+                            fontSize: screenWidth < 350 ? 10 : 11,
+                            height: 1.2,
+                          ),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                child: Center(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Padding(
-                      padding: const EdgeInsets.all(Dimensions.paddingS),
-                      child: Text(
-                        enemyString,
-                        style: AppTextStyles.enemyValue.copyWith(
-                          color: AppColors.onPrimary,
-                          fontSize: adjustedFontSize,
+              )
+            : Center(
+                child: Container(
+                  width: enemyDisplaySize,
+                  height: enemyDisplaySize,
+                  constraints: BoxConstraints(
+                    minWidth: 60,
+                    minHeight: 60,
+                    maxWidth: screenWidth * 0.35,
+                    maxHeight: screenWidth * 0.35,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.enemyNormal,
+                    borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Padding(
+                        padding: const EdgeInsets.all(Dimensions.paddingS),
+                        child: Text(
+                          enemyString,
+                          style: AppTextStyles.enemyValue.copyWith(
+                            color: AppColors.onPrimary,
+                            fontSize: adjustedFontSize,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
                 ),
               ),
-
-              SizedBox(
-                  height: screenWidth < 350
-                      ? Dimensions.spacingXs
-                      : Dimensions.spacingS),
-
-              // Prime/Composite Number タイトル
-              Flexible(
-                child: Text(
-                  isPrime ? l10n.primeNumber : l10n.compositeNumber,
-                  style: AppTextStyles.titleMedium.copyWith(
-                    fontSize: screenWidth < 350 ? 14 : 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-
-              SizedBox(height: screenWidth < 350 ? 2 : Dimensions.spacingXs),
-
-              // 説明文
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth < 350
-                        ? Dimensions.paddingXs
-                        : Dimensions.paddingS,
-                  ),
-                  child: Text(
-                    isPrime ? l10n.enemyDefeated : l10n.attackWithPrimeFactors,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                      fontSize: screenWidth < 350 ? 10 : 11,
-                      height: 1.2,
-                    ),
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -1174,7 +1218,6 @@ class _ActionButtonsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
-    final canClaimVictory = _isPrime(enemy);
     final l10n = AppLocalizations.of(context)!;
 
     return Row(
@@ -1212,15 +1255,13 @@ class _ActionButtonsSection extends ConsumerWidget {
         Expanded(
           flex: 2,
           child: ElevatedButton(
-            onPressed: canClaimVictory
-                ? () {
-                    // 複数回の連続クリックを防ぐ
-                    if (context.mounted) {
-                      _claimVictory(context, ref, enemy, onStopTimer,
-                          onRestartTimer, onGenerateNewEnemy);
-                    }
-                  }
-                : null,
+            onPressed: () {
+              // 複数回の連続クリックを防ぐ
+              if (context.mounted) {
+                _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer,
+                    onGenerateNewEnemy);
+              }
+            },
             child: Text(l10n.claimVictory),
           ),
         ),

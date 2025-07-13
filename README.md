@@ -47,7 +47,7 @@
 
 ```bash
 # 1. リポジトリをクローン
-git clone https://github.com/[username]/composite_hunter.git
+git clone https://github.com/WMs784/composite_hunter.git
 cd composite_hunter
 
 # 2. 依存関係をインストール
@@ -141,8 +141,8 @@ git config core.hooksPath .githooks
 ## 📄 ドキュメント
 
 ### 公式ドキュメント
-- [プライバシーポリシー](https://[username].github.io/composite_hunter/privacy-policy.html)
-- [利用規約](https://[username].github.io/composite_hunter/terms-of-service.html)
+- [プライバシーポリシー](https://wms784.github.io/composite_hunter/privacy-policy.html)
+- [利用規約](https://wms784.github.io/composite_hunter/terms-of-service.html)
 
 ### 設計ドキュメント
 - [要件定義書](docs/requirements.md)
@@ -244,8 +244,8 @@ flutter run
 
 ## 📞 お問い合わせ
 
-- **Issues**: [GitHub Issues](https://github.com/[username]/composite_hunter/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/[username]/composite_hunter/discussions)
+- **Issues**: [GitHub Issues](https://github.com/WMs784/composite_hunter/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/WMs784/composite_hunter/discussions)
 - **Security**: セキュリティに関する問題は [SECURITY.md](SECURITY.md) をご覧ください
 
 ---

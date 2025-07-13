@@ -7,10 +7,10 @@ locale: ja-JP
 # Site settings
 author:
   name: Composite Hunter Development Team
-  email: contact@composite-hunter.example.com
+  email: wms784.app@gmail.com
 
 # Social links
-github_username: composite-hunter
+github_username: WMs784
 
 # Build settings
 markdown: kramdown

@@ -140,7 +140,7 @@ description: 合成数ハンターアプリのプライバシーポリシーに�
 プライバシーポリシーに関するご質問やご意見がございましたら、以下の方法でお問い合わせください：
 
 ### GitHub Issues
-- [プロジェクトのIssuesページ](https://github.com/[username]/composite_hunter/issues)
+- [プロジェクトのIssuesページ](https://github.com/WMs784/composite_hunter/issues)
 - プライバシーに関する質問は「privacy」ラベルを付けてください
 
 ### 対応時間

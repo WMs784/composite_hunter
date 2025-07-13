@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Pre-commit hook for Flutter project
+# Runs flutter analyze before allowing commit
+#
+
+echo "Running Flutter analyze..."
+
+# Run flutter analyze
+flutter analyze
+
+# Check if analyze passed
+if [ $? -ne 0 ]; then
+    echo "❌ Flutter analyze failed. Please fix the issues before committing."
+    exit 1
+fi
+
+echo "✅ Flutter analyze passed."
+
+# Optionally run tests as well
+echo "Running Flutter tests..."
+flutter test
+
+if [ $? -ne 0 ]; then
+    echo "❌ Flutter tests failed. Please fix the tests before committing."
+    exit 1
+fi
+
+echo "✅ All checks passed. Proceeding with commit."
+exit 0

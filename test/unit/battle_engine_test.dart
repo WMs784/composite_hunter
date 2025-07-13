@@ -7,7 +7,7 @@ void main() {
   group('BattleEngine Tests', () {
     group('executeAttack', () {
       test('should allow valid attacks', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -41,7 +41,7 @@ void main() {
       });
 
       test('should reach victory state when enemy becomes prime', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 6,
           originalValue: 12,
           type: EnemyType.small,
@@ -73,7 +73,7 @@ void main() {
       });
 
       test('should return error for invalid attacks', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 15,
           originalValue: 15,
           type: EnemyType.small,
@@ -105,7 +105,7 @@ void main() {
 
     group('processVictoryClaim', () {
       test('should validate correct victory claims', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 7,
           originalValue: 14,
           type: EnemyType.small,
@@ -131,7 +131,7 @@ void main() {
       });
 
       test('should handle power enemy victories', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 3,
           originalValue: 27,
           type: EnemyType.power,
@@ -161,7 +161,7 @@ void main() {
       });
 
       test('should penalize wrong victory claims', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 15,
           originalValue: 30,
           type: EnemyType.small,
@@ -229,7 +229,7 @@ void main() {
 
     group('canAttack', () {
       test('should validate attack availability', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 12,
           originalValue: 12,
           type: EnemyType.small,
@@ -264,7 +264,7 @@ void main() {
 
     group('calculateBattleDifficulty', () {
       test('should calculate difficulty based on enemy and available attacks', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 30,
           originalValue: 30,
           type: EnemyType.medium,
@@ -283,7 +283,7 @@ void main() {
       });
 
       test('should increase difficulty when no attacks available', () {
-        final enemy = Enemy(
+        const enemy = Enemy(
           currentValue: 35,
           originalValue: 35,
           type: EnemyType.medium,

@@ -282,7 +282,7 @@ class _TutorialPage extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.lightbulb,
                     color: AppColors.victoryGreen,
                   ),

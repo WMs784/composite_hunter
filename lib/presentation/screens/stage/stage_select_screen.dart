@@ -9,6 +9,7 @@ import '../../providers/stage_progress_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../battle/battle_screen.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../core/utils/logger.dart';
 
 // ステージ情報
 class StageInfo {
@@ -125,7 +126,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(Dimensions.paddingL),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [AppColors.primary, AppColors.primaryContainer],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -177,7 +178,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
               
               // 練習モードボタン
               const SizedBox(height: Dimensions.spacingM),
-              Container(
+              SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   onPressed: () => _startPracticeMode(),
@@ -196,13 +197,13 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
   }
 
   void _startStage(StageInfo stage) {
-    print('Starting stage ${stage.stageNumber}: ${stage.title}');
+    Logger.info('Starting stage ${stage.stageNumber}: ${stage.title}');
     // アイテム選択画面に遷移
     AppRouter.goToStageItemSelection(context, stage);
   }
 
   void _startPracticeMode() {
-    print('Starting practice mode');
+    Logger.info('Starting practice mode');
     // 現在のアイテム状態を取得
     final currentInventory = ref.read(inventoryProvider);
     // 練習モードでバトルセッションを開始（アイテム状態を保存）
@@ -262,7 +263,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   );
                 }
               } catch (e) {
-                print('Error during reset: $e');
+                Logger.error('Error during reset: $e');
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

@@ -7,7 +7,7 @@ void main() {
   group('Prime Enemy Attack Tests', () {
     test('should prevent attack when enemy becomes prime', () {
       // Create a composite enemy (6 = 2 * 3)
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 6,
         originalValue: 6,
         type: EnemyType.small,
@@ -26,7 +26,7 @@ void main() {
 
     test('should return error when attempting to attack prime enemy', () {
       // Create a prime enemy
-      final primeEnemy = Enemy(
+      const primeEnemy = Enemy(
         currentValue: 7,
         originalValue: 14,
         type: EnemyType.small,
@@ -43,7 +43,7 @@ void main() {
 
     test('should allow attack on composite enemy even with same prime factor', () {
       // Create a composite enemy (12 = 2^2 * 3)
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 12,
         originalValue: 12,
         type: EnemyType.small,
@@ -62,7 +62,7 @@ void main() {
 
     test('should prevent attack when enemy value is 1', () {
       // Create enemy with value 1 (neither prime nor composite)
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 1,
         originalValue: 6,
         type: EnemyType.small,
@@ -76,7 +76,7 @@ void main() {
 
     test('battle engine should handle prime enemy attack correctly', () {
       // Start with composite enemy
-      final enemy = Enemy(
+      const enemy = Enemy(
         currentValue: 10,
         originalValue: 10,
         type: EnemyType.small,

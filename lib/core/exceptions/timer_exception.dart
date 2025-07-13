@@ -1,8 +1,7 @@
 import 'game_exception.dart';
 
 class TimerException extends GameException {
-  const TimerException(String message, [String? details])
-      : super(message, details);
+  const TimerException(super.message, [super.details]);
 }
 
 class TimerAlreadyRunningException extends TimerException {

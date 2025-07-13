@@ -14,21 +14,17 @@ abstract class GameException implements Exception {
 }
 
 class InvalidAttackException extends GameException {
-  const InvalidAttackException(String message, [String? details])
-      : super(message, details);
+  const InvalidAttackException(super.message, [super.details]);
 }
 
 class InvalidPrimeException extends GameException {
-  const InvalidPrimeException(String message, [String? details])
-      : super(message, details);
+  const InvalidPrimeException(super.message, [super.details]);
 }
 
 class InsufficientInventoryException extends GameException {
-  const InsufficientInventoryException(String message, [String? details])
-      : super(message, details);
+  const InsufficientInventoryException(super.message, [super.details]);
 }
 
 class BattleStateException extends GameException {
-  const BattleStateException(String message, [String? details])
-      : super(message, details);
+  const BattleStateException(super.message, [super.details]);
 }

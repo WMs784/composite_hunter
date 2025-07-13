@@ -222,10 +222,15 @@ extension AchievementExtensions on Achievement {
     var difficulty = 1;
     
     // Base difficulty from target value
-    if (targetValue >= 1000) difficulty += 4;
-    else if (targetValue >= 100) difficulty += 3;
-    else if (targetValue >= 50) difficulty += 2;
-    else if (targetValue >= 10) difficulty += 1;
+    if (targetValue >= 1000) {
+      difficulty += 4;
+    } else if (targetValue >= 100) {
+      difficulty += 3;
+    } else if (targetValue >= 50) {
+      difficulty += 2;
+    } else if (targetValue >= 10) {
+      difficulty += 1;
+    }
     
     // Additional difficulty from rarity
     switch (rarity) {
@@ -256,7 +261,7 @@ extension AchievementExtensions on Achievement {
         return Duration(minutes: (targetValue - currentProgress) * 2);
       case AchievementCategory.speed:
         // Speed achievements are quick
-        return Duration(minutes: 30);
+        return const Duration(minutes: 30);
       case AchievementCategory.collection:
         // Collection takes time
         return Duration(hours: (targetValue - currentProgress) * 2);
@@ -264,7 +269,7 @@ extension AchievementExtensions on Achievement {
         // Level-based progression
         return Duration(hours: (targetValue - currentProgress) * 10);
       default:
-        return Duration(hours: 1);
+        return const Duration(hours: 1);
     }
   }
 }

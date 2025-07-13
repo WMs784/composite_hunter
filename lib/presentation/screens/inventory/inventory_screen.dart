@@ -45,15 +45,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           unselectedLabelColor: AppColors.onSurfaceVariant,
           tabs: [
             Tab(
-              icon: Icon(Icons.inventory, color: null), // Use tab bar's color scheme
+              icon: const Icon(Icons.inventory, color: null), // Use tab bar's color scheme
               text: l10n.inventory,
             ),
             Tab(
-              icon: Icon(Icons.book, color: null), // Use tab bar's color scheme
+              icon: const Icon(Icons.book, color: null), // Use tab bar's color scheme
               text: l10n.collection,
             ),
             Tab(
-              icon: Icon(Icons.analytics, color: null), // Use tab bar's color scheme
+              icon: const Icon(Icons.analytics, color: null), // Use tab bar's color scheme
               text: l10n.statistics,
             ),
           ],
@@ -279,7 +279,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                         child: LinearProgressIndicator(
                           value: percentage,
                           backgroundColor: AppColors.surfaceVariant,
-                          valueColor: AlwaysStoppedAnimation<Color>(
+                          valueColor: const AlwaysStoppedAnimation<Color>(
                             AppColors.primary,
                           ),
                         ),

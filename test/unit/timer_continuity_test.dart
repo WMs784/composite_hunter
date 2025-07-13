@@ -24,7 +24,6 @@ void main() {
       expect(timerStopped, false);
       
       // 新しい敵が生成される
-      final newEnemy = 12; // 新しい合成数
       
       // タイマーは継続
       timerValue--;

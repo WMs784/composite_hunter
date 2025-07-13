@@ -89,10 +89,15 @@ class MathUtils {
     
     // Base difficulty from number size
     int difficulty = 0;
-    if (n <= 20) difficulty = 1;
-    else if (n <= 100) difficulty = 2;
-    else if (n <= 1000) difficulty = 3;
-    else difficulty = 4;
+    if (n <= 20) {
+      difficulty = 1;
+    } else if (n <= 100) {
+      difficulty = 2;
+    } else if (n <= 1000) {
+      difficulty = 3;
+    } else {
+      difficulty = 4;
+    }
     
     // Increase difficulty based on number of unique factors
     difficulty += uniqueFactors;

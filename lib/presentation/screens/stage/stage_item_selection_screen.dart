@@ -8,6 +8,7 @@ import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
 import 'stage_select_screen.dart';
+import '../../../core/utils/logger.dart';
 
 /// ステージ用アイテム選択画面
 class StageItemSelectionScreen extends ConsumerStatefulWidget {
@@ -91,7 +92,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       margin: const EdgeInsets.all(Dimensions.paddingM),
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [AppColors.primary, AppColors.primaryContainer],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -176,7 +177,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.inventory_2,
             color: AppColors.onPrimaryContainer,
             size: 24,
@@ -373,8 +374,8 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
   
   /// 選択されたアイテムでバトル開始
   void _startBattleWithSelectedItems() {
-    print('Starting battle with selected counts: $selectedCounts');
-    print('Total selected count: $totalSelectedCount');
+    Logger.logBattle('Starting battle with selected counts', data: {'selected_counts': selectedCounts});
+    Logger.logBattle('Total selected count', data: {'total_count': totalSelectedCount});
     
     // 選択されたアイテムで一時的なインベントリを作成
     final selectedInventory = _createSelectedInventory();

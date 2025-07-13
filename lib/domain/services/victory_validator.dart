@@ -43,7 +43,7 @@ class VictoryValidator {
   }
 
   /// Check if victory can be claimed based on current game state
-  static bool canClaimVictory(Enemy enemy, TimerState timerState) {
+  static bool canClaimVictory(Enemy? enemy, TimerState timerState) {
     // Must have an active enemy
     if (enemy == null) return false;
     

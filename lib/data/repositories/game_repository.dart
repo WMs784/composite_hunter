@@ -3,7 +3,6 @@ import '../models/battle_result_model.dart';
 import '../models/enemy_model.dart';
 import '../datasources/local_database.dart';
 import '../datasources/shared_preferences_service.dart';
-import '../mappers/game_mapper.dart';
 import '../../domain/entities/inventory.dart';
 import '../../domain/entities/prime.dart';
 import '../../domain/entities/player.dart';
@@ -15,15 +14,15 @@ import '../../core/utils/logger.dart';
 class GameRepository {
   final LocalDatabase _database;
   final SharedPreferencesService _preferences;
-  final GameMapper _mapper;
+  // final GameMapper _mapper; // Future feature
 
   GameRepository({
     LocalDatabase? database,
     SharedPreferencesService? preferences,
-    GameMapper? mapper,
+    // GameMapper? mapper, // Future feature
   }) : _database = database ?? LocalDatabase(),
-       _preferences = preferences ?? SharedPreferencesService(),
-       _mapper = mapper ?? GameMapper();
+       _preferences = preferences ?? SharedPreferencesService();
+       // _mapper = mapper ?? GameMapper(); // Future feature
 
   // ========== PLAYER OPERATIONS ==========
 
@@ -435,12 +434,12 @@ class GameRepository {
               battleDuration: duration,
             );
           case 'defeat':
-            return BattleResultModel.error(
+            return const BattleResultModel.error(
               message: 'Battle defeated',
               details: null,
             );
           default:
-            return BattleResultModel.error(
+            return const BattleResultModel.error(
               message: 'Unknown battle result',
               details: null,
             );

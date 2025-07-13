@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../../core/utils/logger.dart';
 
 /// 素数の使用統計を管理するプロバイダー
 class PrimeUsageNotifier extends StateNotifier<Map<int, int>> {
@@ -25,7 +26,7 @@ class PrimeUsageNotifier extends StateNotifier<Map<int, int>> {
       });
       state = usage;
     } catch (e) {
-      print('Failed to load usage data: $e');
+      Logger.error('Failed to load usage data: $e');
     }
   }
 
@@ -49,7 +50,7 @@ class PrimeUsageNotifier extends StateNotifier<Map<int, int>> {
     state = newState;
     
     _saveUsageData().catchError((error) {
-      print('Failed to save usage data: $error');
+      Logger.error('Failed to save usage data: $error');
     });
   }
 

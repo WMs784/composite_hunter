@@ -19,7 +19,11 @@
       "Bash(rg:*)",
       "Bash(grep:*)",
       "Bash(rm:*)",
-      "Bash(echo:*)"
+      "Bash(echo:*)",
+      "Bash(chmod:*)",
+      "Bash(git config:*)",
+      "Bash(git commit:*)",
+      "Bash(git reset:*)"
     ],
     "deny": []
   }

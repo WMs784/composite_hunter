@@ -84,7 +84,7 @@ class AchievementScreen extends ConsumerWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.emoji_events,
                   color: AppColors.victoryGreen,
                   size: Dimensions.iconL,
@@ -123,7 +123,7 @@ class AchievementScreen extends ConsumerWidget {
             LinearProgressIndicator(
               value: progress,
               backgroundColor: AppColors.surfaceVariant,
-              valueColor: AlwaysStoppedAnimation<Color>(
+              valueColor: const AlwaysStoppedAnimation<Color>(
                 AppColors.victoryGreen,
               ),
             ),
@@ -201,7 +201,7 @@ class AchievementScreen extends ConsumerWidget {
                           child: LinearProgressIndicator(
                             value: progressValue,
                             backgroundColor: AppColors.surfaceVariant,
-                            valueColor: AlwaysStoppedAnimation<Color>(
+                            valueColor: const AlwaysStoppedAnimation<Color>(
                               AppColors.primary,
                             ),
                           ),
@@ -228,7 +228,7 @@ class AchievementScreen extends ConsumerWidget {
                   color: AppColors.victoryGreen,
                   borderRadius: BorderRadius.circular(Dimensions.radiusRound),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.check,
                   color: AppColors.onPrimary,
                   size: Dimensions.iconS,
@@ -241,7 +241,7 @@ class AchievementScreen extends ConsumerWidget {
                   color: AppColors.surfaceVariant,
                   borderRadius: BorderRadius.circular(Dimensions.radiusRound),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.lock,
                   color: AppColors.onSurfaceVariant,
                   size: Dimensions.iconS,

@@ -36,7 +36,7 @@ class BattleMenuDialog extends StatelessWidget {
             // ヘッダー
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.menu,
                   color: AppColors.primary,
                   size: 28,
@@ -196,7 +196,7 @@ class _MenuOption extends StatelessWidget {
               ),
             ),
             
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               color: AppColors.onSurfaceVariant,
               size: 16,

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/game_state.dart';
 import '../../domain/entities/player.dart';
 import '../../data/repositories/game_repository.dart';
-import '../../data/mappers/game_mapper.dart';
 import '../../data/datasources/shared_preferences_service.dart';
 import '../../core/constants/game_constants.dart';
 import '../../core/utils/logger.dart';
@@ -10,9 +9,8 @@ import '../../core/utils/logger.dart';
 /// State notifier for overall game state management
 class GameNotifier extends StateNotifier<GameState> {
   final GameRepository _repository;
-  final GameMapper _mapper;
 
-  GameNotifier(this._repository, this._mapper) : super(const GameState()) {
+  GameNotifier(this._repository) : super(const GameState()) {
     _loadGameState();
   }
 
@@ -111,7 +109,7 @@ class GameNotifier extends StateNotifier<GameState> {
     try {
       Logger.debug('Recording power enemy victory');
       
-      final bonusExperience = GameConstants.powerEnemyBonusExperience;
+      const bonusExperience = GameConstants.powerEnemyBonusExperience;
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
         totalVictories: state.player.totalVictories + 1,
@@ -342,8 +340,7 @@ class GameNotifier extends StateNotifier<GameState> {
 /// Game provider
 final gameProvider = StateNotifierProvider<GameNotifier, GameState>((ref) {
   final repository = GameRepository();
-  final mapper = GameMapper();
-  return GameNotifier(repository, mapper);
+  return GameNotifier(repository);
 });
 
 /// Computed providers for game state

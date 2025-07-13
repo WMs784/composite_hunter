@@ -18,7 +18,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   void _initializeAchievements() {
     state = [
       // Battle achievements
-      Achievement(
+      const Achievement(
         id: 'first_victory',
         title: 'First Victory',
         description: 'Win your first battle',
@@ -29,7 +29,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(50),
       ),
-      Achievement(
+      const Achievement(
         id: 'battle_veteran',
         title: 'Battle Veteran',
         description: 'Complete 100 battles',
@@ -40,7 +40,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(500),
       ),
-      Achievement(
+      const Achievement(
         id: 'victory_streak_10',
         title: 'Winning Streak',
         description: 'Win 10 battles in a row',
@@ -51,7 +51,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.prime(11, 1),
       ),
-      Achievement(
+      const Achievement(
         id: 'victory_streak_25',
         title: 'Unstoppable',
         description: 'Win 25 battles in a row',
@@ -64,7 +64,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
       ),
 
       // Power enemy achievements
-      Achievement(
+      const Achievement(
         id: 'power_hunter',
         title: 'Power Hunter',
         description: 'Defeat your first power enemy',
@@ -75,7 +75,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(100),
       ),
-      Achievement(
+      const Achievement(
         id: 'power_slayer',
         title: 'Power Slayer',
         description: 'Defeat 50 power enemies',
@@ -88,7 +88,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
       ),
 
       // Speed achievements
-      Achievement(
+      const Achievement(
         id: 'speed_demon',
         title: 'Speed Demon',
         description: 'Complete a battle in under 10 seconds',
@@ -99,7 +99,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(75),
       ),
-      Achievement(
+      const Achievement(
         id: 'lightning_fast',
         title: 'Lightning Fast',
         description: 'Complete 10 battles in under 15 seconds each',
@@ -112,7 +112,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
       ),
 
       // Efficiency achievements
-      Achievement(
+      const Achievement(
         id: 'efficient_hunter',
         title: 'Efficient Hunter',
         description: 'Complete a battle in 3 turns or less',
@@ -123,7 +123,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(60),
       ),
-      Achievement(
+      const Achievement(
         id: 'minimalist',
         title: 'Minimalist',
         description: 'Complete 20 battles in 3 turns or less',
@@ -136,7 +136,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
       ),
 
       // Collection achievements
-      Achievement(
+      const Achievement(
         id: 'collector',
         title: 'Prime Collector',
         description: 'Collect 10 different primes',
@@ -147,7 +147,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(200),
       ),
-      Achievement(
+      const Achievement(
         id: 'hoarder',
         title: 'Prime Hoarder',
         description: 'Have 100 total primes in inventory',
@@ -158,7 +158,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.prime(19, 3),
       ),
-      Achievement(
+      const Achievement(
         id: 'large_prime_collector',
         title: 'Large Prime Collector',
         description: 'Collect 5 primes larger than 100',
@@ -171,7 +171,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
       ),
 
       // Progression achievements
-      Achievement(
+      const Achievement(
         id: 'level_up_10',
         title: 'Rising Star',
         description: 'Reach level 10',
@@ -182,7 +182,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(300),
       ),
-      Achievement(
+      const Achievement(
         id: 'level_up_25',
         title: 'Expert Hunter',
         description: 'Reach level 25',
@@ -193,7 +193,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.prime(29, 2),
       ),
-      Achievement(
+      const Achievement(
         id: 'level_up_50',
         title: 'Prime Master',
         description: 'Reach level 50',
@@ -206,7 +206,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
       ),
 
       // Special achievements
-      Achievement(
+      const Achievement(
         id: 'perfect_battle',
         title: 'Perfect Battle',
         description: 'Complete a battle with perfect score',
@@ -217,7 +217,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.experience(150),
       ),
-      Achievement(
+      const Achievement(
         id: 'giant_slayer',
         title: 'Giant Slayer',
         description: 'Defeat an enemy with value over 1000',
@@ -228,7 +228,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         isUnlocked: false,
         reward: AchievementReward.prime(31, 2),
       ),
-      Achievement(
+      const Achievement(
         id: 'comeback_king',
         title: 'Comeback King',
         description: 'Win a battle with less than 5 seconds remaining',

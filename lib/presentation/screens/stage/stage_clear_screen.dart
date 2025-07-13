@@ -194,7 +194,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               builder: (context, child) {
                 // Ensure animation is mounted and valid before building stars
                 if (!mounted || !_starsController.isAnimating && _starsController.value == 0.0) {
-                  return Container(
+                  return SizedBox(
                     height: 60,
                     child: Center(
                       child: Row(
@@ -370,7 +370,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       ),
       child: Column(
         children: [
-          Icon(
+          const Icon(
             Icons.celebration,
             color: Colors.amber,
             size: 32,
@@ -419,6 +419,6 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
   String _formatDuration(Duration duration) {
     final minutes = duration.inMinutes;
     final seconds = duration.inSeconds % 60;
-    return '${minutes}:${seconds.toString().padLeft(2, '0')}';
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 }

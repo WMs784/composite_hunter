@@ -149,7 +149,7 @@ class Inventory with _$Inventory {
 
   @override
   String toString() {
-    return 'Inventory(${uniqueCount} unique primes, ${totalCount} total)';
+    return 'Inventory($uniqueCount unique primes, $totalCount total)';
   }
 }
 

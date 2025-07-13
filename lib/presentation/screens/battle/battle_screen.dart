@@ -14,6 +14,7 @@ import '../../../domain/entities/prime.dart';
 import '../stage/stage_clear_screen.dart';
 import '../game_over/game_over_screen.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../core/utils/logger.dart';
 
 // Simple working providers for battle screen
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
@@ -26,7 +27,7 @@ final recentlyAcquiredPrimesProvider = StateProvider<Map<int, DateTime>>((ref) =
 final timerDebugProvider = Provider<String>((ref) {
   final timer = ref.watch(battleTimerProvider);
   final debugInfo = 'Timer: $timer (${DateTime.now().millisecondsSinceEpoch})';
-  print('Timer provider update: $debugInfo');
+  Logger.debug('Timer provider update: $debugInfo');
   return debugInfo;
 });
 
@@ -46,7 +47,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // Initialize battle state and start timer
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        print('Battle screen initialized');
+        Logger.info('Battle screen initialized');
         _initializeBattleForStage();
         _startTimer();
       }
@@ -62,24 +63,24 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   void _startTimer() {
     _timer?.cancel();
     final initialTime = ref.read(battleTimerProvider);
-    print('Starting timer with initial time: $initialTime');
+    Logger.logTimer('Starting timer', seconds: initialTime);
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       // mountedチェックを追加
       if (!mounted) {
-        print('Widget not mounted, cancelling timer');
+        Logger.warning('Widget not mounted, cancelling timer');
         timer.cancel();
         return;
       }
       
       // 直接的な状態更新
       final currentTime = ref.read(battleTimerProvider);
-      print('Timer callback executed - currentTime: $currentTime, mounted: $mounted');
+      Logger.debug('Timer callback executed - currentTime: $currentTime, mounted: $mounted');
       if (currentTime > 0) {
         final newTime = currentTime - 1;
         ref.read(battleTimerProvider.notifier).state = newTime;
-        print('Timer updated: $currentTime -> $newTime');
+        Logger.logTimer('Timer updated', seconds: newTime);
       } else {
-        print('Timer reached 0, handling time up');
+        Logger.logTimer('Timer reached 0, handling time up');
         _handleTimeUp();
         timer.cancel();
       }
@@ -101,18 +102,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     _goToGameOver(GameOverReason.timeUp);
   }
 
-  void _resetBattle() {
-    // アイテム状態をステージ開始時に復元
-    _restoreInventoryWithAnimation();
-    
-    // Reset battle state and restart timer
-    _initializeBattleForStage();
-    
-    // Reset used primes
-    ref.read(battleSessionProvider.notifier).resetUsedPrimes();
-    
-    _startTimer();
-  }
 
   void _showBattleMenu(BuildContext context) {
     showDialog(
@@ -174,13 +163,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       final enemy = _generateEnemyForRange(6, 20);
       ref.read(battleEnemyProvider.notifier).state = enemy;
       ref.read(battleTimerProvider.notifier).state = 30;
-      print('Practice mode initialized - Enemy: $enemy, Timer: 30');
+      Logger.logBattle('Practice mode initialized', data: {'enemy': enemy, 'timer': 30});
     } else {
       final stageNumber = session.stageNumber ?? 1;
       final (enemy, timeLimit) = _getStageSettings(stageNumber);
       ref.read(battleEnemyProvider.notifier).state = enemy;
       ref.read(battleTimerProvider.notifier).state = timeLimit;
-      print('Stage $stageNumber initialized - Enemy: $enemy, Timer: $timeLimit');
+      Logger.logBattle('Stage initialized', data: {'stage': stageNumber, 'enemy': enemy, 'timer': timeLimit});
     }
   }
   
@@ -273,7 +262,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _restartBattle() {
-    print('Restarting battle');
+    Logger.logBattle('Restarting battle');
     
     // アイテム状態をステージ開始時に復元
     _restoreInventoryWithAnimation();
@@ -298,7 +287,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _exitBattle() {
-    print('Exiting battle');
+    Logger.logBattle('Exiting battle');
     // Stop timer before exiting
     _stopTimer();
     
@@ -321,7 +310,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       // アイテム状態を復元
       ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
       
-      print('Inventory restored: ${session.stageStartInventory!.length} items');
+      Logger.logInventory('Inventory restored', count: session.stageStartInventory!.length);
     }
   }
   
@@ -330,8 +319,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // 簡単な視覚的フィードバック
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
-          children: const [
+        content: const Row(
+          children: [
             Icon(Icons.restore, color: Colors.white),
             SizedBox(width: 8),
             Text('Items restored to starting state'),
@@ -347,30 +336,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
   
   
-  /// 最近獲得した素数を追跡（視覚的フィードバック用）
-  void _trackRecentlyAcquiredPrimes(WidgetRef ref, List<int> primes) {
-    final now = DateTime.now();
-    final currentMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
-    
-    // Add new primes with current timestamp
-    for (final prime in primes) {
-      currentMap[prime] = now;
-    }
-    
-    // Clean up old entries (older than 2 seconds)
-    currentMap.removeWhere((key, timestamp) => 
-        now.difference(timestamp).inSeconds > 2);
-    
-    ref.read(recentlyAcquiredPrimesProvider.notifier).state = currentMap;
-    
-    // Schedule cleanup after 2 seconds
-    Future.delayed(const Duration(seconds: 2), () {
-      final updatedMap = Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
-      updatedMap.removeWhere((key, timestamp) => 
-          DateTime.now().difference(timestamp).inSeconds > 2);
-      ref.read(recentlyAcquiredPrimesProvider.notifier).state = updatedMap;
-    });
-  }
 
   
   /// 無効攻撃時の教育的フィードバック
@@ -383,15 +348,15 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       context: context,
       barrierDismissible: true,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
             Icon(
               Icons.info_outline,
               color: AppColors.timerWarning,
               size: 24,
             ),
-            const SizedBox(width: 8),
-            const Text('Attack Failed!'),
+            SizedBox(width: 8),
+            Text('Attack Failed!'),
           ],
         ),
         content: Column(
@@ -459,7 +424,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       SnackBar(
         content: Row(
           children: [
-            Icon(Icons.block, color: Colors.white),
+            const Icon(Icons.block, color: Colors.white),
             const SizedBox(width: 8),
             Text('Prime $prime wasted! $enemy ÷ $prime is not a whole number.'),
           ],
@@ -544,7 +509,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               // Debug info
               Consumer(builder: (context, ref, child) {
                 final debugInfo = ref.watch(timerDebugProvider);
-                return Text(debugInfo, style: TextStyle(fontSize: 10, color: Colors.grey));
+                return Text(debugInfo, style: const TextStyle(fontSize: 10, color: Colors.grey));
               }),
               
               const SizedBox(height: Dimensions.spacingL),
@@ -606,7 +571,7 @@ class _SessionProgressSection extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.emoji_events,
             color: AppColors.onPrimaryContainer,
             size: 20,
@@ -624,7 +589,7 @@ class _SessionProgressSection extends ConsumerWidget {
           ),
           
           if (session.escapes > 0) ...[
-            Icon(
+            const Icon(
               Icons.directions_run,
               color: AppColors.error,
               size: 16,
@@ -639,7 +604,7 @@ class _SessionProgressSection extends ConsumerWidget {
           ],
           
           if (session.wrongClaims > 0) ...[
-            Icon(
+            const Icon(
               Icons.error,
               color: AppColors.timerWarning,
               size: 16,
@@ -669,7 +634,7 @@ class _TimerSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     
     // Debug: Print timer value on each rebuild
-    print('Timer UI rebuild: $timer ($formattedTime) at ${DateTime.now().millisecondsSinceEpoch}');
+    Logger.debug('Timer UI rebuild: $timer ($formattedTime) at ${DateTime.now().millisecondsSinceEpoch}');
 
     Color timerColor = AppColors.timerNormal;
     Color backgroundColor = AppColors.surface;
@@ -917,14 +882,14 @@ class _PrimeGridSection extends ConsumerWidget {
                     return _PrimeButton(
                       prime: prime,
                       onPressed: () {
-                        print('Prime ${prime.value} attack attempt on enemy $enemy');
+                        Logger.logBattle('Prime attack attempt', data: {'prime': prime.value, 'enemy': enemy});
                         if (prime.count > 0) {
                           final session = ref.read(battleSessionProvider);
                           final canAttack = enemy % prime.value == 0 && !_isPrime(enemy);
                           
                           if (canAttack) {
                             // 有効な攻撃：敵の数値を更新
-                            print('Valid attack: $enemy ÷ ${prime.value} = ${enemy ~/ prime.value}');
+                            Logger.logBattle('Valid attack', data: {'enemy': enemy, 'prime': prime.value, 'result': enemy ~/ prime.value});
                             ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
                             
                             // 練習モードでない場合のみアイテムを消費
@@ -944,7 +909,7 @@ class _PrimeGridSection extends ConsumerWidget {
                             });
                           } else {
                             // 無効な攻撃：教育的フィードバックを提供
-                            print('Invalid attack: $enemy is not divisible by ${prime.value}');
+                            Logger.logBattle('Invalid attack', data: {'enemy': enemy, 'prime': prime.value});
                             onInvalidAttack(context, prime.value, enemy);
                             
                             // アイテムは消費するが敵にダメージなし
@@ -1115,7 +1080,7 @@ class _ActionButtonsSection extends ConsumerWidget {
         Expanded(
           child: OutlinedButton(
             onPressed: () {
-              print('Escape button pressed');
+              Logger.logBattle('Escape button pressed');
               
               // Record escape in session
               ref.read(battleSessionProvider.notifier).recordEscape();
@@ -1130,10 +1095,10 @@ class _ActionButtonsSection extends ConsumerWidget {
               
               // Show feedback
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text('逃走しました。時間が10秒減少しました。'),
                   backgroundColor: Colors.orange,
-                  duration: const Duration(seconds: 2),
+                  duration: Duration(seconds: 2),
                 ),
               );
             },
@@ -1162,7 +1127,7 @@ class _ActionButtonsSection extends ConsumerWidget {
   }
   
   void _claimVictory(BuildContext context, WidgetRef ref, int enemy, VoidCallback onStopTimer, VoidCallback onRestartTimer, VoidCallback onGenerateNewEnemy) {
-    print('Claim Victory button pressed');
+    Logger.logBattle('Claim Victory button pressed');
     final l10n = AppLocalizations.of(context)!;
     
     if (_isPrime(enemy)) {
@@ -1175,14 +1140,14 @@ class _ActionButtonsSection extends ConsumerWidget {
       if (!session.isPracticeMode) {
         // ステージモード：完全な素因数分解の結果を獲得（最終素数 + 使用した素数）
         ref.read(inventoryProvider.notifier).receiveFactorizationReward(enemy, usedPrimes);
-        print('Stage mode victory reward: final prime $enemy + used primes ${usedPrimes.join(", ")}');
+        Logger.logBattle('Stage mode victory reward', data: {'final_prime': enemy, 'used_primes': usedPrimes});
         
         // インベントリ更新後の状態をデバッグ出力
         Future.delayed(const Duration(milliseconds: 100), () {
           final updatedInventory = ref.read(inventoryProvider);
           final battleInventory = ref.read(battleInventoryProvider);
-          print('Main inventory after reward: ${updatedInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
-          print('Battle inventory after reward: ${battleInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
+          Logger.logInventory('Main inventory after reward', count: updatedInventory.length);
+          Logger.logInventory('Battle inventory after reward', count: battleInventory.length);
         });
         
         // Track recently acquired primes for visual feedback
@@ -1198,14 +1163,14 @@ class _ActionButtonsSection extends ConsumerWidget {
       } else {
         // 練習モード：最終素数のみ獲得（アイテムは消費されない）
         ref.read(inventoryProvider.notifier).addPrime(enemy);
-        print('Practice mode victory reward: final prime $enemy');
+        Logger.logBattle('Practice mode victory reward', data: {'final_prime': enemy});
         
         // インベントリ更新後の状態をデバッグ出力
         Future.delayed(const Duration(milliseconds: 100), () {
           final updatedInventory = ref.read(inventoryProvider);
           final battleInventory = ref.read(battleInventoryProvider);
-          print('Main inventory after reward: ${updatedInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
-          print('Battle inventory after reward: ${battleInventory.map((p) => "${p.value}x${p.count}").join(", ")}');
+          Logger.logInventory('Main inventory after reward', count: updatedInventory.length);
+          Logger.logInventory('Battle inventory after reward', count: battleInventory.length);
         });
         
         // Track recently acquired prime for visual feedback

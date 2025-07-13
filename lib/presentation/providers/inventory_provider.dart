@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../../domain/entities/prime.dart';
 import 'battle_session_provider.dart';
+import '../../core/utils/logger.dart';
 
 /// プレイヤーのアイテム（素数）インベントリを管理するプロバイダー
 class InventoryNotifier extends StateNotifier<List<Prime>> {
@@ -77,7 +78,7 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
     state = updatedInventory;
     // 非同期保存（エラーハンドリング付き）
     _saveInventory().catchError((error) {
-      print('Failed to save inventory after using prime: $error');
+      Logger.error('Failed to save inventory after using prime: $error');
     });
   }
 
@@ -108,7 +109,7 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
     
     // 非同期保存（エラーハンドリング付き）
     _saveInventory().catchError((error) {
-      print('Failed to save inventory after adding prime: $error');
+      Logger.error('Failed to save inventory after adding prime: $error');
     });
   }
 

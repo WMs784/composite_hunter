@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/stage.dart';
 import '../../domain/entities/prime.dart';
 import '../../domain/usecases/stage_progress_usecase.dart';
+import '../../core/utils/logger.dart';
 
 /// バトルセッション状態
 class BattleSessionState {
@@ -79,9 +80,9 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
       stageStartInventory: List.from(selectedInventory), // 選択されたアイテム状態をコピーして保存
     );
     
-    print('Started stage $stageNumber with ${selectedInventory.length} selected items');
+    Logger.logBattle('Started stage', data: {'stage': stageNumber, 'selected_items': selectedInventory.length});
     for (final prime in selectedInventory) {
-      print('  - Prime ${prime.value}: ${prime.count} available');
+      Logger.logInventory('Prime available', prime: prime.value, count: prime.count);
     }
   }
   

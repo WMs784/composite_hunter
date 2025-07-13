@@ -1,18 +1,15 @@
 import 'game_exception.dart';
 
 class DataException extends GameException {
-  const DataException(String message, [String? details])
-      : super(message, details);
+  const DataException(super.message, [super.details]);
 }
 
 class DatabaseException extends DataException {
-  const DatabaseException(String message, [String? details])
-      : super(message, details);
+  const DatabaseException(super.message, [super.details]);
 }
 
 class DataCorruptionException extends DataException {
-  const DataCorruptionException(String message, [String? details])
-      : super(message, details);
+  const DataCorruptionException(super.message, [super.details]);
 }
 
 class SaveDataNotFoundException extends DataException {
@@ -21,6 +18,5 @@ class SaveDataNotFoundException extends DataException {
 }
 
 class SerializationException extends DataException {
-  const SerializationException(String message, [String? details])
-      : super(message, details);
+  const SerializationException(super.message, [super.details]);
 }

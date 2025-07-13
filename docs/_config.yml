@@ -1,0 +1,38 @@
+# GitHub Pages configuration for Composite Hunter
+title: 合成数ハンター (Composite Hunter)
+description: An educational game that teaches prime factorization through strategic battle gameplay
+theme: minima
+locale: ja-JP
+
+# Site settings
+author:
+  name: Composite Hunter Development Team
+  email: contact@composite-hunter.example.com
+
+# Social links
+github_username: composite-hunter
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Navigation
+header_pages:
+  - privacy-policy.md
+  - terms-of-service.md
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/

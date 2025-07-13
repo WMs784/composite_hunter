@@ -21,6 +21,9 @@ class Enemy with _$Enemy {
 
   /// Check if the enemy can be attacked by the given prime
   bool canBeAttackedBy(int prime) {
+    // Cannot attack if enemy is already defeated (prime number)
+    if (isDefeated) return false;
+    
     return currentValue % prime == 0;
   }
 

@@ -13,8 +13,7 @@ class DataCorruptionException extends DataException {
 }
 
 class SaveDataNotFoundException extends DataException {
-  const SaveDataNotFoundException()
-      : super('Save data not found');
+  const SaveDataNotFoundException() : super('Save data not found');
 }
 
 class SerializationException extends DataException {

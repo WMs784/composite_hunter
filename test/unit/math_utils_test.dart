@@ -133,14 +133,14 @@ void main() {
         // Small numbers (1-20)
         expect(MathUtils.getDifficulty(6), lessThanOrEqualTo(4));
         expect(MathUtils.getDifficulty(12), lessThanOrEqualTo(4));
-        
+
         // Medium numbers (21-100)
         expect(MathUtils.getDifficulty(30), greaterThan(3));
         expect(MathUtils.getDifficulty(60), greaterThan(3));
-        
+
         // Large numbers (101-1000)
         expect(MathUtils.getDifficulty(200), greaterThan(4));
-        
+
         // Very large numbers (>1000)
         expect(MathUtils.getDifficulty(2000), greaterThan(5));
       });
@@ -148,10 +148,10 @@ void main() {
       test('should increase difficulty with more unique factors', () {
         // 6 = 2 × 3 (2 unique factors)
         final difficulty6 = MathUtils.getDifficulty(6);
-        
+
         // 30 = 2 × 3 × 5 (3 unique factors)
         final difficulty30 = MathUtils.getDifficulty(30);
-        
+
         expect(difficulty30, greaterThan(difficulty6));
       });
     });

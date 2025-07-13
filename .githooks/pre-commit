@@ -1,8 +1,21 @@
 #!/bin/sh
 #
 # Pre-commit hook for Flutter project
-# Runs flutter analyze before allowing commit
+# Runs dart format and flutter analyze before allowing commit
 #
+
+echo "Running Dart format check..."
+
+# Run dart format check
+dart format --set-exit-if-changed .
+
+# Check if format passed
+if [ $? -ne 0 ]; then
+    echo "❌ Code formatting issues found. Please run 'dart format .' to fix formatting before committing."
+    exit 1
+fi
+
+echo "✅ Dart format check passed."
 
 echo "Running Flutter analyze..."
 

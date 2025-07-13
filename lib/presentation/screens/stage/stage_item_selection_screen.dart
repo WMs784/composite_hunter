@@ -13,41 +13,50 @@ import '../../../core/utils/logger.dart';
 /// ステージ用アイテム選択画面
 class StageItemSelectionScreen extends ConsumerStatefulWidget {
   final StageInfo stage;
-  
+
   const StageItemSelectionScreen({
     super.key,
     required this.stage,
   });
 
   @override
-  ConsumerState<StageItemSelectionScreen> createState() => _StageItemSelectionScreenState();
+  ConsumerState<StageItemSelectionScreen> createState() =>
+      _StageItemSelectionScreenState();
 }
 
-class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScreen> {
+class _StageItemSelectionScreenState
+    extends ConsumerState<StageItemSelectionScreen> {
   Map<int, int> selectedCounts = {}; // prime value -> selected count
-  
+
   /// ステージ別アイテム制限数を取得（総個数）
   int get maxSelectableCount {
     switch (widget.stage.stageNumber) {
-      case 1: return 8;  // 初心者向け：8個まで
-      case 2: return 15; // 中級者向け：15個まで
-      case 3: return 25; // 上級者向け：25個まで
-      case 4: return 40; // 最上級者向け：40個まで
-      default: return 15;
+      case 1:
+        return 8; // 初心者向け：8個まで
+      case 2:
+        return 15; // 中級者向け：15個まで
+      case 3:
+        return 25; // 上級者向け：25個まで
+      case 4:
+        return 40; // 最上級者向け：40個まで
+      default:
+        return 15;
     }
   }
-  
+
   /// 選択状態の確認
-  int get totalSelectedCount => selectedCounts.values.fold(0, (sum, count) => sum + count);
+  int get totalSelectedCount =>
+      selectedCounts.values.fold(0, (sum, count) => sum + count);
   bool get hasMinimumSelection => totalSelectedCount > 0;
   bool get hasReachedLimit => totalSelectedCount >= maxSelectableCount;
   int get remainingCount => maxSelectableCount - totalSelectedCount;
-  
+
   @override
   Widget build(BuildContext context) {
     final allPrimes = ref.watch(inventoryProvider);
-    final availablePrimes = allPrimes.where((prime) => prime.count > 0).toList();
-    
+    final availablePrimes =
+        allPrimes.where((prime) => prime.count > 0).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Select Items - Stage ${widget.stage.stageNumber}'),
@@ -62,21 +71,21 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
           children: [
             // ステージ情報ヘッダー
             _buildStageInfoHeader(),
-            
+
             const SizedBox(height: Dimensions.spacingM),
-            
+
             // 選択状況表示
             _buildSelectionStatus(),
-            
+
             const SizedBox(height: Dimensions.spacingM),
-            
+
             // アイテム選択グリッド
             Expanded(
               child: _buildItemSelectionGrid(availablePrimes),
             ),
-            
+
             const SizedBox(height: Dimensions.spacingM),
-            
+
             // 開始ボタン
             _buildStartButton(),
           ],
@@ -84,7 +93,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
     );
   }
-  
+
   /// ステージ情報ヘッダー
   Widget _buildStageInfoHeader() {
     return Container(
@@ -163,7 +172,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
     );
   }
-  
+
   /// 選択状況表示
   Widget _buildSelectionStatus() {
     return Container(
@@ -244,7 +253,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
     );
   }
-  
+
   /// アイテム選択グリッド
   Widget _buildItemSelectionGrid(List<Prime> availablePrimes) {
     if (availablePrimes.isEmpty) {
@@ -255,7 +264,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
         ),
       );
     }
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingM),
       child: GridView.builder(
@@ -271,7 +280,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
           final selectedCount = selectedCounts[prime.value] ?? 0;
           final canIncrease = remainingCount > 0;
           final canDecrease = selectedCount > 0;
-          
+
           return _SelectableItemCard(
             prime: prime,
             selectedCount: selectedCount,
@@ -284,7 +293,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
     );
   }
-  
+
   /// 開始ボタン
   Widget _buildStartButton() {
     return Container(
@@ -317,7 +326,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
     );
   }
-  
+
   /// 情報チップ
   Widget _buildInfoChip(IconData icon, String text) {
     return Container(
@@ -348,7 +357,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       ),
     );
   }
-  
+
   /// アイテム個数増加処理
   void _increaseItemCount(int primeValue) {
     if (remainingCount > 0) {
@@ -357,7 +366,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       });
     }
   }
-  
+
   /// アイテム個数減少処理
   void _decreaseItemCount(int primeValue) {
     final currentCount = selectedCounts[primeValue] ?? 0;
@@ -371,40 +380,43 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
       });
     }
   }
-  
+
   /// 選択されたアイテムでバトル開始
   void _startBattleWithSelectedItems() {
-    Logger.logBattle('Starting battle with selected counts', data: {'selected_counts': selectedCounts});
-    Logger.logBattle('Total selected count', data: {'total_count': totalSelectedCount});
-    
+    Logger.logBattle('Starting battle with selected counts',
+        data: {'selected_counts': selectedCounts});
+    Logger.logBattle('Total selected count',
+        data: {'total_count': totalSelectedCount});
+
     // 選択されたアイテムで一時的なインベントリを作成
     final selectedInventory = _createSelectedInventory();
-    
+
     // バトルセッションを開始（選択されたアイテムのみ）
     ref.read(battleSessionProvider.notifier).startStageWithSelectedItems(
-      widget.stage.stageNumber,
-      selectedInventory,
-    );
-    
+          widget.stage.stageNumber,
+          selectedInventory,
+        );
+
     // バトル画面に遷移
     AppRouter.goToBattle(context);
   }
-  
+
   /// 選択されたアイテムからインベントリを作成
   List<Prime> _createSelectedInventory() {
     final allPrimes = ref.read(inventoryProvider);
     List<Prime> selectedInventory = [];
-    
+
     for (final entry in selectedCounts.entries) {
       final primeValue = entry.key;
       final selectedCount = entry.value;
-      
+
       // 元のアイテムを見つけて、選択された個数で新しいPrimeオブジェクトを作成
       final originalPrime = allPrimes.firstWhere(
         (prime) => prime.value == primeValue,
-        orElse: () => Prime(value: primeValue, count: 0, firstObtained: DateTime.now()),
+        orElse: () =>
+            Prime(value: primeValue, count: 0, firstObtained: DateTime.now()),
       );
-      
+
       if (selectedCount > 0) {
         selectedInventory.add(Prime(
           value: primeValue,
@@ -413,7 +425,7 @@ class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScr
         ));
       }
     }
-    
+
     return selectedInventory;
   }
 }
@@ -426,7 +438,7 @@ class _SelectableItemCard extends StatelessWidget {
   final bool canDecrease;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
-  
+
   const _SelectableItemCard({
     required this.prime,
     required this.selectedCount,
@@ -435,11 +447,11 @@ class _SelectableItemCard extends StatelessWidget {
     required this.onIncrease,
     required this.onDecrease,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     final isSelected = selectedCount > 0;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: _getBackgroundColor(),
@@ -461,9 +473,9 @@ class _SelectableItemCard extends StatelessWidget {
               fontSize: 16,
             ),
           ),
-          
+
           const SizedBox(height: 4),
-          
+
           // 所持数表示
           Text(
             'Have: ${prime.count}',
@@ -472,9 +484,9 @@ class _SelectableItemCard extends StatelessWidget {
               fontSize: 9,
             ),
           ),
-          
+
           const SizedBox(height: 6),
-          
+
           // 選択数と操作ボタン
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -491,14 +503,16 @@ class _SelectableItemCard extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.remove,
-                    color: canDecrease ? AppColors.onPrimary : AppColors.onSurfaceVariant,
+                    color: canDecrease
+                        ? AppColors.onPrimary
+                        : AppColors.onSurfaceVariant,
                     size: 12,
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 8),
-              
+
               // 選択数表示
               Container(
                 constraints: const BoxConstraints(minWidth: 24),
@@ -512,25 +526,27 @@ class _SelectableItemCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              
+
               const SizedBox(width: 8),
-              
+
               // 増加ボタン
               GestureDetector(
-                onTap: canIncrease && selectedCount < prime.count ? onIncrease : null,
+                onTap: canIncrease && selectedCount < prime.count
+                    ? onIncrease
+                    : null,
                 child: Container(
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: (canIncrease && selectedCount < prime.count) 
-                        ? AppColors.primary 
+                    color: (canIncrease && selectedCount < prime.count)
+                        ? AppColors.primary
                         : AppColors.outline,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.add,
-                    color: (canIncrease && selectedCount < prime.count) 
-                        ? AppColors.onPrimary 
+                    color: (canIncrease && selectedCount < prime.count)
+                        ? AppColors.onPrimary
                         : AppColors.onSurfaceVariant,
                     size: 12,
                   ),
@@ -542,17 +558,17 @@ class _SelectableItemCard extends StatelessWidget {
       ),
     );
   }
-  
+
   Color _getBackgroundColor() {
     final isSelected = selectedCount > 0;
     return isSelected ? AppColors.primaryContainer : AppColors.surface;
   }
-  
+
   Color _getBorderColor() {
     final isSelected = selectedCount > 0;
     return isSelected ? AppColors.primary : AppColors.outline;
   }
-  
+
   Color _getTextColor() {
     final isSelected = selectedCount > 0;
     return isSelected ? AppColors.onPrimaryContainer : AppColors.onSurface;

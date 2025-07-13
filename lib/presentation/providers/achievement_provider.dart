@@ -240,7 +240,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         reward: AchievementReward.experience(100),
       ),
     ];
-    
+
     // Update progress based on current game state
     _updateAllProgress();
   }
@@ -250,9 +250,10 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
     final player = _ref.read(playerProvider);
     final inventoryList = _ref.read(inventoryProvider);
     final inventory = Inventory(primes: inventoryList);
-    
+
     state = state.map((achievement) {
-      final updatedProgress = _calculateProgress(achievement, player, inventory);
+      final updatedProgress =
+          _calculateProgress(achievement, player, inventory);
       return achievement.copyWith(
         currentProgress: updatedProgress,
         isUnlocked: updatedProgress >= achievement.targetValue,
@@ -261,7 +262,8 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   }
 
   /// Calculate progress for a specific achievement
-  int _calculateProgress(Achievement achievement, Player player, Inventory inventory) {
+  int _calculateProgress(
+      Achievement achievement, Player player, Inventory inventory) {
     switch (achievement.id) {
       // Battle achievements
       case 'first_victory':
@@ -356,7 +358,8 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
           }
           break;
         case 'comeback_king':
-          if (isVictory && battleTimeSeconds >= 0) { // This would need timer state
+          if (isVictory && battleTimeSeconds >= 0) {
+            // This would need timer state
             // Logic would check if victory happened with < 5 seconds remaining
             // For now, just placeholder
           }
@@ -388,7 +391,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   /// Award reward for completed achievement
   Future<void> _awardReward(Achievement achievement) async {
     final reward = achievement.reward;
-    
+
     reward.when(
       experience: (exp) async {
         await _ref.read(gameProvider.notifier).addExperience(exp);
@@ -467,24 +470,28 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   List<Achievement> getRecentlyUnlocked() {
     final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
     return state
-        .where((a) => a.isUnlocked && 
-                     a.unlockedAt != null && 
-                     a.unlockedAt!.isAfter(sevenDaysAgo))
+        .where((a) =>
+            a.isUnlocked &&
+            a.unlockedAt != null &&
+            a.unlockedAt!.isAfter(sevenDaysAgo))
         .toList();
   }
 
   /// Reset all achievements (for testing)
   void resetAllAchievements() {
-    state = state.map((achievement) => achievement.copyWith(
-      currentProgress: 0,
-      isUnlocked: false,
-      unlockedAt: null,
-    )).toList();
+    state = state
+        .map((achievement) => achievement.copyWith(
+              currentProgress: 0,
+              isUnlocked: false,
+              unlockedAt: null,
+            ))
+        .toList();
   }
 }
 
 /// Achievement provider
-final achievementProvider = StateNotifierProvider<AchievementNotifier, List<Achievement>>((ref) {
+final achievementProvider =
+    StateNotifierProvider<AchievementNotifier, List<Achievement>>((ref) {
   return AchievementNotifier(ref);
 });
 
@@ -510,44 +517,64 @@ final recentAchievementsProvider = Provider<List<Achievement>>((ref) {
 
 /// Category-specific providers
 final battleAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.battle);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.battle);
 });
 
 final powerEnemyAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.powerEnemy);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.powerEnemy);
 });
 
 final speedAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.speed);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.speed);
 });
 
 final efficiencyAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.efficiency);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.efficiency);
 });
 
 final collectionAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.collection);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.collection);
 });
 
 final progressionAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.progression);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.progression);
 });
 
 final specialAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByCategory(AchievementCategory.special);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByCategory(AchievementCategory.special);
 });
 
 /// Type-specific providers
 final milestoneAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByType(AchievementType.milestone);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByType(AchievementType.milestone);
 });
 
 final cumulativeAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByType(AchievementType.cumulative);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByType(AchievementType.cumulative);
 });
 
 final streakAchievementsProvider = Provider<List<Achievement>>((ref) {
-  return ref.read(achievementProvider.notifier).getAchievementsByType(AchievementType.streak);
+  return ref
+      .read(achievementProvider.notifier)
+      .getAchievementsByType(AchievementType.streak);
 });
 
 /// Achievement statistics providers

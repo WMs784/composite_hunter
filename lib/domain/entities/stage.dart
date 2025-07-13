@@ -25,11 +25,11 @@ class Stage with _$Stage {
 @freezed
 class StageClearCondition with _$StageClearCondition {
   const factory StageClearCondition({
-    required int requiredVictories,           // 必要勝利数
-    required int timeLimit,                   // 制限時間（秒）
-    required int maxEscapes,                  // 最大逃走回数
-    required int maxWrongClaims,              // 最大誤判定回数
-    required StageClearType clearType,        // クリア条件タイプ
+    required int requiredVictories, // 必要勝利数
+    required int timeLimit, // 制限時間（秒）
+    required int maxEscapes, // 最大逃走回数
+    required int maxWrongClaims, // 最大誤判定回数
+    required StageClearType clearType, // クリア条件タイプ
   }) = _StageClearCondition;
 }
 
@@ -37,10 +37,13 @@ class StageClearCondition with _$StageClearCondition {
 enum StageClearType {
   /// 指定回数勝利する
   victories,
+
   /// 連続勝利する
   consecutiveVictories,
+
   /// 制限時間内に指定回数勝利する
   timedVictories,
+
   /// パーフェクト（逃走・誤判定なし）で指定回数勝利する
   perfectVictories,
 }
@@ -75,17 +78,17 @@ class StarRating {
     required bool isPerfect,
   }) {
     int stars = 1; // 基本クリアで1星
-    
+
     // パーフェクト（逃走・誤判定なし）で+1星
     if (isPerfect) {
       stars++;
     }
-    
+
     // 制限時間の半分以下でクリアで+1星
     if (totalTime.inSeconds <= timeLimit.inSeconds ~/ 2) {
       stars++;
     }
-    
+
     return stars.clamp(1, 3);
   }
 }
@@ -100,7 +103,7 @@ class StageConfig {
     maxWrongClaims: 3,
     clearType: StageClearType.victories,
   );
-  
+
   /// ステージ2: 中級の挑戦
   static const stage2 = StageClearCondition(
     requiredVictories: 5,
@@ -109,7 +112,7 @@ class StageConfig {
     maxWrongClaims: 2,
     clearType: StageClearType.victories,
   );
-  
+
   /// ステージ3: 上級者への道
   static const stage3 = StageClearCondition(
     requiredVictories: 3,
@@ -118,7 +121,7 @@ class StageConfig {
     maxWrongClaims: 1,
     clearType: StageClearType.consecutiveVictories,
   );
-  
+
   /// ステージ4: エキスパート
   static const stage4 = StageClearCondition(
     requiredVictories: 5,
@@ -127,7 +130,7 @@ class StageConfig {
     maxWrongClaims: 0,
     clearType: StageClearType.perfectVictories,
   );
-  
+
   /// ステージクリア条件を取得
   static StageClearCondition getCondition(int stageNumber) {
     switch (stageNumber) {

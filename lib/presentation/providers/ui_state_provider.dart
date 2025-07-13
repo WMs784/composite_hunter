@@ -570,24 +570,23 @@ final animationSpeedProvider = Provider<double>((ref) {
 final hasActiveNotificationProvider = Provider<bool>((ref) {
   final uiState = ref.watch(uiStateProvider);
   return uiState.showSuccessMessage ||
-         uiState.showInfoMessage ||
-         uiState.showAchievementNotification ||
-         uiState.showLevelUpNotification;
+      uiState.showInfoMessage ||
+      uiState.showAchievementNotification ||
+      uiState.showLevelUpNotification;
 });
 
 final hasActiveDialogProvider = Provider<bool>((ref) {
   final uiState = ref.watch(uiStateProvider);
   return uiState.showErrorDialog ||
-         uiState.showConfirmationDialog ||
-         uiState.showTutorialOverlay;
+      uiState.showConfirmationDialog ||
+      uiState.showTutorialOverlay;
 });
 
 final hasActiveScreenProvider = Provider<bool>((ref) {
   final uiState = ref.watch(uiStateProvider);
   return uiState.showBattleResultScreen ||
-         uiState.showSettingsScreen ||
-         uiState.showInventoryScreen ||
-         uiState.showAchievementScreen ||
-         uiState.showStatisticsScreen;
+      uiState.showSettingsScreen ||
+      uiState.showInventoryScreen ||
+      uiState.showAchievementScreen ||
+      uiState.showStatisticsScreen;
 });
-

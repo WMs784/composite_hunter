@@ -15,7 +15,6 @@ import '../../domain/services/battle_engine.dart';
 
 /// Mapper between data models and domain entities
 class GameMapper {
-  
   // Prime mappings
   Prime primeModelToDomain(PrimeModel model) {
     return Prime(
@@ -105,13 +104,16 @@ class GameMapper {
       victory: (enemy, reward, completedAt, duration) => BattleResult.victory(
         defeatedEnemy: enemyModelToDomain(enemy),
         rewardPrime: reward,
-        victoryClaim: VictoryClaim.correct(claimedValue: reward, claimedAt: completedAt),
+        victoryClaim:
+            VictoryClaim.correct(claimedValue: reward, claimedAt: completedAt),
       ),
-      powerVictory: (enemy, reward, count, completedAt, duration) => BattleResult.powerVictory(
+      powerVictory: (enemy, reward, count, completedAt, duration) =>
+          BattleResult.powerVictory(
         defeatedEnemy: enemyModelToDomain(enemy),
         rewardPrime: reward,
         rewardCount: count,
-        victoryClaim: VictoryClaim.correct(claimedValue: reward, claimedAt: completedAt),
+        victoryClaim:
+            VictoryClaim.correct(claimedValue: reward, claimedAt: completedAt),
       ),
       continue_: (enemy, prime) => BattleResult.continue_(
         newEnemy: enemyModelToDomain(enemy),
@@ -159,7 +161,8 @@ class GameMapper {
         completedAt: claim.claimedAt,
         battleDuration: 0, // Duration would need to be tracked separately
       ),
-      powerVictory: (enemy, reward, count, claim) => BattleResultModel.powerVictory(
+      powerVictory: (enemy, reward, count, claim) =>
+          BattleResultModel.powerVictory(
         defeatedEnemy: enemyToModel(enemy),
         rewardPrime: reward,
         rewardCount: count,
@@ -170,7 +173,8 @@ class GameMapper {
         newEnemy: enemyToModel(enemy),
         usedPrime: primeToModel(prime),
       ),
-      awaitingVictoryClaim: (enemy, prime) => BattleResultModel.awaitingVictoryClaim(
+      awaitingVictoryClaim: (enemy, prime) =>
+          BattleResultModel.awaitingVictoryClaim(
         newEnemy: enemyToModel(enemy),
         usedPrime: primeToModel(prime),
       ),
@@ -291,7 +295,8 @@ class GameMapper {
     }
   }
 
-  penalty_model.PenaltyType _mapPenaltyTypeToModel(penalty_entity.PenaltyType type) {
+  penalty_model.PenaltyType _mapPenaltyTypeToModel(
+      penalty_entity.PenaltyType type) {
     switch (type) {
       case penalty_entity.PenaltyType.escape:
         return penalty_model.PenaltyType.escape;
@@ -305,31 +310,40 @@ class GameMapper {
   // Battle state mappings (for complex state persistence)
   Map<String, dynamic> battleStateToJson(BattleState state) {
     return {
-      'currentEnemy': state.currentEnemy != null ? enemyToModel(state.currentEnemy!).toJson() : null,
-      'usedPrimes': state.usedPrimes.map((p) => primeToModel(p).toJson()).toList(),
+      'currentEnemy': state.currentEnemy != null
+          ? enemyToModel(state.currentEnemy!).toJson()
+          : null,
+      'usedPrimes':
+          state.usedPrimes.map((p) => primeToModel(p).toJson()).toList(),
       'status': state.status.name,
       'turnCount': state.turnCount,
       'battleStartTime': state.battleStartTime?.toIso8601String(),
-      'timerState': state.timerState != null ? timerStateToModel(state.timerState!).toJson() : null,
-      'victoryClaim': state.victoryClaim != null ? {
-        'claimedValue': state.victoryClaim!.claimedValue,
-        'claimedAt': state.victoryClaim!.claimedAt.toIso8601String(),
-        'isCorrect': state.victoryClaim!.isCorrect,
-        'rewardPrime': state.victoryClaim!.rewardPrime,
-        'errorMessage': state.victoryClaim!.errorMessage,
-      } : null,
-      'battlePenalties': state.battlePenalties.map((p) => {
-        'seconds': p.seconds,
-        'type': p.type.name,
-        'appliedAt': p.appliedAt.toIso8601String(),
-        'reason': p.reason,
-      }).toList(),
+      'timerState': state.timerState != null
+          ? timerStateToModel(state.timerState!).toJson()
+          : null,
+      'victoryClaim': state.victoryClaim != null
+          ? {
+              'claimedValue': state.victoryClaim!.claimedValue,
+              'claimedAt': state.victoryClaim!.claimedAt.toIso8601String(),
+              'isCorrect': state.victoryClaim!.isCorrect,
+              'rewardPrime': state.victoryClaim!.rewardPrime,
+              'errorMessage': state.victoryClaim!.errorMessage,
+            }
+          : null,
+      'battlePenalties': state.battlePenalties
+          .map((p) => {
+                'seconds': p.seconds,
+                'type': p.type.name,
+                'appliedAt': p.appliedAt.toIso8601String(),
+                'reason': p.reason,
+              })
+          .toList(),
     };
   }
 
   BattleState battleStateFromJson(Map<String, dynamic> json) {
     return BattleState(
-      currentEnemy: json['currentEnemy'] != null 
+      currentEnemy: json['currentEnemy'] != null
           ? enemyModelToDomain(model.EnemyModel.fromJson(json['currentEnemy']))
           : null,
       usedPrimes: (json['usedPrimes'] as List)
@@ -337,13 +351,14 @@ class GameMapper {
           .toList(),
       status: BattleStatus.values.firstWhere((s) => s.name == json['status']),
       turnCount: json['turnCount'] ?? 0,
-      battleStartTime: json['battleStartTime'] != null 
+      battleStartTime: json['battleStartTime'] != null
           ? DateTime.parse(json['battleStartTime'])
           : null,
-      timerState: json['timerState'] != null 
-          ? timerStateModelToDomain(TimerStateModel.fromJson(json['timerState']))
+      timerState: json['timerState'] != null
+          ? timerStateModelToDomain(
+              TimerStateModel.fromJson(json['timerState']))
           : null,
-      victoryClaim: json['victoryClaim'] != null 
+      victoryClaim: json['victoryClaim'] != null
           ? VictoryClaim(
               claimedValue: json['victoryClaim']['claimedValue'],
               claimedAt: DateTime.parse(json['victoryClaim']['claimedAt']),
@@ -355,7 +370,8 @@ class GameMapper {
       battlePenalties: (json['battlePenalties'] as List)
           .map((p) => penalty_entity.TimePenalty(
                 seconds: p['seconds'],
-                type: penalty_entity.PenaltyType.values.firstWhere((t) => t.name == p['type']),
+                type: penalty_entity.PenaltyType.values
+                    .firstWhere((t) => t.name == p['type']),
                 appliedAt: DateTime.parse(p['appliedAt']),
                 reason: p['reason'],
               ))
@@ -363,4 +379,3 @@ class GameMapper {
     );
   }
 }
-

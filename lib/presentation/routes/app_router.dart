@@ -141,7 +141,6 @@ class AppRouter {
     return pushNamed(context, RouteNames.achievement);
   }
 
-
   static Future<void> goToBattleFromAnywhere(BuildContext context) {
     return pushNamedAndRemoveUntil(
       context,
@@ -150,7 +149,8 @@ class AppRouter {
     );
   }
 
-  static Future<void> goToStageItemSelection(BuildContext context, StageInfo stage) {
+  static Future<void> goToStageItemSelection(
+      BuildContext context, StageInfo stage) {
     return pushNamed(context, RouteNames.stageItemSelection, arguments: stage);
   }
 }

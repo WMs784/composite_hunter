@@ -9,8 +9,10 @@ import '../../core/utils/logger.dart';
 /// Service for managing battle timers with penalty system
 class TimerManager {
   Timer? _timer;
-  final StreamController<TimerState> _timerController = StreamController<TimerState>.broadcast();
-  TimerState _currentState = const TimerState(remainingSeconds: 0, originalSeconds: 0);
+  final StreamController<TimerState> _timerController =
+      StreamController<TimerState>.broadcast();
+  TimerState _currentState =
+      const TimerState(remainingSeconds: 0, originalSeconds: 0);
 
   /// Stream of timer state updates
   Stream<TimerState> get timerStream => _timerController.stream;
@@ -82,7 +84,7 @@ class TimerManager {
       Logger.logTimer('Resuming timer');
 
       _currentState = _currentState.start();
-      
+
       _timer = Timer.periodic(
         const Duration(milliseconds: TimerConstants.timerUpdateIntervalMs),
         _onTimerTick,
@@ -143,11 +145,12 @@ class TimerManager {
   /// Calculate adjusted timer duration with penalties applied
   static int getAdjustedTimeForEnemy(Enemy enemy, List<TimePenalty> penalties) {
     final baseTime = getBaseTimeForEnemy(enemy);
-    final totalPenalty = penalties.fold(0, (sum, penalty) => sum + penalty.seconds);
-    
+    final totalPenalty =
+        penalties.fold(0, (sum, penalty) => sum + penalty.seconds);
+
     final adjustedTime = baseTime - totalPenalty;
-    return adjustedTime < TimerConstants.minimumTimerDuration 
-        ? TimerConstants.minimumTimerDuration 
+    return adjustedTime < TimerConstants.minimumTimerDuration
+        ? TimerConstants.minimumTimerDuration
         : adjustedTime;
   }
 
@@ -199,11 +202,13 @@ class TimerManager {
     Logger.logTimer('Restoring from snapshot');
 
     // Calculate elapsed time since snapshot
-    final elapsedSinceSnapshot = DateTime.now().difference(snapshot.snapshotTime).inSeconds;
-    
+    final elapsedSinceSnapshot =
+        DateTime.now().difference(snapshot.snapshotTime).inSeconds;
+
     int adjustedRemaining = snapshot.remainingSeconds;
     if (snapshot.isActive) {
-      adjustedRemaining = (snapshot.remainingSeconds - elapsedSinceSnapshot).clamp(0, snapshot.originalSeconds);
+      adjustedRemaining = (snapshot.remainingSeconds - elapsedSinceSnapshot)
+          .clamp(0, snapshot.originalSeconds);
     }
 
     _currentState = TimerState(
@@ -223,7 +228,8 @@ class TimerManager {
   /// Get statistics about timer usage
   TimerStatistics getStatistics() {
     return TimerStatistics(
-      totalTimeUsed: _currentState.originalSeconds - _currentState.remainingSeconds,
+      totalTimeUsed:
+          _currentState.originalSeconds - _currentState.remainingSeconds,
       totalPenalties: _currentState.penalties.length,
       totalPenaltyTime: _currentState.totalPenaltySeconds,
       currentEfficiency: _calculateEfficiency(),
@@ -233,18 +239,19 @@ class TimerManager {
   /// Calculate timer efficiency (0.0 to 1.0)
   double _calculateEfficiency() {
     if (_currentState.originalSeconds == 0) return 1.0;
-    
-    final timeUsed = _currentState.originalSeconds - _currentState.remainingSeconds;
+
+    final timeUsed =
+        _currentState.originalSeconds - _currentState.remainingSeconds;
     final penaltyTime = _currentState.totalPenaltySeconds;
     final effectiveTime = timeUsed - penaltyTime;
-    
+
     return (effectiveTime / _currentState.originalSeconds).clamp(0.0, 1.0);
   }
 
   /// Dispose of resources
   void dispose() {
     Logger.logTimer('Disposing timer manager');
-    
+
     _timer?.cancel();
     _timer = null;
     _timerController.close();
@@ -272,12 +279,14 @@ class TimerSnapshot {
       'remainingSeconds': remainingSeconds,
       'originalSeconds': originalSeconds,
       'isActive': isActive,
-      'penalties': penalties.map((p) => {
-        'seconds': p.seconds,
-        'type': p.type.name,
-        'appliedAt': p.appliedAt.toIso8601String(),
-        'reason': p.reason,
-      }).toList(),
+      'penalties': penalties
+          .map((p) => {
+                'seconds': p.seconds,
+                'type': p.type.name,
+                'appliedAt': p.appliedAt.toIso8601String(),
+                'reason': p.reason,
+              })
+          .toList(),
       'snapshotTime': snapshotTime.toIso8601String(),
     };
   }
@@ -287,12 +296,14 @@ class TimerSnapshot {
       remainingSeconds: json['remainingSeconds'] as int,
       originalSeconds: json['originalSeconds'] as int,
       isActive: json['isActive'] as bool,
-      penalties: (json['penalties'] as List).map((p) => TimePenalty(
-        seconds: p['seconds'] as int,
-        type: PenaltyType.values.firstWhere((t) => t.name == p['type']),
-        appliedAt: DateTime.parse(p['appliedAt'] as String),
-        reason: p['reason'] as String?,
-      )).toList(),
+      penalties: (json['penalties'] as List)
+          .map((p) => TimePenalty(
+                seconds: p['seconds'] as int,
+                type: PenaltyType.values.firstWhere((t) => t.name == p['type']),
+                appliedAt: DateTime.parse(p['appliedAt'] as String),
+                reason: p['reason'] as String?,
+              ))
+          .toList(),
       snapshotTime: DateTime.parse(json['snapshotTime'] as String),
     );
   }

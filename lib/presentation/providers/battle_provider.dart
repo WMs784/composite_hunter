@@ -34,7 +34,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
 
       final inventory = _ref.read(inventoryProvider);
       final gameState = _ref.read(gameProvider);
-      
+
       // Generate enemy based on current state
       final enemy = _enemyGenerator.generateEnemy(
         inventory,
@@ -90,9 +90,11 @@ class BattleNotifier extends StateNotifier<BattleState> {
           // This shouldn't happen - attacks should await victory claim
           await _handleVictory(defeatedEnemy, rewardPrime, victoryClaim);
         },
-        powerVictory: (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) async {
+        powerVictory:
+            (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) async {
           // This shouldn't happen - attacks should await victory claim
-          await _handlePowerVictory(defeatedEnemy, rewardPrime, rewardCount, victoryClaim);
+          await _handlePowerVictory(
+              defeatedEnemy, rewardPrime, rewardCount, victoryClaim);
         },
         continue_: (newEnemy, usedPrime) async {
           await _handleContinue(newEnemy, usedPrime);
@@ -139,8 +141,10 @@ class BattleNotifier extends StateNotifier<BattleState> {
         victory: (defeatedEnemy, rewardPrime, victoryClaim) async {
           await _handleVictory(defeatedEnemy, rewardPrime, victoryClaim);
         },
-        powerVictory: (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) async {
-          await _handlePowerVictory(defeatedEnemy, rewardPrime, rewardCount, victoryClaim);
+        powerVictory:
+            (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) async {
+          await _handlePowerVictory(
+              defeatedEnemy, rewardPrime, rewardCount, victoryClaim);
         },
         continue_: (newEnemy, usedPrime) async {
           // This shouldn't happen during victory claim
@@ -200,7 +204,7 @@ class BattleNotifier extends StateNotifier<BattleState> {
     // Handle timeout
     if (timerState.isExpired && state.status == BattleStatus.fighting) {
       final result = BattleEngine.processTimeOut();
-      
+
       result.when(
         victory: (_, __, ___) {}, // Won't happen
         powerVictory: (_, __, ___, ____) {}, // Won't happen
@@ -231,7 +235,8 @@ class BattleNotifier extends StateNotifier<BattleState> {
   }
 
   /// Handle awaiting victory claim state
-  Future<void> _handleAwaitingVictoryClaim(Enemy newEnemy, Prime usedPrime) async {
+  Future<void> _handleAwaitingVictoryClaim(
+      Enemy newEnemy, Prime usedPrime) async {
     // Play attack animation
     await _playAttackAnimation(usedPrime.value);
 
@@ -243,7 +248,8 @@ class BattleNotifier extends StateNotifier<BattleState> {
   }
 
   /// Handle successful victory
-  Future<void> _handleVictory(Enemy defeatedEnemy, int rewardPrime, VictoryClaim victoryClaim) async {
+  Future<void> _handleVictory(
+      Enemy defeatedEnemy, int rewardPrime, VictoryClaim victoryClaim) async {
     // Play victory animation
     await _playVictoryAnimation();
 
@@ -296,7 +302,8 @@ class BattleNotifier extends StateNotifier<BattleState> {
   }
 
   /// Handle wrong victory claim
-  Future<void> _handleWrongClaim(TimePenalty penalty, VictoryClaim victoryClaim) async {
+  Future<void> _handleWrongClaim(
+      TimePenalty penalty, VictoryClaim victoryClaim) async {
     // Play penalty animation
     await _playPenaltyAnimation();
 
@@ -304,9 +311,11 @@ class BattleNotifier extends StateNotifier<BattleState> {
     _timerManager.applyPenalty(penalty);
 
     // Update battle state
-    state = state.applyTimePenalty(penalty).copyWith(victoryClaim: victoryClaim);
+    state =
+        state.applyTimePenalty(penalty).copyWith(victoryClaim: victoryClaim);
 
-    _showPenaltyMessage('The value ${victoryClaim.claimedValue} is still composite. Continue attacking!');
+    _showPenaltyMessage(
+        'The value ${victoryClaim.claimedValue} is still composite. Continue attacking!');
   }
 
   /// Handle escape
@@ -390,7 +399,8 @@ class BattleNotifier extends StateNotifier<BattleState> {
 }
 
 /// Battle provider
-final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>((ref) {
+final battleProvider =
+    StateNotifierProvider<BattleNotifier, BattleState>((ref) {
   return BattleNotifier(
     EnemyGenerator(),
     TimerManager(),
@@ -481,27 +491,27 @@ final formattedTimeProvider = Provider<String>((ref) {
 final canAttackProvider = Provider.family<bool, Prime>((ref, prime) {
   final battleState = ref.watch(battleProvider);
   final inventory = ref.watch(inventoryProvider);
-  
+
   if (battleState.currentEnemy == null) return false;
   if (!battleState.isInProgress) return false;
   if (battleState.timerState?.isExpired == true) return false;
-  
+
   return BattleEngine.canAttack(battleState.currentEnemy!, prime, inventory);
 });
 
 final availableAttacksProvider = Provider<List<Prime>>((ref) {
   final battleState = ref.watch(battleProvider);
   final inventory = ref.watch(inventoryProvider);
-  
+
   return battleState.getAvailableAttacks(inventory);
 });
 
 final battleDifficultyProvider = Provider<int>((ref) {
   final battleState = ref.watch(battleProvider);
   final inventory = ref.watch(inventoryProvider);
-  
+
   if (battleState.currentEnemy == null) return 0;
-  
+
   return BattleEngine.calculateBattleDifficulty(
     battleState.currentEnemy!,
     inventory,
@@ -511,9 +521,9 @@ final battleDifficultyProvider = Provider<int>((ref) {
 final optimalAttacksProvider = Provider<List<Prime>>((ref) {
   final battleState = ref.watch(battleProvider);
   final inventory = ref.watch(inventoryProvider);
-  
+
   if (battleState.currentEnemy == null) return [];
-  
+
   return BattleEngine.suggestOptimalAttacks(
     battleState.currentEnemy!,
     inventory,

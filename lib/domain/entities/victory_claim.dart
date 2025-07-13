@@ -38,14 +38,15 @@ class VictoryClaim with _$VictoryClaim {
       claimedValue: claimedValue,
       claimedAt: claimedAt ?? DateTime.now(),
       isCorrect: false,
-      errorMessage: errorMessage ?? 'The claimed value $claimedValue is not prime',
+      errorMessage:
+          errorMessage ?? 'The claimed value $claimedValue is not prime',
     );
   }
 
   /// Validate the claim against the actual value
   static VictoryClaim validate(int actualValue, DateTime? claimedAt) {
     final isPrime = MathUtils.isPrime(actualValue);
-    
+
     if (isPrime) {
       return VictoryClaim.correct(
         claimedValue: actualValue,
@@ -55,7 +56,8 @@ class VictoryClaim with _$VictoryClaim {
       return VictoryClaim.incorrect(
         claimedValue: actualValue,
         claimedAt: claimedAt,
-        errorMessage: 'The value $actualValue is still composite. Continue attacking!',
+        errorMessage:
+            'The value $actualValue is still composite. Continue attacking!',
       );
     }
   }

@@ -8,7 +8,7 @@ import '../../core/utils/logger.dart';
 class LocalDatabase {
   static Database? _database;
   static final LocalDatabase _instance = LocalDatabase._internal();
-  
+
   factory LocalDatabase() => _instance;
   LocalDatabase._internal();
 
@@ -70,7 +70,8 @@ class LocalDatabase {
       // Insert default achievements
       await _insertDefaultAchievements(db);
 
-      Logger.info('Database tables, indexes, views, and triggers created successfully');
+      Logger.info(
+          'Database tables, indexes, views, and triggers created successfully');
     } catch (e) {
       Logger.error('Failed to create database tables: $e');
       throw Exception('Failed to create database tables: $e');
@@ -79,13 +80,13 @@ class LocalDatabase {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     Logger.info('Upgrading database from version $oldVersion to $newVersion');
-    
+
     try {
       // Handle database migrations here
       if (oldVersion < 2) {
         // Future migration logic
       }
-      
+
       Logger.info('Database upgrade completed');
     } catch (e) {
       Logger.error('Failed to upgrade database: $e');
@@ -96,18 +97,18 @@ class LocalDatabase {
   Future<void> _insertDefaultAchievements(Database db) async {
     try {
       final currentTime = DateTime.now().millisecondsSinceEpoch;
-      
+
       for (final achievement in DatabaseSchema.defaultAchievements) {
         final achievementData = Map<String, dynamic>.from(achievement);
         achievementData['created_at'] = currentTime;
-        
+
         await db.insert(
           DatabaseSchema.achievementsTable,
           achievementData,
           conflictAlgorithm: ConflictAlgorithm.ignore,
         );
       }
-      
+
       Logger.info('Default achievements inserted');
     } catch (e) {
       Logger.error('Failed to insert default achievements: $e');
@@ -126,10 +127,10 @@ class LocalDatabase {
         playerData,
         conflictAlgorithm: ConflictAlgorithm.fail,
       );
-      
+
       // Initialize player achievements
       await _initializePlayerAchievements(db, playerId);
-      
+
       Logger.info('Player created with ID: $playerId');
       return playerId;
     } catch (e) {
@@ -155,7 +156,8 @@ class LocalDatabase {
   }
 
   /// Update player data
-  Future<void> updatePlayer(int playerId, Map<String, dynamic> playerData) async {
+  Future<void> updatePlayer(
+      int playerId, Map<String, dynamic> playerData) async {
     try {
       final db = await database;
       await db.update(
@@ -190,7 +192,7 @@ class LocalDatabase {
   Future<void> _initializePlayerAchievements(Database db, int playerId) async {
     try {
       final achievements = await db.query(DatabaseSchema.achievementsTable);
-      
+
       for (final achievement in achievements) {
         await db.insert(
           DatabaseSchema.playerAchievementsTable,
@@ -204,7 +206,7 @@ class LocalDatabase {
           conflictAlgorithm: ConflictAlgorithm.ignore,
         );
       }
-      
+
       Logger.info('Player achievements initialized for player $playerId');
     } catch (e) {
       Logger.error('Failed to initialize player achievements: $e');
@@ -215,7 +217,8 @@ class LocalDatabase {
   // ========== PRIME OPERATIONS ==========
 
   /// Insert or update prime in player's inventory
-  Future<void> insertOrUpdatePrime(int playerId, Map<String, dynamic> primeData) async {
+  Future<void> insertOrUpdatePrime(
+      int playerId, Map<String, dynamic> primeData) async {
     try {
       final db = await database;
       await db.insert(
@@ -247,7 +250,8 @@ class LocalDatabase {
   }
 
   /// Get specific prime for a player
-  Future<Map<String, dynamic>?> getPlayerPrime(int playerId, int primeValue) async {
+  Future<Map<String, dynamic>?> getPlayerPrime(
+      int playerId, int primeValue) async {
     try {
       final db = await database;
       final results = await db.query(
@@ -273,7 +277,8 @@ class LocalDatabase {
       );
       Logger.info('Prime $primeValue deleted for player $playerId');
     } catch (e) {
-      Logger.error('Failed to delete prime $primeValue for player $playerId: $e');
+      Logger.error(
+          'Failed to delete prime $primeValue for player $playerId: $e');
       throw Exception('Failed to delete player prime: $e');
     }
   }
@@ -364,7 +369,8 @@ class LocalDatabase {
   }
 
   /// Update battle (typically to complete it)
-  Future<void> updateBattle(int battleId, Map<String, dynamic> battleData) async {
+  Future<void> updateBattle(
+      int battleId, Map<String, dynamic> battleData) async {
     try {
       final db = await database;
       await db.update(
@@ -397,7 +403,8 @@ class LocalDatabase {
   }
 
   /// Get player's battle history
-  Future<List<Map<String, dynamic>>> getPlayerBattleHistory(int playerId, {int? limit}) async {
+  Future<List<Map<String, dynamic>>> getPlayerBattleHistory(int playerId,
+      {int? limit}) async {
     try {
       final db = await database;
       return await db.query(
@@ -414,7 +421,8 @@ class LocalDatabase {
   }
 
   /// Add battle action
-  Future<void> addBattleAction(int battleId, Map<String, dynamic> actionData) async {
+  Future<void> addBattleAction(
+      int battleId, Map<String, dynamic> actionData) async {
     try {
       final db = await database;
       await db.insert(
@@ -462,7 +470,8 @@ class LocalDatabase {
   }
 
   /// Get player's achievement progress
-  Future<List<Map<String, dynamic>>> getPlayerAchievementProgress(int playerId) async {
+  Future<List<Map<String, dynamic>>> getPlayerAchievementProgress(
+      int playerId) async {
     try {
       final db = await database;
       return await db.query(
@@ -472,40 +481,39 @@ class LocalDatabase {
         orderBy: 'category ASC, target_value ASC',
       );
     } catch (e) {
-      Logger.error('Failed to get achievement progress for player $playerId: $e');
+      Logger.error(
+          'Failed to get achievement progress for player $playerId: $e');
       throw Exception('Failed to get achievement progress: $e');
     }
   }
 
   /// Update achievement progress
   Future<void> updateAchievementProgress(
-    int playerId,
-    String achievementId,
-    int progress,
-    {bool? isUnlocked, int? unlockedAt}
-  ) async {
+      int playerId, String achievementId, int progress,
+      {bool? isUnlocked, int? unlockedAt}) async {
     try {
       final db = await database;
       final updateData = <String, dynamic>{
         'current_progress': progress,
       };
-      
+
       if (isUnlocked != null) {
         updateData['is_unlocked'] = isUnlocked ? 1 : 0;
       }
-      
+
       if (unlockedAt != null) {
         updateData['unlocked_at'] = unlockedAt;
       }
-      
+
       await db.update(
         DatabaseSchema.playerAchievementsTable,
         updateData,
         where: 'player_id = ? AND achievement_id = ?',
         whereArgs: [playerId, achievementId],
       );
-      
-      Logger.info('Achievement progress updated for player $playerId, achievement $achievementId');
+
+      Logger.info(
+          'Achievement progress updated for player $playerId, achievement $achievementId');
     } catch (e) {
       Logger.error('Failed to update achievement progress: $e');
       throw Exception('Failed to update achievement progress: $e');
@@ -513,7 +521,8 @@ class LocalDatabase {
   }
 
   /// Get unlocked achievements for player
-  Future<List<Map<String, dynamic>>> getPlayerUnlockedAchievements(int playerId) async {
+  Future<List<Map<String, dynamic>>> getPlayerUnlockedAchievements(
+      int playerId) async {
     try {
       final db = await database;
       return await db.query(
@@ -523,7 +532,8 @@ class LocalDatabase {
         orderBy: 'unlocked_at DESC',
       );
     } catch (e) {
-      Logger.error('Failed to get unlocked achievements for player $playerId: $e');
+      Logger.error(
+          'Failed to get unlocked achievements for player $playerId: $e');
       throw Exception('Failed to get unlocked achievements: $e');
     }
   }
@@ -531,7 +541,8 @@ class LocalDatabase {
   // ========== GAME SETTINGS OPERATIONS ==========
 
   /// Set game setting
-  Future<void> setGameSetting(int playerId, String key, String value, String type) async {
+  Future<void> setGameSetting(
+      int playerId, String key, String value, String type) async {
     try {
       final db = await database;
       await db.insert(
@@ -607,7 +618,8 @@ class LocalDatabase {
   }
 
   /// End game session
-  Future<void> endGameSession(int sessionId, Map<String, dynamic> sessionData) async {
+  Future<void> endGameSession(
+      int sessionId, Map<String, dynamic> sessionData) async {
     try {
       final db = await database;
       await db.update(
@@ -627,7 +639,8 @@ class LocalDatabase {
   }
 
   /// Get player's game sessions
-  Future<List<Map<String, dynamic>>> getPlayerGameSessions(int playerId, {int? limit}) async {
+  Future<List<Map<String, dynamic>>> getPlayerGameSessions(int playerId,
+      {int? limit}) async {
     try {
       final db = await database;
       return await db.query(
@@ -646,12 +659,14 @@ class LocalDatabase {
   // ========== STATISTICS OPERATIONS ==========
 
   /// Update player daily statistics
-  Future<void> updatePlayerDailyStatistics(int playerId, Map<String, dynamic> statsData) async {
+  Future<void> updatePlayerDailyStatistics(
+      int playerId, Map<String, dynamic> statsData) async {
     try {
       final db = await database;
       final today = DateTime.now();
-      final statDate = DateTime(today.year, today.month, today.day).millisecondsSinceEpoch;
-      
+      final statDate =
+          DateTime(today.year, today.month, today.day).millisecondsSinceEpoch;
+
       await db.insert(
         DatabaseSchema.playerStatisticsTable,
         {
@@ -661,10 +676,11 @@ class LocalDatabase {
         },
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      
+
       Logger.info('Daily statistics updated for player $playerId');
     } catch (e) {
-      Logger.error('Failed to update daily statistics for player $playerId: $e');
+      Logger.error(
+          'Failed to update daily statistics for player $playerId: $e');
       throw Exception('Failed to update daily statistics: $e');
     }
   }
@@ -679,7 +695,7 @@ class LocalDatabase {
       final db = await database;
       final startTimestamp = startDate.millisecondsSinceEpoch;
       final endTimestamp = endDate.millisecondsSinceEpoch;
-      
+
       return await db.query(
         DatabaseSchema.playerStatisticsTable,
         where: 'player_id = ? AND stat_date >= ? AND stat_date <= ?',
@@ -695,7 +711,8 @@ class LocalDatabase {
   // ========== UTILITY OPERATIONS ==========
 
   /// Execute raw query
-  Future<List<Map<String, dynamic>>> executeRawQuery(String query, [List<dynamic>? arguments]) async {
+  Future<List<Map<String, dynamic>>> executeRawQuery(String query,
+      [List<dynamic>? arguments]) async {
     try {
       final db = await database;
       return await db.rawQuery(query, arguments);
@@ -706,7 +723,8 @@ class LocalDatabase {
   }
 
   /// Execute transaction
-  Future<T> executeTransaction<T>(Future<T> Function(Transaction) action) async {
+  Future<T> executeTransaction<T>(
+      Future<T> Function(Transaction) action) async {
     try {
       final db = await database;
       return await db.transaction(action);
@@ -748,7 +766,7 @@ class LocalDatabase {
       final tables = await db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
       );
-      
+
       return {
         'version': version,
         'tables': tables.map((t) => t['name']).toList(),

@@ -376,31 +376,31 @@ class DatabaseSchema {
 
   // Get all table creation statements
   static List<String> get allTableCreationStatements => [
-    createPlayersTable,
-    createPrimesTable,
-    createEnemiesTable,
-    createBattlesTable,
-    createAchievementsTable,
-    createPlayerAchievementsTable,
-    createGameSettingsTable,
-    createGameSessionsTable,
-    createBattleActionsTable,
-    createPlayerStatisticsTable,
-  ];
+        createPlayersTable,
+        createPrimesTable,
+        createEnemiesTable,
+        createBattlesTable,
+        createAchievementsTable,
+        createPlayerAchievementsTable,
+        createGameSettingsTable,
+        createGameSessionsTable,
+        createBattleActionsTable,
+        createPlayerStatisticsTable,
+      ];
 
   // Get all view creation statements
   static List<String> get allViewCreationStatements => [
-    createPlayerStatsView,
-    createBattleHistoryView,
-    createAchievementProgressView,
-  ];
+        createPlayerStatsView,
+        createBattleHistoryView,
+        createAchievementProgressView,
+      ];
 
   // Get all trigger creation statements
   static List<String> get allTriggerCreationStatements => [
-    createUpdatePlayerStatsTriggger,
-    createUpdateWinStreakTrigger,
-    createUpdatePrimeUsageTrigger,
-  ];
+        createUpdatePlayerStatsTriggger,
+        createUpdateWinStreakTrigger,
+        createUpdatePrimeUsageTrigger,
+      ];
 
   // Default achievements data
   static const List<Map<String, dynamic>> defaultAchievements = [

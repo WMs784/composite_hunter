@@ -5,8 +5,9 @@ import '../../core/utils/logger.dart';
 /// Service for managing shared preferences data
 class SharedPreferencesService {
   static SharedPreferences? _prefs;
-  static final SharedPreferencesService _instance = SharedPreferencesService._internal();
-  
+  static final SharedPreferencesService _instance =
+      SharedPreferencesService._internal();
+
   factory SharedPreferencesService() => _instance;
   SharedPreferencesService._internal();
 
@@ -463,12 +464,12 @@ class SharedPreferencesService {
       final prefs = await _preferences;
       final keys = prefs.getKeys();
       final prefsMap = <String, dynamic>{};
-      
+
       for (final key in keys) {
         final value = prefs.get(key);
         prefsMap[key] = value;
       }
-      
+
       return prefsMap;
     } catch (e) {
       Logger.error('Failed to get all preferences: $e');
@@ -514,7 +515,7 @@ class SharedPreferencesService {
   Future<void> setCustomSetting<T>(String key, T value) async {
     try {
       final prefs = await _preferences;
-      
+
       if (value is String) {
         await prefs.setString(key, value);
       } else if (value is int) {
@@ -529,7 +530,7 @@ class SharedPreferencesService {
         // For complex objects, store as JSON string
         await prefs.setString(key, jsonEncode(value));
       }
-      
+
       Logger.info('Custom setting set: $key = $value');
     } catch (e) {
       Logger.error('Failed to set custom setting $key: $e');
@@ -553,11 +554,11 @@ class SharedPreferencesService {
     try {
       final Map<String, dynamic> prefsMap = jsonDecode(jsonData);
       final prefs = await _preferences;
-      
+
       for (final entry in prefsMap.entries) {
         final key = entry.key;
         final value = entry.value;
-        
+
         if (value is String) {
           await prefs.setString(key, value);
         } else if (value is int) {
@@ -570,7 +571,7 @@ class SharedPreferencesService {
           await prefs.setStringList(key, value.cast<String>());
         }
       }
-      
+
       Logger.info('Preferences imported successfully');
     } catch (e) {
       Logger.error('Failed to import preferences: $e');
@@ -667,7 +668,7 @@ class SharedPreferencesService {
     try {
       final jsonString = await getString(key);
       if (jsonString == null) return null;
-      
+
       return jsonDecode(jsonString) as Map<String, dynamic>;
     } catch (e) {
       Logger.error('Failed to get JSON $key: $e');

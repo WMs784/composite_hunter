@@ -13,7 +13,7 @@ void main() {
           type: EnemyType.small,
           primeFactors: [2, 2, 3],
         );
-        
+
         final prime = Prime(
           value: 2,
           count: 1,
@@ -24,7 +24,8 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should not be victory yet'),
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (newEnemy, usedPrime) {
             expect(newEnemy.currentValue, 6);
             expect(usedPrime.value, 2);
@@ -47,7 +48,7 @@ void main() {
           type: EnemyType.small,
           primeFactors: [2, 3],
         );
-        
+
         final prime = Prime(
           value: 2,
           count: 1,
@@ -58,7 +59,8 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should await victory claim first'),
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (_, __) => fail('Should not continue'),
           awaitingVictoryClaim: (newEnemy, usedPrime) {
             expect(newEnemy.currentValue, 3);
@@ -79,7 +81,7 @@ void main() {
           type: EnemyType.small,
           primeFactors: [3, 5],
         );
-        
+
         final prime = Prime(
           value: 2,
           count: 1,
@@ -90,9 +92,11 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should not be victory'),
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (_, __) => fail('Should not continue'),
-          awaitingVictoryClaim: (_, __) => fail('Should not await victory claim'),
+          awaitingVictoryClaim: (_, __) =>
+              fail('Should not await victory claim'),
           wrongClaim: (_, __, ___) => fail('Should not be wrong claim'),
           escape: (_) => fail('Should not be escape'),
           timeOut: (_) => fail('Should not be timeout'),
@@ -120,9 +124,11 @@ void main() {
             expect(rewardPrime, 7);
             expect(victoryClaim.isCorrect, true);
           },
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (_, __) => fail('Should not continue'),
-          awaitingVictoryClaim: (_, __) => fail('Should not await victory claim'),
+          awaitingVictoryClaim: (_, __) =>
+              fail('Should not await victory claim'),
           wrongClaim: (_, __, ___) => fail('Should not be wrong claim'),
           escape: (_) => fail('Should not be escape'),
           timeOut: (_) => fail('Should not be timeout'),
@@ -145,14 +151,16 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should be power victory'),
-          powerVictory: (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) {
+          powerVictory:
+              (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) {
             expect(defeatedEnemy.currentValue, 3);
             expect(rewardPrime, 3);
             expect(rewardCount, 3);
             expect(victoryClaim.isCorrect, true);
           },
           continue_: (_, __) => fail('Should not continue'),
-          awaitingVictoryClaim: (_, __) => fail('Should not await victory claim'),
+          awaitingVictoryClaim: (_, __) =>
+              fail('Should not await victory claim'),
           wrongClaim: (_, __, ___) => fail('Should not be wrong claim'),
           escape: (_) => fail('Should not be escape'),
           timeOut: (_) => fail('Should not be timeout'),
@@ -172,9 +180,11 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should not be victory'),
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (_, __) => fail('Should not continue'),
-          awaitingVictoryClaim: (_, __) => fail('Should not await victory claim'),
+          awaitingVictoryClaim: (_, __) =>
+              fail('Should not await victory claim'),
           wrongClaim: (penalty, currentEnemy, victoryClaim) {
             expect(penalty.seconds, 10);
             expect(currentEnemy.currentValue, 15);
@@ -193,9 +203,11 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should not be victory'),
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (_, __) => fail('Should not continue'),
-          awaitingVictoryClaim: (_, __) => fail('Should not await victory claim'),
+          awaitingVictoryClaim: (_, __) =>
+              fail('Should not await victory claim'),
           wrongClaim: (_, __, ___) => fail('Should not be wrong claim'),
           escape: (penalty) {
             expect(penalty.seconds, 10);
@@ -213,9 +225,11 @@ void main() {
 
         result.when(
           victory: (_, __, ___) => fail('Should not be victory'),
-          powerVictory: (_, __, ___, ____) => fail('Should not be power victory'),
+          powerVictory: (_, __, ___, ____) =>
+              fail('Should not be power victory'),
           continue_: (_, __) => fail('Should not continue'),
-          awaitingVictoryClaim: (_, __) => fail('Should not await victory claim'),
+          awaitingVictoryClaim: (_, __) =>
+              fail('Should not await victory claim'),
           wrongClaim: (_, __, ___) => fail('Should not be wrong claim'),
           escape: (_) => fail('Should not be escape'),
           timeOut: (penalty) {
@@ -257,13 +271,15 @@ void main() {
         final inventory = [availablePrime, unavailablePrime, invalidPrime];
 
         expect(BattleEngine.canAttack(enemy, availablePrime, inventory), true);
-        expect(BattleEngine.canAttack(enemy, unavailablePrime, inventory), false);
+        expect(
+            BattleEngine.canAttack(enemy, unavailablePrime, inventory), false);
         expect(BattleEngine.canAttack(enemy, invalidPrime, inventory), false);
       });
     });
 
     group('calculateBattleDifficulty', () {
-      test('should calculate difficulty based on enemy and available attacks', () {
+      test('should calculate difficulty based on enemy and available attacks',
+          () {
         const enemy = Enemy(
           currentValue: 30,
           originalValue: 30,
@@ -277,7 +293,8 @@ void main() {
           Prime(value: 5, count: 1, firstObtained: DateTime.now()),
         ];
 
-        final difficulty = BattleEngine.calculateBattleDifficulty(enemy, inventory);
+        final difficulty =
+            BattleEngine.calculateBattleDifficulty(enemy, inventory);
         expect(difficulty, greaterThan(0));
         expect(difficulty, lessThanOrEqualTo(10));
       });
@@ -295,8 +312,10 @@ void main() {
           Prime(value: 3, count: 1, firstObtained: DateTime.now()),
         ];
 
-        final difficulty = BattleEngine.calculateBattleDifficulty(enemy, inventory);
-        expect(difficulty, greaterThan(5)); // Should be high due to no valid attacks
+        final difficulty =
+            BattleEngine.calculateBattleDifficulty(enemy, inventory);
+        expect(difficulty,
+            greaterThan(5)); // Should be high due to no valid attacks
       });
     });
   });

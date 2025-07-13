@@ -23,7 +23,8 @@
       "Bash(chmod:*)",
       "Bash(git config:*)",
       "Bash(git commit:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

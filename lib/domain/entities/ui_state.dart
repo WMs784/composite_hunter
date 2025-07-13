@@ -9,58 +9,58 @@ class UiState with _$UiState {
     // Loading state
     @Default(false) bool isLoading,
     String? loadingMessage,
-    
+
     // Error dialog state
     @Default(false) bool showErrorDialog,
     String? errorMessage,
     String? errorTitle,
-    
+
     // Success message state
     @Default(false) bool showSuccessMessage,
     String? successMessage,
-    
+
     // Info message state
     @Default(false) bool showInfoMessage,
     String? infoMessage,
-    
+
     // Confirmation dialog state
     @Default(false) bool showConfirmationDialog,
     String? confirmationMessage,
     String? confirmationTitle,
     String? confirmationConfirmText,
     String? confirmationCancelText,
-    
+
     // Tutorial overlay state
     @Default(false) bool showTutorialOverlay,
     String? tutorialKey,
     String? tutorialContent,
-    
+
     // Achievement notification state
     @Default(false) bool showAchievementNotification,
     String? achievementTitle,
     String? achievementDescription,
-    
+
     // Level up notification state
     @Default(false) bool showLevelUpNotification,
     int? levelUpNewLevel,
-    
+
     // Battle result screen state
     @Default(false) bool showBattleResultScreen,
     bool? battleResultIsVictory,
     int? battleResultScore,
     String? battleResultMessage,
     List<String>? battleResultRewards,
-    
+
     // Screen visibility state
     @Default(false) bool showSettingsScreen,
     @Default(false) bool showInventoryScreen,
     @Default(false) bool showAchievementScreen,
     @Default(false) bool showStatisticsScreen,
-    
+
     // Navigation state
     @Default(0) int bottomNavIndex,
     @Default('home') String currentScreen,
-    
+
     // Settings state
     @Default(false) bool isDebugMode,
     @Default(ThemeMode.system) ThemeMode themeMode,

@@ -12,7 +12,6 @@ class RouteNames {
   static const String inventory = '/inventory';
   static const String achievement = '/achievement';
 
-
   // All route names for validation
   static const List<String> all = [
     splash,

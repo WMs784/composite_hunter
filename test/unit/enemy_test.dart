@@ -43,7 +43,7 @@ void main() {
         );
 
         final attackedEnemy = enemy.attack(2);
-        
+
         expect(attackedEnemy.currentValue, 6);
         expect(attackedEnemy.originalValue, 12); // Should remain unchanged
         expect(attackedEnemy.type, EnemyType.small);
@@ -71,7 +71,7 @@ void main() {
         );
 
         final attackedEnemy = enemy.attack(4);
-        
+
         expect(attackedEnemy.currentValue, 5);
         expect(attackedEnemy.originalValue, 20);
         expect(attackedEnemy.type, EnemyType.small);
@@ -179,7 +179,8 @@ void main() {
 
         final attacks = enemy.availableAttacks;
         expect(attacks, containsAll([2, 3]));
-        expect(attacks.where((p) => p == 2).length, 1); // Should appear only once
+        expect(
+            attacks.where((p) => p == 2).length, 1); // Should appear only once
       });
     });
 

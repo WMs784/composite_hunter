@@ -1,9 +1,9 @@
 abstract class GameException implements Exception {
   final String message;
   final String? details;
-  
+
   const GameException(this.message, [this.details]);
-  
+
   @override
   String toString() {
     if (details != null) {

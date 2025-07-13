@@ -41,7 +41,8 @@ void main() {
       expect(result, isA<BattleError>());
     });
 
-    test('should allow attack on composite enemy even with same prime factor', () {
+    test('should allow attack on composite enemy even with same prime factor',
+        () {
       // Create a composite enemy (12 = 2^2 * 3)
       const enemy = Enemy(
         currentValue: 12,
@@ -86,10 +87,10 @@ void main() {
       // Attack with 2, reducing to 5 (prime)
       final prime2 = Prime(value: 2, count: 1, firstObtained: DateTime.now());
       final result1 = BattleEngine.executeAttack(enemy, prime2);
-      
+
       // Should be awaiting victory claim
       expect(result1, isA<BattleAwaitingVictoryClaim>());
-      
+
       final newEnemy = (result1 as BattleAwaitingVictoryClaim).newEnemy;
       expect(newEnemy.currentValue, equals(5));
       expect(newEnemy.isDefeated, isTrue);
@@ -97,7 +98,7 @@ void main() {
       // Now try to attack the prime enemy (5) with prime 5
       final prime5 = Prime(value: 5, count: 1, firstObtained: DateTime.now());
       final result2 = BattleEngine.executeAttack(newEnemy, prime5);
-      
+
       // Should return error
       expect(result2, isA<BattleError>());
     });

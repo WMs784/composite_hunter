@@ -10,27 +10,27 @@ enum LogLevel {
 class Logger {
   static const String _name = 'CompositeHunter';
   static bool _isDebugMode = true;
-  
+
   static void setDebugMode(bool debug) {
     _isDebugMode = debug;
   }
-  
+
   static void debug(String message, [Object? error, StackTrace? stackTrace]) {
     _log(LogLevel.debug, message, error, stackTrace);
   }
-  
+
   static void info(String message, [Object? error, StackTrace? stackTrace]) {
     _log(LogLevel.info, message, error, stackTrace);
   }
-  
+
   static void warning(String message, [Object? error, StackTrace? stackTrace]) {
     _log(LogLevel.warning, message, error, stackTrace);
   }
-  
+
   static void error(String message, [Object? error, StackTrace? stackTrace]) {
     _log(LogLevel.error, message, error, stackTrace);
   }
-  
+
   static void _log(
     LogLevel level,
     String message,
@@ -38,11 +38,11 @@ class Logger {
     StackTrace? stackTrace,
   ) {
     if (!_isDebugMode && level == LogLevel.debug) return;
-    
+
     final timestamp = DateTime.now().toIso8601String();
     final levelName = level.name.toUpperCase();
     final logMessage = '[$timestamp] [$levelName] $message';
-    
+
     developer.log(
       logMessage,
       name: _name,
@@ -51,7 +51,7 @@ class Logger {
       level: _getLoggerLevel(level),
     );
   }
-  
+
   static int _getLoggerLevel(LogLevel level) {
     switch (level) {
       case LogLevel.debug:
@@ -64,7 +64,7 @@ class Logger {
         return 1000;
     }
   }
-  
+
   // Specific loggers for different components
   static void logBattle(String action, {Map<String, dynamic>? data}) {
     final message = 'BATTLE: $action';
@@ -74,7 +74,7 @@ class Logger {
       info(message);
     }
   }
-  
+
   static void logTimer(String action, {int? seconds}) {
     final message = 'TIMER: $action';
     if (seconds != null) {
@@ -83,7 +83,7 @@ class Logger {
       info(message);
     }
   }
-  
+
   static void logInventory(String action, {int? prime, int? count}) {
     final message = 'INVENTORY: $action';
     if (prime != null && count != null) {
@@ -92,7 +92,7 @@ class Logger {
       info(message);
     }
   }
-  
+
   static void logEnemy(String action, {int? value, String? type}) {
     final message = 'ENEMY: $action';
     if (value != null && type != null) {

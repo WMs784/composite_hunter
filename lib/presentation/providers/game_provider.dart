@@ -18,10 +18,10 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> _loadGameState() async {
     try {
       Logger.info('Loading game state');
-      
+
       final playerId = await _repository.getCurrentOrCreatePlayer();
       final player = await _repository.getPlayer(playerId);
-      
+
       if (player == null) {
         throw Exception('Failed to load or create player');
       }
@@ -29,7 +29,7 @@ class GameNotifier extends StateNotifier<GameState> {
       // Check tutorial completion from preferences
       final prefsService = SharedPreferencesService();
       final tutorialCompleted = await prefsService.isTutorialCompleted();
-      
+
       state = state.copyWith(
         player: player,
         isInitialized: true,
@@ -47,7 +47,7 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> _initializeNewGame() async {
     try {
       Logger.info('Initializing new game');
-      
+
       final now = DateTime.now();
       final newPlayer = Player(
         level: 1,
@@ -78,18 +78,19 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> recordVictory() async {
     try {
       Logger.debug('Recording victory');
-      
+
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
         totalVictories: state.player.totalVictories + 1,
-        experience: state.player.experience + GameConstants.baseVictoryExperience,
+        experience:
+            state.player.experience + GameConstants.baseVictoryExperience,
         lastPlayedAt: DateTime.now(),
       );
 
       // Check for level up
       final newLevel = _calculateLevel(updatedPlayer.experience);
       final finalPlayer = updatedPlayer.copyWith(level: newLevel);
-      
+
       state = state.copyWith(player: finalPlayer);
       await _saveGameState();
 
@@ -98,7 +99,8 @@ class GameNotifier extends StateNotifier<GameState> {
         _triggerLevelUpEvent(newLevel);
       }
 
-      Logger.debug('Victory recorded: level=$newLevel, experience=${finalPlayer.experience}');
+      Logger.debug(
+          'Victory recorded: level=$newLevel, experience=${finalPlayer.experience}');
     } catch (e, stackTrace) {
       Logger.error('Failed to record victory', e, stackTrace);
     }
@@ -108,20 +110,22 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> recordPowerEnemyVictory() async {
     try {
       Logger.debug('Recording power enemy victory');
-      
+
       const bonusExperience = GameConstants.powerEnemyBonusExperience;
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
         totalVictories: state.player.totalVictories + 1,
         totalPowerEnemiesDefeated: state.player.totalPowerEnemiesDefeated + 1,
-        experience: state.player.experience + GameConstants.baseVictoryExperience + bonusExperience,
+        experience: state.player.experience +
+            GameConstants.baseVictoryExperience +
+            bonusExperience,
         lastPlayedAt: DateTime.now(),
       );
 
       // Check for level up
       final newLevel = _calculateLevel(updatedPlayer.experience);
       final finalPlayer = updatedPlayer.copyWith(level: newLevel);
-      
+
       state = state.copyWith(player: finalPlayer);
       await _saveGameState();
 
@@ -140,7 +144,7 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> recordEscape() async {
     try {
       Logger.debug('Recording escape');
-      
+
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
         totalEscapes: state.player.totalEscapes + 1,
@@ -160,7 +164,7 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> recordTimeOut() async {
     try {
       Logger.debug('Recording timeout');
-      
+
       final updatedPlayer = state.player.copyWith(
         totalBattles: state.player.totalBattles + 1,
         totalTimeOuts: state.player.totalTimeOuts + 1,
@@ -180,18 +184,19 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> completeTutorial() async {
     try {
       Logger.debug('Completing tutorial');
-      
+
       state = state.copyWith(tutorialCompleted: true);
       await _repository.completeTutorial();
-      
+
       // Award tutorial completion experience
       final updatedPlayer = state.player.copyWith(
-        experience: state.player.experience + GameConstants.tutorialCompletionExperience,
+        experience: state.player.experience +
+            GameConstants.tutorialCompletionExperience,
       );
-      
+
       final newLevel = _calculateLevel(updatedPlayer.experience);
       final finalPlayer = updatedPlayer.copyWith(level: newLevel);
-      
+
       state = state.copyWith(player: finalPlayer);
       await _saveGameState();
 
@@ -205,7 +210,7 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> addExperience(int experience) async {
     try {
       Logger.debug('Adding experience: $experience');
-      
+
       final updatedPlayer = state.player.copyWith(
         experience: state.player.experience + experience,
         lastPlayedAt: DateTime.now(),
@@ -214,7 +219,7 @@ class GameNotifier extends StateNotifier<GameState> {
       // Check for level up
       final newLevel = _calculateLevel(updatedPlayer.experience);
       final finalPlayer = updatedPlayer.copyWith(level: newLevel);
-      
+
       state = state.copyWith(player: finalPlayer);
       await _saveGameState();
 
@@ -239,21 +244,24 @@ class GameNotifier extends StateNotifier<GameState> {
   /// Calculate experience needed for next level
   int getExperienceForNextLevel() {
     final currentLevel = state.player.level;
-    final nextLevelExperience = (currentLevel) * GameConstants.baseExperiencePerLevel;
+    final nextLevelExperience =
+        (currentLevel) * GameConstants.baseExperiencePerLevel;
     return nextLevelExperience - state.player.experience;
   }
 
   /// Get experience progress as percentage for current level
   double getLevelProgress() {
-    final currentLevelExp = (state.player.level - 1) * GameConstants.baseExperiencePerLevel;
-    final nextLevelExp = state.player.level * GameConstants.baseExperiencePerLevel;
+    final currentLevelExp =
+        (state.player.level - 1) * GameConstants.baseExperiencePerLevel;
+    final nextLevelExp =
+        state.player.level * GameConstants.baseExperiencePerLevel;
     final currentExp = state.player.experience;
-    
+
     if (currentExp >= nextLevelExp) return 1.0;
-    
+
     final levelExp = currentExp - currentLevelExp;
     final levelRange = nextLevelExp - currentLevelExp;
-    
+
     return (levelExp / levelRange).clamp(0.0, 1.0);
   }
 
@@ -281,7 +289,7 @@ class GameNotifier extends StateNotifier<GameState> {
       // Update player in repository
       final playerId = await _repository.getCurrentOrCreatePlayer();
       await _repository.updatePlayer(playerId, state.player);
-      
+
       // Save tutorial completion to preferences
       if (state.tutorialCompleted) {
         final prefsService = SharedPreferencesService();
@@ -296,10 +304,10 @@ class GameNotifier extends StateNotifier<GameState> {
   Future<void> resetGame() async {
     try {
       Logger.debug('Resetting game');
-      
+
       await _repository.clearAllData();
       await _initializeNewGame();
-      
+
       Logger.debug('Game reset completed');
     } catch (e, stackTrace) {
       Logger.error('Failed to reset game', e, stackTrace);
@@ -331,7 +339,7 @@ class GameNotifier extends StateNotifier<GameState> {
     final updatedPlayer = state.player.copyWith(
       lastPlayedAt: DateTime.now(),
     );
-    
+
     state = state.copyWith(player: updatedPlayer);
     await _saveGameState();
   }

@@ -100,7 +100,7 @@ class BattleEngine {
   /// Process battle escape
   static BattleResult processEscape() {
     Logger.logBattle('Process escape');
-    
+
     final penalty = TimePenalty(
       seconds: TimerConstants.escapePenalty,
       type: PenaltyType.escape,
@@ -114,7 +114,7 @@ class BattleEngine {
   /// Process battle timeout
   static BattleResult processTimeOut() {
     Logger.logBattle('Process timeout');
-    
+
     final penalty = TimePenalty(
       seconds: TimerConstants.timeOutPenalty,
       type: PenaltyType.timeOut,
@@ -131,7 +131,7 @@ class BattleEngine {
     final availablePrime = inventory
         .where((p) => p.value == prime.value && p.isAvailable)
         .firstOrNull;
-    
+
     if (availablePrime == null) return false;
 
     // Check if prime can attack enemy
@@ -141,14 +141,13 @@ class BattleEngine {
   /// Calculate battle difficulty
   static int calculateBattleDifficulty(Enemy enemy, List<Prime> inventory) {
     int difficulty = enemy.difficulty;
-    
+
     // Adjust based on available attacks
     final availableAttacks = inventory
-        .where((prime) => 
-            prime.isAvailable && 
-            enemy.canBeAttackedBy(prime.value))
+        .where(
+            (prime) => prime.isAvailable && enemy.canBeAttackedBy(prime.value))
         .length;
-    
+
     if (availableAttacks == 0) {
       difficulty += 10; // Impossible battle
     } else if (availableAttacks == 1) {
@@ -156,21 +155,20 @@ class BattleEngine {
     } else if (availableAttacks >= 5) {
       difficulty -= 1; // Many options available
     }
-    
+
     return difficulty.clamp(1, 10);
   }
 
   /// Get optimal attack strategy suggestion
   static List<Prime> suggestOptimalAttacks(Enemy enemy, List<Prime> inventory) {
     final availableAttacks = inventory
-        .where((prime) => 
-            prime.isAvailable && 
-            enemy.canBeAttackedBy(prime.value))
+        .where(
+            (prime) => prime.isAvailable && enemy.canBeAttackedBy(prime.value))
         .toList();
 
     // Sort by strategic value (larger primes first for efficiency)
     availableAttacks.sort((a, b) => b.value.compareTo(a.value));
-    
+
     return availableAttacks.take(3).toList(); // Return top 3 suggestions
   }
 }
@@ -220,32 +218,47 @@ sealed class BattleResult {
 
   /// Pattern matching method
   T when<T>({
-    required T Function(Enemy defeatedEnemy, int rewardPrime, VictoryClaim victoryClaim) victory,
-    required T Function(Enemy defeatedEnemy, int rewardPrime, int rewardCount, VictoryClaim victoryClaim) powerVictory,
+    required T Function(
+            Enemy defeatedEnemy, int rewardPrime, VictoryClaim victoryClaim)
+        victory,
+    required T Function(Enemy defeatedEnemy, int rewardPrime, int rewardCount,
+            VictoryClaim victoryClaim)
+        powerVictory,
     required T Function(Enemy newEnemy, Prime usedPrime) continue_,
     required T Function(Enemy newEnemy, Prime usedPrime) awaitingVictoryClaim,
-    required T Function(TimePenalty penalty, Enemy currentEnemy, VictoryClaim victoryClaim) wrongClaim,
+    required T Function(
+            TimePenalty penalty, Enemy currentEnemy, VictoryClaim victoryClaim)
+        wrongClaim,
     required T Function(TimePenalty penalty) escape,
     required T Function(TimePenalty penalty) timeOut,
     required T Function(String message) error,
   }) {
     return switch (this) {
-      BattleVictory(defeatedEnemy: final e, rewardPrime: final r, victoryClaim: final v) => 
+      BattleVictory(
+        defeatedEnemy: final e,
+        rewardPrime: final r,
+        victoryClaim: final v
+      ) =>
         victory(e, r, v),
-      BattlePowerVictory(defeatedEnemy: final e, rewardPrime: final r, rewardCount: final c, victoryClaim: final v) => 
+      BattlePowerVictory(
+        defeatedEnemy: final e,
+        rewardPrime: final r,
+        rewardCount: final c,
+        victoryClaim: final v
+      ) =>
         powerVictory(e, r, c, v),
-      BattleContinue(newEnemy: final e, usedPrime: final p) => 
-        continue_(e, p),
-      BattleAwaitingVictoryClaim(newEnemy: final e, usedPrime: final p) => 
+      BattleContinue(newEnemy: final e, usedPrime: final p) => continue_(e, p),
+      BattleAwaitingVictoryClaim(newEnemy: final e, usedPrime: final p) =>
         awaitingVictoryClaim(e, p),
-      BattleWrongClaim(penalty: final pen, currentEnemy: final e, victoryClaim: final v) => 
+      BattleWrongClaim(
+        penalty: final pen,
+        currentEnemy: final e,
+        victoryClaim: final v
+      ) =>
         wrongClaim(pen, e, v),
-      BattleEscape(penalty: final p) => 
-        escape(p),
-      BattleTimeOut(penalty: final p) => 
-        timeOut(p),
-      BattleError(message: final m) => 
-        error(m),
+      BattleEscape(penalty: final p) => escape(p),
+      BattleTimeOut(penalty: final p) => timeOut(p),
+      BattleError(message: final m) => error(m),
     };
   }
 }

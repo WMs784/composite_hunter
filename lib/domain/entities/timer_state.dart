@@ -21,14 +21,14 @@ class TimerState with _$TimerState {
   bool get isExpired => remainingSeconds <= 0;
 
   /// Check if the timer should show warning
-  bool get shouldShowWarning => 
-      remainingSeconds <= TimerConstants.warningThreshold && 
+  bool get shouldShowWarning =>
+      remainingSeconds <= TimerConstants.warningThreshold &&
       remainingSeconds > TimerConstants.criticalThreshold &&
       isActive;
 
   /// Check if the timer is in critical state
-  bool get isCritical => 
-      remainingSeconds <= TimerConstants.criticalThreshold && 
+  bool get isCritical =>
+      remainingSeconds <= TimerConstants.criticalThreshold &&
       remainingSeconds > 0 &&
       isActive;
 
@@ -61,7 +61,7 @@ class TimerState with _$TimerState {
     return copyWith(
       remainingSeconds: newRemainingSeconds,
       isWarning: newRemainingSeconds <= TimerConstants.warningThreshold &&
-                 newRemainingSeconds > TimerConstants.criticalThreshold,
+          newRemainingSeconds > TimerConstants.criticalThreshold,
     );
   }
 

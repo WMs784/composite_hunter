@@ -68,7 +68,6 @@ class StageInfo {
   }
 }
 
-
 class StageSelectScreen extends ConsumerStatefulWidget {
   const StageSelectScreen({super.key});
 
@@ -153,9 +152,9 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: Dimensions.spacingL),
-              
+
               // ステージリスト
               Expanded(
                 child: ListView.builder(
@@ -163,19 +162,19 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   itemBuilder: (context, index) {
                     final stage = stages[index];
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: Dimensions.spacingM),
+                      padding:
+                          const EdgeInsets.only(bottom: Dimensions.spacingM),
                       child: _StageCard(
                         stage: stage,
                         l10n: l10n,
-                        onTap: stage.isUnlocked
-                            ? () => _startStage(stage)
-                            : null,
+                        onTap:
+                            stage.isUnlocked ? () => _startStage(stage) : null,
                       ),
                     );
                   },
                 ),
               ),
-              
+
               // 練習モードボタン
               const SizedBox(height: Dimensions.spacingM),
               SizedBox(
@@ -185,7 +184,8 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   icon: const Icon(Icons.school),
                   label: Text(l10n.practiceMode),
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: Dimensions.paddingM),
                   ),
                 ),
               ),
@@ -214,7 +214,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
 
   void _resetInventory() {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -228,32 +228,32 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
           TextButton(
             onPressed: () async {
               Navigator.pop(context);
-              
+
               try {
                 // Reset battle session first
                 ref.read(battleSessionProvider.notifier).resetSession();
-                
+
                 // Reset battle screen providers
                 ref.read(battleEnemyProvider.notifier).state = 12;
                 ref.read(battleTimerProvider.notifier).state = 90;
-                
+
                 // Reset inventory
                 await ref.read(inventoryProvider.notifier).resetInventory();
-                
+
                 // Reset stage progress
                 await ref.read(stageProgressProvider.notifier).resetProgress();
-                
+
                 // Wait a bit for providers to update
                 await Future.delayed(const Duration(milliseconds: 100));
-                
+
                 // Force UI refresh by triggering a rebuild
                 if (mounted) {
                   setState(() {});
                 }
-                
+
                 // Additional delay before showing message
                 await Future.delayed(const Duration(milliseconds: 100));
-                
+
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -297,7 +297,7 @@ class _StageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLocked = !stage.isUnlocked;
-    
+
     return Card(
       elevation: isLocked ? 1 : 4,
       child: InkWell(
@@ -307,9 +307,7 @@ class _StageCard extends StatelessWidget {
           padding: const EdgeInsets.all(Dimensions.paddingL),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
-            color: isLocked 
-                ? AppColors.surfaceVariant.withOpacity(0.5)
-                : null,
+            color: isLocked ? AppColors.surfaceVariant.withOpacity(0.5) : null,
           ),
           child: Row(
             children: [
@@ -318,10 +316,10 @@ class _StageCard extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: isLocked 
+                  color: isLocked
                       ? AppColors.outline
-                      : (stage.isCompleted 
-                          ? AppColors.victoryGreen 
+                      : (stage.isCompleted
+                          ? AppColors.victoryGreen
                           : AppColors.primary),
                   borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 ),
@@ -341,9 +339,9 @@ class _StageCard extends StatelessWidget {
                         ),
                 ),
               ),
-              
+
               const SizedBox(width: Dimensions.spacingM),
-              
+
               // ステージ情報
               Expanded(
                 child: Column(
@@ -355,7 +353,7 @@ class _StageCard extends StatelessWidget {
                           child: Text(
                             stage.getLocalizedTitle(l10n),
                             style: AppTextStyles.titleMedium.copyWith(
-                              color: isLocked 
+                              color: isLocked
                                   ? AppColors.onSurfaceVariant
                                   : AppColors.onSurface,
                             ),
@@ -364,20 +362,16 @@ class _StageCard extends StatelessWidget {
                         if (stage.isCompleted) _buildStars(stage.stars),
                       ],
                     ),
-                    
                     const SizedBox(height: Dimensions.spacingXs),
-                    
                     Text(
                       stage.getLocalizedDescription(l10n),
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: isLocked 
+                        color: isLocked
                             ? AppColors.onSurfaceVariant.withOpacity(0.7)
                             : AppColors.onSurfaceVariant,
                       ),
                     ),
-                    
                     const SizedBox(height: Dimensions.spacingS),
-                    
                     if (!isLocked) ...[
                       Row(
                         children: [
@@ -396,14 +390,12 @@ class _StageCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // 進行状況インジケーター
               if (!isLocked)
                 Icon(
-                  stage.isCompleted 
-                      ? Icons.check_circle
-                      : Icons.play_arrow,
-                  color: stage.isCompleted 
+                  stage.isCompleted ? Icons.check_circle : Icons.play_arrow,
+                  color: stage.isCompleted
                       ? AppColors.victoryGreen
                       : AppColors.primary,
                   size: 28,

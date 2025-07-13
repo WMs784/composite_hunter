@@ -87,7 +87,8 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 120,
                       decoration: BoxDecoration(
                         color: AppColors.onPrimary,
-                        borderRadius: BorderRadius.circular(Dimensions.radiusXl),
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radiusXl),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.2),
@@ -102,9 +103,9 @@ class _SplashScreenState extends State<SplashScreen>
                         color: AppColors.primary,
                       ),
                     ),
-                    
+
                     const SizedBox(height: Dimensions.spacingXl),
-                    
+
                     // App name
                     Text(
                       'Composite Hunter',
@@ -113,9 +114,9 @@ class _SplashScreenState extends State<SplashScreen>
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    
+
                     const SizedBox(height: Dimensions.spacingS),
-                    
+
                     // Subtitle
                     Text(
                       '合成数ハンター',
@@ -123,9 +124,9 @@ class _SplashScreenState extends State<SplashScreen>
                         color: AppColors.onPrimary.withOpacity(0.8),
                       ),
                     ),
-                    
+
                     const SizedBox(height: Dimensions.spacingXl),
-                    
+
                     // Loading indicator
                     const SizedBox(
                       width: 40,
@@ -137,9 +138,9 @@ class _SplashScreenState extends State<SplashScreen>
                         strokeWidth: 3,
                       ),
                     ),
-                    
+
                     const SizedBox(height: Dimensions.spacingM),
-                    
+
                     // Loading text
                     Text(
                       'Loading...',

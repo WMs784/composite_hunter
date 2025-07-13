@@ -352,7 +352,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tutorialBasicTitle => '素数 vs 合成数';
 
   @override
-  String get tutorialBasicContent => '素数（2, 3, 5, 7...）は1と自分自身でしか割り切れません。\n\n合成数（4, 6, 8, 9...）は他の数でも割り切れます。';
+  String get tutorialBasicContent =>
+      '素数（2, 3, 5, 7...）は1と自分自身でしか割り切れません。\n\n合成数（4, 6, 8, 9...）は他の数でも割り切れます。';
 
   @override
   String get tutorialBasicExample => '12 = 2 × 2 × 3';
@@ -361,7 +362,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tutorialAttackTitle => '素数で攻撃';
 
   @override
-  String get tutorialAttackContent => '素数を使って合成数の敵を攻撃しましょう。\n\n素数で割り切れると、敵の値が小さくなります！';
+  String get tutorialAttackContent =>
+      '素数を使って合成数の敵を攻撃しましょう。\n\n素数で割り切れると、敵の値が小さくなります！';
 
   @override
   String get tutorialAttackExample => '12 ÷ 2 = 6\n6 ÷ 2 = 3\n3は素数！';
@@ -370,7 +372,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tutorialVictoryTitle => '勝利宣言';
 
   @override
-  String get tutorialVictoryContent => '敵を素数まで減らしたら「勝利宣言！」を押してください。\n\n注意 - 間違った宣言は時間を失います！';
+  String get tutorialVictoryContent =>
+      '敵を素数まで減らしたら「勝利宣言！」を押してください。\n\n注意 - 間違った宣言は時間を失います！';
 
   @override
   String get tutorialVictoryExample => '敵が素数になった？\n勝利宣言！ ✓';
@@ -379,7 +382,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tutorialTimerTitle => '時間制限';
 
   @override
-  String get tutorialTimerContent => '各バトルには制限時間があります！\n\n• 逃走: 次のバトルで-10秒\n• 誤った宣言: 即座に-10秒\n• タイムアップ: 次のバトルで-10秒';
+  String get tutorialTimerContent =>
+      '各バトルには制限時間があります！\n\n• 逃走: 次のバトルで-10秒\n• 誤った宣言: 即座に-10秒\n• タイムアップ: 次のバトルで-10秒';
 
   @override
   String get tutorialTimerExample => '賢く、素早く戦いましょう！';

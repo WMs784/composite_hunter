@@ -6,10 +6,10 @@ void main() {
   group('Inventory Tests', () {
     late Inventory emptyInventory;
     late Inventory sampleInventory;
-    
+
     setUp(() {
       emptyInventory = const Inventory();
-      
+
       sampleInventory = Inventory(primes: [
         Prime(
           value: 2,
@@ -51,7 +51,7 @@ void main() {
 
       test('should identify available primes', () {
         expect(emptyInventory.availablePrimes, isEmpty);
-        
+
         final available = sampleInventory.availablePrimes;
         expect(available.length, 3);
         expect(available.map((p) => p.value), containsAll([2, 3, 7]));
@@ -72,12 +72,12 @@ void main() {
     group('Prime Operations', () {
       test('should find primes by value', () {
         expect(emptyInventory.getPrime(2), isNull);
-        
+
         final prime2 = sampleInventory.getPrime(2);
         expect(prime2, isNotNull);
         expect(prime2!.value, 2);
         expect(prime2.count, 3);
-        
+
         expect(sampleInventory.getPrime(11), isNull);
       });
 
@@ -85,7 +85,7 @@ void main() {
         expect(sampleInventory.hasPrime(2), true);
         expect(sampleInventory.hasPrime(5), true);
         expect(sampleInventory.hasPrime(11), false);
-        
+
         expect(sampleInventory.isPrimeAvailable(2), true);
         expect(sampleInventory.isPrimeAvailable(5), false); // Count is 0
         expect(sampleInventory.isPrimeAvailable(11), false);
@@ -95,7 +95,7 @@ void main() {
         final attacksFor12 = sampleInventory.getPrimesForAttack(12);
         expect(attacksFor12.map((p) => p.value), containsAll([2, 3]));
         expect(attacksFor12.map((p) => p.value), isNot(contains(7)));
-        
+
         final attacksFor35 = sampleInventory.getPrimesForAttack(35);
         expect(attacksFor35.map((p) => p.value), contains(7));
         expect(attacksFor35.length, 1);
@@ -109,11 +109,12 @@ void main() {
           count: 2,
           firstObtained: DateTime.now(),
         );
-        
+
         final updated = emptyInventory.addPrime(newPrime);
-        
+
         expect(updated.uniqueCount, 1);
-        expect(updated.totalCount, 1); // 11 is a large prime, clamped to maxLargePrimeCount
+        expect(updated.totalCount,
+            1); // 11 is a large prime, clamped to maxLargePrimeCount
         expect(updated.getPrime(11), isNotNull);
       });
 
@@ -123,9 +124,9 @@ void main() {
           count: 2,
           firstObtained: DateTime.now(),
         );
-        
+
         final updated = sampleInventory.addPrime(additionalPrime2);
-        
+
         final prime2 = updated.getPrime(2);
         expect(prime2!.count, 5); // 3 + 2
         expect(updated.uniqueCount, 4); // Same number of unique primes
@@ -138,10 +139,10 @@ void main() {
           count: 10,
           firstObtained: DateTime.now(),
         );
-        
+
         final updated = sampleInventory.addPrime(tooManyPrime2);
         final prime2 = updated.getPrime(2);
-        
+
         expect(prime2!.count, 5); // Should be clamped to max
       });
 
@@ -152,10 +153,10 @@ void main() {
           count: 3,
           firstObtained: DateTime.now(),
         );
-        
+
         final updated = sampleInventory.addPrime(largePrime);
         final prime13 = updated.getPrime(13);
-        
+
         expect(prime13!.count, 1); // Should be clamped to max for large primes
       });
     });
@@ -164,7 +165,7 @@ void main() {
       test('should decrease count and increase usage', () {
         final primeToUse = sampleInventory.getPrime(2)!;
         final updated = sampleInventory.usePrime(primeToUse);
-        
+
         final updatedPrime2 = updated.getPrime(2);
         expect(updatedPrime2!.count, 2); // 3 - 1
         expect(updatedPrime2.usageCount, 6); // 5 + 1
@@ -173,14 +174,14 @@ void main() {
       test('should remove prime when count reaches zero', () {
         final primeToUse = sampleInventory.getPrime(7)!;
         final updated = sampleInventory.usePrime(primeToUse);
-        
+
         expect(updated.getPrime(7), isNull);
         expect(updated.uniqueCount, 3);
       });
 
       test('should throw error when using unavailable prime', () {
         final unavailablePrime = sampleInventory.getPrime(5)!;
-        
+
         expect(
           () => sampleInventory.usePrime(unavailablePrime),
           throwsStateError,
@@ -193,7 +194,7 @@ void main() {
           count: 1,
           firstObtained: DateTime.now(),
         );
-        
+
         expect(
           () => sampleInventory.usePrime(nonExistentPrime),
           throwsStateError,
@@ -204,7 +205,7 @@ void main() {
     group('removePrime', () {
       test('should remove prime completely', () {
         final updated = sampleInventory.removePrime(2);
-        
+
         expect(updated.getPrime(2), isNull);
         expect(updated.uniqueCount, 3);
         expect(updated.totalCount, 3); // 2 + 0 + 1
@@ -212,7 +213,7 @@ void main() {
 
       test('should handle removal of non-existent prime', () {
         final updated = sampleInventory.removePrime(11);
-        
+
         expect(updated.uniqueCount, 4);
         expect(updated.totalCount, 6);
       });
@@ -222,21 +223,21 @@ void main() {
       test('should sort by value', () {
         final sorted = sampleInventory.sortedByValue;
         final values = sorted.map((p) => p.value).toList();
-        
+
         expect(values, [2, 3, 5, 7]);
       });
 
       test('should sort by count (highest first)', () {
         final sorted = sampleInventory.sortedByCount;
         final counts = sorted.map((p) => p.count).toList();
-        
+
         expect(counts, [3, 2, 1, 0]);
       });
 
       test('should sort by usage (highest first)', () {
         final sorted = sampleInventory.sortedByUsage;
         final usages = sorted.map((p) => p.usageCount).toList();
-        
+
         expect(usages, [5, 3, 1, 0]);
       });
     });
@@ -244,7 +245,7 @@ void main() {
     group('Statistics', () {
       test('should generate correct stats', () {
         final stats = sampleInventory.stats;
-        
+
         expect(stats.totalPrimes, 6);
         expect(stats.uniquePrimes, 4);
         expect(stats.smallPrimes, 4); // 2, 3, 5, 7 (all <= 10)
@@ -255,7 +256,7 @@ void main() {
 
       test('should handle empty inventory stats', () {
         final stats = emptyInventory.stats;
-        
+
         expect(stats.totalPrimes, 0);
         expect(stats.uniquePrimes, 0);
         expect(stats.smallPrimes, 0);

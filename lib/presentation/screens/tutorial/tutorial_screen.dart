@@ -51,14 +51,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             // Progress indicator
             _buildProgressIndicator(),
-            
+
             // Tutorial content
             Expanded(
               child: PageView(
@@ -77,7 +77,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                 ],
               ),
             ),
-            
+
             // Navigation buttons
             _buildNavigationButtons(l10n),
           ],
@@ -93,13 +93,14 @@ class _TutorialScreenState extends State<TutorialScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(_totalPages, (index) {
           return Container(
-            margin: const EdgeInsets.symmetric(horizontal: Dimensions.spacingXs),
+            margin:
+                const EdgeInsets.symmetric(horizontal: Dimensions.spacingXs),
             width: 12,
             height: 12,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: index <= _currentPage 
-                  ? AppColors.primary 
+              color: index <= _currentPage
+                  ? AppColors.primary
                   : AppColors.surfaceVariant,
             ),
           );
@@ -171,10 +172,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                 child: Text(l10n.previous),
               ),
             ),
-          
-          if (_currentPage > 0)
-            const SizedBox(width: Dimensions.spacingM),
-          
+          if (_currentPage > 0) const SizedBox(width: Dimensions.spacingM),
           Expanded(
             flex: _currentPage == 0 ? 1 : 2,
             child: ElevatedButton(
@@ -230,28 +228,27 @@ class _TutorialPage extends StatelessWidget {
               color: iconColor,
             ),
           ),
-          
+
           const SizedBox(height: Dimensions.spacingXl),
-          
+
           // Title
           Text(
             title,
             style: AppTextStyles.headlineMedium,
             textAlign: TextAlign.center,
           ),
-          
+
           const SizedBox(height: Dimensions.spacingL),
-          
+
           // Content
           Text(
             content,
             style: AppTextStyles.bodyLarge,
             textAlign: TextAlign.center,
           ),
-          
+
           if (example != null) ...[
             const SizedBox(height: Dimensions.spacingL),
-            
             Container(
               padding: const EdgeInsets.all(Dimensions.paddingM),
               decoration: BoxDecoration(
@@ -268,10 +265,9 @@ class _TutorialPage extends StatelessWidget {
               ),
             ),
           ],
-          
+
           if (isLastPage) ...[
             const SizedBox(height: Dimensions.spacingXl),
-            
             Container(
               padding: const EdgeInsets.all(Dimensions.paddingM),
               decoration: BoxDecoration(

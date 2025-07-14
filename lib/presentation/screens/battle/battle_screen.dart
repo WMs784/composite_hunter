@@ -1095,8 +1095,6 @@ class _PrimeButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAvailable = prime.count > 0;
-    final recentlyAcquired = ref.watch(recentlyAcquiredPrimesProvider);
-    final isRecentlyAcquired = recentlyAcquired.containsKey(prime.value);
 
     return Material(
       color: isAvailable
@@ -1161,37 +1159,6 @@ class _PrimeButton extends ConsumerWidget {
                 ],
               ),
 
-              // Recently acquired indicator
-              if (isRecentlyAcquired)
-                Positioned(
-                  top: 4,
-                  right: 4,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.victoryGreen,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.victoryGreen.withOpacity(0.5),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Text(
-                      '+1',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),

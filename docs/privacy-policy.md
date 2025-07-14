@@ -6,7 +6,7 @@ description: 合成数ハンターアプリのプライバシーポリシーに�
 
 # プライバシーポリシー
 
-最終更新日: 2024年12月28日
+最終更新日: 2025年7月14日
 
 ## はじめに
 
@@ -161,10 +161,10 @@ description: 合成数ハンターアプリのプライバシーポリシーに�
 
 ### バージョン履歴
 
-- v1.0.0 (2024年12月28日): 初版公開
+- v1.0.0 (2025年7月14日): 初版公開
 
 ---
 
-© 2024 Composite Hunter Development Team. All rights reserved.
+© 2025 Composite Hunter Development Team. All rights reserved.
 
-最終更新日: 2024年12月28日
+最終更新日: 2025年7月14日

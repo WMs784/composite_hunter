@@ -4,6 +4,7 @@ import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
+import '../../providers/stage_progress_provider.dart';
 
 /// 結果画面共通のボタン機能
 mixin ResultScreenMixin {
@@ -32,10 +33,10 @@ mixin ResultScreenMixin {
   void goToStageSelect(BuildContext context, WidgetRef ref) {
     // アイテム状態を復元
     final session = ref.read(battleSessionProvider);
-    if (session.stageStartInventory != null) {
+    if (session.originalMainInventory != null) {
       ref
           .read(inventoryProvider.notifier)
-          .restoreInventory(session.stageStartInventory!);
+          .restoreInventory(session.originalMainInventory!);
     }
 
     // バトルセッションをリセット
@@ -50,36 +51,32 @@ mixin ResultScreenMixin {
   void retryStage(BuildContext context, WidgetRef ref, int stageNumber) {
     // アイテム状態を復元
     final session = ref.read(battleSessionProvider);
-    if (session.stageStartInventory != null) {
+    if (session.originalMainInventory != null) {
       ref
           .read(inventoryProvider.notifier)
-          .restoreInventory(session.stageStartInventory!);
+          .restoreInventory(session.originalMainInventory!);
     }
 
     // バトルセッションをリセット
     ref.read(battleSessionProvider.notifier).resetSession();
 
-    // 現在のアイテム状態を取得
-    final currentInventory = ref.read(inventoryProvider);
+    // 指定されたステージの情報を取得
+    final stages = ref.read(stageProgressProvider);
+    final stage = stages.firstWhere((s) => s.stageNumber == stageNumber);
 
-    // 同じステージを再開
-    ref
-        .read(battleSessionProvider.notifier)
-        .startStage(stageNumber, currentInventory);
-
-    // 現在の画面を閉じてバトル画面に遷移
+    // 現在の画面を閉じてアイテム選択画面に遷移
     Navigator.pop(context);
-    AppRouter.goToBattle(context);
+    AppRouter.goToStageItemSelection(context, stage);
   }
 
   /// 練習モードを開始
   void goToPractice(BuildContext context, WidgetRef ref) {
     // アイテム状態を復元
     final session = ref.read(battleSessionProvider);
-    if (session.stageStartInventory != null) {
+    if (session.originalMainInventory != null) {
       ref
           .read(inventoryProvider.notifier)
-          .restoreInventory(session.stageStartInventory!);
+          .restoreInventory(session.originalMainInventory!);
     }
 
     // バトルセッションをリセット

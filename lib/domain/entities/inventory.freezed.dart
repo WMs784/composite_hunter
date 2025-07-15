@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Inventory {
-  List<Prime> get primes => throw _privateConstructorUsedError;
+  List<Item> get primes => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $InventoryCopyWith<Inventory> get copyWith =>
@@ -28,7 +28,7 @@ abstract class $InventoryCopyWith<$Res> {
   factory $InventoryCopyWith(Inventory value, $Res Function(Inventory) then) =
       _$InventoryCopyWithImpl<$Res, Inventory>;
   @useResult
-  $Res call({List<Prime> primes});
+  $Res call({List<Item> primes});
 }
 
 /// @nodoc
@@ -50,7 +50,7 @@ class _$InventoryCopyWithImpl<$Res, $Val extends Inventory>
       primes: null == primes
           ? _value.primes
           : primes // ignore: cast_nullable_to_non_nullable
-              as List<Prime>,
+              as List<Item>,
     ) as $Val);
   }
 }
@@ -63,7 +63,7 @@ abstract class _$$InventoryImplCopyWith<$Res>
       __$$InventoryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Prime> primes});
+  $Res call({List<Item> primes});
 }
 
 /// @nodoc
@@ -83,7 +83,7 @@ class __$$InventoryImplCopyWithImpl<$Res>
       primes: null == primes
           ? _value._primes
           : primes // ignore: cast_nullable_to_non_nullable
-              as List<Prime>,
+              as List<Item>,
     ));
   }
 }
@@ -91,14 +91,14 @@ class __$$InventoryImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$InventoryImpl extends _Inventory {
-  const _$InventoryImpl({final List<Prime> primes = const []})
+  const _$InventoryImpl({final List<Item> primes = const []})
       : _primes = primes,
         super._();
 
-  final List<Prime> _primes;
+  final List<Item> _primes;
   @override
   @JsonKey()
-  List<Prime> get primes {
+  List<Item> get primes {
     if (_primes is EqualUnmodifiableListView) return _primes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_primes);
@@ -124,11 +124,11 @@ class _$InventoryImpl extends _Inventory {
 }
 
 abstract class _Inventory extends Inventory {
-  const factory _Inventory({final List<Prime> primes}) = _$InventoryImpl;
+  const factory _Inventory({final List<Item> primes}) = _$InventoryImpl;
   const _Inventory._() : super._();
 
   @override
-  List<Prime> get primes;
+  List<Item> get primes;
   @override
   @JsonKey(ignore: true)
   _$$InventoryImplCopyWith<_$InventoryImpl> get copyWith =>
@@ -141,7 +141,7 @@ mixin _$InventoryStats {
   int get uniquePrimes => throw _privateConstructorUsedError;
   int get smallPrimes => throw _privateConstructorUsedError;
   int get largePrimes => throw _privateConstructorUsedError;
-  Prime? get mostUsedPrime => throw _privateConstructorUsedError;
+  Item? get mostUsedPrime => throw _privateConstructorUsedError;
   double get averageUsage => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -160,10 +160,10 @@ abstract class $InventoryStatsCopyWith<$Res> {
       int uniquePrimes,
       int smallPrimes,
       int largePrimes,
-      Prime? mostUsedPrime,
+      Item? mostUsedPrime,
       double averageUsage});
 
-  $PrimeCopyWith<$Res>? get mostUsedPrime;
+  $ItemCopyWith<$Res>? get mostUsedPrime;
 }
 
 /// @nodoc
@@ -206,7 +206,7 @@ class _$InventoryStatsCopyWithImpl<$Res, $Val extends InventoryStats>
       mostUsedPrime: freezed == mostUsedPrime
           ? _value.mostUsedPrime
           : mostUsedPrime // ignore: cast_nullable_to_non_nullable
-              as Prime?,
+              as Item?,
       averageUsage: null == averageUsage
           ? _value.averageUsage
           : averageUsage // ignore: cast_nullable_to_non_nullable
@@ -216,12 +216,12 @@ class _$InventoryStatsCopyWithImpl<$Res, $Val extends InventoryStats>
 
   @override
   @pragma('vm:prefer-inline')
-  $PrimeCopyWith<$Res>? get mostUsedPrime {
+  $ItemCopyWith<$Res>? get mostUsedPrime {
     if (_value.mostUsedPrime == null) {
       return null;
     }
 
-    return $PrimeCopyWith<$Res>(_value.mostUsedPrime!, (value) {
+    return $ItemCopyWith<$Res>(_value.mostUsedPrime!, (value) {
       return _then(_value.copyWith(mostUsedPrime: value) as $Val);
     });
   }
@@ -240,11 +240,11 @@ abstract class _$$InventoryStatsImplCopyWith<$Res>
       int uniquePrimes,
       int smallPrimes,
       int largePrimes,
-      Prime? mostUsedPrime,
+      Item? mostUsedPrime,
       double averageUsage});
 
   @override
-  $PrimeCopyWith<$Res>? get mostUsedPrime;
+  $ItemCopyWith<$Res>? get mostUsedPrime;
 }
 
 /// @nodoc
@@ -285,7 +285,7 @@ class __$$InventoryStatsImplCopyWithImpl<$Res>
       mostUsedPrime: freezed == mostUsedPrime
           ? _value.mostUsedPrime
           : mostUsedPrime // ignore: cast_nullable_to_non_nullable
-              as Prime?,
+              as Item?,
       averageUsage: null == averageUsage
           ? _value.averageUsage
           : averageUsage // ignore: cast_nullable_to_non_nullable
@@ -314,7 +314,7 @@ class _$InventoryStatsImpl implements _InventoryStats {
   @override
   final int largePrimes;
   @override
-  final Prime? mostUsedPrime;
+  final Item? mostUsedPrime;
   @override
   final double averageUsage;
 
@@ -360,7 +360,7 @@ abstract class _InventoryStats implements InventoryStats {
       required final int uniquePrimes,
       required final int smallPrimes,
       required final int largePrimes,
-      final Prime? mostUsedPrime,
+      final Item? mostUsedPrime,
       required final double averageUsage}) = _$InventoryStatsImpl;
 
   @override
@@ -372,7 +372,7 @@ abstract class _InventoryStats implements InventoryStats {
   @override
   int get largePrimes;
   @override
-  Prime? get mostUsedPrime;
+  Item? get mostUsedPrime;
   @override
   double get averageUsage;
   @override

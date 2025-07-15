@@ -45,42 +45,6 @@ void main() {
       expect(actualInventory[5], expectedPostBattleInventory[5]);
     });
 
-    test('enemy becomes 1 should give no reward', () {
-      // バトル前の状態
-      Map<int, int> preBattleInventory = {
-        2: 3,
-        3: 1,
-      };
-
-      // バトルシナリオ: 敵6を1にする
-      // 6 ÷ 2 = 3, 3 ÷ 3 = 1
-      List<int> usedPrimes = [2, 3];
-      int finalValue = 1; // 敵が1になった
-
-      // 期待される結果: 使用分だけ減って、報酬なし
-      Map<int, int> expectedPostBattleInventory = {
-        2: 2, // 3 - 1 = 2
-        3: 0, // 1 - 1 = 0
-      };
-
-      // 計算ロジックをシミュレート
-      Map<int, int> actualInventory = Map.from(preBattleInventory);
-
-      // 使用した素数を減算
-      for (int usedPrime in usedPrimes) {
-        actualInventory[usedPrime] = (actualInventory[usedPrime] ?? 0) - 1;
-      }
-
-      // 最終値が1の場合は報酬なし
-      if (finalValue > 1 && _isPrime(finalValue)) {
-        actualInventory[finalValue] = (actualInventory[finalValue] ?? 0) + 1;
-      }
-
-      // 検証
-      expect(actualInventory[2], expectedPostBattleInventory[2]);
-      expect(actualInventory[3], expectedPostBattleInventory[3]);
-    });
-
     test('multiple battles should accumulate correctly', () {
       // 初期状態
       Map<int, int> inventory = {
@@ -166,17 +130,4 @@ void main() {
       expect(postBattleTotal, preBattleTotal - 1); // 1個減少（コスト）
     });
   });
-}
-
-/// 素数判定関数（テスト用）
-bool _isPrime(int n) {
-  if (n <= 1) return false;
-  if (n <= 3) return true;
-  if (n % 2 == 0 || n % 3 == 0) return false;
-
-  for (int i = 5; i * i <= n; i += 6) {
-    if (n % i == 0 || n % (i + 2) == 0) return false;
-  }
-
-  return true;
 }

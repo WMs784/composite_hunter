@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$BattleState {
   Enemy? get currentEnemy => throw _privateConstructorUsedError;
-  List<Prime> get usedPrimes => throw _privateConstructorUsedError;
+  List<Item> get usedPrimes => throw _privateConstructorUsedError;
   BattleStatus get status => throw _privateConstructorUsedError;
   int get turnCount => throw _privateConstructorUsedError;
   DateTime? get battleStartTime => throw _privateConstructorUsedError;
@@ -38,7 +38,7 @@ abstract class $BattleStateCopyWith<$Res> {
   @useResult
   $Res call(
       {Enemy? currentEnemy,
-      List<Prime> usedPrimes,
+      List<Item> usedPrimes,
       BattleStatus status,
       int turnCount,
       DateTime? battleStartTime,
@@ -81,7 +81,7 @@ class _$BattleStateCopyWithImpl<$Res, $Val extends BattleState>
       usedPrimes: null == usedPrimes
           ? _value.usedPrimes
           : usedPrimes // ignore: cast_nullable_to_non_nullable
-              as List<Prime>,
+              as List<Item>,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -156,7 +156,7 @@ abstract class _$$BattleStateImplCopyWith<$Res>
   @useResult
   $Res call(
       {Enemy? currentEnemy,
-      List<Prime> usedPrimes,
+      List<Item> usedPrimes,
       BattleStatus status,
       int turnCount,
       DateTime? battleStartTime,
@@ -200,7 +200,7 @@ class __$$BattleStateImplCopyWithImpl<$Res>
       usedPrimes: null == usedPrimes
           ? _value._usedPrimes
           : usedPrimes // ignore: cast_nullable_to_non_nullable
-              as List<Prime>,
+              as List<Item>,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -234,7 +234,7 @@ class __$$BattleStateImplCopyWithImpl<$Res>
 class _$BattleStateImpl extends _BattleState {
   const _$BattleStateImpl(
       {this.currentEnemy,
-      final List<Prime> usedPrimes = const [],
+      final List<Item> usedPrimes = const [],
       this.status = BattleStatus.waiting,
       this.turnCount = 0,
       this.battleStartTime,
@@ -247,10 +247,10 @@ class _$BattleStateImpl extends _BattleState {
 
   @override
   final Enemy? currentEnemy;
-  final List<Prime> _usedPrimes;
+  final List<Item> _usedPrimes;
   @override
   @JsonKey()
-  List<Prime> get usedPrimes {
+  List<Item> get usedPrimes {
     if (_usedPrimes is EqualUnmodifiableListView) return _usedPrimes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_usedPrimes);
@@ -321,7 +321,7 @@ class _$BattleStateImpl extends _BattleState {
 abstract class _BattleState extends BattleState {
   const factory _BattleState(
       {final Enemy? currentEnemy,
-      final List<Prime> usedPrimes,
+      final List<Item> usedPrimes,
       final BattleStatus status,
       final int turnCount,
       final DateTime? battleStartTime,
@@ -333,7 +333,7 @@ abstract class _BattleState extends BattleState {
   @override
   Enemy? get currentEnemy;
   @override
-  List<Prime> get usedPrimes;
+  List<Item> get usedPrimes;
   @override
   BattleStatus get status;
   @override

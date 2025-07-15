@@ -25,7 +25,8 @@
       "Bash(git commit:*)",
       "Bash(git reset:*)",
       "Bash(git add:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "Bash(timeout 30 flutter test:*)"
     ],
     "deny": []
   }

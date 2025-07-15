@@ -15,28 +15,28 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$Prime {
+mixin _$Item {
   int get value => throw _privateConstructorUsedError;
   int get count => throw _privateConstructorUsedError;
   DateTime get firstObtained => throw _privateConstructorUsedError;
   int get usageCount => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
-  $PrimeCopyWith<Prime> get copyWith => throw _privateConstructorUsedError;
+  $ItemCopyWith<Item> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $PrimeCopyWith<$Res> {
-  factory $PrimeCopyWith(Prime value, $Res Function(Prime) then) =
-      _$PrimeCopyWithImpl<$Res, Prime>;
+abstract class $ItemCopyWith<$Res> {
+  factory $ItemCopyWith(Item value, $Res Function(Item) then) =
+      _$ItemCopyWithImpl<$Res, Item>;
   @useResult
   $Res call({int value, int count, DateTime firstObtained, int usageCount});
 }
 
 /// @nodoc
-class _$PrimeCopyWithImpl<$Res, $Val extends Prime>
-    implements $PrimeCopyWith<$Res> {
-  _$PrimeCopyWithImpl(this._value, this._then);
+class _$ItemCopyWithImpl<$Res, $Val extends Item>
+    implements $ItemCopyWith<$Res> {
+  _$ItemCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -73,21 +73,20 @@ class _$PrimeCopyWithImpl<$Res, $Val extends Prime>
 }
 
 /// @nodoc
-abstract class _$$PrimeImplCopyWith<$Res> implements $PrimeCopyWith<$Res> {
-  factory _$$PrimeImplCopyWith(
-          _$PrimeImpl value, $Res Function(_$PrimeImpl) then) =
-      __$$PrimeImplCopyWithImpl<$Res>;
+abstract class _$$ItemImplCopyWith<$Res> implements $ItemCopyWith<$Res> {
+  factory _$$ItemImplCopyWith(
+          _$ItemImpl value, $Res Function(_$ItemImpl) then) =
+      __$$ItemImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({int value, int count, DateTime firstObtained, int usageCount});
 }
 
 /// @nodoc
-class __$$PrimeImplCopyWithImpl<$Res>
-    extends _$PrimeCopyWithImpl<$Res, _$PrimeImpl>
-    implements _$$PrimeImplCopyWith<$Res> {
-  __$$PrimeImplCopyWithImpl(
-      _$PrimeImpl _value, $Res Function(_$PrimeImpl) _then)
+class __$$ItemImplCopyWithImpl<$Res>
+    extends _$ItemCopyWithImpl<$Res, _$ItemImpl>
+    implements _$$ItemImplCopyWith<$Res> {
+  __$$ItemImplCopyWithImpl(_$ItemImpl _value, $Res Function(_$ItemImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -98,7 +97,7 @@ class __$$PrimeImplCopyWithImpl<$Res>
     Object? firstObtained = null,
     Object? usageCount = null,
   }) {
-    return _then(_$PrimeImpl(
+    return _then(_$ItemImpl(
       value: null == value
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
@@ -121,8 +120,8 @@ class __$$PrimeImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$PrimeImpl extends _Prime {
-  const _$PrimeImpl(
+class _$ItemImpl extends _Item {
+  const _$ItemImpl(
       {required this.value,
       required this.count,
       required this.firstObtained,
@@ -142,17 +141,17 @@ class _$PrimeImpl extends _Prime {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$PrimeImplCopyWith<_$PrimeImpl> get copyWith =>
-      __$$PrimeImplCopyWithImpl<_$PrimeImpl>(this, _$identity);
+  _$$ItemImplCopyWith<_$ItemImpl> get copyWith =>
+      __$$ItemImplCopyWithImpl<_$ItemImpl>(this, _$identity);
 }
 
-abstract class _Prime extends Prime {
-  const factory _Prime(
+abstract class _Item extends Item {
+  const factory _Item(
       {required final int value,
       required final int count,
       required final DateTime firstObtained,
-      final int usageCount}) = _$PrimeImpl;
-  const _Prime._() : super._();
+      final int usageCount}) = _$ItemImpl;
+  const _Item._() : super._();
 
   @override
   int get value;
@@ -164,6 +163,6 @@ abstract class _Prime extends Prime {
   int get usageCount;
   @override
   @JsonKey(ignore: true)
-  _$$PrimeImplCopyWith<_$PrimeImpl> get copyWith =>
+  _$$ItemImplCopyWith<_$ItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

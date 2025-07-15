@@ -203,6 +203,11 @@ class _$EnemyImpl extends _Enemy {
   final int? powerExponent;
 
   @override
+  String toString() {
+    return 'Enemy(currentValue: $currentValue, originalValue: $originalValue, type: $type, primeFactors: $primeFactors, isPowerEnemy: $isPowerEnemy, powerBase: $powerBase, powerExponent: $powerExponent)';
+  }
+
+  @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&

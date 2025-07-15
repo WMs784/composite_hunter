@@ -1,4 +1,4 @@
-# 合成数ハンター 詳細クラス設計書
+# 合成数ハンター 詳細クラス設計書（修正版 v4）
 
 ## 1. クラス図
 
@@ -6,15 +6,61 @@
 
 ```mermaid
 classDiagram
-    class Prime {
+    class Item {
         +int value
         +int count
         +DateTime firstObtained
-        +int usageCount
         +bool isPrime
-        +Prime copyWith()
+        +bool isAvailable
+        +bool isEmpty
+        +Item consume(int amount)
+        +Item add(int amount)
+        +Item copyWith()
         +bool operator==()
         +int hashCode
+    }
+
+    class Stage {
+        +int stageNumber
+        +String name
+        +String description
+        +int slotLimit
+        +int baseTimeSeconds
+        +StageType type
+        +StageDifficulty difficulty
+        +List~StageReward~ rewards
+        +bool isUnlocked
+        +bool canChallenge(List~Item~ inventory)
+        +Stage copyWith()
+    }
+
+    class BattleLoadout {
+        +List~Item~ battleItems
+        +List~Item~ originalItems
+        +int maxSlots
+        +Stage targetStage
+        +DateTime createdAt
+        +bool isFull
+        +bool isEmpty
+        +bool canContinueBattle
+        +int remainingSlots
+        +int totalItemCount
+        +BattleLoadout useItem(Item item)
+        +bool canUseItem(Item item)
+        +int getRemainingCount(int itemValue)
+        +BattleLoadout copyWith()
+    }
+
+    class TempReward {
+        +List~Item~ tempItems
+        +DateTime battleStartTime
+        +bool isFinalized
+        +TempReward addTempItem(Item item)
+        +TempReward finalize()
+        +TempReward discard()
+        +int totalTempItems
+        +bool hasTempRewards
+        +TempReward copyWith()
     }
 
     class Enemy {
@@ -25,11 +71,10 @@ classDiagram
         +bool isPowerEnemy
         +int? powerBase
         +int? powerExponent
-        +int powerRewardCount
-        +int powerRewardPrime
+        +bool isPrime
         +bool isDefeated
-        +bool canBeAttackedBy(int prime)
-        +Enemy attack(int prime)
+        +bool canBeAttackedBy(int value)
+        +Enemy attack(int value)
         +Enemy copyWith()
     }
 
@@ -63,39 +108,53 @@ classDiagram
 
     class BattleState {
         +Enemy? currentEnemy
-        +List~Prime~ usedPrimes
+        +BattleLoadout? loadout
+        +TempReward tempReward
+        +List~Item~ usedItems
         +BattleStatus status
         +int turnCount
         +DateTime? battleStartTime
         +TimerState? timerState
         +VictoryClaim? victoryClaim
         +List~TimePenalty~ battlePenalties
-        +bool canFight(List~Prime~ inventory)
+        +Stage? currentStage
+        +bool canUseItem(Item item)
+        +bool canFight
         +bool canClaimVictory
-        +BattleState nextTurn(Prime usedPrime)
-        +BattleState applyTimePenalty(TimePenalty penalty)
+        +BattleState useItem(Item item)
+        +BattleState addTempReward(Item rewardItem)
+        +BattleState finalizeRewards()
+        +BattleState discardRewards()
         +BattleState copyWith()
     }
 
     class Inventory {
-        +List~Prime~ primes
-        +int totalCount
-        +int uniqueCount
-        +List~Prime~ availablePrimes
-        +Prime? getPrime(int value)
-        +bool hasPrime(int value)
-        +Inventory addPrime(Prime prime)
-        +Inventory usePrime(Prime prime)
+        +List~Item~ items
+        +DateTime lastUpdated
+        +bool hasItem(int value)
+        +Item? getItem(int value)
+        +List~Item~ availableItems
+        +Inventory addItem(Item newItem)
+        +Inventory addTempRewards(TempReward tempReward)
+        +int totalItems
+        +int uniqueItems
         +Inventory copyWith()
     }
 
     BattleState --> Enemy : contains
-    BattleState --> Prime : uses
+    BattleState --> BattleLoadout : uses
+    BattleState --> TempReward : manages
+    BattleState --> Item : tracks
     BattleState --> TimerState : has
     BattleState --> VictoryClaim : has
     BattleState --> TimePenalty : tracks
+    BattleState --> Stage : references
+    BattleLoadout --> Item : manages
+    BattleLoadout --> Stage : targets
+    TempReward --> Item : holds
     TimerState --> TimePenalty : applies
-    Inventory --> Prime : manages
+    Inventory --> Item : manages
+    Stage --> StageReward : contains
 
     <<enumeration>> EnemyType
     EnemyType : SMALL
@@ -108,14 +167,28 @@ classDiagram
     BattleStatus : WAITING
     BattleStatus : FIGHTING
     BattleStatus : VICTORY
+    BattleStatus : STAGE_COMPLETE
+    BattleStatus : STAGE_FAILED
     BattleStatus : ESCAPE
-    BattleStatus : DEFEAT
     BattleStatus : TIMEOUT
 
+    <<enumeration>> StageType
+    StageType : TUTORIAL
+    StageType : NORMAL
+    StageType : CHALLENGE
+    StageType : SPECIAL
+
+    <<enumeration>> StageDifficulty
+    StageDifficulty : EASY
+    StageDifficulty : NORMAL
+    StageDifficulty : HARD
+    StageDifficulty : EXTREME
+
     <<enumeration>> PenaltyType
-    PenaltyType : ESCAPE
+    PenaltyType : RETIRE
     PenaltyType : WRONG_VICTORY_CLAIM
-    PenaltyType : TIME_OUT
+    PenaltyType : TIMEOUT
+    PenaltyType : ITEM_USAGE
 ```
 
 ### 1.2 ビジネスロジック層クラス図
@@ -123,22 +196,59 @@ classDiagram
 ```mermaid
 classDiagram
     class BattleEngine {
-        +static BattleResult executeAttack(Enemy enemy, Prime prime)
-        +static BattleResult processVictoryClaim(Enemy enemy, int claimedValue)
-        +static BattleResult processEscape()
-        +static BattleResult processTimeOut()
+        +ItemConsumptionManager itemConsumptionManager
+        +RewardManager rewardManager
+        +VictoryValidator victoryValidator
+        +PenaltyCalculator penaltyCalculator
+        +Future~BattleResult~ executeAttack(BattleState state, Item item)
+        +BattleResult processVictoryClaim(BattleState state, int claimedValue)
+        +BattleResult processRetire()
+        +BattleResult processTimeOut()
+    }
+
+    class ItemConsumptionManager {
+        +BattleLoadout consumeItem(BattleLoadout loadout, Item item)
+        +AttackResult validateAttack(Enemy enemy, Item item)
+        +BattleLoadout createBattleLoadout(Stage stage, List~Item~ selectedItems)
+    }
+
+    class RewardManager {
+        +TempReward addBattleReward(TempReward currentReward, Enemy defeatedEnemy)
+        +TempReward addPowerEnemyReward(TempReward currentReward, PowerEnemy defeatedPowerEnemy)
+        +Future~RewardResult~ finalizeStageRewards(TempReward tempReward, Inventory inventory, Stage stage)
+        +RewardResult discardStageRewards(TempReward tempReward)
+    }
+
+    class SetupManager {
+        +BattleLoadout currentLoadout
+        +List~Item~ originalSelection
+        +BattleLoadout createLoadout(Stage stage, List~Item~ selectedItems)
+        +SetupValidationResult validateSelection(Stage stage, List~Item~ selectedItems, List~Item~ inventory)
+        +BattleLoadout addItemToLoadout(Item item)
+        +BattleLoadout removeItemFromLoadout(Item item)
+        +BattleLoadout restoreOriginalLoadout()
+    }
+
+    class StageManager {
+        +List~Stage~ getAllStages()
+        +List~Stage~ getUnlockedStages()
+        +Stage? getStage(int stageNumber)
+        +bool canChallengeStage(Stage stage, List~Item~ inventory)
+        +Stage unlockStage(int stageNumber)
+        +List~StageReward~ calculateRewards(Stage stage, BattleResult result)
     }
 
     class EnemyGenerator {
         -Random _random
-        +Enemy generateEnemy(List~Prime~ playerInventory, int playerLevel)
-        -Enemy _generatePowerEnemy(List~Prime~ playerInventory, int playerLevel)
-        -Enemy _generateNormalEnemy(List~Prime~ playerInventory, int playerLevel)
-        -int _generateSmallEnemy(List~int~ availablePrimes)
-        -int _generateMediumEnemy(List~int~ availablePrimes)
-        -int _generateLargeEnemy(List~int~ availablePrimes)
+        +Enemy generateEnemyForStage(Stage stage)
+        +Enemy generateEnemy(List~Item~ playerInventory, int playerLevel)
+        -Enemy _generatePowerEnemy(List~Item~ playerInventory, int playerLevel)
+        -Enemy _generateNormalEnemy(List~Item~ playerInventory, int playerLevel)
+        -int _generateSmallEnemy(List~int~ availableItems)
+        -int _generateMediumEnemy(List~int~ availableItems)
+        -int _generateLargeEnemy(List~int~ availableItems)
         -int _calculateTargetDifficulty(int playerLevel)
-        -List~int~ _getAvailablePrimes(List~Prime~ inventory)
+        -List~int~ _getAvailableItems(List~Item~ inventory)
     }
 
     class PowerEnemyDetector {
@@ -163,11 +273,11 @@ classDiagram
         +void stopTimer()
         +void applyPenalty(TimePenalty penalty)
         +void dispose()
-        +static int getBaseTimeForEnemy(Enemy enemy)
+        +static int getBaseTimeForStage(Stage stage)
     }
 
     class VictoryValidator {
-        +static VictoryValidationResult validateVictoryClaim(int claimedValue)
+        +static VictoryValidationResult validateVictoryClaim(Enemy enemy, int claimedValue)
         +static bool canClaimVictory(Enemy enemy, TimerState timerState)
     }
 
@@ -185,7 +295,13 @@ classDiagram
         +static bool isPowerOfPrime(int number)
     }
 
+    BattleEngine --> ItemConsumptionManager : uses
+    BattleEngine --> RewardManager : uses
     BattleEngine --> VictoryValidator : uses
+    BattleEngine --> PenaltyCalculator : uses
+    ItemConsumptionManager --> AttackResult : returns
+    RewardManager --> RewardResult : returns
+    SetupManager --> SetupValidationResult : returns
     EnemyGenerator --> PowerEnemyDetector : uses
     EnemyGenerator --> PrimeCalculator : uses
     PowerEnemyDetector --> PowerEnemyInfo : creates
@@ -203,27 +319,60 @@ classDiagram
         -BattleEngine _battleEngine
         -EnemyGenerator _enemyGenerator
         -TimerManager _timerManager
+        -RewardManager _rewardManager
         -Ref _ref
-        +void startBattle()
-        +Future~void~ attack(Prime prime)
+        +void startBattleWithLoadout(BattleLoadout loadout)
+        +Future~void~ attack(Item item)
         +Future~void~ claimVictory()
-        +void escape()
+        +Future~void~ retire()
+        -Future~void~ _checkStageCompletion()
+        -Future~void~ _completeStage()
+        -Future~void~ _discardTempRewards()
         -void _handleTimerUpdate(TimerState timerState)
-        -Future~void~ _playAttackAnimation(int primeValue)
+        -Future~void~ _playAttackAnimation(int itemValue, bool isPrimeReached)
         -Future~void~ _playVictoryAnimation()
         -Future~void~ _playPowerVictoryAnimation()
         -Future~void~ _playPenaltyAnimation()
         -void _showError(String message)
         -void _showPenaltyMessage(String message)
+        -void _showStageCompleteMessage(int rewardCount)
+        -void _showStageFailedMessage(int lostRewardCount)
     }
 
     class InventoryNotifier {
         -InventoryRepository _repository
-        +void addPrime(Prime prime)
-        +void usePrime(Prime prime)
-        +void removePrime(int value)
+        +void addItem(Item item)
+        +void updateInventory(Inventory inventory)
+        +void removeItem(int value)
         +Future~void~ loadInventory()
         +Future~void~ saveInventory()
+    }
+
+    class SetupNotifier {
+        -SetupManager _setupManager
+        -StageManager _stageManager
+        -Ref _ref
+        +void initializeSetup(Stage stage)
+        +void addItemToLoadout(Item item)
+        +void removeItemFromLoadout(Item item)
+        +BattleLoadout? createLoadout()
+        +void resetSetup()
+    }
+
+    class StageNotifier {
+        -StageManager _stageManager
+        +void initializeStages()
+        +void unlockStage(int stageNumber)
+        +void updateStageProgress(int stageNumber, BattleResult result)
+        +Future~void~ loadStageData()
+        +Future~void~ saveStageData()
+    }
+
+    class TempRewardNotifier {
+        -RewardManager _rewardManager
+        +void initializeTempReward()
+        +void addTempItem(Item item)
+        +void clearTempRewards()
     }
 
     class GameNotifier {
@@ -244,12 +393,33 @@ classDiagram
         +Stream~TimerState~ get timerStream
     }
 
+    class StageSelectionScreen {
+        +Widget build(BuildContext context)
+        -Widget _buildStageCard(Stage stage)
+        -Widget _buildStageList()
+        -Widget _buildProgressIndicator()
+        -void _goToSetupScreen(Stage stage)
+        -void _startPracticeMode()
+    }
+
+    class SetupScreen {
+        +Stage targetStage
+        +Widget build(BuildContext context)
+        -Widget _buildItemSelector()
+        -Widget _buildLoadoutDisplay()
+        -Widget _buildSlotLimitIndicator()
+        -Widget _buildStartBattleButton()
+        -void _selectItem(Item item)
+        -void _startBattle()
+    }
+
     class BattleScreen {
         +Widget build(BuildContext context)
         -Widget _buildEnemyDisplay()
-        -Widget _buildPrimeGrid()
+        -Widget _buildBattleItemsGrid()
         -Widget _buildActionButtons()
         -Widget _buildTimerDisplay()
+        -Widget _buildTempRewardsDisplay()
         -Widget _buildVictoryClaimButton()
     }
 
@@ -260,6 +430,23 @@ classDiagram
         -Widget _buildPowerEnemy()
         -Widget _buildEnemyValue()
         -Widget _buildEnemyType()
+    }
+
+    class BattleItemsGridWidget {
+        +List~Item~ battleItems
+        +Function(Item) onItemTap
+        +Widget build(BuildContext context)
+        -Widget _buildItemCard(Item item)
+        -Widget _buildItemCount(Item item)
+        -Widget _buildUsageIndicator(Item item)
+    }
+
+    class TempRewardsWidget {
+        +TempReward tempReward
+        +Widget build(BuildContext context)
+        -Widget _buildRewardList()
+        -Widget _buildRewardItem(Item item)
+        -Widget _buildTotalCount()
     }
 
     class TimerWidget {
@@ -278,872 +465,1143 @@ classDiagram
 
     BattleNotifier --> StateNotifier : extends
     InventoryNotifier --> StateNotifier : extends
+    SetupNotifier --> StateNotifier : extends
+    StageNotifier --> StateNotifier : extends
+    TempRewardNotifier --> StateNotifier : extends
     GameNotifier --> StateNotifier : extends
     TimerNotifier --> StateNotifier : extends
-    
+
+    StageSelectionScreen --> StageNotifier : watches
+    SetupScreen --> SetupNotifier : watches
+    SetupScreen --> InventoryNotifier : watches
     BattleScreen --> BattleNotifier : watches
+    BattleScreen --> TempRewardNotifier : watches
     BattleScreen --> EnemyWidget : contains
+    BattleScreen --> BattleItemsGridWidget : contains
+    BattleScreen --> TempRewardsWidget : contains
     BattleScreen --> TimerWidget : contains
     BattleScreen --> VictoryClaimButton : contains
-    
+
     EnemyWidget --> Enemy : displays
+    BattleItemsGridWidget --> Item : displays
+    TempRewardsWidget --> TempReward : displays
     TimerWidget --> TimerState : displays
 ```
 
 ## 2. メソッド仕様
 
-### 2.1 Enemy クラス
+### 2.1 Item クラス
 
-#### attack(int prime) → Enemy
+#### consume(int amount) → Item
+
 ```dart
-/// 敵に素数で攻撃を行う
-/// 
+/// アイテムを消費する
+///
 /// Parameters:
-///   - prime: 攻撃に使用する素数
-/// 
+///   - amount: 消費する数量
+///
 /// Returns:
-///   - 攻撃後の敵の状態
-/// 
+///   - 消費後のアイテム状態
+///
 /// Throws:
-///   - InvalidAttackException: 攻撃できない素数の場合
-/// 
+///   - ItemException: 所持数が不足している場合
+///
 /// Preconditions:
-///   - prime > 0
-///   - currentValue % prime == 0
-/// 
+///   - amount > 0
+///   - count >= amount
+///
 /// Postconditions:
-///   - 戻り値のcurrentValue == 元のcurrentValue / prime
-///   - originalValueは変更されない
+///   - 戻り値のcount == 元のcount - amount
+///   - valueとfirstObtainedは変更されない
 ```
 
-#### canBeAttackedBy(int prime) → bool
+#### add(int amount) → Item
+
 ```dart
-/// 指定された素数で攻撃可能かを判定
-/// 
+/// アイテムを追加する
+///
 /// Parameters:
-///   - prime: 判定対象の素数
-/// 
+///   - amount: 追加する数量
+///
 /// Returns:
-///   - true: 攻撃可能, false: 攻撃不可能
-/// 
-/// Complexity: O(1)
-```
-
-### 2.2 TimerManager クラス
-
-#### startTimer(int seconds) → void
-```dart
-/// タイマーを開始する
-/// 
-/// Parameters:
-///   - seconds: タイマーの初期秒数
-/// 
-/// Side Effects:
-///   - 既存のタイマーが停止される
-///   - 新しいタイマーストリームが開始される
-///   - 毎秒timerStreamに更新が送信される
-/// 
+///   - 追加後のアイテム状態
+///
 /// Preconditions:
-///   - seconds > 0
-```
-
-#### applyPenalty(TimePenalty penalty) → void
-```dart
-/// ペナルティを適用してタイマーを減少させる
-/// 
-/// Parameters:
-///   - penalty: 適用するペナルティ情報
-/// 
-/// Side Effects:
-///   - remainingSecondsが減少される
-///   - penaltiesリストに追加される
-///   - timerStreamに更新が送信される
-/// 
+///   - amount > 0
+///
 /// Postconditions:
-///   - remainingSeconds >= 0 (負数にはならない)
+///   - 戻り値のcount == 元のcount + amount
 ```
 
-### 2.3 BattleEngine クラス
+### 2.2 BattleLoadout クラス
 
-#### executeAttack(Enemy enemy, Prime prime) → BattleResult
+#### useItem(Item item) → BattleLoadout
+
 ```dart
-/// 戦闘での攻撃を実行する
-/// 
+/// 戦闘中にアイテムを使用する
+///
+/// Parameters:
+///   - item: 使用するアイテム
+///
+/// Returns:
+///   - アイテム使用後のロードアウト状態
+///
+/// Throws:
+///   - ItemException: アイテムが見つからない、または残数不足の場合
+///
+/// Business Rules:
+///   - 攻撃の成功/失敗に関わらずアイテムは消費される
+///   - 残数が0になったアイテムは使用不可になる
+```
+
+#### canUseItem(Item item) → bool
+
+```dart
+/// アイテムが使用可能かを判定
+///
+/// Parameters:
+///   - item: 判定対象のアイテム
+///
+/// Returns:
+///   - true: 使用可能, false: 使用不可能
+///
+/// Business Rules:
+///   - バトルロードアウトに含まれ、かつ残数が1以上の場合のみ使用可能
+```
+
+### 2.3 TempReward クラス
+
+#### addTempItem(Item item) → TempReward
+
+```dart
+/// 仮報酬にアイテムを追加する
+///
+/// Parameters:
+///   - item: 追加するアイテム
+///
+/// Returns:
+///   - アイテム追加後の仮報酬状態
+///
+/// Throws:
+///   - RewardException: 既に確定済みの場合
+///
+/// Business Rules:
+///   - 同じ値のアイテムが既に存在する場合は数量を合算
+///   - 確定済み(isFinalized=true)の場合は追加不可
+```
+
+#### finalize() → TempReward
+
+```dart
+/// 仮報酬を確定状態にする
+///
+/// Returns:
+///   - 確定状態の仮報酬
+///
+/// Business Rules:
+///   - 一度確定した仮報酬は変更不可
+///   - ステージクリア時のみ呼び出される
+```
+
+#### discard() → TempReward
+
+```dart
+/// 仮報酬を破棄する
+///
+/// Returns:
+///   - 破棄状態の仮報酬
+///
+/// Business Rules:
+///   - ステージ失敗時（タイムアウト・リタイア）に呼び出される
+///   - 破棄されたアイテムはインベントリに追加されない
+```
+
+### 2.4 ItemConsumptionManager クラス
+
+#### consumeItem(BattleLoadout loadout, Item item) → BattleLoadout
+
+```dart
+/// アイテム消費処理（成功/失敗に関わらず消費）
+///
+/// Parameters:
+///   - loadout: 現在のバトルロードアウト
+///   - item: 消費するアイテム
+///
+/// Returns:
+///   - アイテム消費後のロードアウト
+///
+/// Throws:
+///   - ItemException: アイテムが使用不可能な場合
+///
+/// Business Rules:
+///   - 攻撃の成功/失敗に関わらずアイテムは必ず消費される
+///   - 消費処理と攻撃判定は分離されている
+```
+
+#### validateAttack(Enemy enemy, Item item) → AttackResult
+
+```dart
+/// 攻撃の有効性を判定（消費は別途実行）
+///
 /// Parameters:
 ///   - enemy: 攻撃対象の敵
-///   - prime: 使用する素数
-/// 
+///   - item: 使用するアイテム
+///
 /// Returns:
-///   - BattleResult: 攻撃結果のUnion Type
-/// 
+///   - AttackResult: 攻撃結果のUnion Type
+///
 /// Business Rules:
-///   - 攻撃後に敵が素数になった場合は勝利宣言待ち状態
-///   - 攻撃後も合成数の場合は戦闘継続
-///   - 攻撃不可能な素数の場合はエラー
+///   - 素数への攻撃は必ず失敗
+///   - 割り切れない場合は失敗
+///   - 攻撃判定と消費処理は独立
 ```
 
-#### processVictoryClaim(Enemy enemy, int claimedValue) → BattleResult
+### 2.5 RewardManager クラス
+
+#### finalizeStageRewards(TempReward tempReward, Inventory inventory, Stage stage) → Future<RewardResult>
+
 ```dart
-/// 勝利宣言を処理する
-/// 
+/// ステージクリア時の報酬確定処理
+///
 /// Parameters:
-///   - enemy: 現在の敵
-///   - claimedValue: プレイヤーが宣言した値
-/// 
+///   - tempReward: 確定対象の仮報酬
+///   - inventory: 現在のインベントリ
+///   - stage: クリアしたステージ
+///
 /// Returns:
-///   - BattleResult: 勝利判定結果
-/// 
-/// Business Rules:
-///   - claimedValueが素数の場合: 勝利
-///   - 累乗敵の場合: 特別報酬付き勝利
-///   - claimedValueが合成数の場合: ペナルティ
-```
-
-### 2.4 BattleNotifier クラス
-
-#### attack(Prime prime) → Future<void>
-```dart
-/// 戦闘画面での攻撃アクションを処理
-/// 
-/// Parameters:
-///   - prime: 使用する素数
-/// 
+///   - RewardResult: 確定結果
+///
 /// Side Effects:
+///   - 仮報酬をインベントリに追加
+///   - ステージ基本報酬も追加
+///   - 確定アニメーションを再生
+///
+/// Business Rules:
+///   - ステージクリア時のみ呼び出される
+///   - 仮報酬とステージ報酬の両方を処理
+```
+
+#### discardStageRewards(TempReward tempReward) → RewardResult
+
+```dart
+/// ステージ失敗時の報酬破棄処理
+///
+/// Parameters:
+///   - tempReward: 破棄対象の仮報酬
+///
+/// Returns:
+///   - RewardResult: 破棄結果
+///
+/// Business Rules:
+///   - タイムアウト・リタイア時に呼び出される
+///   - 破棄されたアイテム数を記録
+```
+
+### 2.6 BattleNotifier クラス
+
+#### attack(Item item) → Future<void>
+
+```dart
+/// 戦闘画面でのアイテム使用アクションを処理
+///
+/// Parameters:
+///   - item: 使用するアイテム
+///
+/// Side Effects:
+///   - アイテムを必ず消費（成功/失敗問わず）
 ///   - 攻撃アニメーションを再生
-///   - インベントリから素数を消費
 ///   - 戦闘状態を更新
-///   - UI状態を更新
-/// 
+///   - 素数到達時は勝利宣言待ち状態に移行
+///
 /// Async Operations:
 ///   - アニメーション再生 (500ms)
 ///   - 状態の永続化
+///
+/// Business Rules:
+///   - 素数への攻撃も実行可能（教育効果のため）
+///   - 無効攻撃でもアイテムは消費される
 ```
 
 #### claimVictory() → Future<void>
+
 ```dart
 /// 勝利宣言を処理
-/// 
+///
 /// Side Effects:
 ///   - 勝利判定を実行
-///   - 正解の場合: 勝利アニメーション + 報酬付与
+///   - 正解の場合: 勝利アニメーション + 仮報酬追加
 ///   - 不正解の場合: ペナルティアニメーション + タイム減少
-///   - タイマー停止
-///   - 実績チェック
-/// 
+///   - タイマー管理
+///   - ステージ完了判定
+///
 /// Preconditions:
 ///   - canClaimVictory == true
+///
+/// Business Rules:
+///   - 仮報酬として一時保存
+///   - ステージクリア時に確定処理
+```
+
+#### retire() → Future<void>
+
+```dart
+/// リタイア処理
+///
+/// Side Effects:
+///   - ペナルティ記録
+///   - 仮報酬破棄
+///   - タイマー停止
+///   - 次回ステージのペナルティ設定
+///
+/// Business Rules:
+///   - 獲得していた仮報酬は全て失われる
+///   - 次回同ステージ挑戦時の制限時間が短縮される
 ```
 
 ## 3. データフロー図
 
-### 3.1 戦闘フロー
+### 3.1 ステージ挑戦フロー（修正版）
 
 ```mermaid
 flowchart TD
-    A[ユーザーが攻撃ボタン押下] --> B[BattleScreen]
-    B --> C[BattleNotifier.attack]
-    C --> D[BattleEngine.executeAttack]
-    D --> E{攻撃結果判定}
-    
-    E -->|素数に到達| F[awaitingVictoryClaim]
-    E -->|まだ合成数| G[continue]
-    E -->|攻撃不可| H[error]
-    
-    F --> I[勝利宣言ボタン表示]
-    G --> J[戦闘継続]
-    H --> K[エラー表示]
-    
-    I --> L[ユーザーが勝利宣言]
-    L --> M[BattleNotifier.claimVictory]
-    M --> N[VictoryValidator.validateVictoryClaim]
-    N --> O{勝利判定}
-    
-    O -->|正解| P[報酬付与]
-    O -->|不正解| Q[ペナルティ適用]
-    
-    P --> R[勝利アニメーション]
-    Q --> S[ペナルティアニメーション]
-    
-    R --> T[次の戦闘準備]
-    S --> J
-    
-    J --> U[EnemyGenerator.generateEnemy]
-    U --> V[新しい敵表示]
-    V --> W[タイマー開始]
+    A[ユーザーがステージ選択] --> B[StageSelectionScreen]
+    B --> C[StageNotifier.getUnlockedStages]
+    C --> D[ステージ一覧表示]
+    D --> E[ユーザーがステージタップ]
+
+    E --> F[SetupScreen遷移]
+    F --> G[SetupNotifier.initializeSetup]
+    G --> H[InventoryNotifier.availableItems取得]
+    H --> I[アイテム選択UI表示]
+
+    I --> J[ユーザーがアイテム選択]
+    J --> K[SetupNotifier.addItemToLoadout]
+    K --> L{制限数チェック}
+
+    L -->|制限内| M[選択完了]
+    L -->|制限超過| N[エラー表示]
+    N --> I
+
+    M --> O[SetupNotifier.createLoadout]
+    O --> P[BattleLoadout作成]
+    P --> Q[BattleScreen遷移]
+    Q --> R[BattleNotifier.startBattleWithLoadout]
 ```
 
-### 3.2 タイマーフロー
+### 3.2 戦闘フロー（修正版）
 
 ```mermaid
 flowchart TD
-    A[戦闘開始] --> B[TimerManager.startTimer]
-    B --> C[Stream<TimerState>開始]
-    C --> D[毎秒tick()]
-    
-    D --> E{残り時間チェック}
-    E -->|時間あり| F[UI更新]
-    E -->|10秒以下| G[警告表示]
-    E -->|0秒| H[タイムアウト処理]
-    
-    F --> I[BattleNotifier状態更新]
-    G --> I
-    H --> J[BattleEngine.processTimeOut]
-    
-    J --> K[ペナルティ記録]
-    K --> L[新戦闘開始]
-    
-    M[ペナルティ発生] --> N[TimerManager.applyPenalty]
-    N --> O[remainingSeconds減少]
-    O --> P[Stream更新]
-    P --> I
+    A[BattleNotifier.startBattleWithLoadout] --> B[EnemyGenerator.generateEnemyForStage]
+    B --> C[TimerManager.startTimer]
+    C --> D[TempReward初期化]
+    D --> E[戦闘UI表示]
+
+    E --> F[ユーザーがアイテムボタン押下]
+    F --> G[BattleNotifier.attack]
+    G --> H[BattleLoadout.useItem - アイテム消費]
+    H --> I[ItemConsumptionManager.validateAttack]
+
+    I --> J{攻撃結果判定}
+    J -->|成功・継続| K[敵の値更新]
+    J -->|成功・素数到達| L[勝利宣言待ち]
+    J -->|失敗| M[エラーフィードバック]
+
+    K --> N[戦闘継続]
+    M --> N
+
+    L --> O[ユーザーが勝利宣言]
+    O --> P[BattleNotifier.claimVictory]
+    P --> Q[VictoryValidator.validateVictoryClaim]
+
+    Q --> R{勝利判定}
+    R -->|正解| S[RewardManager.addBattleReward]
+    R -->|不正解| T[ペナルティ適用]
+
+    S --> U[TempReward追加]
+    U --> V{ステージ完了判定}
+
+    V -->|継続| W[次の敵生成]
+    V -->|完了| X[RewardManager.finalizeStageRewards]
+
+    W --> E
+    X --> Y[Inventory更新]
+    Y --> Z[ステージクリア画面]
+
+    T --> N
+
+    AA[タイムアウト] --> BB[RewardManager.discardStageRewards]
+    CC[リタイア] --> BB
+    BB --> DD[仮報酬破棄]
+    DD --> EE[ステージ失敗画面]
 ```
 
-### 3.3 累乗敵検出フロー
+### 3.3 仮報酬管理フロー（新規）
 
 ```mermaid
 flowchart TD
-    A[EnemyGenerator.generateEnemy] --> B{10%の確率}
-    B -->|Yes| C[_generatePowerEnemy]
-    B -->|No| D[_generateNormalEnemy]
-    
-    C --> E[プレイヤー所持素数確認]
-    E --> F[PowerEnemyDetector.createPowerEnemy]
-    F --> G[base^exponent計算]
-    G --> H[Enemy作成]
-    H --> I[isPowerEnemy = true]
-    
-    D --> J[通常の合成数生成]
-    J --> K[Enemy作成]
-    K --> L[isPowerEnemy = false]
-    
-    I --> M[累乗敵UI表示]
-    L --> N[通常敵UI表示]
-    
-    M --> O[特別勝利処理]
-    N --> P[通常勝利処理]
-    
-    O --> Q[base素数 × exponent個報酬]
-    P --> R[currentValue素数 × 1個報酬]
+    A[戦闘開始] --> B[TempReward初期化]
+    B --> C[tempItems = []]
+    C --> D[戦闘実行]
+
+    D --> E[敵撃破]
+    D --> E[敵撃破]
+E --> F{敵タイプ判定}
+
+F -->|通常敵| G[TempReward.addTempItem]
+F -->|累乗敵| H[TempReward.addTempItem - 複数個]
+
+G --> I[仮報酬リストに追加]
+H --> I
+I --> J[TempRewardsWidget更新]
+J --> K{ステージ継続？}
+
+K -->|継続| L[次の敵]
+K -->|完了| M[ステージクリア判定]
+
+L --> D
+M --> N[RewardManager.finalizeStageRewards]
+N --> O[TempReward.finalize]
+O --> P[Inventory.addTempRewards]
+P --> Q[確定アニメーション]
+Q --> R[ステージクリア]
+
+S[タイムアウト/リタイア] --> T[RewardManager.discardStageRewards]
+T --> U[TempReward.discard]
+U --> V[破棄アニメーション]
+V --> W[ステージ失敗]
+
+style I fill:#e1f5fe
+style P fill:#c8e6c9
+style U fill:#ffcdd2
 ```
 
-## 4. UI画面遷移図（現在の実装ベース）
+### 3.4 アイテム消費フロー（新規）
+
+```mermaid
+flowchart TD
+    A[ユーザーがアイテム選択] --> B{アイテム使用可能？}
+    B -->|No| C[使用不可表示]
+    B -->|Yes| D[BattleLoadout.useItem]
+
+    D --> E[Item.consume実行]
+    E --> F[battleItemsから数量減算]
+    F --> G[ItemConsumptionManager.validateAttack]
+
+    G --> H{攻撃有効性判定}
+    H -->|素数への攻撃| I[AttackResult.failure - isPrimeAttack]
+    H -->|割り切れない| J[AttackResult.failure - invalid]
+    H -->|割り切れる| K[AttackResult.success]
+
+    I --> L[教育的フィードバック表示]
+    J --> M[無効攻撃フィードバック]
+    K --> N[敵の値更新]
+
+    L --> O[消費完了]
+    M --> O
+    N --> O
+
+    O --> P{残りアイテムチェック}
+    P -->|残りあり| Q[戦闘継続]
+    P -->|残りなし| R[ゲームオーバー判定]
+
+    style E fill:#ffcdd2
+    style I fill:#fff3e0
+    style J fill:#fff3e0
+    style N fill:#c8e6c9
+```
+
+### 3.5 ステージ管理フロー（新規）
+
+```marmaid
+mermaidflowchart TD
+    A[アプリ起動] --> B[StageManager.getAllStages]
+    B --> C[デフォルトステージ読み込み]
+    C --> D[StageNotifier.initializeStages]
+    D --> E[解放状況確認]
+
+    E --> F[ステージ1: 常に解放]
+    F --> G[ステージ2以降: 条件チェック]
+    G --> H[StageSelectionScreen表示]
+
+    I[ステージクリア] --> J[StageManager.calculateRewards]
+    J --> K[報酬計算]
+    K --> L{次ステージ解放条件}
+
+    L -->|条件満たす| M[StageManager.unlockStage]
+    L -->|条件不足| N[現状維持]
+
+    M --> O[Stage.isUnlocked = true]
+    O --> P[解放アニメーション]
+    P --> Q[ステージリスト更新]
+
+    N --> R[ステージリスト更新]
+    Q --> R
+    R --> S[次回表示時に反映]
+
+    style M fill:#c8e6c9
+    style P fill:#e1f5fe
+```
+
+## 4. UI 画面遷移図（修正版）
 
 ### 4.1 全体画面遷移
 
-```mermaid
-stateDiagram-v2
+```marmaid
+mermaidstateDiagram-v2
     [*] --> SplashScreen : アプリ起動
-    
+
     SplashScreen --> TutorialScreen : 初回起動
-    SplashScreen --> StageSelectScreen : 通常起動
-    
-    TutorialScreen --> StageSelectScreen : チュートリアル完了
-    
-    StageSelectScreen --> BattleScreen : ステージ選択
-    StageSelectScreen --> BattleScreen : 練習モード選択
-    StageSelectScreen --> InventoryScreen : インベントリタップ
-    StageSelectScreen --> AchievementScreen : 実績タップ
-    
-    BattleScreen --> StageSelectScreen : 戻るボタン
+    SplashScreen --> StageSelectionScreen : 通常起動
+
+    TutorialScreen --> StageSelectionScreen : チュートリアル完了
+
+    StageSelectionScreen --> SetupScreen : ステージ選択
+    StageSelectionScreen --> BattleScreen : 練習モード選択
+    StageSelectionScreen --> InventoryScreen : インベントリタップ
+    StageSelectionScreen --> AchievementScreen : 実績タップ
+
+    SetupScreen --> StageSelectionScreen : 戻るボタン
+    SetupScreen --> BattleScreen : 戦闘開始
+
+    BattleScreen --> StageSelectionScreen : 戻るボタン
     BattleScreen --> InventoryScreen : インベントリタップ
     BattleScreen --> AchievementScreen : 実績タップ
-    BattleScreen --> StageClearScreen : ステージクリア
-    BattleScreen --> GameOverScreen : ゲームオーバー
-    
-    StageClearScreen --> StageSelectScreen : 戻る
-    GameOverScreen --> StageSelectScreen : 戻る
-    
-    InventoryScreen --> StageSelectScreen : 戻るボタン
-    AchievementScreen --> StageSelectScreen : 戻るボタン
-    
+    BattleScreen --> StageCompleteScreen : ステージクリア
+    BattleScreen --> StageFailedScreen : ステージ失敗
+
+    StageCompleteScreen --> StageSelectionScreen : 戻る
+    StageFailedScreen --> StageSelectionScreen : 戻る
+    StageFailedScreen --> SetupScreen : 再挑戦
+
+    InventoryScreen --> StageSelectionScreen : 戻るボタン
+    AchievementScreen --> StageSelectionScreen : 戻るボタン
+
     state BattleScreen {
         [*] --> InitializingState
         InitializingState --> FightingState : 戦闘開始
-        FightingState --> FightingState : 攻撃継続
-        FightingState --> VictoryState : 勝利宣言成功
-        FightingState --> EscapeState : 逃走選択
+        FightingState --> FightingState : アイテム使用継続
+        FightingState --> AwaitingClaimState : 素数到達
+        AwaitingClaimState --> FightingState : 勝利宣言失敗
+        AwaitingClaimState --> VictoryState : 勝利宣言成功
+        FightingState --> RetiredState : リタイア選択
         FightingState --> TimeOutState : 時間切れ
-        FightingState --> GameOverState : アイテム不足
+        AwaitingClaimState --> TimeOutState : 時間切れ
         VictoryState --> InitializingState : 次の敵（継続）
-        VictoryState --> ClearedState : ステージクリア
-        EscapeState --> InitializingState : 次の敵（ペナルティ）
-        TimeOutState --> InitializingState : 次の敵（ペナルティ）
-        GameOverState --> [*] : ゲームオーバー画面
-        ClearedState --> [*] : ステージクリア画面
+        VictoryState --> StageCompleteState : ステージクリア
+        RetiredState --> StageFailedState : 失敗処理
+        TimeOutState --> StageFailedState : 失敗処理
+        StageCompleteState --> [*] : クリア画面
+        StageFailedState --> [*] : 失敗画面
+    }
+
+    state SetupScreen {
+        [*] --> ItemSelectionState
+        ItemSelectionState --> ItemSelectionState : アイテム選択/解除
+        ItemSelectionState --> ValidationState : 選択完了
+        ValidationState --> ItemSelectionState : 検証失敗
+        ValidationState --> LoadoutCreatedState : 検証成功
+        LoadoutCreatedState --> [*] : 戦闘開始
     }
 ```
 
-### 4.2 戦闘画面状態遷移詳細
+### 4.2 戦闘画面状態遷移詳細（修正版）
 
-```mermaid
-stateDiagram-v2
+```marmaid
+mermaidstateDiagram-v2
     [*] --> Waiting : 初期状態
-    
-    Waiting --> Fighting : startBattle()
-    note right of Fighting : タイマー開始\n敵表示\n素数グリッド表示
-    
+
+    Waiting --> Fighting : startBattleWithLoadout()
+    note right of Fighting : タイマー開始\n敵表示\nバトルアイテム表示\n仮報酬初期化
+
     Fighting --> Fighting : attack() - 継続
-    note left of Fighting : 攻撃アニメーション\n敵の値更新\n素数消費
-    
+    note left of Fighting : アイテム消費\n攻撃アニメーション\n敵の値更新
+
     Fighting --> AwaitingClaim : attack() - 素数到達
-    note right of AwaitingClaim : 勝利宣言ボタン表示\nタイマー継続
-    
-    AwaitingClaim --> Victory : claimVictory() - 正解
-    note right of Victory : 勝利アニメーション\n報酬付与\nタイマー停止
-    
+    note right of AwaitingClaim : 勝利宣言ボタン表示\nタイマー継続\nアイテム消費済み
+
+    AwaitingClaim --> TempRewardAdded : claimVictory() - 正解
+    note right of TempRewardAdded : 仮報酬追加\n勝利アニメーション\nステージ完了判定
+
     AwaitingClaim --> Fighting : claimVictory() - 不正解
     note left of AwaitingClaim : ペナルティアニメーション\nタイマー減少
-    
-    Fighting --> Escape : escape()
-    note left of Escape : ペナルティ記録\n次回時間短縮
-    
+
+    TempRewardAdded --> Fighting : 次の敵
+    TempRewardAdded --> StageComplete : ステージクリア
+
+    Fighting --> Retired : retire()
+    AwaitingClaim --> Retired : retire()
+    note left of Retired : 仮報酬破棄\nペナルティ記録
+
     Fighting --> TimeOut : タイマー満了
     AwaitingClaim --> TimeOut : タイマー満了
-    note right of TimeOut : ペナルティ記録\n次回時間短縮
-    
-    Victory --> Waiting : 次の戦闘準備
-    Escape --> Waiting : 次の戦闘準備
-    TimeOut --> Waiting : 次の戦闘準備
-    
-    state Victory {
-        [*] --> NormalVictory
-        [*] --> PowerVictory
-        
-        NormalVictory : 通常報酬\n素数 × 1個
-        PowerVictory : 特別報酬\nbase素数 × exponent個
+    note right of TimeOut : 仮報酬破棄\nペナルティ記録
+
+    StageComplete --> RewardFinalized : finalizeStageRewards()
+    note right of RewardFinalized : 仮報酬確定\nインベントリ更新\n確定アニメーション
+
+    Retired --> RewardDiscarded : discardStageRewards()
+    TimeOut --> RewardDiscarded : discardStageRewards()
+    note left of RewardDiscarded : 仮報酬破棄\n破棄アニメーション
+
+    RewardFinalized --> Waiting : 次ステージ準備
+    RewardDiscarded --> Waiting : 再挑戦準備
+
+    state TempRewardAdded {
+        [*] --> NormalReward
+        [*] --> PowerReward
+
+        NormalReward : 通常報酬\nアイテム × 1個
+        PowerReward : 特別報酬\nbase × exponent個
     }
 ```
 
-### 4.3 累乗敵UI状態
+### 4.3 アイテム選択画面状態（新規）
 
-```mermaid
-stateDiagram-v2
-    [*] --> EnemyGeneration : 敵生成開始
-    
-    EnemyGeneration --> NormalEnemy : 90%確率
-    EnemyGeneration --> PowerEnemy : 10%確率
-    
-    state NormalEnemy {
-        [*] --> DisplayNormal
-        DisplayNormal : 通常の敵表示\n- 単色背景\n- 標準アイコン\n- 基本アニメーション
+```marmaid
+mermaidstateDiagram-v2
+    [*] --> ItemSelection : セットアップ開始
+
+    ItemSelection --> ItemSelection : アイテム選択/解除
+    note right of ItemSelection : 制限数チェック\n選択状況表示\n残り枠表示
+
+    ItemSelection --> SlotLimitReached : 制限数到達
+    note right of SlotLimitReached : 追加選択不可\n選択解除のみ可能
+
+    SlotLimitReached --> ItemSelection : アイテム解除
+
+    ItemSelection --> ValidationPassed : 最小選択数満たす
+    SlotLimitReached --> ValidationPassed : 最小選択数満たす
+    note right of ValidationPassed : 戦闘開始ボタン有効\nロードアウト作成可能
+
+    ValidationPassed --> ItemSelection : アイテム解除で最小数未満
+    ValidationPassed --> LoadoutCreated : 戦闘開始
+
+    LoadoutCreated --> [*] : 戦闘画面遷移
+
+    state ItemSelection {
+        [*] --> InsufficientSelection
+        InsufficientSelection : 選択数不足\n戦闘開始不可
+        InsufficientSelection --> SufficientSelection : 最小数達成
+        SufficientSelection : 選択数十分\n戦闘開始可能
+        SufficientSelection --> InsufficientSelection : 選択数減少
     }
-    
-    state PowerEnemy {
-        [*] --> DisplayPower
-        DisplayPower : 累乗敵表示\n- 虹色背景\n- 特別アイコン\n- 強化アニメーション\n- base^exponent表記
-        
-        DisplayPower --> PowerVictoryAnimation : 勝利時
-        PowerVictoryAnimation : 特別勝利演出\n- 拡張アニメーション\n- 複数報酬表示\n- 特別効果音
+4.4 仮報酬UI状態（新規）
+mermaidstateDiagram-v2
+    [*] --> Empty : 仮報酬なし
+
+    Empty --> HasTempRewards : 初回報酬獲得
+    note right of HasTempRewards : 仮報酬リスト表示\n獲得アニメーション\n総数表示
+
+    HasTempRewards --> HasTempRewards : 追加報酬獲得
+    note left of HasTempRewards : リスト更新\n総数増加\n新規アイテム強調
+
+    HasTempRewards --> Finalizing : ステージクリア
+    note right of Finalizing : 確定プロセス開始\n確定アニメーション準備
+
+    HasTempRewards --> Discarding : ステージ失敗
+    note left of Discarding : 破棄プロセス開始\n破棄アニメーション準備
+
+    Finalizing --> Finalized : 確定完了
+    note right of Finalized : 成功メッセージ表示\nインベントリ反映\n確定演出
+
+    Discarding --> Discarded : 破棄完了
+    note left of Discarded : 失敗メッセージ表示\n失ったアイテム数表示\n破棄演出
+
+    Finalized --> Empty : 新ステージ開始
+    Discarded --> Empty : 再挑戦・他ステージ
+
+    state HasTempRewards {
+        [*] --> SingleType
+        SingleType : 単一種類\n同じアイテムのみ
+        SingleType --> MultipleTypes : 異なるアイテム獲得
+        MultipleTypes : 複数種類\n多様なアイテム
+        MultipleTypes --> SingleType : 統合・整理
     }
-    
-    NormalEnemy --> [*] : 戦闘終了
-    PowerEnemy --> [*] : 戦闘終了
 ```
 
-### 4.4 タイマーUI状態
+## 5. 状態管理フロー（修正版）
 
-```mermaid
-stateDiagram-v2
-    [*] --> Inactive : タイマー停止中
-    
-    Inactive --> Active : startTimer()
-    note right of Active : 緑色表示\n通常カウントダウン
-    
-    Active --> Warning : 残り10秒
-    note right of Warning : 橙色表示\n点滅アニメーション\n警告音
-    
-    Warning --> Critical : 残り5秒
-    note right of Critical : 赤色表示\n激しい点滅\n緊急音
-    
-    Critical --> Expired : 残り0秒
-    note right of Expired : グレーアウト\nタイムアウト表示
-    
-    Active --> PenaltyApplied : ペナルティ発生
-    Warning --> PenaltyApplied : ペナルティ発生
-    Critical --> PenaltyApplied : ペナルティ発生
-    
-    PenaltyApplied --> Active : 時間残存
-    PenaltyApplied --> Warning : 警告範囲
-    PenaltyApplied --> Critical : 危険範囲
-    PenaltyApplied --> Expired : 時間切れ
-    
-    note left of PenaltyApplied : ペナルティアニメーション\n- 数値減少演出\n- 色変化\n- 振動効果
-    
-    Expired --> Inactive : stopTimer()
-    Active --> Inactive : stopTimer()
-    Warning --> Inactive : stopTimer()
-    Critical --> Inactive : stopTimer()
-```
+### 5.1 Riverpod プロバイダー依存関係（修正版）
 
-## 5. 状態管理フロー
-
-### 5.1 Riverpod プロバイダー依存関係
-
-```mermaid
-graph TD
+```marmaid
+mermaidgraph TD
     A[gameDataProvider] --> B[battleProvider]
     A --> C[inventoryProvider]
     A --> D[achievementProvider]
-    
-    E[timerManagerProvider] --> F[timerProvider]
-    F --> B
-    
-    G[battleEngineProvider] --> B
-    H[enemyGeneratorProvider] --> B
-    I[victoryValidatorProvider] --> B
-    
-    B --> J[canClaimVictoryProvider]
-    B --> K[isPowerEnemyProvider]
-    B --> L[currentEnemyProvider]
-    
-    C --> M[availablePrimesProvider]
-    C --> N[primeCountProvider]
-    
-    B --> O[battleStatusProvider]
-    O --> P[uiStateProvider]
-    
-    F --> Q[timeWarningProvider]
-    Q --> P
+    A --> E[stageProvider]
+
+    F[timerManagerProvider] --> G[timerProvider]
+    G --> B
+
+    H[battleEngineProvider] --> B
+    I[enemyGeneratorProvider] --> B
+    J[itemConsumptionManagerProvider] --> B
+    K[rewardManagerProvider] --> B
+    K --> L[tempRewardProvider]
+
+    M[setupManagerProvider] --> N[setupProvider]
+    O[stageManagerProvider] --> E
+    O --> N
+
+    C --> P[availableItemsProvider]
+    C --> Q[itemCountProvider]
+
+    B --> R[canClaimVictoryProvider]
+    B --> S[canUseItemProvider]
+    B --> T[currentEnemyProvider]
+    B --> U[battleItemsRemainingProvider]
+
+    L --> V[tempRewardCountProvider]
+    L --> W[hasTempRewardsProvider]
+
+    E --> X[unlockedStagesProvider]
+    E --> Y[currentStageInfoProvider]
+
+    N --> Z[canStartBattleProvider]
+    N --> AA[canAddToBattleLoadoutProvider]
+    N --> BB[currentLoadoutInfoProvider]
+
+    B --> CC[battleStatusProvider]
+    CC --> DD[uiStateProvider]
+
+    G --> EE[timeWarningProvider]
+    EE --> DD
 ```
 
-### 5.2 状態更新シーケンス
+### 5.2 状態更新シーケンス（修正版）
 
-```mermaid
-sequenceDiagram
+```marmaid
+mermaidsequenceDiagram
     participant User
-    participant UI
+    participant SetupScreen
+    participant SetupNotifier
+    participant BattleScreen
     participant BattleNotifier
-    participant BattleEngine
-    participant TimerManager
+    participant ItemConsumptionManager
+    participant RewardManager
     participant InventoryNotifier
-    
-    User->>UI: 攻撃ボタン押下
-    UI->>BattleNotifier: attack(prime)
-    BattleNotifier->>BattleEngine: executeAttack(enemy, prime)
-    BattleEngine-->>BattleNotifier: BattleResult
-    
-    alt 継続の場合
-        BattleNotifier->>InventoryNotifier: usePrime(prime)
-        BattleNotifier->>UI: 状態更新
-        UI->>User: 攻撃アニメーション表示
-    end
-    
-    alt 勝利宣言待ちの場合
-        BattleNotifier->>UI: 勝利ボタン表示
-        User->>UI: 勝利宣言ボタン押下
-        UI->>BattleNotifier: claimVictory()
-        BattleNotifier->>BattleEngine: processVictoryClaim(enemy, value)
-        BattleEngine-->>BattleNotifier: BattleResult
-        
-        alt 正解の場合
-            BattleNotifier->>TimerManager: stopTimer()
-            BattleNotifier->>InventoryNotifier: addPrime(reward)
-            BattleNotifier->>UI: 勝利アニメーション
-        else 不正解の場合
-            BattleNotifier->>TimerManager: applyPenalty(penalty)
-            BattleNotifier->>UI: ペナルティアニメーション
-        end
+    participant TempRewardNotifier
+
+    User->>SetupScreen: ステージ選択
+    SetupScreen->>SetupNotifier: initializeSetup(stage)
+    SetupNotifier-->>SetupScreen: 初期化完了
+
+    User->>SetupScreen: アイテム選択
+    SetupScreen->>SetupNotifier: addItemToLoadout(item)
+    SetupNotifier-->>SetupScreen: 選択状態更新
+
+    User->>SetupScreen: 戦闘開始
+    SetupScreen->>SetupNotifier: createLoadout()
+    SetupNotifier-->>SetupScreen: BattleLoadout作成
+
+    SetupScreen->>BattleScreen: 画面遷移
+    BattleScreen->>BattleNotifier: startBattleWithLoadout(loadout)
+    BattleNotifier->>TempRewardNotifier: initializeTempReward()
+
+    User->>BattleScreen: アイテム使用
+    BattleScreen->>BattleNotifier: attack(item)
+    BattleNotifier->>ItemConsumptionManager: consumeItem(loadout, item)
+    ItemConsumptionManager-->>BattleNotifier: 消費完了
+    BattleNotifier->>ItemConsumptionManager: validateAttack(enemy, item)
+    ItemConsumptionManager-->>BattleNotifier: AttackResult
+
+    alt 攻撃成功・勝利
+        BattleNotifier->>RewardManager: addBattleReward(tempReward, enemy)
+        RewardManager-->>BattleNotifier: 仮報酬追加
+        BattleNotifier->>TempRewardNotifier: addTempItem(rewardItem)
+        TempRewardNotifier-->>BattleScreen: 仮報酬表示更新
+
+        BattleNotifier->>RewardManager: finalizeStageRewards(tempReward, inventory, stage)
+        RewardManager->>InventoryNotifier: addTempRewards(finalizedReward)
+        InventoryNotifier-->>BattleScreen: インベントリ更新
+
+    else 攻撃失敗・タイムアウト
+        BattleNotifier->>RewardManager: discardStageRewards(tempReward)
+        RewardManager-->>BattleNotifier: 破棄完了
+        BattleNotifier->>TempRewardNotifier: clearTempRewards()
     end
 ```
 
-## 6. ステージ挑戦前画面の設計（現在の実装ベース）
+## 6. アイテム選択画面の詳細設計（修正版）
 
-### 6.1 StageSelectScreen クラス
+### 6.1 SetupScreen クラス（修正版）
 
 ```dart
-class StageSelectScreen extends ConsumerStatefulWidget {
-  // ステージ選択画面の実装
-  
-  /// ステージ情報の表示
-  Widget _buildStageCard(StageInfo stage) {
+dartclass SetupScreen extends ConsumerStatefulWidget {
+  final Stage targetStage;
+
+  const SetupScreen({
+    super.key,
+    required this.targetStage,
+  });
+
+  @override
+  ConsumerState<SetupScreen> createState() => _SetupScreenState();
+}
+
+class _SetupScreenState extends ConsumerState<SetupScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // セットアップ初期化
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(setupProvider.notifier).initializeSetup(widget.targetStage);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final setupState = ref.watch(setupProvider);
+    final availableItems = ref.watch(availableItemsProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${widget.targetStage.name} - アイテム選択'),
+        actions: [
+          _buildSlotLimitIndicator(setupState),
+        ],
+      ),
+      body: Column(
+        children: [
+          _buildStageInfo(),
+          _buildSelectedItemsDisplay(setupState),
+          Expanded(
+            child: _buildAvailableItemsList(availableItems, setupState),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomBar(setupState),
+    );
+  }
+
+  /// ステージ情報表示
+  Widget _buildStageInfo() {
     return Card(
-      child: InkWell(
-        onTap: stage.isUnlocked ? () => _goToItemSelection(stage) : null,
-        child: StageCardContent(stage: stage),
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.targetStage.name,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(widget.targetStage.description),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.timer, size: 16),
+                const SizedBox(width: 4),
+                Text('制限時間: ${widget.targetStage.baseTimeSeconds}秒'),
+                const SizedBox(width: 16),
+                Icon(Icons.inventory, size: 16),
+                const SizedBox(width: 4),
+                Text('持込制限: ${widget.targetStage.slotLimit}個'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
-  
-  /// アイテム選択画面へ遷移
-  void _goToItemSelection(StageInfo stage) {
-    AppRouter.goToStageItemSelection(context, stage);
+
+  /// 選択済みアイテム表示
+  Widget _buildSelectedItemsDisplay(SetupState setupState) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '選択中のアイテム (${setupState.selectedItems.length}/${setupState.maxSlots})',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            if (setupState.selectedItems.isEmpty)
+              const Text('アイテムを選択してください')
+            else
+              Wrap(
+                spacing: 8,
+                children: setupState.selectedItems.map((item) {
+                  return Chip(
+                    label: Text('${item.value} × ${item.count}'),
+                    onDeleted: () => _removeItemFromLoadout(item),
+                    deleteIcon: const Icon(Icons.close, size: 16),
+                  );
+                }).toList(),
+              ),
+          ],
+        ),
+      ),
+    );
   }
-  
-  /// 練習モード開始（アイテム選択なし）
-  void _startPracticeMode() {
-    final currentInventory = ref.read(inventoryProvider);
-    ref.read(battleSessionProvider.notifier).startPractice(currentInventory);
-    AppRouter.goToBattle(context);
+
+  /// 利用可能アイテム一覧
+  Widget _buildAvailableItemsList(List<Item> availableItems, SetupState setupState) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: availableItems.length,
+      itemBuilder: (context, index) {
+        final item = availableItems[index];
+        final isSelected = setupState.selectedItems.any((selected) => selected.value == item.value);
+        final canAdd = !setupState.isFull && !isSelected && item.isAvailable;
+
+        return Card(
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: _getItemColor(item),
+              child: Text(
+                item.value.toString(),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            title: Text('素数 ${item.value}'),
+            subtitle: Text('所持数: ${item.count}個'),
+            trailing: isSelected
+                ? const Icon(Icons.check_circle, color: Colors.green)
+                : canAdd
+                    ? IconButton(
+                        icon: const Icon(Icons.add_circle_outline),
+                        onPressed: () => _addItemToLoadout(item),
+                      )
+                    : Icon(
+                        Icons.block,
+                        color: Colors.grey.shade400,
+                      ),
+            enabled: canAdd || isSelected,
+            onTap: isSelected
+                ? () => _removeItemFromLoadout(item)
+                : canAdd
+                    ? () => _addItemToLoadout(item)
+                    : null,
+          ),
+        );
+      },
+    );
+  }
+
+  /// スロット制限インジケーター
+  Widget _buildSlotLimitIndicator(SetupState setupState) {
+    final progress = setupState.selectedItems.length / setupState.maxSlots;
+    final color = progress >= 1.0 ? Colors.red :
+                  progress >= 0.8 ? Colors.orange : Colors.green;
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircularProgressIndicator(
+            value: progress,
+            color: color,
+            backgroundColor: Colors.grey.shade300,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '${setupState.selectedItems.length}/${setupState.maxSlots}',
+            style: TextStyle(fontSize: 12, color: color),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 底部バー（戦闘開始ボタンなど）
+  Widget _buildBottomBar(SetupState setupState) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          BoxShadow(
+            offset: const Offset(0, -2),
+            blurRadius: 4,
+            color: Colors.black.withOpacity(0.1),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (setupState.errorMessage != null)
+                    Text(
+                      setupState.errorMessage!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  Text(
+                    setupState.isValid
+                        ? '戦闘開始の準備ができました'
+                        : 'アイテムを${setupState.maxSlots > 0 ? '1個以上' : ''}選択してください',
+                    style: TextStyle(
+                      color: setupState.isValid ? Colors.green : Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: setupState.isValid ? _startBattle : null,
+              icon: const Icon(Icons.play_arrow),
+              label: const Text('戦闘開始'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// アイテムをロードアウトに追加
+  void _addItemToLoadout(Item item) {
+    ref.read(setupProvider.notifier).addItemToLoadout(item);
+  }
+
+  /// アイテムをロードアウトから削除
+  void _removeItemFromLoadout(Item item) {
+    ref.read(setupProvider.notifier).removeItemFromLoadout(item);
+  }
+
+  /// 戦闘開始処理
+  void _startBattle() {
+    final loadout = ref.read(setupProvider.notifier).createLoadout();
+    if (loadout != null) {
+      // 戦闘画面に遷移
+      AppRouter.goToBattleWithLoadout(context, loadout);
+    }
+  }
+
+  /// アイテムの色を取得
+  Color _getItemColor(Item item) {
+    // 素数値に応じた色分け
+    if (item.value <= 10) return Colors.blue;
+    if (item.value <= 50) return Colors.green;
+    if (item.value <= 100) return Colors.orange;
+    return Colors.purple;
   }
 }
 ```
 
-### 6.2 StageItemSelectionScreen クラス（新規実装）
+## 6.2 アイテム消費システムの教育的配慮（修正版）
+
+### 6.2.1 消費の視覚的フィードバック
 
 ```dart
-class StageItemSelectionScreen extends ConsumerStatefulWidget {
-  final StageInfo stage;
-  
-  const StageItemSelectionScreen({
+// BattleItemsGridWidget での残数表示
+Widget _buildItemCard(Item item) {
+  final remaining = ref.watch(itemRemainingCountProvider(item.value));
+  final canUse = remaining > 0;
+
+  return Card(
+    color: canUse ? null : Colors.grey.shade300,
+    child: InkWell(
+      onTap: canUse ? () => widget.onItemTap(item) : null,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Text(
+              item.value.toString(),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: canUse ? null : Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 4),
+            _buildRemainingCounter(remaining, canUse),
+            if (!canUse)
+              const Icon(
+                Icons.block,
+                color: Colors.red,
+                size: 16,
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildRemainingCounter(int remaining, bool canUse) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    decoration: BoxDecoration(
+      color: canUse ? Colors.blue : Colors.grey,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Text(
+      'あと$remaining個',
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 10,
+      ),
+    ),
+  );
+}
+```
+
+### 6.2.2 消費アニメーション
+
+```dart
+// アイテム消費時のアニメーション効果
+class ItemConsumptionAnimation extends StatefulWidget {
+  final Item item;
+  final VoidCallback onComplete;
+
+  const ItemConsumptionAnimation({
     super.key,
-    required this.stage,
+    required this.item,
+    required this.onComplete,
   });
-  
+
   @override
-  ConsumerState<StageItemSelectionScreen> createState() => _StageItemSelectionScreenState();
+  State<ItemConsumptionAnimation> createState() => _ItemConsumptionAnimationState();
 }
 
-class _StageItemSelectionScreenState extends ConsumerState<StageItemSelectionScreen> {
-  Set<int> selectedPrimeValues = {};
-  
-  /// ステージ別アイテム制限数を取得
-  int get maxSelectableItems {
-    switch (widget.stage.stageNumber) {
-      case 1: return 3;  // 初心者向け：3個まで
-      case 2: return 5;  // 中級者向け：5個まで
-      case 3: return 7;  // 上級者向け：7個まで  
-      case 4: return 10; // 最上級者向け：10個まで
-      default: return 5;
-    }
-  }
-  
-  /// アイテム選択/選択解除の処理
-  void _toggleItemSelection(int primeValue) {
-    setState(() {
-      if (selectedPrimeValues.contains(primeValue)) {
-        selectedPrimeValues.remove(primeValue);
-      } else if (selectedPrimeValues.length < maxSelectableItems) {
-        selectedPrimeValues.add(primeValue);
-      }
-    });
-  }
-  
-  /// 選択されたアイテムでバトル開始
-  void _startBattleWithSelectedItems() {
-    // 選択されたアイテムで一時的なインベントリを作成
-    final selectedInventory = _createSelectedInventory();
-    
-    // バトルセッションを開始（選択されたアイテムのみ）
-    ref.read(battleSessionProvider.notifier).startStageWithSelectedItems(
-      widget.stage.stageNumber,
-      selectedInventory,
+class _ItemConsumptionAnimationState extends State<ItemConsumptionAnimation>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
     );
-    
-    // バトル画面に遷移
-    AppRouter.goToBattle(context);
-  }
-  
-  /// 選択されたアイテムからインベントリを作成
-  List<Prime> _createSelectedInventory() {
-    final allPrimes = ref.read(inventoryProvider);
-    return allPrimes.where((prime) => 
-      selectedPrimeValues.contains(prime.value) && prime.count > 0
-    ).toList();
-  }
-}
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.8,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+
+    _opacityAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.3,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
 ```
-
-### 6.2 StageInfo エンティティ（現在の実装）
-
-```dart
-class StageInfo {
-  final int stageNumber;
-  final String title;
-  final String description;
-  final int enemyRangeMin;        // 敵数値の最小値
-  final int enemyRangeMax;        // 敵数値の最大値
-  final int timeLimit;            // 制限時間
-  final bool isUnlocked;          // アンロック状態
-  final bool isCompleted;         // クリア状態
-  final int stars;                // 獲得星数
-  
-  /// ステージ挑戦可能性の判定
-  bool canChallenge(List<Prime> inventory) {
-    return isUnlocked && inventory.isNotEmpty;
-  }
-  
-  /// ローカライズされたタイトル取得
-  String getLocalizedTitle(AppLocalizations l10n) {
-    switch (stageNumber) {
-      case 1: return l10n.stage1Title;
-      case 2: return l10n.stage2Title;
-      case 3: return l10n.stage3Title;
-      case 4: return l10n.stage4Title;
-      default: return title;
-    }
-  }
-}
-```
-
-### 6.3 ステージ挑戦前の状態管理フロー（アイテム選択画面追加）
-
-```mermaid
-flowchart TD
-    A[ユーザーがステージ選択] --> B[StageSelectScreen]
-    B --> C[ステージ情報表示]
-    C --> D{ステージアンロック状態}
-    
-    D -->|アンロック済み| E[ステージカードタップ可能]
-    D -->|ロック中| F[ステージカード無効化]
-    
-    E --> G[_goToItemSelection実行]
-    G --> H[StageItemSelectionScreen遷移]
-    H --> I[所持アイテム一覧表示]
-    I --> J[ステージ制限数表示]
-    J --> K[アイテム選択UI]
-    
-    K --> L{選択完了？}
-    L -->|未選択| M[選択継続]
-    L -->|選択完了| N[_startBattleWithSelectedItems実行]
-    
-    M --> K
-    N --> O[選択アイテムでインベントリ作成]
-    O --> P[BattleSessionProvider.startStageWithSelectedItems]
-    P --> Q[選択アイテム状態スナップショット保存]
-    Q --> R[戦闘画面遷移]
-    
-    F --> S[ロック表示]
-    
-    T[練習モードボタン] --> U[_startPracticeMode実行]
-    U --> V[BattleSessionProvider.startPractice]
-    V --> W[練習モードフラグ設定]
-    W --> R
-```
-
-### 6.4 アイテム選択画面の詳細仕様
-
-#### 6.4.1 ステージ別制限数（素数の総個数）
-```dart
-Map<int, int> stageItemLimits = {
-  1: 8,  // ステージ1：初心者向け、8個までの素数を選択
-  2: 15, // ステージ2：中級者向け、15個までの素数を選択
-  3: 25, // ステージ3：上級者向け、25個までの素数を選択
-  4: 40, // ステージ4：最上級者向け、40個までの素数を選択
-};
-```
-
-**重要な変更点：**
-- 制限対象：素数の種類数 → 素数の総個数
-- 例：Prime(value: 2, count: 5)の場合、5個分としてカウント
-- プレイヤーは各素数から何個取るかを選択可能
-
-#### 6.4.2 UI状態管理（個数ベース選択）
-```dart
-class ItemSelectionState {
-  final Map<int, int> selectedCounts; // prime value -> selected count
-  final int maxSelectableCount;       // 最大選択可能な総個数
-  final List<Prime> availableItems;
-  
-  int get totalSelectedCount => selectedCounts.values.fold(0, (sum, count) => sum + count);
-  bool get hasReachedLimit => totalSelectedCount >= maxSelectableCount;
-  bool get hasMinimumSelection => totalSelectedCount >= 1;
-  int get remainingCount => maxSelectableCount - totalSelectedCount;
-  
-  ItemSelectionState copyWith({
-    Map<int, int>? selectedCounts,
-    int? maxSelectableCount,
-    List<Prime>? availableItems,
-  }) {
-    return ItemSelectionState(
-      selectedCounts: selectedCounts ?? this.selectedCounts,
-      maxSelectableCount: maxSelectableCount ?? this.maxSelectableCount,
-      availableItems: availableItems ?? this.availableItems,
-    );
-  }
-}
-```
-
-#### 6.4.3 教育的配慮
-- **選択制限の可視化**: 現在選択数/最大選択数を常に表示
-- **戦略的思考の促進**: 制限された選択肢での最適解を考えさせる
-- **段階的難易度**: ステージが進むにつれて選択肢が増加
-- **失敗からの学習**: 選択ミスによる失敗も学習機会として提供
-
-## 7. 無効攻撃システムの設計（教育強化機能）
-
-### 7.1 基本方針
-従来は「正しくない素数では攻撃できない」仕様でしたが、教育効果を高めるため「正しくない素数でも攻撃可能だが効果なし」に変更。
-
-### 7.2 無効攻撃の動作
-
-#### 7.2.1 攻撃可能条件
-```dart
-// 従来の条件
-bool canAttack = (enemy % prime == 0) && (prime.count > 0);
-
-// 新しい条件
-bool canAttack = prime.count > 0; // 所持数があれば常に攻撃可能
-bool isEffective = (enemy % prime == 0) && (prime.count > 0); // 効果的かどうかは別判定
-```
-
-#### 7.2.2 攻撃処理フロー
-```mermaid
-flowchart TD
-    A[プレイヤーが素数ボタンを押下] --> B{所持数 > 0？}
-    B -->|No| C[攻撃不可]
-    B -->|Yes| D{enemy % prime == 0？}
-    
-    D -->|Yes| E[有効攻撃]
-    D -->|No| F[無効攻撃]
-    
-    E --> G[敵の数値を更新]
-    E --> H[アイテムを消費]
-    E --> I[使用記録]
-    
-    F --> J[教育的フィードバック表示]
-    F --> K[アイテムを消費]
-    F --> L[無効攻撃記録]
-    
-    G --> M[ゲームオーバー条件チェック]
-    J --> N[ダイアログ表示]
-    N --> O[素因数分解の説明]
-```
-
-### 7.3 教育的フィードバック機能
-
-#### 7.3.1 フィードバック内容
-1. **即座の視覚的フィードバック**
-   - SnackBar: "Prime X wasted! Enemy ÷ X is not a whole number."
-   - 色: エラー色（赤）
-
-2. **詳細な教育ダイアログ**
-   - タイトル: "Attack Failed!"
-   - 説明: なぜ攻撃が失敗したか
-   - 数学的解説: 「X ÷ Y = Z.abc (not a whole number)」
-   - 敵の素因数分解表示: 「Enemy = 2 × 3 × 5」
-   - 推奨行動: "Try using one of these factors instead!"
-
-#### 7.3.2 UI視覚的区別
-```dart
-// 素数ボタンの状態表示
-enum PrimeButtonState {
-  unavailable,  // 所持数0：グレーアウト
-  ineffective,  // 所持数あり・無効：警告色（オレンジ）+ ？アイコン
-  effective,    // 所持数あり・有効：通常色（青/緑）+ ✓アイコン
-}
-```
-
-#### 7.3.3 学習効果測定
-```dart
-class BattleAnalytics {
-  int validAttacks = 0;
-  int invalidAttacks = 0;
-  Map<int, int> invalidAttacksByPrime = {}; // どの素数で間違いやすいか
-  
-  double get attackAccuracy => validAttacks / (validAttacks + invalidAttacks);
-  List<int> get problematicPrimes => invalidAttacksByPrime.entries
-      .where((e) => e.value > 2)
-      .map((e) => e.key)
-      .toList();
-}
-```
-
-## 7. アイテム消費ロジックの詳細設計（現在の実装ベース）
-
-### 7.1 BattleSessionProvider クラス
-
-```dart
-class BattleSessionProvider extends StateNotifier<BattleSession> {
-  /// ステージ戦闘開始
-  void startStage(int stageNumber, Inventory currentInventory) {
-    state = state.copyWith(
-      stageNumber: stageNumber,
-      isPracticeMode: false,
-      stageStartInventory: currentInventory.primes, // スナップショット保存
-      victories: 0,
-      escapes: 0,
-      wrongClaims: 0,
-      usedPrimesInCurrentBattle: [],
-    );
-  }
-  
-  /// 練習モード開始
-  void startPractice(Inventory currentInventory) {
-    state = state.copyWith(
-      stageNumber: null,
-      isPracticeMode: true,
-      stageStartInventory: currentInventory.primes,
-      victories: 0,
-      escapes: 0,
-      wrongClaims: 0,
-      usedPrimesInCurrentBattle: [],
-    );
-  }
-  
-  /// アイテム状態復元
-  void restoreInventory() {
-    if (state.stageStartInventory != null) {
-      // インベントリプロバイダーに復元指示
-    }
-  }
-}
-```
-
-### 7.2 アイテム消費・復元フロー
-
-```mermaid
-flowchart TD
-    A[戦闘開始] --> B[アイテム状態スナップショット]
-    B --> C[戦闘実行]
-    
-    C --> D{練習モード？}
-    D -->|Yes| E[アイテム消費なし]
-    D -->|No| F[アイテム通常消費]
-    
-    E --> G[戦闘継続]
-    F --> G
-    
-    G --> H{戦闘結果}
-    H -->|勝利| I[勝利報酬獲得]
-    H -->|エスケープ| J[アイテム状態復元]
-    H -->|タイムアウト| J
-    H -->|ゲームオーバー| J
-    
-    I --> K[次の戦闘 or ステージクリア]
-    J --> L[復元アニメーション]
-    L --> M[新しい戦闘開始]
-    
-    M --> B
-```
-
-### 7.3 実装における教育的配慮
-
-#### 練習モードの非消費設計
-```dart
-// 戦闘中のアイテム使用処理
-if (canAttack && prime.count > 0) {
-  final session = ref.read(battleSessionProvider);
-  
-  // 敵の数値を更新
-  ref.read(battleEnemyProvider.notifier).state = enemy ~/ prime.value;
-  
-  // 練習モードでない場合のみアイテムを消費
-  if (!session.isPracticeMode) {
-    ref.read(inventoryProvider.notifier).usePrime(prime.value);
-  }
-  
-  // 使用した素数を記録（復元用）
-  ref.read(battleSessionProvider.notifier).recordUsedPrime(prime.value);
-}
-```
-
-#### 復元システムの実装
-```dart
-// エスケープ時の復元処理
-void _escapeButton() {
-  // アイテム状態をステージ開始時に復元
-  final session = ref.read(battleSessionProvider);
-  if (session.stageStartInventory != null) {
-    ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
-  }
-  
-  // 使用素数記録をリセット
-  ref.read(battleSessionProvider.notifier).resetUsedPrimes();
-  
-  // 新しい敵を生成して戦闘継続
-  _generateNewEnemy();
-  _restartTimer();
-}
-```
-
-この詳細設計書により、現在の実装における各クラスの実装指針と相互作用が明確になり、開発時の指針として活用できます。簡素化されたアーキテクチャにより、教育的価値を保ちながら開発・保守コストを最小限に抑えることができます。

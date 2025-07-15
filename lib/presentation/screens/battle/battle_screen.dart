@@ -126,7 +126,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
     // Reset used primes at stage end (game over)
     ref.read(battleSessionProvider.notifier).resetUsedPrimes();
-    
+
     // Clear temporary rewards (game over)
     ref.read(battleTempRewardsProvider.notifier).clearTempRewards();
 
@@ -1303,41 +1303,46 @@ class _ActionButtonsSection extends ConsumerWidget {
         if (!session.isPracticeMode) {
           // デバッグ: クリア前のメインインベントリ状態
           final beforeInventory = ref.read(inventoryProvider);
-          Logger.logBattle('Before stage clear - main inventory',
-              data: {
-                'total_items': beforeInventory.length,
-                'items': beforeInventory.map((p) => '${p.value}x${p.count}').join(', ')
-              });
-          
+          Logger.logBattle('Before stage clear - main inventory', data: {
+            'total_items': beforeInventory.length,
+            'items':
+                beforeInventory.map((p) => '${p.value}x${p.count}').join(', ')
+          });
+
           // 1. メインインベントリをオリジナル状態に復元
           if (session.originalMainInventory != null) {
             ref
                 .read(inventoryProvider.notifier)
                 .restoreInventory(session.originalMainInventory!);
-            
+
             Logger.logBattle('Restored main inventory to original state',
                 data: {
                   'restored_items': session.originalMainInventory!.length,
-                  'items': session.originalMainInventory!.map((p) => '${p.value}x${p.count}').join(', ')
+                  'items': session.originalMainInventory!
+                      .map((p) => '${p.value}x${p.count}')
+                      .join(', ')
                 });
           }
-          
+
           // 2. 一時的な報酬をメインインベントリに追加
-          final tempRewards = ref.read(battleTempRewardsProvider.notifier).finalizeTempRewards();
+          final tempRewards = ref
+              .read(battleTempRewardsProvider.notifier)
+              .finalizeTempRewards();
           for (final reward in tempRewards) {
             for (int i = 0; i < reward.count; i++) {
               ref.read(inventoryProvider.notifier).addPrime(reward.value);
             }
           }
-          
+
           // デバッグ: クリア後のメインインベントリ状態
           final afterInventory = ref.read(inventoryProvider);
-          Logger.logBattle('After stage clear - main inventory',
-              data: {
-                'total_items': afterInventory.length,
-                'items': afterInventory.map((p) => '${p.value}x${p.count}').join(', '),
-                'temp_rewards': tempRewards.map((r) => '${r.value}x${r.count}').join(', ')
-              });
+          Logger.logBattle('After stage clear - main inventory', data: {
+            'total_items': afterInventory.length,
+            'items':
+                afterInventory.map((p) => '${p.value}x${p.count}').join(', '),
+            'temp_rewards':
+                tempRewards.map((r) => '${r.value}x${r.count}').join(', ')
+          });
         } else {
           // 練習モード - 一時的な報酬のみクリア
           ref.read(battleTempRewardsProvider.notifier).finalizeTempRewards();

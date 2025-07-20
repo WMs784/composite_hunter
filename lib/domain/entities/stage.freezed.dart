@@ -613,6 +613,7 @@ mixin _$StageClearResult {
   List<int> get defeatedEnemies => throw _privateConstructorUsedError;
   bool get isPerfect => throw _privateConstructorUsedError;
   bool get isNewRecord => throw _privateConstructorUsedError;
+  List<int> get rewardItems => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $StageClearResultCopyWith<StageClearResult> get copyWith =>
@@ -636,7 +637,8 @@ abstract class $StageClearResultCopyWith<$Res> {
       Duration totalTime,
       List<int> defeatedEnemies,
       bool isPerfect,
-      bool isNewRecord});
+      bool isNewRecord,
+      List<int> rewardItems});
 }
 
 /// @nodoc
@@ -663,6 +665,7 @@ class _$StageClearResultCopyWithImpl<$Res, $Val extends StageClearResult>
     Object? defeatedEnemies = null,
     Object? isPerfect = null,
     Object? isNewRecord = null,
+    Object? rewardItems = null,
   }) {
     return _then(_value.copyWith(
       stageNumber: null == stageNumber
@@ -709,6 +712,10 @@ class _$StageClearResultCopyWithImpl<$Res, $Val extends StageClearResult>
           ? _value.isNewRecord
           : isNewRecord // ignore: cast_nullable_to_non_nullable
               as bool,
+      rewardItems: null == rewardItems
+          ? _value.rewardItems
+          : rewardItems // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ) as $Val);
   }
 }
@@ -732,7 +739,8 @@ abstract class _$$StageClearResultImplCopyWith<$Res>
       Duration totalTime,
       List<int> defeatedEnemies,
       bool isPerfect,
-      bool isNewRecord});
+      bool isNewRecord,
+      List<int> rewardItems});
 }
 
 /// @nodoc
@@ -757,6 +765,7 @@ class __$$StageClearResultImplCopyWithImpl<$Res>
     Object? defeatedEnemies = null,
     Object? isPerfect = null,
     Object? isNewRecord = null,
+    Object? rewardItems = null,
   }) {
     return _then(_$StageClearResultImpl(
       stageNumber: null == stageNumber
@@ -803,6 +812,10 @@ class __$$StageClearResultImplCopyWithImpl<$Res>
           ? _value.isNewRecord
           : isNewRecord // ignore: cast_nullable_to_non_nullable
               as bool,
+      rewardItems: null == rewardItems
+          ? _value._rewardItems
+          : rewardItems // ignore: cast_nullable_to_non_nullable
+              as List<int>,
     ));
   }
 }
@@ -821,8 +834,10 @@ class _$StageClearResultImpl implements _StageClearResult {
       required this.totalTime,
       required final List<int> defeatedEnemies,
       required this.isPerfect,
-      required this.isNewRecord})
-      : _defeatedEnemies = defeatedEnemies;
+      required this.isNewRecord,
+      final List<int> rewardItems = const []})
+      : _defeatedEnemies = defeatedEnemies,
+        _rewardItems = rewardItems;
 
   @override
   final int stageNumber;
@@ -852,10 +867,18 @@ class _$StageClearResultImpl implements _StageClearResult {
   final bool isPerfect;
   @override
   final bool isNewRecord;
+  final List<int> _rewardItems;
+  @override
+  @JsonKey()
+  List<int> get rewardItems {
+    if (_rewardItems is EqualUnmodifiableListView) return _rewardItems;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_rewardItems);
+  }
 
   @override
   String toString() {
-    return 'StageClearResult(stageNumber: $stageNumber, isCleared: $isCleared, stars: $stars, score: $score, victories: $victories, escapes: $escapes, wrongClaims: $wrongClaims, totalTime: $totalTime, defeatedEnemies: $defeatedEnemies, isPerfect: $isPerfect, isNewRecord: $isNewRecord)';
+    return 'StageClearResult(stageNumber: $stageNumber, isCleared: $isCleared, stars: $stars, score: $score, victories: $victories, escapes: $escapes, wrongClaims: $wrongClaims, totalTime: $totalTime, defeatedEnemies: $defeatedEnemies, isPerfect: $isPerfect, isNewRecord: $isNewRecord, rewardItems: $rewardItems)';
   }
 
   @override
@@ -881,7 +904,9 @@ class _$StageClearResultImpl implements _StageClearResult {
             (identical(other.isPerfect, isPerfect) ||
                 other.isPerfect == isPerfect) &&
             (identical(other.isNewRecord, isNewRecord) ||
-                other.isNewRecord == isNewRecord));
+                other.isNewRecord == isNewRecord) &&
+            const DeepCollectionEquality()
+                .equals(other._rewardItems, _rewardItems));
   }
 
   @override
@@ -897,7 +922,8 @@ class _$StageClearResultImpl implements _StageClearResult {
       totalTime,
       const DeepCollectionEquality().hash(_defeatedEnemies),
       isPerfect,
-      isNewRecord);
+      isNewRecord,
+      const DeepCollectionEquality().hash(_rewardItems));
 
   @JsonKey(ignore: true)
   @override
@@ -919,7 +945,8 @@ abstract class _StageClearResult implements StageClearResult {
       required final Duration totalTime,
       required final List<int> defeatedEnemies,
       required final bool isPerfect,
-      required final bool isNewRecord}) = _$StageClearResultImpl;
+      required final bool isNewRecord,
+      final List<int> rewardItems}) = _$StageClearResultImpl;
 
   @override
   int get stageNumber;
@@ -943,6 +970,8 @@ abstract class _StageClearResult implements StageClearResult {
   bool get isPerfect;
   @override
   bool get isNewRecord;
+  @override
+  List<int> get rewardItems;
   @override
   @JsonKey(ignore: true)
   _$$StageClearResultImplCopyWith<_$StageClearResultImpl> get copyWith =>

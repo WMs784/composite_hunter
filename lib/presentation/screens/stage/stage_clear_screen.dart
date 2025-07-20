@@ -9,6 +9,7 @@ import '../../providers/stage_progress_provider.dart';
 import '../common/result_screen_base.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import '../game_over/game_over_screen.dart'; // For LocalizedResultScreenButtons
+import '../../../core/utils/logger.dart';
 
 class StageClearScreen extends ConsumerStatefulWidget {
   final StageClearResult clearResult;
@@ -237,6 +238,12 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
 
               const SizedBox(height: Dimensions.spacingL),
 
+              // 報酬表示
+              if (widget.clearResult.rewardItems.isNotEmpty)
+                _buildRewardsSection(l10n),
+
+              const SizedBox(height: Dimensions.spacingL),
+
               // ボタン
               LocalizedResultScreenButtons(
                 stageNumber: widget.clearResult.stageNumber,
@@ -408,6 +415,127 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRewardsSection(AppLocalizations l10n) {
+    // デバッグ: 受け取った報酬データをログ出力
+    Logger.logBattle('Stage clear screen - displaying rewards', data: {
+      'total_reward_items': widget.clearResult.rewardItems.length,
+      'reward_items': widget.clearResult.rewardItems.join(', ')
+    });
+
+    // 報酬アイテムを集計（同じ値をまとめる）
+    final rewardMap = <int, int>{};
+    for (final item in widget.clearResult.rewardItems) {
+      rewardMap[item] = (rewardMap[item] ?? 0) + 1;
+    }
+
+    // 値でソート
+    final sortedRewards = rewardMap.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(Dimensions.paddingM),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary.withOpacity(0.1),
+            AppColors.primaryContainer.withOpacity(0.3),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(Dimensions.radiusM),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 報酬タイトル
+          Row(
+            children: [
+              const Icon(
+                Icons.card_giftcard,
+                color: AppColors.primary,
+                size: 24,
+              ),
+              const SizedBox(width: Dimensions.spacingS),
+              Text(
+                'Stage Rewards', // TODO: Localize
+                style: AppTextStyles.titleMedium.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: Dimensions.spacingM),
+
+          // 報酬アイテム一覧
+          Wrap(
+            spacing: Dimensions.spacingS,
+            runSpacing: Dimensions.spacingS,
+            children: sortedRewards.map((entry) {
+              final value = entry.key;
+              final count = entry.value;
+
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Dimensions.paddingM,
+                  vertical: Dimensions.paddingS,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(Dimensions.radiusS),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      value.toString(),
+                      style: AppTextStyles.titleSmall.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (count > 1) ...[
+                      const SizedBox(width: Dimensions.spacingXs),
+                      Text(
+                        'x$count',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: Dimensions.spacingS),
+
+          // 合計数
+          Text(
+            'Total: ${widget.clearResult.rewardItems.length} items', // TODO: Localize
+            style: AppTextStyles.bodySmall.copyWith(
+              color: AppColors.onSurfaceVariant,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
         ],
       ),
     );

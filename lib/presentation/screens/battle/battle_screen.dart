@@ -1300,6 +1300,8 @@ class _ActionButtonsSection extends ConsumerWidget {
         onStopTimer();
 
         // ステージクリア時の統合処理
+        List<int> rewardItems = [];
+
         if (!session.isPracticeMode) {
           // デバッグ: クリア前のメインインベントリ状態
           final beforeInventory = ref.read(inventoryProvider);
@@ -1328,9 +1330,21 @@ class _ActionButtonsSection extends ConsumerWidget {
           final tempRewards = ref
               .read(battleTempRewardsProvider.notifier)
               .finalizeTempRewards();
+
+          Logger.logBattle('Adding rewards to main inventory', data: {
+            'temp_rewards_count': tempRewards.length,
+            'temp_rewards':
+                tempRewards.map((r) => '${r.value}x${r.count}').join(', ')
+          });
+
           for (final reward in tempRewards) {
             for (int i = 0; i < reward.count; i++) {
               ref.read(inventoryProvider.notifier).addPrime(reward.value);
+              rewardItems.add(reward.value); // 報酬リストに追加
+              Logger.logBattle('Added reward to main inventory', data: {
+                'prime': reward.value,
+                'total_in_reward_list': rewardItems.length
+              });
             }
           }
 
@@ -1351,6 +1365,10 @@ class _ActionButtonsSection extends ConsumerWidget {
         // 3. 使用したアイテムの記録をリセット
         ref.read(battleSessionProvider.notifier).resetUsedPrimes();
 
+        // 4. 報酬データを含む新しいStageClearResultを作成
+        final clearResultWithRewards =
+            clearResult.copyWith(rewardItems: rewardItems);
+
         // Delay navigation to ensure current frame completes
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
@@ -1358,7 +1376,7 @@ class _ActionButtonsSection extends ConsumerWidget {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    StageClearScreen(clearResult: clearResult),
+                    StageClearScreen(clearResult: clearResultWithRewards),
               ),
             );
           }

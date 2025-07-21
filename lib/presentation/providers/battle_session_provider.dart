@@ -41,6 +41,7 @@ class BattleSessionState {
     List<int>? usedPrimesInCurrentBattle,
     List<Prime>? stageStartInventory,
     List<Prime>? originalMainInventory,
+    bool clearOriginalMainInventory = false,
   }) {
     return BattleSessionState(
       stageNumber: stageNumber ?? this.stageNumber,
@@ -53,8 +54,9 @@ class BattleSessionState {
       usedPrimesInCurrentBattle:
           usedPrimesInCurrentBattle ?? this.usedPrimesInCurrentBattle,
       stageStartInventory: stageStartInventory ?? this.stageStartInventory,
-      originalMainInventory:
-          originalMainInventory ?? this.originalMainInventory,
+      originalMainInventory: clearOriginalMainInventory
+          ? null
+          : (originalMainInventory ?? this.originalMainInventory),
     );
   }
 
@@ -155,6 +157,13 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
   void resetSession() {
     state = BattleSessionState(
       sessionStartTime: DateTime.now(),
+    );
+  }
+
+  /// originalMainInventoryをクリアして復元処理を防ぐ
+  void clearOriginalInventory() {
+    state = state.copyWith(
+      clearOriginalMainInventory: true,
     );
   }
 

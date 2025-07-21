@@ -1365,7 +1365,12 @@ class _ActionButtonsSection extends ConsumerWidget {
         // 3. 使用したアイテムの記録をリセット
         ref.read(battleSessionProvider.notifier).resetUsedPrimes();
 
-        // 4. 報酬データを含む新しいStageClearResultを作成
+        // 4. originalMainInventoryをクリアして、後続の復元処理を防ぐ
+        ref.read(battleSessionProvider.notifier).clearOriginalInventory();
+        Logger.logBattle(
+            'Cleared originalMainInventory to prevent restoration after stage clear');
+
+        // 5. 報酬データを含む新しいStageClearResultを作成
         final clearResultWithRewards =
             clearResult.copyWith(rewardItems: rewardItems);
 

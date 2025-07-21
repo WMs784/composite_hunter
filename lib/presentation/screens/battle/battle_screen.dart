@@ -50,7 +50,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       if (mounted) {
         Logger.info('Battle screen initialized');
         _initializeBattleForStage();
-        _startTimer();
+        final session = ref.read(battleSessionProvider);
+        if (!session.isPracticeMode) {
+          _startTimer();
+        }
       }
     });
   }
@@ -94,6 +97,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _handleTimeUp() {
+    final session = ref.read(battleSessionProvider);
+
+    // 練習モードでは時間切れ処理をしない
+    if (session.isPracticeMode) {
+      return;
+    }
+
     // Stop timer
     _stopTimer();
 
@@ -173,12 +183,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
     // ステージに応じた敵と制限時間を設定
     if (session.isPracticeMode) {
-      // 練習モードはデフォルト設定
+      // 練習モードはタイマーなし
       final enemy = _generateEnemyForRange(6, 20);
       ref.read(battleEnemyProvider.notifier).state = enemy;
-      ref.read(battleTimerProvider.notifier).state = 30;
+      // 練習モードではタイマーを設定しない
       Logger.logBattle('Practice mode initialized',
-          data: {'enemy': enemy, 'timer': 30});
+          data: {'enemy': enemy, 'timer': 'disabled'});
     } else {
       final stageNumber = session.stageNumber ?? 1;
       final (enemy, timeLimit) = _getStageSettings(stageNumber);
@@ -596,8 +606,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               if (!session.isPracticeMode)
                 const SizedBox(height: Dimensions.spacingM),
 
-              // Timer display
-              const _TimerSection(),
+              // Timer display (only in stage mode)
+              if (!session.isPracticeMode) const _TimerSection(),
 
               // Debug info
               Consumer(builder: (context, ref, child) {

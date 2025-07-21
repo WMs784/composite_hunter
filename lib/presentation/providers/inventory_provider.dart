@@ -37,13 +37,17 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
 
     try {
       final List<dynamic> inventoryData = json.decode(inventoryJson);
-      state = inventoryData.map((item) {
+      final loadedInventory = inventoryData.map((item) {
         return Prime(
           value: item['value'],
           count: item['count'],
           firstObtained: DateTime.parse(item['firstObtained']),
         );
       }).toList();
+
+      // 値の小さい順にソート
+      loadedInventory.sort((a, b) => a.value.compareTo(b.value));
+      state = loadedInventory;
     } catch (e) {
       // データが破損している場合は初期化
       _initializeInventory();
@@ -68,14 +72,20 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
   void usePrime(int primeValue) {
     if (primeValue <= 1) return;
 
-    final updatedInventory = state.map((prime) {
-      if (prime.value == primeValue && prime.count > 0) {
-        return prime.copyWith(count: prime.count - 1);
-      }
-      return prime;
-    }).toList();
+    final updatedInventory = state
+        .map((prime) {
+          if (prime.value == primeValue && prime.count > 0) {
+            return prime.copyWith(count: prime.count - 1);
+          }
+          return prime;
+        })
+        .where((prime) => prime.count > 0)
+        .toList(); // count が 0 のアイテムを除外
 
     state = updatedInventory;
+    Logger.info(
+        'Used prime $primeValue, remaining items: ${updatedInventory.length}');
+
     // 非同期保存（エラーハンドリング付き）
     _saveInventory().catchError((error) {
       Logger.error('Failed to save inventory after using prime: $error');
@@ -89,15 +99,15 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
     final existingIndex =
         state.indexWhere((prime) => prime.value == primeValue);
 
+    List<Prime> updatedInventory;
     if (existingIndex >= 0) {
       // 既に所持している素数の場合は個数を増やす
-      final updatedInventory = state.map((prime) {
+      updatedInventory = state.map((prime) {
         if (prime.value == primeValue) {
           return prime.copyWith(count: prime.count + 1);
         }
         return prime;
       }).toList();
-      state = updatedInventory;
     } else {
       // 新しい素数の場合は追加
       final newPrime = Prime(
@@ -105,8 +115,12 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
         count: 1,
         firstObtained: DateTime.now(),
       );
-      state = [...state, newPrime];
+      updatedInventory = [...state, newPrime];
     }
+
+    // 値の小さい順にソート
+    updatedInventory.sort((a, b) => a.value.compareTo(b.value));
+    state = updatedInventory;
 
     // 非同期保存（エラーハンドリング付き）
     _saveInventory().catchError((error) {
@@ -139,7 +153,10 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
 
   /// アイテム状態を指定した状態に復元
   void restoreInventory(List<Prime> savedInventory) {
-    state = List.from(savedInventory);
+    final sortedInventory = List<Prime>.from(savedInventory);
+    // 値の小さい順にソート
+    sortedInventory.sort((a, b) => a.value.compareTo(b.value));
+    state = sortedInventory;
     _saveInventory();
   }
 
@@ -175,6 +192,26 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
     }
   }
 
+  /// バトル終了時に使用したアイテムを確定消費
+  Future<void> finalizeUsedItems(List<int> usedPrimes) async {
+    Logger.info('Finalizing used items: $usedPrimes');
+
+    // 使用したアイテムの詳細をログ出力
+    final usageMap = <int, int>{};
+    for (final primeValue in usedPrimes) {
+      usageMap[primeValue] = (usageMap[primeValue] ?? 0) + 1;
+    }
+
+    for (final entry in usageMap.entries) {
+      Logger.info('Using ${entry.value} x ${entry.key}');
+      for (int i = 0; i < entry.value; i++) {
+        usePrime(entry.key);
+      }
+    }
+
+    Logger.info('Finalized used items completed');
+  }
+
   /// 素数判定
   bool _isPrime(int n) {
     if (n <= 1) return false;
@@ -193,10 +230,57 @@ final inventoryProvider = StateNotifierProvider<InventoryNotifier, List<Prime>>(
   (ref) => InventoryNotifier(),
 );
 
+/// バトル中の一時的な報酬を追跡するプロバイダー
+final battleTempRewardsProvider =
+    StateNotifierProvider<BattleTempRewardsNotifier, List<Prime>>((ref) {
+  return BattleTempRewardsNotifier();
+});
+
+/// バトル中の一時的な報酬を管理するNotifier
+class BattleTempRewardsNotifier extends StateNotifier<List<Prime>> {
+  BattleTempRewardsNotifier() : super([]);
+
+  /// 一時的な報酬を追加
+  void addTempReward(int value) {
+    final existingIndex = state.indexWhere((item) => item.value == value);
+
+    if (existingIndex >= 0) {
+      // 既存のアイテムの個数を増やす
+      final updated = [...state];
+      updated[existingIndex] = updated[existingIndex].increaseCount(1);
+      state = updated;
+    } else {
+      // 新しいアイテムを追加
+      state = [
+        ...state,
+        Prime(value: value, count: 1, firstObtained: DateTime.now())
+      ];
+    }
+
+    Logger.logBattle('Added temp reward',
+        data: {'value': value, 'total_temp_rewards': state.length});
+  }
+
+  /// 一時的な報酬をクリア（ステージ終了時）
+  void clearTempRewards() {
+    Logger.logBattle('Clearing temp rewards', data: {'count': state.length});
+    state = [];
+  }
+
+  /// 一時的な報酬を確定（ステージクリア時）
+  List<Prime> finalizeTempRewards() {
+    Logger.logBattle('Finalizing temp rewards', data: {'count': state.length});
+    final rewards = List<Prime>.from(state);
+    state = [];
+    return rewards;
+  }
+}
+
 /// バトル用インベントリプロバイダー（リアルタイム更新対応）
 final battleInventoryProvider = Provider<List<Prime>>((ref) {
   final battleSession = ref.watch(battleSessionProvider);
   final mainInventory = ref.watch(inventoryProvider);
+  final tempRewards = ref.watch(battleTempRewardsProvider);
 
   // ステージモードの場合、メインインベントリが更新されても反映する
   // ただし、初期選択されたアイテムの制約は保持する
@@ -204,37 +288,40 @@ final battleInventoryProvider = Provider<List<Prime>>((ref) {
       battleSession.stageStartInventory != null &&
       battleSession.stageStartInventory!.isNotEmpty) {
     // ステージ開始時のアイテムを基準に、現在のメインインベントリの状態を取得
-    final List<Prime> battleInventory = [];
+    final Map<int, Prime> battleInventoryMap = {};
 
+    // 1. ステージ開始時のアイテムを基準にする
     for (final startPrime in battleSession.stageStartInventory!) {
-      // メインインベントリから対応するアイテムを取得
-      final currentPrime = mainInventory.firstWhere(
-        (p) => p.value == startPrime.value,
-        orElse: () => Prime(
-            value: startPrime.value,
-            count: 0,
-            firstObtained: startPrime.firstObtained),
-      );
+      // 選択した数量のみを使用可能にする
+      // 使用したアイテムは表示から減算する
+      final usedCount = battleSession.usedPrimesInCurrentBattle
+          .where((prime) => prime == startPrime.value)
+          .length;
+      final displayCount =
+          (startPrime.count - usedCount).clamp(0, double.infinity).toInt();
 
-      // バトル中に獲得したアイテムも含めて使用可能にする
-      battleInventory.add(Prime(
+      battleInventoryMap[startPrime.value] = Prime(
         value: startPrime.value,
-        count: currentPrime.count, // 現在の個数（バトル中の獲得も含む）
+        count: displayCount, // 選択した個数 - 使用した個数
         firstObtained: startPrime.firstObtained,
-      ));
+      );
     }
 
-    // バトル中に新しく獲得した素数も追加
-    for (final mainPrime in mainInventory) {
-      final isNewPrime = !battleSession.stageStartInventory!
-          .any((sp) => sp.value == mainPrime.value);
-
-      if (isNewPrime && mainPrime.count > 0) {
-        battleInventory.add(mainPrime);
+    // 2. バトル中に獲得した一時的な報酬を追加
+    for (final tempReward in tempRewards) {
+      if (battleInventoryMap.containsKey(tempReward.value)) {
+        // 既存のアイテムに追加
+        final existing = battleInventoryMap[tempReward.value]!;
+        battleInventoryMap[tempReward.value] =
+            existing.increaseCount(tempReward.count);
+      } else {
+        // 新しいアイテムとして追加
+        battleInventoryMap[tempReward.value] = tempReward;
       }
     }
 
-    // ソートして表示順序を統一
+    // リストに変換してソート
+    final battleInventory = battleInventoryMap.values.toList();
     battleInventory.sort((a, b) => a.value.compareTo(b.value));
 
     return battleInventory;

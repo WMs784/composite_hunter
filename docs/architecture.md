@@ -1,4 +1,4 @@
-# 合成数ハンター システム設計書（最新版）
+# 合成数ハンター システム設計書（実装版）
 
 ## 1. アプリ全体構成図
 
@@ -7,12 +7,12 @@
 ┌─────────────────────────────────────────────────────────┐
 │                    Presentation Layer                   │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Battle    │  │  Inventory  │  │ Achievement │     │
-│  │   Screen    │  │   Screen    │  │   Screen    │     │
+│  │   Battle    │  │  Inventory  │  │   Stage     │     │
+│  │   Screen    │  │   Screen    │  │ Selection   │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │  Tutorial   │  │   Timer     │  │  Victory    │     │
-│  │   Screen    │  │  Widget     │  │  Dialog     │     │
+│  │   Setup     │  │Stage Clear  │  │   Timer     │     │
+│  │   Screen    │  │   Screen    │  │  Widget     │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 └─────────────────────────────────────────────────────────┘
                               │
@@ -21,12 +21,12 @@
 │                     State Management                    │
 │             (Riverpod Providers & Notifiers)            │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Battle    │  │  Inventory  │  │    Game     │     │
+│  │   Battle    │  │  Inventory  │  │    Stage    │     │
 │  │  Provider   │  │  Provider   │  │  Provider   │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Timer     │  │   Enemy     │  │ Achievement │     │
-│  │  Provider   │  │  Provider   │  │  Provider   │     │
+│  │   Setup     │  │   Timer     │  │BattleSession│     │
+│  │  Provider   │  │  Provider   │  │ Provider    │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 └─────────────────────────────────────────────────────────┘
                               │
@@ -34,12 +34,12 @@
 ┌─────────────────────────────────────────────────────────┐
 │                    Business Logic Layer                 │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Battle    │  │  Inventory  │  │   Enemy     │     │
-│  │   Engine    │  │  Manager    │  │ Generator   │     │
+│  │   Battle    │  │Enemy & Prime│  │   Stage     │     │
+│  │   Engine    │  │  Entities   │  │ Entities    │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │    Prime    │  │   Timer     │  │  Victory    │     │
-│  │ Calculator  │  │  Manager    │  │ Validator   │     │
+│  │Math Utils & │  │    Logger   │  │   Timer     │     │
+│  │Prime Logic  │  │   Service   │  │ Management  │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 └─────────────────────────────────────────────────────────┘
                               │
@@ -47,1306 +47,200 @@
 ┌─────────────────────────────────────────────────────────┐
 │                      Data Layer                         │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │  Local DB   │  │ Preferences │  │   Models    │     │
-│  │  (SQLite)   │  │(SharedPrefs)│  │   (DTOs)    │     │
+│  │SharedPrefs  │  │  Freezed    │  │ Generated   │     │
+│  │(Inventory)  │  │  Entities   │  │ Code Files  │     │
 │  └─────────────┘  └─────────────┘  └─────────────┘     │
 └─────────────────────────────────────────────────────────┘
 ```
 
-### 1.2 データフロー図（現在の実装ベース）
+### 1.2 報酬システムデータフロー（実装版）
 ```
-User Action → StageSelect → BattleSession → Battle → Inventory Update
-     ↑             ↓            ↓           ↓            │
-     └── Navigation ← Session State ← Timer/Victory ←───┘
-                     ↓            ↓
-               Item Backup → Item Restore
+Stage Mode Battle Flow:
+Stage Selection → Item Selection → Battle Session → Stage Clear
+      ↓              ↓              ↓               ↓
+   Stage Info → Battle Inventory → Temp Rewards → Reward Finalization
+      ↓              ↓              ↓               ↓
+   Slot Limit → Original Backup → Enemy Defeats → Main Inventory Update
+                      ↓              ↓               ↓
+                 Restoration → Reward Collection → UI Display
+                 (on failure)   (during battle)   (on success)
 ```
 
-## 2. 状態管理戦略
+## 2. 実装されている状態管理システム
 
-### 2.1 Riverpod選択理由
+### 2.1 主要プロバイダー
 
-#### ✅ 採用理由
-1. **コンパイル時安全性**: Provider の型安全性が保証される
-2. **テスト容易性**: DI が簡単で、モックの注入が容易
-3. **パフォーマンス**: 必要な部分のみリビルドされる最適化
-4. **将来性**: Flutter チームが推奨する現代的な状態管理
-5. **複雑な状態管理**: タイマー・勝利判定・ペナルティの複合状態に最適
-6. **時間系処理**: ストリーム・非同期処理との親和性が高い
-
-#### ❌ Provider を選ばない理由
-- グローバル状態での型安全性の欠如
-- テスト時のプロバイダー注入の複雑さ
-- タイマーなど複雑な状態管理が困難
-
-#### ❌ Bloc を選ばない理由
-- 小規模アプリには過度に複雑
-- ボイラープレートコードが多い
-- 1人開発には学習コストが高い
-
-### 2.2 Riverpod実装戦略
-
-#### 状態管理パターン
+#### 現在実装されている StateNotifier プロバイダー
 ```dart
-// 1. タイマー状態 - StreamProvider
-final timerProvider = StreamProvider<int>((ref) {
-  return TimerManager().timerStream;
-});
-
-// 2. 戦闘状態 - StateNotifierProvider
-final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>(
-  (ref) => BattleNotifier(ref),
+// 1. メインインベントリ管理 - List<Item>
+final inventoryProvider = StateNotifierProvider<InventoryNotifier, List<Item>>(
+  (ref) => InventoryNotifier(),
 );
 
-// 3. 勝利判定 - StateProvider
-final victoryClaimProvider = StateProvider<bool>((ref) => false);
+// 2. バトルセッション管理 - BattleSessionState
+final battleSessionProvider = StateNotifierProvider<BattleSessionNotifier, BattleSessionState>(
+  (ref) => BattleSessionNotifier(),
+);
 
-// 4. ペナルティ計算 - Provider (computed)
-final timeReductionProvider = Provider<int>((ref) {
-  final battleHistory = ref.watch(battleProvider);
-  return PenaltyCalculator.calculateTimeReduction(battleHistory.penalties);
-});
+// 3. ステージ情報管理 - List<Stage>  
+final stageProvider = StateNotifierProvider<StageNotifier, List<Stage>>(
+  (ref) => StageNotifier(),
+);
 
-// 5. 累乗敵検出 - Provider (computed)
-final isPowerEnemyProvider = Provider<bool>((ref) {
-  final enemy = ref.watch(battleProvider).currentEnemy;
-  return enemy != null && PowerEnemyDetector.isPowerEnemy(enemy.value);
-});
+// 4. アイテム選択管理 - SetupState
+final setupProvider = StateNotifierProvider<SetupNotifier, SetupState>(
+  (ref) => SetupNotifier(),
+);
+
+// 5. バトル状態管理 - BattleState
+final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>(
+  (ref) => BattleNotifier(),
+);
+
+// 6. タイマー管理 - TimerState
+final timerProvider = StateNotifierProvider<TimerNotifier, TimerState>(
+  (ref) => TimerNotifier(),
+);
 ```
 
-#### プロバイダー階層（更新版）
+### 2.2 重要な実装特徴
+
+#### インベントリシステム
+- **メインインベントリ**: 永続的な所持アイテム（SharedPreferencesで保存）
+- **バトルインベントリ**: ステージ用の一時的なアイテム
+- **originalMainInventory**: 復元用のバックアップ（失敗時に使用）
+
+#### 報酬システム
+- **一時報酬**: バトル中に敵を倒して獲得する報酬（BattleSessionState内で管理）
+- **報酬確定**: ステージクリア時にメインインベントリに追加
+- **復元処理**: ステージ失敗時は元のインベントリに戻す
+
+#### データフロー
 ```
-App Level Providers:
-├── gameDataProvider (永続化データ)
-├── settingsProvider (アプリ設定)
-├── achievementProvider (実績管理)
-└── globalTimerProvider (アプリ全体タイマー)
-
-Screen Level Providers:
-├── battleProvider (戦闘状態)
-├── inventoryProvider (素数管理)
-├── enemyProvider (敵生成・累乗敵含む)
-├── timerProvider (制限時間管理)
-└── victoryValidationProvider (勝利判定)
-
-UI Level Providers:
-├── animationProvider (アニメーション状態)
-├── penaltyDisplayProvider (ペナルティ表示)
-└── uiStateProvider (UI表示状態)
+1. ステージ選択 → setupProvider.setStage()
+2. アイテム選択 → setupProvider.addItem() / removeItem()
+3. バトル開始 → battleSessionProvider.startBattle()
+4. 敵撃破 → battleSessionProvider.addTempReward()
+5. ステージクリア → inventoryProvider.addPrime() (報酬確定)
+6. ステージ失敗 → inventoryProvider.restoreInventory()
 ```
 
-## 3. ディレクトリ構造
+## 3. エンティティ設計（実装版）
 
-### 3.1 全体構造（更新版）
+### 3.1 主要エンティティ
+
+#### Item/Prime エンティティ
+```dart
+@freezed
+class Item with _$Item {
+  const factory Item({
+    required int value,        // 素数値
+    required int count,        // 所持数
+    required DateTime firstObtained, // 初回取得日時
+    @Default(0) int usageCount, // 使用回数
+  }) = _Item;
+}
+
+typedef Prime = Item; // 後方互換性のため
+```
+
+#### Stage エンティティ
+```dart
+@freezed 
+class StageClearResult with _$StageClearResult {
+  const factory StageClearResult({
+    required int stageNumber,
+    required bool isCleared,
+    required int victories,
+    required List<int> defeatedEnemies,
+    @Default([]) List<int> rewardItems, // 獲得した報酬
+  }) = _StageClearResult;
+}
+```
+
+#### BattleSessionState
+```dart
+@freezed
+class BattleSessionState with _$BattleSessionState {
+  const factory BattleSessionState({
+    required bool isPracticeMode,
+    required List<Prime>? originalMainInventory, // 復元用バックアップ
+    required List<int> usedPrimesInCurrentBattle,
+    required List<int> defeatedEnemies,
+  }) = _BattleSessionState;
+}
+```
+
+### 3.2 実際のディレクトリ構造
 ```
 lib/
 ├── main.dart
-├── app.dart
-│
-├── core/                     # 共通機能
+├── core/
 │   ├── constants/
-│   │   ├── app_constants.dart
-│   │   ├── game_constants.dart
-│   │   ├── timer_constants.dart
-│   │   └── ui_constants.dart
-│   ├── exceptions/
-│   │   ├── game_exception.dart
-│   │   ├── timer_exception.dart
-│   │   ├── victory_exception.dart
-│   │   └── data_exception.dart
-│   ├── extensions/
-│   │   ├── int_extensions.dart
-│   │   ├── list_extensions.dart
-│   │   └── duration_extensions.dart
-│   ├── utils/
-│   │   ├── math_utils.dart
-│   │   ├── timer_utils.dart
-│   │   ├── validation_utils.dart
-│   │   └── logger.dart
-│   └── di/
-│       └── injection.dart
-│
-├── data/                     # データレイヤー
-│   ├── models/
-│   │   ├── prime_model.dart
-│   │   ├── enemy_model.dart
-│   │   ├── power_enemy_model.dart
-│   │   ├── battle_result_model.dart
-│   │   ├── timer_state_model.dart
-│   │   ├── penalty_record_model.dart
-│   │   └── game_data_model.dart
-│   ├── repositories/
-│   │   ├── game_repository.dart
-│   │   ├── inventory_repository.dart
-│   │   ├── battle_repository.dart
-│   │   ├── timer_repository.dart
-│   │   └── achievement_repository.dart
-│   ├── datasources/
-│   │   ├── local_database.dart
-│   │   ├── shared_preferences_service.dart
-│   │   └── file_storage_service.dart
-│   └── mappers/
-│       ├── prime_mapper.dart
-│       ├── enemy_mapper.dart
-│       ├── battle_mapper.dart
-│       └── timer_mapper.dart
-│
-├── domain/                   # ビジネスロジック層
+│   │   └── timer_constants.dart
+│   └── utils/
+│       ├── logger.dart
+│       └── math_utils.dart
+├── domain/
 │   ├── entities/
-│   │   ├── prime.dart
-│   │   ├── enemy.dart
-│   │   ├── power_enemy.dart
-│   │   ├── battle_state.dart
-│   │   ├── timer_state.dart
-│   │   ├── penalty_state.dart
-│   │   ├── victory_claim.dart
-│   │   └── inventory.dart
-│   ├── usecases/
-│   │   ├── battle_usecase.dart
-│   │   ├── inventory_usecase.dart
-│   │   ├── enemy_generation_usecase.dart
-│   │   ├── timer_management_usecase.dart
-│   │   ├── victory_validation_usecase.dart
-│   │   └── penalty_calculation_usecase.dart
-│   ├── repositories/
-│   │   └── game_repository_interface.dart
+│   │   ├── prime.dart        # Item/Prime定義
+│   │   ├── stage.dart        # ステージエンティティ
+│   │   ├── enemy.dart        # 敵エンティティ
+│   │   └── battle_loadout.dart
 │   └── services/
-│       ├── battle_engine.dart
-│       ├── prime_calculator.dart
-│       ├── enemy_generator.dart
-│       ├── power_enemy_detector.dart
-│       ├── timer_manager.dart
-│       ├── victory_validator.dart
-│       └── penalty_calculator.dart
-│
-├── presentation/             # プレゼンテーション層
-│   ├── providers/
-│   │   ├── battle_provider.dart
-│   │   ├── inventory_provider.dart
-│   │   ├── enemy_provider.dart
-│   │   ├── timer_provider.dart
-│   │   ├── victory_provider.dart
-│   │   ├── penalty_provider.dart
-│   │   ├── game_provider.dart
-│   │   └── ui_state_provider.dart
-│   ├── screens/
-│   │   ├── splash/
-│   │   │   └── splash_screen.dart
-│   │   ├── tutorial/
-│   │   │   ├── tutorial_screen.dart
-│   │   │   └── widgets/
-│   │   │       ├── timer_tutorial_widget.dart
-│   │   │       └── victory_tutorial_widget.dart
-│   │   ├── battle/
-│   │   │   ├── battle_screen.dart
-│   │   │   └── widgets/
-│   │   │       ├── enemy_widget.dart
-│   │   │       ├── power_enemy_widget.dart
-│   │   │       ├── prime_grid_widget.dart
-│   │   │       ├── timer_widget.dart
-│   │   │       ├── victory_claim_button.dart
-│   │   │       ├── action_buttons_widget.dart
-│   │   │       └── battle_animation_widget.dart
-│   │   ├── inventory/
-│   │   │   ├── inventory_screen.dart
-│   │   │   └── widgets/
-│   │   │       ├── prime_list_widget.dart
-│   │   │       └── prime_detail_widget.dart
-│   │   └── achievement/
-│   │       ├── achievement_screen.dart
-│   │       └── widgets/
-│   ├── widgets/
-│   │   ├── common/
-│   │   │   ├── custom_button.dart
-│   │   │   ├── timer_display.dart
-│   │   │   ├── penalty_indicator.dart
-│   │   │   ├── loading_widget.dart
-│   │   │   └── error_widget.dart
-│   │   ├── animations/
-│   │   │   ├── number_change_animation.dart
-│   │   │   ├── attack_effect_animation.dart
-│   │   │   ├── victory_animation.dart
-│   │   │   ├── penalty_animation.dart
-│   │   │   └── power_enemy_animation.dart
-│   │   └── dialogs/
-│   │       ├── battle_result_dialog.dart
-│   │       ├── victory_validation_dialog.dart
-│   │       ├── penalty_warning_dialog.dart
-│   │       └── confirmation_dialog.dart
-│   ├── theme/
-│   │   ├── app_theme.dart
-│   │   ├── colors.dart
-│   │   ├── text_styles.dart
-│   │   └── dimensions.dart
-│   └── routes/
-│       ├── app_router.dart
-│       └── route_names.dart
-│
-└── test/                     # テスト
-    ├── unit/
-    │   ├── timer_test.dart
-    │   ├── victory_validator_test.dart
-    │   └── power_enemy_test.dart
-    ├── widget/
-    └── integration/
+│       └── battle_engine.dart # 戦闘ロジック
+└── presentation/
+    ├── providers/
+    │   ├── inventory_provider.dart      # メインインベントリ
+    │   ├── battle_session_provider.dart # バトルセッション
+    │   ├── battle_temp_rewards_provider.dart # 一時報酬
+    │   ├── stage_provider.dart
+    │   ├── setup_provider.dart
+    │   ├── battle_provider.dart
+    │   └── timer_provider.dart
+    └── screens/
+        ├── battle/
+        │   └── battle_screen.dart       # 戦闘画面
+        ├── inventory/
+        │   └── inventory_screen.dart    # インベントリ画面
+        ├── stage/
+        │   ├── stage_item_selection_screen.dart
+        │   └── stage_clear_screen.dart  # クリア画面
+        └── ...
 ```
+## 4. 報酬システムの実装詳細
 
-## 4. 主要クラス設計
+### 4.1 報酬追加の流れ
 
-### 4.1 ドメイン層クラス（更新版）
+#### ステージモード
+1. **敵を倒す** → `battleTempRewardsProvider`に一時報酬として追加
+2. **ステージクリア** → 一時報酬をメインインベントリに確定
+3. **originalMainInventory**をクリア → 復元処理を防ぐ
 
-#### Prime エンティティ（変更なし）
+#### 練習モード
+1. **敵を倒す** → 直接メインインベントリに追加（アイテム消費なし）
+
+### 4.2 主要メソッド
+
+#### InventoryProvider
 ```dart
-class Prime {
-  final int value;
-  final int count;
-  final DateTime firstObtained;
-  final int usageCount;
-  
-  const Prime({
-    required this.value,
-    required this.count,
-    required this.firstObtained,
-    this.usageCount = 0,
-  });
-  
-  bool get isPrime => PrimeCalculator.isPrime(value);
-  
-  Prime copyWith({
-    int? value,
-    int? count,
-    DateTime? firstObtained,
-    int? usageCount,
-  });
-  
-  @override
-  bool operator ==(Object other);
-  
-  @override
-  int get hashCode;
-}
+void addPrime(int value) // メインインベントリに素数を追加
+void restoreInventory(List<Prime> backup) // バックアップから復元
 ```
 
-#### Enemy エンティティ（累乗敵対応）
+#### BattleSessionProvider
 ```dart
-class Enemy {
-  final int currentValue;
-  final int originalValue;
-  final EnemyType type;
-  final List<int> primeFactors;
-  final bool isPowerEnemy; // 累乗敵フラグ
-  final int? powerBase;    // 累乗の底（2^3なら2）
-  final int? powerExponent; // 累乗の指数（2^3なら3）
-  
-  const Enemy({
-    required this.currentValue,
-    required this.originalValue,
-    required this.type,
-    required this.primeFactors,
-    this.isPowerEnemy = false,
-    this.powerBase,
-    this.powerExponent,
-  });
-  
-  bool canBeAttackedBy(int prime) {
-    return currentValue % prime == 0;
-  }
-  
-  Enemy attack(int prime) {
-    if (!canBeAttackedBy(prime)) {
-      throw InvalidAttackException('Cannot attack $currentValue with $prime');
-    }
-    
-    return copyWith(currentValue: currentValue ~/ prime);
-  }
-  
-  bool get isDefeated => PrimeCalculator.isPrime(currentValue);
-  
-  // 累乗敵の報酬計算
-  int get powerRewardCount => isPowerEnemy && powerExponent != null ? powerExponent! : 1;
-  int get powerRewardPrime => isPowerEnemy && powerBase != null ? powerBase! : currentValue;
-  
-  Enemy copyWith({
-    int? currentValue,
-    int? originalValue,
-    EnemyType? type,
-    List<int>? primeFactors,
-    bool? isPowerEnemy,
-    int? powerBase,
-    int? powerExponent,
-  });
-}
-
-enum EnemyType { small, medium, large, power, special }
+void addTempReward(int value) // 一時報酬に追加
+void clearOriginalInventory() // 復元用バックアップをクリア
 ```
 
-#### TimerState エンティティ（新規）
-```dart
-class TimerState {
-  final int remainingSeconds;
-  final int originalSeconds;
-  final bool isActive;
-  final bool isWarning; // 残り10秒以下
-  final List<TimePenalty> penalties;
-  
-  const TimerState({
-    required this.remainingSeconds,
-    required this.originalSeconds,
-    this.isActive = false,
-    this.isWarning = false,
-    this.penalties = const [],
-  });
-  
-  bool get isExpired => remainingSeconds <= 0;
-  bool get shouldShowWarning => remainingSeconds <= 10 && isActive;
-  
-  int get totalPenaltySeconds {
-    return penalties.fold(0, (sum, penalty) => sum + penalty.seconds);
-  }
-  
-  TimerState applyPenalty(TimePenalty penalty) {
-    return copyWith(
-      remainingSeconds: math.max(0, remainingSeconds - penalty.seconds),
-      penalties: [...penalties, penalty],
-    );
-  }
-  
-  TimerState tick() {
-    if (!isActive || remainingSeconds <= 0) return this;
-    
-    return copyWith(
-      remainingSeconds: remainingSeconds - 1,
-      isWarning: remainingSeconds - 1 <= 10,
-    );
-  }
-  
-  TimerState copyWith({
-    int? remainingSeconds,
-    int? originalSeconds,
-    bool? isActive,
-    bool? isWarning,
-    List<TimePenalty>? penalties,
-  });
-}
+### 4.3 データ永続化
+- **SharedPreferences**: メインインベントリの保存
+- **メモリ**: 一時報酬とセッション状態
 
-class TimePenalty {
-  final int seconds;
-  final PenaltyType type;
-  final DateTime appliedAt;
-  
-  const TimePenalty({
-    required this.seconds,
-    required this.type,
-    required this.appliedAt,
-  });
-}
+### 4.4 ソート機能
+報酬追加後、すべてのインベントリは自動的に小さい順にソートされます。
 
-enum PenaltyType { escape, wrongVictoryClaim, timeOut }
-```
+---
 
-#### VictoryClaim エンティティ（新規）
-```dart
-class VictoryClaim {
-  final int claimedValue;
-  final DateTime claimedAt;
-  final bool isCorrect;
-  final int? rewardPrime;
-  
-  const VictoryClaim({
-    required this.claimedValue,
-    required this.claimedAt,
-    required this.isCorrect,
-    this.rewardPrime,
-  });
-  
-  VictoryClaim copyWith({
-    int? claimedValue,
-    DateTime? claimedAt,
-    bool? isCorrect,
-    int? rewardPrime,
-  });
-}
-```
-
-#### BattleState エンティティ（タイマー・勝利判定対応）
-```dart
-class BattleState {
-  final Enemy? currentEnemy;
-  final List<Prime> usedPrimes;
-  final BattleStatus status;
-  final int turnCount;
-  final DateTime? battleStartTime;
-  final TimerState? timerState;
-  final VictoryClaim? victoryClaim;
-  final List<TimePenalty> battlePenalties;
-  
-  const BattleState({
-    this.currentEnemy,
-    this.usedPrimes = const [],
-    this.status = BattleStatus.waiting,
-    this.turnCount = 0,
-    this.battleStartTime,
-    this.timerState,
-    this.victoryClaim,
-    this.battlePenalties = const [],
-  });
-  
-  bool canFight(List<Prime> inventory) {
-    if (currentEnemy == null || timerState?.isExpired == true) return false;
-    return true; // 戦闘可能性判定は削除
-  }
-  
-  bool get canClaimVictory {
-    return currentEnemy != null && 
-           timerState?.isActive == true && 
-           !timerState!.isExpired;
-  }
-  
-  BattleState nextTurn(Prime usedPrime) {
-    return copyWith(
-      usedPrimes: [...usedPrimes, usedPrime],
-      turnCount: turnCount + 1,
-    );
-  }
-  
-  BattleState applyTimePenalty(TimePenalty penalty) {
-    return copyWith(
-      timerState: timerState?.applyPenalty(penalty),
-      battlePenalties: [...battlePenalties, penalty],
-    );
-  }
-  
-  BattleState copyWith({
-    Enemy? currentEnemy,
-    List<Prime>? usedPrimes,
-    BattleStatus? status,
-    int? turnCount,
-    DateTime? battleStartTime,
-    TimerState? timerState,
-    VictoryClaim? victoryClaim,
-    List<TimePenalty>? battlePenalties,
-  });
-}
-
-enum BattleStatus { waiting, fighting, victory, escape, defeat, timeOut }
-```
-
-### 4.2 ビジネスロジック層クラス（更新版）
-
-#### PowerEnemyDetector サービス（新規）
-```dart
-class PowerEnemyDetector {
-  static bool isPowerEnemy(int value) {
-    final factors = PrimeCalculator.factorize(value);
-    
-    // 全ての因子が同じ素数かチェック
-    if (factors.isEmpty || factors.length < 2) return false;
-    
-    final firstFactor = factors.first;
-    return factors.every((factor) => factor == firstFactor);
-  }
-  
-  static PowerEnemyInfo? analyzePowerEnemy(int value) {
-    if (!isPowerEnemy(value)) return null;
-    
-    final factors = PrimeCalculator.factorize(value);
-    return PowerEnemyInfo(
-      base: factors.first,
-      exponent: factors.length,
-      value: value,
-    );
-  }
-  
-  static Enemy createPowerEnemy(int base, int exponent) {
-    final value = math.pow(base, exponent).toInt();
-    
-    return Enemy(
-      currentValue: value,
-      originalValue: value,
-      type: EnemyType.power,
-      primeFactors: List.filled(exponent, base),
-      isPowerEnemy: true,
-      powerBase: base,
-      powerExponent: exponent,
-    );
-  }
-}
-
-class PowerEnemyInfo {
-  final int base;
-  final int exponent;
-  final int value;
-  
-  const PowerEnemyInfo({
-    required this.base,
-    required this.exponent,
-    required this.value,
-  });
-}
-```
-
-#### TimerManager サービス（新規）
-```dart
-class TimerManager {
-  Timer? _timer;
-  final StreamController<TimerState> _timerController = StreamController<TimerState>.broadcast();
-  TimerState _currentState = const TimerState(remainingSeconds: 0, originalSeconds: 0);
-  
-  Stream<TimerState> get timerStream => _timerController.stream;
-  TimerState get currentState => _currentState;
-  
-  void startTimer(int seconds) {
-    stopTimer();
-    
-    _currentState = TimerState(
-      remainingSeconds: seconds,
-      originalSeconds: seconds,
-      isActive: true,
-    );
-    
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _currentState = _currentState.tick();
-      _timerController.add(_currentState);
-      
-      if (_currentState.isExpired) {
-        stopTimer();
-      }
-    });
-    
-    _timerController.add(_currentState);
-  }
-  
-  void stopTimer() {
-    _timer?.cancel();
-    _timer = null;
-    _currentState = _currentState.copyWith(isActive: false);
-    _timerController.add(_currentState);
-  }
-  
-  void applyPenalty(TimePenalty penalty) {
-    _currentState = _currentState.applyPenalty(penalty);
-    _timerController.add(_currentState);
-  }
-  
-  void dispose() {
-    _timer?.cancel();
-    _timerController.close();
-  }
-  
-  // 敵タイプに応じた基本時間取得
-  static int getBaseTimeForEnemy(Enemy enemy) {
-    if (enemy.originalValue <= 20) return 30;
-    if (enemy.originalValue <= 100) return 60;
-    return 90;
-  }
-}
-```
-
-#### VictoryValidator サービス（新規）
-```dart
-class VictoryValidator {
-  static VictoryValidationResult validateVictoryClaim(int claimedValue) {
-    final isPrime = PrimeCalculator.isPrime(claimedValue);
-    
-    return VictoryValidationResult(
-      isValid: isPrime,
-      claimedValue: claimedValue,
-      rewardPrime: isPrime ? claimedValue : null,
-      penalty: isPrime ? null : const TimePenalty(
-        seconds: 10,
-        type: PenaltyType.wrongVictoryClaim,
-        appliedAt: DateTime.now(),
-      ),
-    );
-  }
-  
-  static bool canClaimVictory(Enemy enemy, TimerState timerState) {
-    return timerState.isActive && !timerState.isExpired;
-  }
-}
-
-class VictoryValidationResult {
-  final bool isValid;
-  final int claimedValue;
-  final int? rewardPrime;
-  final TimePenalty? penalty;
-  
-  const VictoryValidationResult({
-    required this.isValid,
-    required this.claimedValue,
-    this.rewardPrime,
-    this.penalty,
-  });
-}
-```
-
-#### BattleEngine サービス（更新版）
-```dart
-class BattleEngine {
-  static BattleResult executeAttack(Enemy enemy, Prime prime) {
-    try {
-      final newEnemy = enemy.attack(prime.value);
-      
-      if (newEnemy.isDefeated) {
-        // 素数になったが、ユーザーが勝利宣言するまで待機
-        return BattleResult.awaitingVictoryClaim(
-          newEnemy: newEnemy,
-          usedPrime: prime,
-        );
-      }
-      
-      return BattleResult.continue_(
-        newEnemy: newEnemy,
-        usedPrime: prime,
-      );
-      
-    } catch (e) {
-      return BattleResult.error(e.toString());
-    }
-  }
-  
-  static BattleResult processVictoryClaim(Enemy enemy, int claimedValue) {
-    final validation = VictoryValidator.validateVictoryClaim(claimedValue);
-    
-    if (validation.isValid) {
-      // 累乗敵の場合は特別報酬
-      if (enemy.isPowerEnemy) {
-        return BattleResult.powerVictory(
-          defeatedEnemy: enemy,
-          rewardPrime: enemy.powerRewardPrime,
-          rewardCount: enemy.powerRewardCount,
-        );
-      } else {
-        return BattleResult.victory(
-          defeatedEnemy: enemy,
-          rewardPrime: validation.rewardPrime!,
-        );
-      }
-    } else {
-      return BattleResult.wrongClaim(
-        penalty: validation.penalty!,
-        currentEnemy: enemy,
-      );
-    }
-  }
-  
-  static BattleResult processEscape() {
-    return BattleResult.escape(
-      penalty: const TimePenalty(
-        seconds: 10,
-        type: PenaltyType.escape,
-        appliedAt: DateTime.now(),
-      ),
-    );
-  }
-  
-  static BattleResult processTimeOut() {
-    return BattleResult.timeOut(
-      penalty: const TimePenalty(
-        seconds: 10,
-        type: PenaltyType.timeOut,
-        appliedAt: DateTime.now(),
-      ),
-    );
-  }
-}
-```
-
-#### EnemyGenerator サービス（累乗敵対応）
-```dart
-class EnemyGenerator {
-  final Random _random = Random();
-  
-  Enemy generateEnemy(List<Prime> playerInventory, int playerLevel) {
-    // 10%の確率で累乗敵を生成
-    if (_random.nextDouble() < 0.1) {
-      return _generatePowerEnemy(playerInventory, playerLevel);
-    }
-    
-    return _generateNormalEnemy(playerInventory, playerLevel);
-  }
-  
-  Enemy _generatePowerEnemy(List<Prime> playerInventory, int playerLevel) {
-    final availablePrimes = _getAvailablePrimes(playerInventory);
-    
-    if (availablePrimes.isEmpty) {
-      return _generateNormalEnemy(playerInventory, playerLevel); // フォールバック
-    }
-    
-    // プレイヤーが持っている素数の中から選択
-    final basePrime = availablePrimes[_random.nextInt(availablePrimes.length)];
-    
-    // 指数を2-4の範囲で選択（レベルに応じて調整）
-    final maxExponent = math.min(4, 2 + (playerLevel ~/ 5));
-    final exponent = 2 + _random.nextInt(maxExponent - 1);
-    
-    return PowerEnemyDetector.createPowerEnemy(basePrime, exponent);
-  }
-  
-  Enemy _generateNormalEnemy(List<Prime> playerInventory, int playerLevel) {
-    final availablePrimes = _getAvailablePrimes(playerInventory);
-    final targetDifficulty = _calculateTargetDifficulty(playerLevel);
-    
-    int enemyValue;
-    EnemyType enemyType;
-    
-    if (targetDifficulty < 10) {
-      enemyValue = _generateSmallEnemy(availablePrimes);
-      enemyType = EnemyType.small;
-    } else if (targetDifficulty < 50) {
-      enemyValue = _generateMediumEnemy(availablePrimes);
-      enemyType = EnemyType.medium;
-    } else {
-      enemyValue = _generateLargeEnemy(availablePrimes);
-      enemyType = EnemyType.large;
-    }
-    
-    return Enemy(
-      currentValue: enemyValue,
-      originalValue: enemyValue,
-      type: enemyType,
-      primeFactors: PrimeCalculator.factorize(enemyValue),
-      isPowerEnemy: false,
-    );
-  }
-  
-  int _generateSmallEnemy(List<int> availablePrimes) {
-    // 2-3個の小さな素数の積（6-20範囲）
-    if (availablePrimes.length < 2) return 6; // フォールバック
-    
-    final prime1 = availablePrimes[_random.nextInt(availablePrimes.length)];
-    final prime2 = availablePrimes[_random.nextInt(availablePrimes.length)];
-    
-    final result = prime1 * prime2;
-    return result <= 20 ? result : 6;
-  }
-  
-  int _generateMediumEnemy(List<int> availablePrimes) {
-    // 3-4個の素数の積（21-100範囲）
-    if (availablePrimes.length < 2) return 21;
-    
-    int result = 1;
-    final factorCount = 3 + _random.nextInt(2); // 3または4個
-    
-    for (int i = 0; i < factorCount; i++) {
-      final prime = availablePrimes[_random.nextInt(availablePrimes.length)];
-      result *= prime;
-      if (result > 100) break;
-    }
-    
-    return result.clamp(21, 100);
-  }
-  
-  int _generateLargeEnemy(List<int> availablePrimes) {
-    // 4-5個の素数の積（101-1000範囲）
-    if (availablePrimes.length < 3) return 101;
-    
-    int result = 1;
-    final factorCount = 4 + _random.nextInt(2); // 4または5個
-    
-    for (int i = 0; i < factorCount; i++) {
-      final prime = availablePrimes[_random.nextInt(availablePrimes.length)];
-      result *= prime;
-      if (result > 1000) break;
-    }
-    
-    return result.clamp(101, 1000);
-  }
-  
-  int _calculateTargetDifficulty(int playerLevel) {
-    return playerLevel * 2 + _random.nextInt(10);
-  }
-  
-  List<int> _getAvailablePrimes(List<Prime> inventory) {
-    return inventory
-        .where((prime) => prime.count > 0)
-        .map((prime) => prime.value)
-        .toList();
-  }
-}
-```
-
-### 4.3 プレゼンテーション層クラス（更新版）
-
-#### BattleNotifier (Riverpod)（大幅更新）
-```dart
-class BattleNotifier extends StateNotifier<BattleState> {
-  final BattleEngine _battleEngine;
-  final EnemyGenerator _enemyGenerator;
-  final TimerManager _timerManager;
-  final Ref _ref;
-  
-  BattleNotifier(
-    this._battleEngine, 
-    this._enemyGenerator, 
-    this._timerManager,
-    this._ref
-  ) : super(const BattleState()) {
-    // タイマーストリームを監視
-    _timerManager.timerStream.listen(_handleTimerUpdate);
-  }
-  
-  void startBattle() {
-    final inventory = _ref.read(inventoryProvider);
-    final playerLevel = _ref.read(gameProvider).level;
-    
-    final enemy = _enemyGenerator.generateEnemy(inventory.primes, playerLevel);
-    final baseTime = TimerManager.getBaseTimeForEnemy(enemy);
-    
-    // 前回のペナルティを適用
-    final penaltyReduction = state.battlePenalties
-        .fold(0, (sum, penalty) => sum + penalty.seconds);
-    final adjustedTime = math.max(10, baseTime - penaltyReduction);
-    
-    // タイマー開始
-    _timerManager.startTimer(adjustedTime);
-    
-    state = state.copyWith(
-      currentEnemy: enemy,
-      status: BattleStatus.fighting,
-      battleStartTime: DateTime.now(),
-      turnCount: 0,
-      usedPrimes: [],
-      victoryClaim: null,
-    );
-  }
-  
-  Future<void> attack(Prime prime) async {
-    if (state.currentEnemy == null || state.timerState?.isExpired == true) return;
-    
-    final result = _battleEngine.executeAttack(state.currentEnemy!, prime);
-    
-    await result.when(
-      awaitingVictoryClaim: (newEnemy, usedPrime) async {
-        // 攻撃アニメーション
-        await _playAttackAnimation(usedPrime.value);
-        
-        // 素数使用
-        _ref.read(inventoryProvider.notifier).usePrime(usedPrime);
-        
-        // 勝利宣言待ち状態
-        state = state.copyWith(
-          currentEnemy: newEnemy,
-          usedPrimes: [...state.usedPrimes, usedPrime],
-          turnCount: state.turnCount + 1,
-          status: BattleStatus.fighting, // まだ勝利確定ではない
-        );
-      },
-      continue_: (newEnemy, usedPrime) async {
-        // 攻撃アニメーション
-        await _playAttackAnimation(usedPrime.value);
-        
-        // 素数使用
-        _ref.read(inventoryProvider.notifier).usePrime(usedPrime);
-        
-        // 状態更新
-        state = state.copyWith(
-          currentEnemy: newEnemy,
-          usedPrimes: [...state.usedPrimes, usedPrime],
-          turnCount: state.turnCount + 1,
-        );
-      },
-      error: (message) {
-        _showError(message);
-      },
-      // 他のケースは使用されない
-      victory: (_, __) => {},
-      powerVictory: (_, __, ___) => {},
-      wrongClaim: (_, __) => {},
-      escape: (_) => {},
-      timeOut: (_) => {},
-    );
-  }
-  
-  Future<void> claimVictory() async {
-    if (state.currentEnemy == null || !state.canClaimVictory) return;
-    
-    final result = _battleEngine.processVictoryClaim(
-      state.currentEnemy!, 
-      state.currentEnemy!.currentValue
-    );
-    
-    await result.when(
-      victory: (defeatedEnemy, rewardPrime) async {
-        await _playVictoryAnimation();
-        
-        // 通常報酬
-        _ref.read(inventoryProvider.notifier).addPrime(Prime(
-          value: rewardPrime,
-          count: 1,
-          firstObtained: DateTime.now(),
-        ));
-        
-        state = state.copyWith(
-          status: BattleStatus.victory,
-          victoryClaim: VictoryClaim(
-            claimedValue: state.currentEnemy!.currentValue,
-            claimedAt: DateTime.now(),
-            isCorrect: true,
-            rewardPrime: rewardPrime,
-          ),
-        );
-        
-        _timerManager.stopTimer();
-        _ref.read(achievementProvider.notifier).checkAchievements();
-      },
-      powerVictory: (defeatedEnemy, rewardPrime, rewardCount) async {
-        await _playPowerVictoryAnimation();
-        
-        // 累乗敵特別報酬
-        for (int i = 0; i < rewardCount; i++) {
-          _ref.read(inventoryProvider.notifier).addPrime(Prime(
-            value: rewardPrime,
-            count: 1,
-            firstObtained: DateTime.now(),
-          ));
-        }
-        
-        state = state.copyWith(
-          status: BattleStatus.victory,
-          victoryClaim: VictoryClaim(
-            claimedValue: state.currentEnemy!.currentValue,
-            claimedAt: DateTime.now(),
-            isCorrect: true,
-            rewardPrime: rewardPrime,
-          ),
-        );
-        
-        _timerManager.stopTimer();
-        _ref.read(achievementProvider.notifier).checkAchievements();
-      },
-      wrongClaim: (penalty, currentEnemy) async {
-        await _playPenaltyAnimation();
-        
-        // ペナルティ適用
-        _timerManager.applyPenalty(penalty);
-        
-        state = state.copyWith(
-          victoryClaim: VictoryClaim(
-            claimedValue: currentEnemy.currentValue,
-            claimedAt: DateTime.now(),
-            isCorrect: false,
-          ),
-          battlePenalties: [...state.battlePenalties, penalty],
-        );
-        
-        _showPenaltyMessage("まだ合成数です。続けてください");
-      },
-      // 他のケースは使用されない
-      awaitingVictoryClaim: (_, __) => {},
-      continue_: (_, __) => {},
-      error: (_) => {},
-      escape: (_) => {},
-      timeOut: (_) => {},
-    );
-  }
-  
-  void escape() {
-    final result = _battleEngine.processEscape();
-    
-    result.when(
-      escape: (penalty) {
-        // 次回戦闘用ペナルティ記録
-        state = state.copyWith(
-          status: BattleStatus.escape,
-          battlePenalties: [...state.battlePenalties, penalty],
-        );
-        
-        _timerManager.stopTimer();
-        
-        // 新しい戦闘を開始（ペナルティ付き）
-        Future.delayed(const Duration(milliseconds: 500), () {
-          startBattle();
-        });
-      },
-      // 他のケースは使用されない
-      victory: (_, __) => {},
-      powerVictory: (_, __, ___) => {},
-      wrongClaim: (_, __) => {},
-      awaitingVictoryClaim: (_, __) => {},
-      continue_: (_, __) => {},
-      error: (_) => {},
-      timeOut: (_) => {},
-    );
-  }
-  
-  void _handleTimerUpdate(TimerState timerState) {
-    state = state.copyWith(timerState: timerState);
-    
-    // タイムアウト処理
-    if (timerState.isExpired && state.status == BattleStatus.fighting) {
-      final result = _battleEngine.processTimeOut();
-      
-      result.when(
-        timeOut: (penalty) {
-          state = state.copyWith(
-            status: BattleStatus.timeOut,
-            battlePenalties: [...state.battlePenalties, penalty],
-          );
-          
-          // 新しい戦闘を開始（ペナルティ付き）
-          Future.delayed(const Duration(milliseconds: 1000), () {
-            startBattle();
-          });
-        },
-        // 他のケースは使用されない
-        victory: (_, __) => {},
-        powerVictory: (_, __, ___) => {},
-        wrongClaim: (_, __) => {},
-        awaitingVictoryClaim: (_, __) => {},
-        continue_: (_, __) => {},
-        error: (_) => {},
-        escape: (_) => {},
-      );
-    }
-  }
-  
-  // アニメーション関連メソッド
-  Future<void> _playAttackAnimation(int primeValue) async {
-    // 攻撃アニメーション実装
-    await Future.delayed(const Duration(milliseconds: 500));
-  }
-  
-  Future<void> _playVictoryAnimation() async {
-    // 勝利アニメーション実装
-    await Future.delayed(const Duration(milliseconds: 1000));
-  }
-  
-  Future<void> _playPowerVictoryAnimation() async {
-    // 累乗敵勝利アニメーション実装
-    await Future.delayed(const Duration(milliseconds: 1500));
-  }
-  
-  Future<void> _playPenaltyAnimation() async {
-    // ペナルティアニメーション実装
-    await Future.delayed(const Duration(milliseconds: 800));
-  }
-  
-  void _showError(String message) {
-    // エラー表示実装
-  }
-  
-  void _showPenaltyMessage(String message) {
-    // ペナルティメッセージ表示実装
-  }
-  
-  @override
-  void dispose() {
-    _timerManager.dispose();
-    super.dispose();
-  }
-}
-
-// プロバイダー定義（更新版）
-final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>((ref) {
-  return BattleNotifier(
-    ref.read(battleEngineProvider),
-    ref.read(enemyGeneratorProvider),
-    ref.read(timerManagerProvider),
-    ref,
-  );
-});
-
-// 追加プロバイダー
-final timerProvider = StreamProvider<TimerState>((ref) {
-  final timerManager = ref.read(timerManagerProvider);
-  return timerManager.timerStream;
-});
-
-final canClaimVictoryProvider = Provider<bool>((ref) {
-  final battleState = ref.watch(battleProvider);
-  return battleState.canClaimVictory;
-});
-
-final isPowerEnemyProvider = Provider<bool>((ref) {
-  final enemy = ref.watch(battleProvider).currentEnemy;
-  return enemy?.isPowerEnemy ?? false;
-});
-```
-
-### 4.4 拡張されたBattleResult（union type）
-
-```dart
-@freezed
-class BattleResult with _$BattleResult {
-  const factory BattleResult.victory({
-    required Enemy defeatedEnemy,
-    required int rewardPrime,
-  }) = _Victory;
-  
-  const factory BattleResult.powerVictory({
-    required Enemy defeatedEnemy,
-    required int rewardPrime,
-    required int rewardCount,
-  }) = _PowerVictory;
-  
-  const factory BattleResult.continue_({
-    required Enemy newEnemy,
-    required Prime usedPrime,
-  }) = _Continue;
-  
-  const factory BattleResult.awaitingVictoryClaim({
-    required Enemy newEnemy,
-    required Prime usedPrime,
-  }) = _AwaitingVictoryClaim;
-  
-  const factory BattleResult.wrongClaim({
-    required TimePenalty penalty,
-    required Enemy currentEnemy,
-  }) = _WrongClaim;
-  
-  const factory BattleResult.escape({
-    required TimePenalty penalty,
-  }) = _Escape;
-  
-  const factory BattleResult.timeOut({
-    required TimePenalty penalty,
-  }) = _TimeOut;
-  
-  const factory BattleResult.error(String message) = _Error;
-}
-```
-
-## 5. 重要な設計判断
-
-### 5.1 アイテム消費ロジックの実装戦略（現在の実装ベース）
-
-#### 練習モードでの非消費システム
-```dart
-// 現在の実装：練習モードでは素数を消費しない
-if (!session.isPracticeMode) {
-  // インベントリから素数を消費
-  ref.read(inventoryProvider.notifier).usePrime(prime.value);
-}
-```
-
-#### ステージ挑戦でのアイテム状態管理
-```dart
-// 戦闘開始時にアイテム状態を保存
-final session = ref.read(battleSessionProvider);
-if (session.stageStartInventory != null) {
-  ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
-}
-```
-
-#### 復元システムの設計
-- **戦闘開始前**: アイテム状態のスナップショット保存
-- **戦闘中**: 通常通りアイテム消費
-- **戦闘終了**: エスケープ・タイムアウト時にアイテム状態復元
-- **勝利時**: 消費したアイテムと勝利報酬の獲得
-
-### 5.2 現在の実装における状態管理
-
-#### BattleSessionProvider による状態管理
-```dart
-class BattleSessionProvider {
-  List<Prime>? stageStartInventory; // 戦闘開始時のアイテム状態
-  List<int> usedPrimesInCurrentBattle; // 現在の戦闘で使用した素数
-  bool isPracticeMode; // 練習モード判定
-}
-```
-
-#### アイテム復元のタイミング
-1. **エスケープ時**: `_exitBattle()`, `escape()`
-2. **タイムアウト時**: `_handleTimeUp()`
-3. **戦闘再開時**: `_restartBattle()`
-4. **勝利時**: 使用素数の返却 + 勝利報酬
-
-### 5.3 ステージ挑戦前画面の設計（計画）
-
-#### 既存のStageSelectScreen拡張
-```dart
-class StageInfo {
-  final int stageNumber;
-  final String title;
-  final String description;
-  final int enemyRangeMin;
-  final int enemyRangeMax;
-  final int timeLimit;
-  final bool isUnlocked;
-  final bool isCompleted;
-  final int stars;
-}
-```
-
-#### 今後実装予定の機能
-- ステージ詳細情報の表示
-- 推奨素数の表示
-- 難易度指標の表示
-- 報酬プレビュー
-
-### 5.4 教育的価値を重視した設計方針
-
-#### 非消費型戦闘の教育効果
-- **試行錯誤の促進**: アイテム枯渇の心配なく実験可能
-- **戦略学習**: 最適な素数選択の学習
-- **数学理解**: 素因数分解の理解促進
-
-#### 練習モードと本格モードの差別化
-- **練習モード**: 完全非消費、学習重視
-- **本格モード**: 戦略性重視、リソース管理
-
-## 6. 現在の実装における設計判断の総括
-
-### 6.1 簡素化されたアーキテクチャの利点
-
-#### 開発効率の向上
-- **要件定義書**の理想的な設計から**実装可能**な範囲に調整
-- 複雑な持ち込みシステムを**シンプルな状態管理**に変更
-- コアとなる**教育機能**は完全に保持
-
-#### 教育的価値の維持
-- **練習モード**: 完全非消費で試行錯誤を促進
-- **本格モード**: 適度な戦略性とリソース管理
-- **復元システム**: 失敗時のペナルティを教育的に活用
-
-#### 保守性の確保
-- **StateProvider**と**StateNotifierProvider**による分かりやすい状態管理
-- **BattleSessionProvider**による戦闘状態の一元管理
-- **復元ロジック**の明確な分離
-
-### 6.2 実装上の工夫
-
-#### アイテム消費ロジック
-```dart
-// 練習モードでは消費しない
-if (!session.isPracticeMode) {
-  ref.read(inventoryProvider.notifier).usePrime(prime.value);
-}
-```
-
-#### 状態復元システム
-```dart
-// 戦闘開始時にスナップショット保存
-ref.read(battleSessionProvider.notifier).startStage(stage.stageNumber, currentInventory);
-
-// 必要時に復元
-if (session.stageStartInventory != null) {
-  ref.read(inventoryProvider.notifier).restoreInventory(session.stageStartInventory!);
-}
-```
-
-#### 国際化対応
-- **ARB ファイル**による多言語対応
-- **AppLocalizations**による動的言語切り替え
-- **MonsterWidget**による視覚的魅力の向上
-
-### 6.3 今後の拡張可能性
-
-この簡素化された実装により、以下の拡張が容易になります：
-
-1. **新しいステージ**の追加
-2. **追加の敵タイプ**の実装
-3. **より複雑な戦略システム**への発展
-4. **マルチプレイヤー機能**の追加
-
-### 6.4 教育効果の最大化
-
-実装された機能により以下の教育効果が達成されます：
-
-- **素因数分解の理解**: 実際の計算を通じた学習
-- **戦略的思考**: 限られたリソースでの最適解探索
-- **試行錯誤の促進**: 失敗しても復元できる安心感
-- **数学への興味**: ゲーム要素による動機付け
-
-この簡素化された実装により、コアとなる教育機能を維持しながら、開発・保守コストを最小限に抑え、実際に動作する高品質な教育アプリケーションを提供することができます。
+**このドキュメントは現在の実装を反映するように更新されました。**

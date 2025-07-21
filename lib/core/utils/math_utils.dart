@@ -81,6 +81,25 @@ class MathUtils {
     return primeFactors.reduce((a, b) => a * b);
   }
 
+  /// Get all factors of a number
+  static List<int> getFactors(int n) {
+    if (n <= 1) return [];
+
+    final factors = <int>[];
+
+    for (int i = 1; i * i <= n; i++) {
+      if (n % i == 0) {
+        factors.add(i);
+        if (i != n ~/ i) {
+          factors.add(n ~/ i);
+        }
+      }
+    }
+
+    factors.sort();
+    return factors;
+  }
+
   /// Get the difficulty rating for a number based on its size and complexity
   static int getDifficulty(int n) {
     final factors = factorize(n);

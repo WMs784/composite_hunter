@@ -15,6 +15,7 @@ class BattleSessionState {
   final List<int> defeatedEnemies;
   final List<int> usedPrimesInCurrentBattle; // 現在のバトルで使用した素数
   final List<Prime>? stageStartInventory; // ステージ開始時のアイテム状態
+  final List<Prime>? originalMainInventory; // ステージ挑戦前のメインインベントリ
 
   const BattleSessionState({
     this.stageNumber,
@@ -26,6 +27,7 @@ class BattleSessionState {
     this.defeatedEnemies = const [],
     this.usedPrimesInCurrentBattle = const [],
     this.stageStartInventory,
+    this.originalMainInventory,
   });
 
   BattleSessionState copyWith({
@@ -38,6 +40,8 @@ class BattleSessionState {
     List<int>? defeatedEnemies,
     List<int>? usedPrimesInCurrentBattle,
     List<Prime>? stageStartInventory,
+    List<Prime>? originalMainInventory,
+    bool clearOriginalMainInventory = false,
   }) {
     return BattleSessionState(
       stageNumber: stageNumber ?? this.stageNumber,
@@ -50,6 +54,9 @@ class BattleSessionState {
       usedPrimesInCurrentBattle:
           usedPrimesInCurrentBattle ?? this.usedPrimesInCurrentBattle,
       stageStartInventory: stageStartInventory ?? this.stageStartInventory,
+      originalMainInventory: clearOriginalMainInventory
+          ? null
+          : (originalMainInventory ?? this.originalMainInventory),
     );
   }
 
@@ -70,17 +77,21 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
       isPracticeMode: false,
       sessionStartTime: DateTime.now(),
       stageStartInventory: List.from(currentInventory), // アイテム状態をコピーして保存
+      originalMainInventory:
+          List.from(currentInventory), // ステージ挑戦前のメインインベントリを保存
     );
   }
 
   /// 選択されたアイテムでステージバトルを開始
-  void startStageWithSelectedItems(
-      int stageNumber, List<Prime> selectedInventory) {
+  void startStageWithSelectedItems(int stageNumber,
+      List<Prime> selectedInventory, List<Prime> originalMainInventory) {
     state = BattleSessionState(
       stageNumber: stageNumber,
       isPracticeMode: false,
       sessionStartTime: DateTime.now(),
       stageStartInventory: List.from(selectedInventory), // 選択されたアイテム状態をコピーして保存
+      originalMainInventory:
+          List.from(originalMainInventory), // ステージ挑戦前のメインインベントリを保存
     );
 
     Logger.logBattle('Started stage', data: {
@@ -99,6 +110,8 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
       isPracticeMode: true,
       sessionStartTime: DateTime.now(),
       stageStartInventory: List.from(currentInventory), // アイテム状態をコピーして保存
+      originalMainInventory:
+          List.from(currentInventory), // ステージ挑戦前のメインインベントリを保存
     );
   }
 
@@ -107,7 +120,7 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
     state = state.copyWith(
       victories: state.victories + 1,
       defeatedEnemies: [...state.defeatedEnemies, defeatedEnemy],
-      usedPrimesInCurrentBattle: [], // 勝利時にリセット
+      // usedPrimesInCurrentBattleはリセットしない - ステージ終了時にのみリセット
     );
   }
 
@@ -129,7 +142,7 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
   void recordEscape() {
     state = state.copyWith(
       escapes: state.escapes + 1,
-      usedPrimesInCurrentBattle: [], // 逃走時にリセット
+      // usedPrimesInCurrentBattleはリセットしない - ステージ終了時にのみリセット
     );
   }
 
@@ -144,6 +157,13 @@ class BattleSessionNotifier extends StateNotifier<BattleSessionState> {
   void resetSession() {
     state = BattleSessionState(
       sessionStartTime: DateTime.now(),
+    );
+  }
+
+  /// originalMainInventoryをクリアして復元処理を防ぐ
+  void clearOriginalInventory() {
+    state = state.copyWith(
+      clearOriginalMainInventory: true,
     );
   }
 

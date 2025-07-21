@@ -1,1366 +1,462 @@
-# 合成数ハンター システム設計書（持ち込みシステム対応版）
+# 合成数ハンター 要件定義書（修正版 v3）
 
-## 1. アプリ全体構成図
+## 1. 概要
 
-### 1.1 アーキテクチャ概要
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Presentation Layer                   │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Battle    │  │  Inventory  │  │ Achievement │     │
-│  │   Screen    │  │   Screen    │  │   Screen    │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Stage     │  │   Setup     │  │   Timer     │     │
-│  │ Selection   │  │   Screen    │  │  Widget     │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-└─────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────┐
-│                     State Management                    │
-│             (Riverpod Providers & Notifiers)            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Battle    │  │  Inventory  │  │    Stage    │     │
-│  │  Provider   │  │  Provider   │  │  Provider   │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Setup     │  │   Timer     │  │ Achievement │     │
-│  │  Provider   │  │  Provider   │  │  Provider   │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-└─────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────┐
-│                    Business Logic Layer                 │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Battle    │  │  Inventory  │  │   Stage     │     │
-│  │   Engine    │  │  Manager    │  │  Manager    │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │   Setup     │  │   Timer     │  │  Victory    │     │
-│  │  Manager    │  │  Manager    │  │ Validator   │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-└─────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────┐
-│                      Data Layer                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
-│  │  Local DB   │  │ Preferences │  │   Models    │     │
-│  │  (SQLite)   │  │(SharedPrefs)│  │   (DTOs)    │     │
-│  └─────────────┘  └─────────────┘  └─────────────┘     │
-└─────────────────────────────────────────────────────────┘
-```
+### 1.1 プロダクト概要
 
-### 1.2 データフロー図（持ち込みシステム対応）
-```
-Stage Selection → Setup Screen → Battle → Restoration
-      ↓              ↓            ↓           ↓
-   Stage Info → Prime Selection → Combat → Full Recovery
-      ↓              ↓            ↓           ↓
-   Slot Limit → Battle Loadout → Timer → Original Inventory
-```
+**合成数ハンター**は、素因数分解を戦略的バトルゲームとして体験できるモバイルアプリケーションです。プレイヤーは素数を武器として合成数モンスターと戦い、勝利により新たな素数を獲得していく教育的エンターテイメントアプリです。
 
-## 2. 状態管理戦略（更新版）
+### 1.2 ターゲットユーザー
 
-### 2.1 Riverpod実装戦略（持ち込みシステム対応）
+- **主要ターゲット**: 中学生〜高校生（12-18 歳）
+- **副次ターゲット**: 数学に興味のある大人、教育関係者
+- **想定ユーザー数**: 初年度 1 万ダウンロード目標
 
-#### 状態管理パターン（更新版）
-```dart
-// 1. インベントリ状態 - StateNotifierProvider
-final inventoryProvider = StateNotifierProvider<InventoryNotifier, InventoryState>(
-  (ref) => InventoryNotifier(ref),
-);
+### 1.3 主要価値提案
 
-// 2. ステージ状態 - StateNotifierProvider  
-final stageProvider = StateNotifierProvider<StageNotifier, StageState>(
-  (ref) => StageNotifier(ref),
-);
+- 素因数分解の概念を直感的に理解できる
+- ゲーム要素により数学学習が楽しくなる
+- 戦略的思考力を育成できる
 
-// 3. 持ち込みセットアップ状態 - StateNotifierProvider
-final setupProvider = StateNotifierProvider<SetupNotifier, SetupState>(
-  (ref) => SetupNotifier(ref),
-);
+## 2. 機能要件
 
-// 4. 戦闘状態 - StateNotifierProvider（持ち込み素数のみ使用）
-final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>(
-  (ref) => BattleNotifier(ref),
-);
+### 2.1 ステージシステム（FR001-FR010）
 
-// 5. 持ち込み制限チェック - Provider (computed)
-final canAddToBattleLoadoutProvider = Provider<bool>((ref) {
-  final setup = ref.watch(setupProvider);
-  final stage = ref.watch(stageProvider);
-  return setup.selectedPrimes.length < stage.currentStage.slotLimit;
-});
+#### FR001: ステージ選択機能
 
-// 6. 戦闘可能チェック - Provider (computed)
-final canStartBattleProvider = Provider<bool>((ref) {
-  final setup = ref.watch(setupProvider);
-  return setup.selectedPrimes.isNotEmpty;
-});
-```
+- **概要**: プレイヤーが挑戦するステージを選択する
+- **ステージ構成**: 難易度別に複数のステージを用意
+- **解放条件**: 前のステージクリアで次ステージが解放
+- **持込制限**: 各ステージごとに持ち込み可能なアイテム数が設定
+- **表示情報**: ステージ難易度、推奨レベル、持込制限数、報酬プレビュー
 
-#### プロバイダー階層（持ち込みシステム対応）
-```
-App Level Providers:
-├── gameDataProvider (永続化データ)
-├── settingsProvider (アプリ設定)
-├── achievementProvider (実績管理)
-└── globalTimerProvider (アプリ全体タイマー)
+#### FR002: アイテム選択画面
 
-Game Flow Providers:
-├── stageProvider (ステージ管理・スロット制限)
-├── inventoryProvider (永続的な素数管理)
-├── setupProvider (持ち込み選択管理)
-└── battleProvider (戦闘状態・持ち込み素数のみ)
+- **概要**: ステージ選択後、バトルで使用するアイテムを選択
+- **制限**: ステージごとに決められた数のアイテムのみ選択可能
+- **表示**: 所持アイテム一覧から持込制限数分を選択
+- **確認**: 選択したアイテムの確認画面
+- **キャンセル**: ステージ選択に戻る機能
 
-Battle Specific Providers:
-├── timerProvider (制限時間管理)
-├── victoryValidationProvider (勝利判定)
-├── enemyProvider (敵生成・累乗敵含む)
-└── restoreProvider (戦闘終了後復元)
+#### FR003: 初期アイテム配布
 
-UI Level Providers:
-├── animationProvider (アニメーション状態)
-├── penaltyDisplayProvider (ペナルティ表示)
-└── uiStateProvider (UI表示状態)
-```
+- **初期配布**: 素数「2」を 3 個、「3」を 2 個付与
+- **チュートリアル**: 段階的なアイテム追加配布
+- **配布記録**: 獲得履歴の管理
 
-## 3. ディレクトリ構造（更新版）
+### 2.2 戦闘システム（FR011-FR020）
 
-### 3.1 全体構造（持ち込みシステム対応）
-```
-lib/
-├── main.dart
-├── app.dart
-│
-├── core/                     # 共通機能
-│   ├── constants/
-│   │   ├── app_constants.dart
-│   │   ├── game_constants.dart
-│   │   ├── stage_constants.dart    # 新規：ステージスロット制限
-│   │   ├── timer_constants.dart
-│   │   └── ui_constants.dart
-│   ├── exceptions/
-│   │   ├── game_exception.dart
-│   │   ├── setup_exception.dart    # 新規：持ち込み設定例外
-│   │   ├── stage_exception.dart    # 新規：ステージ例外
-│   │   ├── timer_exception.dart
-│   │   ├── victory_exception.dart
-│   │   └── data_exception.dart
-│   ├── extensions/
-│   │   ├── int_extensions.dart
-│   │   ├── list_extensions.dart
-│   │   ├── prime_extensions.dart   # 新規：持ち込み用拡張
-│   │   └── duration_extensions.dart
-│   ├── utils/
-│   │   ├── math_utils.dart
-│   │   ├── setup_utils.dart        # 新規：持ち込み設定ユーティリティ
-│   │   ├── stage_utils.dart        # 新規：ステージユーティリティ
-│   │   ├── timer_utils.dart
-│   │   ├── validation_utils.dart
-│   │   └── logger.dart
-│   └── di/
-│       └── injection.dart
-│
-├── data/                     # データレイヤー
-│   ├── models/
-│   │   ├── prime_model.dart
-│   │   ├── enemy_model.dart
-│   │   ├── power_enemy_model.dart
-│   │   ├── stage_model.dart        # 新規：ステージ情報
-│   │   ├── battle_loadout_model.dart # 新規：持ち込み構成
-│   │   ├── battle_result_model.dart
-│   │   ├── timer_state_model.dart
-│   │   ├── penalty_record_model.dart
-│   │   └── game_data_model.dart
-│   ├── repositories/
-│   │   ├── game_repository.dart
-│   │   ├── inventory_repository.dart
-│   │   ├── stage_repository.dart   # 新規：ステージデータ管理
-│   │   ├── setup_repository.dart   # 新規：持ち込み設定管理
-│   │   ├── battle_repository.dart
-│   │   ├── timer_repository.dart
-│   │   └── achievement_repository.dart
-│   ├── datasources/
-│   │   ├── local_database.dart
-│   │   ├── shared_preferences_service.dart
-│   │   └── file_storage_service.dart
-│   └── mappers/
-│       ├── prime_mapper.dart
-│       ├── enemy_mapper.dart
-│       ├── stage_mapper.dart       # 新規：ステージマッパー
-│       ├── setup_mapper.dart       # 新規：持ち込み設定マッパー
-│       ├── battle_mapper.dart
-│       └── timer_mapper.dart
-│
-├── domain/                   # ビジネスロジック層
-│   ├── entities/
-│   │   ├── prime.dart
-│   │   ├── enemy.dart
-│   │   ├── power_enemy.dart
-│   │   ├── stage.dart              # 新規：ステージエンティティ
-│   │   ├── battle_loadout.dart     # 新規：持ち込み構成エンティティ
-│   │   ├── battle_state.dart       # 更新：持ち込み素数のみ管理
-│   │   ├── timer_state.dart
-│   │   ├── penalty_state.dart
-│   │   ├── victory_claim.dart
-│   │   └── inventory.dart          # 更新：非消費型インベントリ
-│   ├── usecases/
-│   │   ├── battle_usecase.dart     # 更新：持ち込み素数のみ使用
-│   │   ├── inventory_usecase.dart  # 更新：非消費型管理
-│   │   ├── stage_usecase.dart      # 新規：ステージ管理
-│   │   ├── setup_usecase.dart      # 新規：持ち込み設定管理
-│   │   ├── enemy_generation_usecase.dart
-│   │   ├── timer_management_usecase.dart
-│   │   ├── victory_validation_usecase.dart
-│   │   └── penalty_calculation_usecase.dart
-│   ├── repositories/
-│   │   └── game_repository_interface.dart
-│   └── services/
-│       ├── battle_engine.dart      # 更新：持ち込み素数制限
-│       ├── setup_manager.dart      # 新規：持ち込み選択管理
-│       ├── stage_manager.dart      # 新規：ステージ管理
-│       ├── restore_manager.dart    # 新規：戦闘後復元管理
-│       ├── prime_calculator.dart
-│       ├── enemy_generator.dart
-│       ├── power_enemy_detector.dart
-│       ├── timer_manager.dart
-│       ├── victory_validator.dart
-│       └── penalty_calculator.dart
-│
-├── presentation/             # プレゼンテーション層
-│   ├── providers/
-│   │   ├── battle_provider.dart    # 更新：持ち込み素数のみ
-│   │   ├── inventory_provider.dart # 更新：非消費型
-│   │   ├── stage_provider.dart     # 新規：ステージ管理
-│   │   ├── setup_provider.dart     # 新規：持ち込み設定
-│   │   ├── enemy_provider.dart
-│   │   ├── timer_provider.dart
-│   │   ├── victory_provider.dart
-│   │   ├── penalty_provider.dart
-│   │   ├── game_provider.dart
-│   │   └── ui_state_provider.dart
-│   ├── screens/
-│   │   ├── splash/
-│   │   │   └── splash_screen.dart
-│   │   ├── tutorial/
-│   │   │   ├── tutorial_screen.dart
-│   │   │   └── widgets/
-│   │   │       ├── timer_tutorial_widget.dart
-│   │   │       ├── setup_tutorial_widget.dart # 新規：持ち込み説明
-│   │   │       └── victory_tutorial_widget.dart
-│   │   ├── stage/                  # 新規：ステージ選択
-│   │   │   ├── stage_selection_screen.dart
-│   │   │   └── widgets/
-│   │   │       ├── stage_card_widget.dart
-│   │   │       └── stage_info_widget.dart
-│   │   ├── setup/                  # 新規：持ち込み設定
-│   │   │   ├── setup_screen.dart
-│   │   │   └── widgets/
-│   │   │       ├── prime_selector_widget.dart
-│   │   │       ├── loadout_display_widget.dart
-│   │   │       ├── slot_limit_widget.dart
-│   │   │       └── start_battle_button.dart
-│   │   ├── battle/
-│   │   │   ├── battle_screen.dart  # 更新：持ち込み素数のみ表示
-│   │   │   └── widgets/
-│   │   │       ├── enemy_widget.dart
-│   │   │       ├── power_enemy_widget.dart
-│   │   │       ├── loadout_grid_widget.dart # 更新：持ち込み素数グリッド
-│   │   │       ├── timer_widget.dart
-│   │   │       ├── victory_claim_button.dart
-│   │   │       ├── action_buttons_widget.dart
-│   │   │       └── battle_animation_widget.dart
-│   │   ├── inventory/
-│   │   │   ├── inventory_screen.dart # 更新：全素数表示（非消費）
-│   │   │   └── widgets/
-│   │   │       ├── prime_list_widget.dart
-│   │   │       └── prime_detail_widget.dart
-│   │   └── achievement/
-│   │       ├── achievement_screen.dart
-│   │       └── widgets/
-│   ├── widgets/
-│   │   ├── common/
-│   │   │   ├── custom_button.dart
-│   │   │   ├── timer_display.dart
-│   │   │   ├── penalty_indicator.dart
-│   │   │   ├── slot_indicator.dart  # 新規：スロット数表示
-│   │   │   ├── loading_widget.dart
-│   │   │   └── error_widget.dart
-│   │   ├── animations/
-│   │   │   ├── number_change_animation.dart
-│   │   │   ├── attack_effect_animation.dart
-│   │   │   ├── victory_animation.dart
-│   │   │   ├── penalty_animation.dart
-│   │   │   ├── restore_animation.dart # 新規：復元アニメーション
-│   │   │   └── power_enemy_animation.dart
-│   │   └── dialogs/
-│   │       ├── battle_result_dialog.dart
-│   │       ├── victory_validation_dialog.dart
-│   │       ├── penalty_warning_dialog.dart
-│   │       ├── stage_complete_dialog.dart # 新規：ステージクリア
-│   │       └── confirmation_dialog.dart
-│   ├── theme/
-│   │   ├── app_theme.dart
-│   │   ├── colors.dart
-│   │   ├── text_styles.dart
-│   │   └── dimensions.dart
-│   └── routes/
-│       ├── app_router.dart         # 更新：新画面対応
-│       └── route_names.dart
-│
-└── test/                     # テスト
-    ├── unit/
-    │   ├── setup_manager_test.dart # 新規：持ち込み設定テスト
-    │   ├── stage_manager_test.dart # 新規：ステージ管理テスト
-    │   ├── restore_manager_test.dart # 新規：復元機能テスト
-    │   ├── timer_test.dart
-    │   ├── victory_validator_test.dart
-    │   └── power_enemy_test.dart
-    ├── widget/
-    └── integration/
-```
+#### FR011: 基本攻撃機能
 
-## 4. 主要クラス設計（持ち込みシステム対応）
+- **概要**: 選択したアイテム（素数）で合成数敵を攻撃する
+- **使用制限**: ステージ開始時に選択したアイテムのみ使用可能
+- **入力**: バトル用アイテムから使用する素数の選択
+- **成功条件**: 敵の数値を選択した素数で除算可能
+- **失敗条件**: 敵の数値が選択した素数で割り切れない
+- **素数攻撃失敗**: すでに素数となっている敵への攻撃は全て失敗
+- **消費システム**: 攻撃成功/失敗に関わらず、使用したアイテムはバトル用在庫から 1 減算
 
-### 4.1 新規ドメイン層クラス
+#### FR012: 勝利判定機能
 
-#### Stage エンティティ（新規）
-```dart
-class Stage {
-  final int stageNumber;
-  final String name;
-  final String description;
-  final int slotLimit;          // 持ち込み素数の上限数
-  final int baseTimeSeconds;    // 基本制限時間
-  final StageType type;
-  final StageDifficulty difficulty;
-  final List<StageReward> rewards;
-  final bool isUnlocked;
-  
-  const Stage({
-    required this.stageNumber,
-    required this.name,
-    required this.description,
-    required this.slotLimit,
-    required this.baseTimeSeconds,
-    required this.type,
-    required this.difficulty,
-    required this.rewards,
-    this.isUnlocked = false,
-  });
-  
-  bool canChallenge(List<Prime> inventory) {
-    return isUnlocked && inventory.length >= slotLimit;
-  }
-  
-  Stage copyWith({
-    int? stageNumber,
-    String? name,
-    String? description,
-    int? slotLimit,
-    int? baseTimeSeconds,
-    StageType? type,
-    StageDifficulty? difficulty,
-    List<StageReward>? rewards,
-    bool? isUnlocked,
-  });
-}
+- **概要**: 敵が素数になったとユーザーが判断した時点で勝利宣言
+- **判定方法**: ユーザーが「勝利宣言」ボタンを押下
+- **正解時**: 最後に残った素数を獲得、その敵を撃破
+- **誤判定時**: 制限時間から 10 秒減算、「まだ合成数です。続けてください」と表示
+- **教育効果**: ユーザー自身が素数を見極める力を養成
 
-enum StageType { tutorial, normal, challenge, special }
-enum StageDifficulty { easy, normal, hard, extreme }
+#### FR013: リタイア機能
 
-class StageReward {
-  final RewardType type;
-  final int value;
-  final int count;
-  
-  const StageReward({
-    required this.type,
-    required this.value,
-    this.count = 1,
-  });
-}
+- **概要**: 戦略的にステージから撤退する
+- **実行**: いつでもリタイア可能
+- **ペナルティ**: 獲得済みアイテムの没収（ステージ開始前の状態に戻る）
 
-enum RewardType { prime, achievement, unlockStage }
-```
+#### FR014: 制限時間システム
 
-#### BattleLoadout エンティティ（新規）
-```dart
-class BattleLoadout {
-  final List<Prime> selectedPrimes;
-  final int maxSlots;
-  final Stage targetStage;
-  final DateTime createdAt;
-  
-  const BattleLoadout({
-    required this.selectedPrimes,
-    required this.maxSlots,
-    required this.targetStage,
-    required this.createdAt,
-  });
-  
-  bool get isFull => selectedPrimes.length >= maxSlots;
-  bool get isEmpty => selectedPrimes.isEmpty;
-  bool get canStartBattle => selectedPrimes.isNotEmpty;
-  
-  int get remainingSlots => maxSlots - selectedPrimes.length;
-  
-  BattleLoadout addPrime(Prime prime) {
-    if (isFull) {
-      throw SetupException('Cannot add more primes. Loadout is full.');
-    }
-    
-    return copyWith(
-      selectedPrimes: [...selectedPrimes, prime],
-    );
-  }
-  
-  BattleLoadout removePrime(Prime prime) {
-    final newPrimes = List<Prime>.from(selectedPrimes);
-    newPrimes.remove(prime);
-    
-    return copyWith(selectedPrimes: newPrimes);
-  }
-  
-  BattleLoadout usePrime(Prime prime) {
-    final primeIndex = selectedPrimes.indexWhere((p) => p.value == prime.value);
-    if (primeIndex == -1) {
-      throw SetupException('Prime ${prime.value} not found in loadout');
-    }
-    
-    final newPrimes = List<Prime>.from(selectedPrimes);
-    final usedPrime = newPrimes[primeIndex];
-    
-    if (usedPrime.count > 1) {
-      // 複数個持っている場合は1個減らす
-      newPrimes[primeIndex] = usedPrime.copyWith(count: usedPrime.count - 1);
-    } else {
-      // 1個の場合は削除
-      newPrimes.removeAt(primeIndex);
-    }
-    
-    return copyWith(selectedPrimes: newPrimes);
-  }
-  
-  BattleLoadout restoreAll() {
-    // 戦闘終了後、全素数を元の状態に復元
-    // 実際の復元処理はSetupManagerで行う
-    return this;
-  }
-  
-  BattleLoadout copyWith({
-    List<Prime>? selectedPrimes,
-    int? maxSlots,
-    Stage? targetStage,
-    DateTime? createdAt,
-  });
-}
-```
+- **小さな敵（6-20）**: 30 秒
+- **中程度（21-100）**: 60 秒
+- **大きな敵（101-1000）**: 90 秒
+- **時間切れ**: 自動的にリタイア扱い、獲得アイテム没収
 
-#### Inventory エンティティ（更新版：非消費型）
-```dart
-class Inventory {
-  final List<Prime> primes;
-  final DateTime lastUpdated;
-  
-  const Inventory({
-    required this.primes,
-    required this.lastUpdated,
-  });
-  
-  // 非消費型：素数は戦闘で使用されても在庫から消えない
-  bool hasPrime(int value) {
-    return primes.any((prime) => prime.value == value && prime.count > 0);
-  }
-  
-  Prime? getPrime(int value) {
-    try {
-      return primes.firstWhere((prime) => prime.value == value);
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  // 持ち込み可能な素数のリスト（count > 0のもの）
-  List<Prime> get availablePrimes {
-    return primes.where((prime) => prime.count > 0).toList();
-  }
-  
-  // 新しい素数を追加（勝利報酬など）
-  Inventory addPrime(Prime newPrime) {
-    final existingIndex = primes.indexWhere(
-      (prime) => prime.value == newPrime.value
-    );
-    
-    if (existingIndex != -1) {
-      final updatedPrimes = List<Prime>.from(primes);
-      updatedPrimes[existingIndex] = primes[existingIndex].copyWith(
-        count: primes[existingIndex].count + newPrime.count,
-      );
-      return copyWith(primes: updatedPrimes);
-    } else {
-      return copyWith(primes: [...primes, newPrime]);
-    }
-  }
-  
-  // 戦闘では使用されないメソッド（非消費型のため）
-  // Inventory usePrime(Prime prime) は削除
-  
-  int get totalPrimes => primes.fold(0, (sum, prime) => sum + prime.count);
-  int get uniquePrimes => primes.length;
-  
-  Inventory copyWith({
-    List<Prime>? primes,
-    DateTime? lastUpdated,
-  });
-}
-```
+#### FR015: 連続戦闘システム
 
-### 4.2 更新されたBattleState エンティティ
+- **概要**: ステージ内で複数の敵と連続戦闘
+- **敵数**: ステージごとに設定された敵数
+- **難易度**: 持込アイテムと敵の組み合わせでバランス調整
+- **中断不可**: ステージ途中での中断は不可（リタイアのみ）
 
-```dart
-class BattleState {
-  final Enemy? currentEnemy;
-  final BattleLoadout? loadout;     // 変更：持ち込み素数管理
-  final List<Prime> usedPrimes;     // 戦闘中に使用した素数（復元用）
-  final BattleStatus status;
-  final int turnCount;
-  final DateTime? battleStartTime;
-  final TimerState? timerState;
-  final VictoryClaim? victoryClaim;
-  final List<TimePenalty> battlePenalties;
-  final Stage? currentStage;        // 新規：現在のステージ
-  
-  const BattleState({
-    this.currentEnemy,
-    this.loadout,
-    this.usedPrimes = const [],
-    this.status = BattleStatus.waiting,
-    this.turnCount = 0,
-    this.battleStartTime,
-    this.timerState,
-    this.victoryClaim,
-    this.battlePenalties = const [],
-    this.currentStage,
-  });
-  
-  // 持ち込み素数のみ使用可能
-  bool canUsePrime(Prime prime) {
-    if (loadout == null || timerState?.isExpired == true) return false;
-    return loadout!.selectedPrimes.any((p) => p.value == prime.value && p.count > 0);
-  }
-  
-  // 戦闘可能性チェック（持ち込み素数の有無）
-  bool get canFight {
-    return loadout != null && 
-           loadout!.selectedPrimes.isNotEmpty && 
-           timerState?.isActive == true && 
-           !timerState!.isExpired;
-  }
-  
-  bool get canClaimVictory {
-    return currentEnemy != null && 
-           timerState?.isActive == true && 
-           !timerState!.isExpired;
-  }
-  
-  BattleState usePrime(Prime prime) {
-    if (loadout == null) return this;
-    
-    return copyWith(
-      loadout: loadout!.usePrime(prime),
-      usedPrimes: [...usedPrimes, prime],
-      turnCount: turnCount + 1,
-    );
-  }
-  
-  // 戦闘終了後の復元処理
-  BattleState restoreLoadout() {
-    if (loadout == null) return this;
-    
-    // SetupManagerを通じて元の持ち込み構成に復元
-    return copyWith(
-      loadout: loadout!.restoreAll(),
-      usedPrimes: [],
-    );
-  }
-  
-  BattleState copyWith({
-    Enemy? currentEnemy,
-    BattleLoadout? loadout,
-    List<Prime>? usedPrimes,
-    BattleStatus? status,
-    int? turnCount,
-    DateTime? battleStartTime,
-    TimerState? timerState,
-    VictoryClaim? victoryClaim,
-    List<TimePenalty>? battlePenalties,
-    Stage? currentStage,
-  });
-}
-```
+### 2.3 アイテム獲得・管理システム（FR021-FR030）
 
-### 4.3 新規ビジネスロジック層クラス
+#### FR021: 戦闘報酬システム
 
-#### SetupManager サービス（新規）
-```dart
-class SetupManager {
-  late BattleLoadout _currentLoadout;
-  late List<Prime> _originalSelection; // 復元用の元データ
-  
-  BattleLoadout createLoadout(Stage stage, List<Prime> selectedPrimes) {
-    if (selectedPrimes.length > stage.slotLimit) {
-      throw SetupException(
-        'Too many primes selected. Limit: ${stage.slotLimit}, Selected: ${selectedPrimes.length}'
-      );
-    }
-    
-    _originalSelection = List<Prime>.from(selectedPrimes);
-    _currentLoadout = BattleLoadout(
-      selectedPrimes: selectedPrimes,
-      maxSlots: stage.slotLimit,
-      targetStage: stage,
-      createdAt: DateTime.now(),
-    );
-    
-    return _currentLoadout;
-  }
-  
-  SetupValidationResult validateSelection(
-    Stage stage, 
-    List<Prime> selectedPrimes,
-    List<Prime> inventory
-  ) {
-    // スロット制限チェック
-    if (selectedPrimes.length > stage.slotLimit) {
-      return SetupValidationResult.invalid(
-        'スロット制限を超えています (${selectedPrimes.length}/${stage.slotLimit})'
-      );
-    }
-    
-    // 空の選択チェック
-    if (selectedPrimes.isEmpty) {
-      return SetupValidationResult.invalid('素数を1つ以上選択してください');
-    }
-    
-    // インベントリ存在チェック
-    for (final selectedPrime in selectedPrimes) {
-      final inventoryPrime = inventory.firstWhere(
-        (p) => p.value == selectedPrime.value,
-        orElse: () => const Prime(value: 0, count: 0, firstObtained: DateTime.now()),
-      );
-      
-      if (inventoryPrime.count < selectedPrime.count) {
-        return SetupValidationResult.invalid(
-          '素数${selectedPrime.value}の所持数が不足しています'
-        );
-      }
-    }
-    
-    return SetupValidationResult.valid();
-  }
-  
-  BattleLoadout addPrimeToLoadout(Prime prime) {
-    if (_currentLoadout.isFull) {
-      throw SetupException('持ち込みスロットが満杯です');
-    }
-    
-    _currentLoadout = _currentLoadout.addPrime(prime);
-    return _currentLoadout;
-  }
-  
-  BattleLoadout removePrimeFromLoadout(Prime prime) {
-    _currentLoadout = _currentLoadout.removePrime(prime);
-    return _currentLoadout;
-  }
-  
-  // 戦闘終了後の復元処理
-  BattleLoadout restoreOriginalLoadout() {
-    _currentLoadout = _currentLoadout.copyWith(
-      selectedPrimes: List<Prime>.from(_originalSelection),
-    );
-    return _currentLoadout;
-  }
-  
-  BattleLoadout get currentLoadout => _currentLoadout;
-  List<Prime> get originalSelection => List<Prime>.from(_originalSelection);
-}
+- **概要**: 敵を倒すことで素数アイテムを獲得
+- **獲得タイミング**: 勝利宣言成功時に最後に残った素数を獲得
+- **仮獲得**: ステージ中の獲得アイテムは仮状態で管理
+- **確定条件**: ステージクリア時に所持アイテムに正式追加
+- **没収条件**: タイムオーバー・リタイア時は仮獲得アイテムを没収
 
-class SetupValidationResult {
-  final bool isValid;
-  final String? errorMessage;
-  
-  const SetupValidationResult._(this.isValid, this.errorMessage);
-  
-  const SetupValidationResult.valid() : this._(true, null);
-  const SetupValidationResult.invalid(String message) : this._(false, message);
-}
-```
+#### FR022: アイテム在庫管理
 
-#### StageManager サービス（新規）
-```dart
-class StageManager {
-  static const List<Stage> _defaultStages = [
-    Stage(
-      stageNumber: 1,
-      name: 'チュートリアル',
-      description: '基本的な戦闘を学ぼう',
-      slotLimit: 3,
-      baseTimeSeconds: 60,
-      type: StageType.tutorial,
-      difficulty: StageDifficulty.easy,
-      rewards: [
-        StageReward(type: RewardType.prime, value: 7),
-        StageReward(type: RewardType.unlockStage, value: 2),
-      ],
-      isUnlocked: true,
-    ),
-    Stage(
-      stageNumber: 2,
-      name: '初級バトル',
-      description: '小さな合成数を倒そう',
-      slotLimit: 4,
-      baseTimeSeconds: 90,
-      type: StageType.normal,
-      difficulty: StageDifficulty.easy,
-      rewards: [
-        StageReward(type: RewardType.prime, value: 11),
-        StageReward(type: RewardType.unlockStage, value: 3),
-      ],
-      isUnlocked: false,
-    ),
-    Stage(
-      stageNumber: 3,
-      name: '中級バトル',
-      description: '中程度の敵に挑戦',
-      slotLimit: 5,
-      baseTimeSeconds: 120,
-      type: StageType.normal,
-      difficulty: StageDifficulty.normal,
-      rewards: [
-        StageReward(type: RewardType.prime, value: 13),
-        StageReward(type: RewardType.prime, value: 17),
-        StageReward(type: RewardType.unlockStage, value: 4),
-      ],
-      isUnlocked: false,
-    ),
-    Stage(
-      stageNumber: 4,
-      name: '上級バトル',
-      description: '大きな合成数との戦い',
-      slotLimit: 6,
-      baseTimeSeconds: 150,
-      type: StageType.normal,
-      difficulty: StageDifficulty.hard,
-      rewards: [
-        StageReward(type: RewardType.prime, value: 19),
-        StageReward(type: RewardType.prime, value: 23),
-        StageReward(type: RewardType.unlockStage, value: 5),
-      ],
-      isUnlocked: false,
-    ),
-    Stage(
-      stageNumber: 5,
-      name: '累乗敵チャレンジ',
-      description: '特殊な累乗敵との戦い',
-      slotLimit: 7,
-      baseTimeSeconds: 180,
-      type: StageType.challenge,
-      difficulty: StageDifficulty.extreme,
-      rewards: [
-        StageReward(type: RewardType.prime, value: 29, count: 2),
-        StageReward(type: RewardType.prime, value: 31, count: 2),
-      ],
-      isUnlocked: false,
-    ),
-  ];
-  
-  List<Stage> getAllStages() => List<Stage>.from(_defaultStages);
-  
-  List<Stage> getUnlockedStages() {
-    return _defaultStages.where((stage) => stage.isUnlocked).toList();
-  }
-  
-  Stage? getStage(int stageNumber) {
-    try {
-      return _defaultStages.firstWhere((stage) => stage.stageNumber == stageNumber);
-    } catch (e) {
-      return null;
-    }
-  }
-  
-  bool canChallengeStage(Stage stage, List<Prime> inventory) {
-    return stage.isUnlocked && 
-           inventory.where((p) => p.count > 0).length >= stage.slotLimit;
-  }
-  
-  Stage unlockStage(int stageNumber) {
-    final stageIndex = _defaultStages.indexWhere(
-      (stage) => stage.stageNumber == stageNumber
-    );
-    
-    if (stageIndex == -1) {
-      throw StageException('Stage $stageNumber not found');
-    }
-    
-    return _defaultStages[stageIndex].copyWith(isUnlocked: true);
-  }
-  
-  List<StageReward> calculateRewards(Stage stage, BattleResult result) {
-    return result.when(
-      victory: (_, rewardPrime) => [
-        ...stage.rewards,
-        StageReward(type: RewardType.prime, value: rewardPrime),
-      ],
-      powerVictory: (_, rewardPrime, count) => [
-        ...stage.rewards,
-        StageReward(type: RewardType.prime, value: rewardPrime, count: count),
-      ],
-      // 他のケースでは基本報酬のみ
-      escape: (_) => [],
-      timeOut: (_) => [],
-      wrongClaim: (_, __) => [],
-      continue_: (_, __) => [],
-      awaitingVictoryClaim: (_, __) => [],
-      error: (_) => [],
-    );
-  }
-}
-```
+- **所持アイテム**: プレイヤーの恒久的なアイテム在庫
+- **バトル用アイテム**: ステージで使用可能なアイテム（一時的）
+- **使用可能性**: バトル用アイテムのみが戦闘で使用可能
+- **次回利用**: 新たに獲得したアイテムは次のステージから使用可能
 
-#### RestoreManager サービス（新規）
-```dart
-class RestoreManager {
-  // 戦闘終了後の自動復元処理
-  Future<RestoreResult> restoreAfterBattle(
-    BattleState battleState,
-    Inventory originalInventory,
-  ) async {
-    try {
-      // アニメーション再生
-      await _playRestoreAnimation();
-      
-      // 持ち込み素数を元の状態に復元
-      final restoredLoadout = battleState.loadout?.restoreAll();
-      
-      // インベントリは変更なし（非消費型のため）
-      final restoredInventory = originalInventory;
-      
-      // 復元完了状態を作成
-      final restoredState = battleState.copyWith(
-        loadout: restoredLoadout,
-        usedPrimes: [],
-        status: BattleStatus.waiting,
-      );
-      
-      return RestoreResult.success(
-        restoredState: restoredState,
-        restoredInventory: restoredInventory,
-        message: '素数が復元されました',
-      );
-      
-    } catch (e) {
-      return RestoreResult.failure('復元に失敗しました: ${e.toString()}');
-    }
-  }
-  
-  Future<void> _playRestoreAnimation() async {
-    // 復元アニメーション実装
-    await Future.delayed(const Duration(milliseconds: 1000));
-  }
-}
+#### FR023: ステージクリア報酬
 
-@freezed
-class RestoreResult with _$RestoreResult {
-  const factory RestoreResult.success({
-    required BattleState restoredState,
-    required Inventory restoredInventory,
-    required String message,
-  }) = _RestoreSuccess;
-  
-  const factory RestoreResult.failure(String message) = _RestoreFailure;
-}
-```
+- **成功時**: 所持アイテム = ステージ開始前アイテム + 獲得アイテム
+- **失敗時**: 所持アイテム = ステージ開始前アイテム（獲得分没収）
+- **表示**: クリア後の獲得アイテムと最終在庫の表示
 
-### 4.4 更新されたプレゼンテーション層クラス
+#### FR024: アイテムインベントリ機能
 
-#### SetupNotifier (Riverpod)（新規）
-```dart
-class SetupNotifier extends StateNotifier<SetupState> {
-  final SetupManager _setupManager;
-  final StageManager _stageManager;
-  final Ref _ref;
-  
-  SetupNotifier(this._setupManager, this._stageManager, this._ref) 
-    : super(const SetupState());
-  
-  void initializeSetup(Stage stage) {
-    state = state.copyWith(
-      targetStage: stage,
-      maxSlots: stage.slotLimit,
-      selectedPrimes: [],
-      isValid: false,
-    );
-  }
-  
-  void addPrimeToLoadout(Prime prime) {
-    final inventory = _ref.read(inventoryProvider);
-    
-    // 選択可能性チェック
-    if (state.selectedPrimes.length >= state.maxSlots) {
-      state = state.copyWith(
-        errorMessage: 'スロット上限に達しています (${state.maxSlots}個)',
-      );
-      return;
-    }
-    
-    // インベントリ存在チェック
-    if (!inventory.hasPrime(prime.value)) {
-      state = state.copyWith(
-        errorMessage: '素数${prime.value}を所持していません',
-      );
-      return;
-    }
-    
-    try {
-      final newSelection = [...state.selectedPrimes, prime];
-      final validation = _setupManager.validateSelection(
-        state.targetStage!,
-        newSelection,
-        inventory.primes,
-      );
-      
-      if (validation.isValid) {
-        state = state.copyWith(
-          selectedPrimes: newSelection,
-          isValid: newSelection.isNotEmpty,
-          errorMessage: null,
-        );
-      } else {
-        state = state.copyWith(
-          errorMessage: validation.errorMessage,
-        );
-      }
-    } catch (e) {
-      state = state.copyWith(
-        errorMessage: e.toString(),
-      );
-    }
-  }
-  
-  void removePrimeFromLoadout(Prime prime) {
-    final newSelection = List<Prime>.from(state.selectedPrimes);
-    newSelection.remove(prime);
-    
-    state = state.copyWith(
-      selectedPrimes: newSelection,
-      isValid: newSelection.isNotEmpty,
-      errorMessage: null,
-    );
-  }
-  
-  BattleLoadout? createLoadout() {
-    if (!state.isValid || state.targetStage == null) return null;
-    
-    try {
-      final loadout = _setupManager.createLoadout(
-        state.targetStage!,
-        state.selectedPrimes,
-      );
-      
-      state = state.copyWith(
-        createdLoadout: loadout,
-        setupComplete: true,
-      );
-      
-      return loadout;
-    } catch (e) {
-      state = state.copyWith(
-        errorMessage: e.toString(),
-      );
-      return null;
-    }
-  }
-  
-  void resetSetup() {
-    state = const SetupState();
-  }
-}
+- **概要**: 獲得したアイテムを管理・表示する
+- **表示形式**: 数値と所持数の一覧
+- **ソート**: 数値順、獲得順、使用頻度順
+- **検索**: 特定の素数を素早く見つける
+- **状態表示**: 使用可能数の明確な表示
 
-@freezed
-class SetupState with _$SetupState {
-  const factory SetupState({
-    Stage? targetStage,
-    @Default([]) List<Prime> selectedPrimes,
-    @Default(0) int maxSlots,
-    @Default(false) bool isValid,
-    @Default(false) bool setupComplete,
-    BattleLoadout? createdLoadout,
-    String? errorMessage,
-  }) = _SetupState;
-}
-```
+#### FR025: 複数個所持機能
 
-#### 更新されたBattleNotifier（持ち込みシステム対応）
-```dart
-class BattleNotifier extends StateNotifier<BattleState> {
-  final BattleEngine _battleEngine;
-  final EnemyGenerator _enemyGenerator;
-  final TimerManager _timerManager;
-  final RestoreManager _restoreManager;
-  final Ref _ref;
-  
-  BattleNotifier(
-    this._battleEngine, 
-    this._enemyGenerator, 
-    this._timerManager,
-    this._restoreManager,
-    this._ref
-  ) : super(const BattleState()) {
-    _timerManager.timerStream.listen(_handleTimerUpdate);
-  }
-  
-  void startBattleWithLoadout(BattleLoadout loadout) {
-    final stage = loadout.targetStage;
-    
-    // 敵生成（ステージに応じた難易度）
-    final enemy = _enemyGenerator.generateEnemyForStage(stage);
-    
-    // タイマー開始（ステージの基本時間 - 前回ペナルティ）
-    final penaltyReduction = state.battlePenalties
-        .fold(0, (sum, penalty) => sum + penalty.seconds);
-    final adjustedTime = math.max(10, stage.baseTimeSeconds - penaltyReduction);
-    
-    _timerManager.startTimer(adjustedTime);
-    
-    state = state.copyWith(
-      currentEnemy: enemy,
-      loadout: loadout,
-      currentStage: stage,
-      status: BattleStatus.fighting,
-      battleStartTime: DateTime.now(),
-      turnCount: 0,
-      usedPrimes: [],
-      victoryClaim: null,
-    );
-  }
-  
-  Future<void> attack(Prime prime) async {
-    if (state.currentEnemy == null || 
-        state.timerState?.isExpired == true ||
-        !state.canUsePrime(prime)) {
-      return;
-    }
-    
-    final result = _battleEngine.executeAttack(state.currentEnemy!, prime);
-    
-    await result.when(
-      awaitingVictoryClaim: (newEnemy, usedPrime) async {
-        await _playAttackAnimation(usedPrime.value);
-        
-        // 持ち込み素数から使用（一時的に減らす）
-        state = state.copyWith(
-          currentEnemy: newEnemy,
-          loadout: state.loadout!.usePrime(usedPrime),
-          usedPrimes: [...state.usedPrimes, usedPrime],
-          turnCount: state.turnCount + 1,
-          status: BattleStatus.fighting,
-        );
-      },
-      continue_: (newEnemy, usedPrime) async {
-        await _playAttackAnimation(usedPrime.value);
-        
-        state = state.copyWith(
-          currentEnemy: newEnemy,
-          loadout: state.loadout!.usePrime(usedPrime),
-          usedPrimes: [...state.usedPrimes, usedPrime],
-          turnCount: state.turnCount + 1,
-        );
-      },
-      error: (message) {
-        _showError(message);
-      },
-      // 他のケースは後続処理で使用
-      victory: (_, __) => {},
-      powerVictory: (_, __, ___) => {},
-      wrongClaim: (_, __) => {},
-      escape: (_) => {},
-      timeOut: (_) => {},
-    );
-  }
-  
-  Future<void> claimVictory() async {
-    if (state.currentEnemy == null || !state.canClaimVictory) return;
-    
-    final result = _battleEngine.processVictoryClaim(
-      state.currentEnemy!, 
-      state.currentEnemy!.currentValue
-    );
-    
-    await result.when(
-      victory: (defeatedEnemy, rewardPrime) async {
-        await _playVictoryAnimation();
-        await _completeBattle(rewardPrime, 1);
-      },
-      powerVictory: (defeatedEnemy, rewardPrime, rewardCount) async {
-        await _playPowerVictoryAnimation();
-        await _completeBattle(rewardPrime, rewardCount);
-      },
-      wrongClaim: (penalty, currentEnemy) async {
-        await _playPenaltyAnimation();
-        _timerManager.applyPenalty(penalty);
-        
-        state = state.copyWith(
-          victoryClaim: VictoryClaim(
-            claimedValue: currentEnemy.currentValue,
-            claimedAt: DateTime.now(),
-            isCorrect: false,
-          ),
-          battlePenalties: [...state.battlePenalties, penalty],
-        );
-        
-        _showPenaltyMessage("まだ合成数です。続けてください");
-      },
-      // 他のケースは使用されない
-      awaitingVictoryClaim: (_, __) => {},
-      continue_: (_, __) => {},
-      error: (_) => {},
-      escape: (_) => {},
-      timeOut: (_) => {},
-    );
-  }
-  
-  Future<void> _completeBattle(int rewardPrime, int rewardCount) async {
-    // 勝利報酬をインベントリに追加
-    for (int i = 0; i < rewardCount; i++) {
-      _ref.read(inventoryProvider.notifier).addPrime(Prime(
-        value: rewardPrime,
-        count: 1,
-        firstObtained: DateTime.now(),
-      ));
-    }
-    
-    state = state.copyWith(
-      status: BattleStatus.victory,
-      victoryClaim: VictoryClaim(
-        claimedValue: state.currentEnemy!.currentValue,
-        claimedAt: DateTime.now(),
-        isCorrect: true,
-        rewardPrime: rewardPrime,
-      ),
-    );
-    
-    _timerManager.stopTimer();
-    
-    // 戦闘終了後の自動復元処理
-    await _restoreBattleLoadout();
-    
-    _ref.read(achievementProvider.notifier).checkAchievements();
-  }
-  
-  Future<void> _restoreBattleLoadout() async {
-    final originalInventory = _ref.read(inventoryProvider);
-    
-    final restoreResult = await _restoreManager.restoreAfterBattle(
-      state,
-      originalInventory,
-    );
-    
-    restoreResult.when(
-      success: (restoredState, restoredInventory, message) {
-        state = restoredState;
-        _showRestoreMessage(message);
-      },
-      failure: (message) {
-        _showError(message);
-      },
-    );
-  }
-  
-  void escape() {
-    final result = _battleEngine.processEscape();
-    
-    result.when(
-      escape: (penalty) async {
-        state = state.copyWith(
-          status: BattleStatus.escape,
-          battlePenalties: [...state.battlePenalties, penalty],
-        );
-        
-        _timerManager.stopTimer();
-        await _restoreBattleLoadout();
-        
-        // 新しい戦闘への遷移は画面レベルで制御
-      },
-      // 他のケースは使用されない
-      victory: (_, __) => {},
-      powerVictory: (_, __, ___) => {},
-      wrongClaim: (_, __) => {},
-      awaitingVictoryClaim: (_, __) => {},
-      continue_: (_, __) => {},
-      error: (_) => {},
-      timeOut: (_) => {},
-    );
-  }
-  
-  void _handleTimerUpdate(TimerState timerState) {
-    state = state.copyWith(timerState: timerState);
-    
-    if (timerState.isExpired && state.status == BattleStatus.fighting) {
-      final result = _battleEngine.processTimeOut();
-      
-      result.when(
-        timeOut: (penalty) async {
-          state = state.copyWith(
-            status: BattleStatus.timeOut,
-            battlePenalties: [...state.battlePenalties, penalty],
-          );
-          
-          await _restoreBattleLoadout();
-        },
-        // 他のケースは使用されない
-        victory: (_, __) => {},
-        powerVictory: (_, __, ___) => {},
-        wrongClaim: (_, __) => {},
-        awaitingVictoryClaim: (_, __) => {},
-        continue_: (_, __) => {},
-        error: (_) => {},
-        escape: (_) => {},
-      );
-    }
-  }
-  
-  // アニメーション・メッセージ関連メソッド
-  Future<void> _playAttackAnimation(int primeValue) async {
-    await Future.delayed(const Duration(milliseconds: 500));
-  }
-  
-  Future<void> _playVictoryAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 1000));
-  }
-  
-  Future<void> _playPowerVictoryAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 1500));
-  }
-  
-  Future<void> _playPenaltyAnimation() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-  }
-  
-  void _showError(String message) {
-    // エラー表示実装
-  }
-  
-  void _showPenaltyMessage(String message) {
-    // ペナルティメッセージ表示実装
-  }
-  
-  void _showRestoreMessage(String message) {
-    // 復元メッセージ表示実装
-  }
-  
-  @override
-  void dispose() {
-    _timerManager.dispose();
-    super.dispose();
-  }
-}
-```
+- **概要**: 同じ素数を複数個所持可能
+- **表示**: 所持数をバッジやゲージで表示
+- **管理**: アイテム選択時に使用数を指定
 
-### 4.5 プロバイダー定義（完全版）
+#### FR026: アイテム図鑑機能
 
-```dart
-// ==================== Core Providers ====================
-final setupManagerProvider = Provider<SetupManager>((ref) => SetupManager());
-final stageManagerProvider = Provider<StageManager>((ref) => StageManager());
-final restoreManagerProvider = Provider<RestoreManager>((ref) => RestoreManager());
+- **概要**: 全素数の収集状況を確認
+- **表示内容**: 素数値、獲得状況、初回獲得日時
+- **進捗表示**: 収集率をパーセンテージで表示
+- **豆知識**: 各素数に関する数学的情報
 
-// ==================== State Providers ====================
-final inventoryProvider = StateNotifierProvider<InventoryNotifier, Inventory>((ref) {
-  return InventoryNotifier(ref);
-});
+### 2.4 敵生成システム（FR031-FR040）
 
-final stageProvider = StateNotifierProvider<StageNotifier, StageState>((ref) {
-  return StageNotifier(ref.read(stageManagerProvider));
-});
+#### FR031: 合成数敵の生成
 
-final setupProvider = StateNotifierProvider<SetupNotifier, SetupState>((ref) {
-  return SetupNotifier(
-    ref.read(setupManagerProvider),
-    ref.read(stageManagerProvider),
-    ref,
-  );
-});
+- **概要**: ステージ設計に応じた合成数を生成
+- **範囲**: 初期 6〜12、最大 10,000 程度
+- **調整**: 持込制限とのバランスを考慮した設計
+- **種類**: 小さな合成数、中程度、大きな合成数
 
-final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>((ref) {
-  return BattleNotifier(
-    ref.read(battleEngineProvider),
-    ref.read(enemyGeneratorProvider),
-    ref.read(timerManagerProvider),
-    ref.read(restoreManagerProvider),
-    ref,
-  );
-});
+#### FR032: 敵の視覚化
 
-// ==================== Computed Providers ====================
-final canAddToBattleLoadoutProvider = Provider<bool>((ref) {
-  final setup = ref.watch(setupProvider);
-  return setup.selectedPrimes.length < setup.maxSlots;
-});
+- **概要**: 合成数をモンスターキャラクターとして表示
+- **デザイン**: 数値の大きさに応じた外見変化
+- **アニメーション**: 攻撃を受けた際のエフェクト
+- **状態表示**: 現在の数値を明確に表示
 
-final canStartBattleProvider = Provider<bool>((ref) {
-  final setup = ref.watch(setupProvider);
-  return setup.isValid && setup.selectedPrimes.isNotEmpty;
-});
+#### FR033: レア敵システム（累乗敵）
 
-final availablePrimesProvider = Provider<List<Prime>>((ref) {
-  final inventory = ref.watch(inventoryProvider);
-  return inventory.availablePrimes;
-});
+- **概要**: 素数の累乗が特別な敵として出現
+- **出現例**: 2³=8、3²=9、5²=25、2⁴=16、3³=27 など
+- **出現率**: 通常敵の 10%の確率で出現
+- **特別報酬**: 該当素数を累乗数分獲得（2³=8 を倒すと 2 を 3 個獲得）
+- **視覚的区別**: 特別なエフェクトや色で通常敵と区別
+- **難易度**: 通常の同数値敵と同等（累乗なので実際は攻略しやすい）
 
-final unlockedStagesProvider = Provider<List<Stage>>((ref) {
-  final stageState = ref.watch(stageProvider);
-  return stageState.stages.where((stage) => stage.isUnlocked).toList();
-});
+#### FR034: 敵タイプ分類
 
-final currentLoadoutInfoProvider = Provider<String>((ref) {
-  final setup = ref.watch(setupProvider);
-  return '${setup.selectedPrimes.length}/${setup.maxSlots}';
-});
+- **通常敵**: 複数の異なる素因数を持つ合成数
+- **累乗敵**: 単一素数の累乗（2²、3³、5² など）
+- **特殊敵**: 稀に出現する大きな素数を含む合成数
 
-// ==================== Stream Providers ====================
-final timerProvider = StreamProvider<TimerState>((ref) {
-  final timerManager = ref.read(timerManagerProvider);
-  return timerManager.timerStream;
-});
-```
+### 2.5 ユーザーインターフェース（FR041-FR050）
 
-## 5. 重要な設計判断（持ち込みシステム対応）
+#### FR041: ステージ選択画面
 
-### 5.1 非消費型インベントリの実装
-- **永続性**: 素数は戦闘で使用されても在庫から消失しない
-- **復元システム**: 戦闘終了時に持ち込み素数を自動復元
-- **教育的価値**: 試行錯誤を促進し、リソース枯渇による詰みを回避
+- **レイアウト**: ステージ一覧、難易度表示、持込制限情報
+- **情報表示**: 推奨レベル、敵数、制限時間、持込アイテム数
+- **進行状況**: クリア済み/未クリアの視覚的表示
 
-### 5.2 持ち込みシステムの設計原則
-- **事前選択**: ステージ挑戦前に戦略的な素数選択
-- **スロット制限**: ステージごとの持ち込み上限で難易度調整
-- **視覚的フィードバック**: UI で選択状態・制限を明確に表示
+#### FR042: アイテム選択画面
 
-### 5.3 ゲームフロー設計
-```
-ステージ選択 → 持ち込み設定 → 戦闘 → 自動復元 → 結果表示
-     ↓           ↓         ↓       ↓         ↓
-  制限確認 → 素数選択 → 制限使用 → 全復元 → 次ステージ解放
-```
+- **レイアウト**: 所持アイテム一覧、選択済みアイテム、制限数表示
+- **操作性**: タップで選択/解除、制限数に達すると選択不可
+- **確認機能**: 選択内容の最終確認画面
 
-### 5.4 新機能の統合性
-- **既存システム**: タイマー・勝利判定・累乗敵システムとの共存
-- **バランス調整**: スロット制限によるゲームバランス維持
-- **教育効果**: 戦略的思考と素数理解の促進
+#### FR043: メイン戦闘画面
 
-この設計により、ゲームの教育的価値を保ちながら、プレイヤーの詰み状態を回避し、より戦略的で楽しいゲーム体験を提供できます。持ち込みシステムにより、各ステージで異なる戦略を試すことができ、リプレイ価値も向上します。
+- **レイアウト**: 上部（敵表示）、中部（バトル用アイテム）、下部（操作ボタン）
+- **情報表示**: 現在の敵数値、残り時間、残りアイテム数
+- **操作性**: タップでアイテム選択、スワイプで詳細確認
+- **勝利宣言ボタン**: 目立つ位置に配置、素数判定用
+
+#### FR044: アイテム使用 UI
+
+- **表示**: バトル用アイテムの残数を明確に表示
+- **状態表示**: 使用可能/残数 0 の視覚的区別
+- **個数表示**: 各アイテムの残り使用可能数
+- **使用制限**: 残数 0 のアイテムは選択不可
+
+#### FR045: 戦闘アニメーション
+
+- **攻撃エフェクト**: 素数による攻撃の視覚的表現
+- **成功/失敗**: 攻撃結果の明確な視覚的フィードバック
+- **数値変化**: 敵の数値が変化する過程をアニメーション
+- **勝利演出**: 勝利時の祝福エフェクト
+- **累乗敵演出**: 特別な獲得アニメーション
+
+#### FR046: 結果表示画面
+
+- **クリア時**: 獲得したアイテム、戦闘時間、使用アイテム数
+- **失敗時**: 失敗理由、没収されたアイテム、再挑戦への案内
+- **統計**: 累計クリア率、獲得アイテム数
+
+#### FR047: 制限時間表示
+
+- **タイマー**: 見やすい位置に残り時間を表示
+- **警告**: 残り 10 秒で色変化・点滅
+- **ペナルティ表示**: リタイア・誤判定時の時間減算エフェクト
+
+### 2.6 チュートリアル（FR051-FR055）
+
+#### FR051: 基本システムチュートリアル
+
+- **内容**: ステージ選択、アイテム選択、基本戦闘の説明
+- **実践**: 実際の簡単なステージを通じた学習
+- **段階**: 5 つのステップに分けた段階的習得
+- **初期配布**: チュートリアル進行に応じてアイテムを追加配布
+
+#### FR052: 戦略学習チュートリアル
+
+- **内容**: 効率的なアイテム選択、攻撃順序の考え方
+- **例題**: 複数の攻略パターンの比較
+- **応用**: より大きな数への挑戦準備
+- **リスク管理**: 失敗時の没収システムの理解
+
+#### FR053: 累乗敵チュートリアル
+
+- **内容**: 累乗敵の特徴と攻略方法の説明
+- **実践**: 実際に累乗敵と戦闘
+- **報酬説明**: 複数アイテム獲得の仕組み
+
+### 2.7 進行管理（FR061-FR065）
+
+#### FR061: レベルシステム
+
+- **概要**: クリアステージ数とアイテム獲得数に応じたレベル上昇
+- **報酬**: レベルアップ時の特典（新ステージ解放等）
+- **表示**: 現在レベルと次レベルまでの進捗
+
+#### FR062: 実績システム
+
+- **種類**: 初回クリア、連続クリア、特定アイテム獲得、累乗敵撃破等
+- **報酬**: 実績達成時のボーナスアイテム
+- **表示**: 実績一覧と達成状況
+
+#### FR063: タイムアタック記録
+
+- **概要**: 各ステージでの最速クリア時間を記録
+- **表示**: 個人ベスト記録の一覧
+- **目標**: 時間短縮へのモチベーション向上
+
+## 3. 非機能要件
+
+### 3.1 パフォーマンス要件（NFR001-NFR010）
+
+#### NFR001: 応答性能
+
+- **ステージ開始**: 選択から 1 秒以内に戦闘画面表示
+- **攻撃処理**: アイテム選択から結果表示まで 0.5 秒以内
+- **画面遷移**: 全ての画面遷移を 1 秒以内に完了
+
+#### NFR002: 計算性能
+
+- **素因数分解**: 10,000 以下の数値を 0.1 秒以内に処理
+- **素数判定**: リアルタイムでの判定処理
+- **大きな数値**: 100,000 以下まで対応（将来拡張）
+
+#### NFR003: メモリ使用量
+
+- **基本動作**: 50MB 以下での動作
+- **画像資産**: 圧縮により総容量 30MB 以下
+- **メモリリーク**: 長時間プレイでもメモリ増加なし
+
+#### NFR004: タイマー精度
+
+- **制限時間**: 1 秒単位での正確な計測
+- **応答性**: タイマー更新による画面遅延なし
+- **バックグラウンド**: アプリがバックグラウンドに行ってもタイマー継続
+
+### 3.2 ユーザビリティ要件（NFR011-NFR020）
+
+#### NFR011: 学習容易性
+
+- **初回プレイ**: チュートリアル完了まで 15 分以内
+- **基本操作**: 3 回以内の操作で主要機能を理解
+- **エラー回復**: 誤操作からの回復が容易
+
+#### NFR012: アクセシビリティ
+
+- **文字サイズ**: 最小 12pt、拡大対応
+- **色覚対応**: 色以外でも状態判別可能
+- **音声対応**: 重要な情報の音声フィードバック
+
+#### NFR013: 多言語対応
+
+- **初期**: 日本語のみ
+- **将来**: 英語対応予定
+
+#### NFR014: 誤判定防止
+
+- **確認ダイアログ**: 勝利宣言時の確認メッセージ
+- **ヒント機能**: 素数判定に迷った時のサポート
+- **学習サポート**: 間違いから学ぶ仕組み
+
+#### NFR015: アイテム管理の直感性
+
+- **選択画面**: 制限数と選択数の明確な表示
+- **残数管理**: バトル中のアイテム残数を常に表示
+- **結果予測**: アイテム没収リスクの事前警告
+
+### 3.3 信頼性要件（NFR021-NFR025）
+
+#### NFR021: 可用性
+
+- **稼働率**: オフラインアプリのため 99.9%
+- **データ保護**: セーブデータの自動バックアップ
+- **回復機能**: アプリクラッシュからの自動回復
+
+#### NFR022: データ整合性
+
+- **保存**: アイテム獲得状況の確実な保存
+- **検証**: データ破損の検出と修復
+- **移行**: アプリ更新時のデータ継承
+- **ロールバック**: 失敗時の確実なデータ復旧
+
+#### NFR023: ゲームバランス
+
+- **ステージ設計**: 持込制限と敵の適切なバランス
+- **報酬調整**: 累乗敵の報酬が過度にならない調整
+- **時間設定**: 制限時間の適切性
+- **没収システム**: 過度なペナルティの防止
+
+### 3.4 保守性要件（NFR031-NFR035）
+
+#### NFR031: 更新容易性
+
+- **ステージ追加**: 新ステージの追加が容易
+- **バランス調整**: 難易度・時間制限・持込数の調整機能
+- **バグ修正**: 迅速な修正とリリース
+
+#### NFR032: テスト容易性
+
+- **自動テスト**: 主要機能の自動テスト対応
+- **デバッグ**: 開発時のデバッグ機能
+- **ログ**: 問題調査のためのログ出力
+
+## 4. 制約事項
+
+### 4.1 技術制約（CON001-CON010）
+
+#### CON001: 開発プラットフォーム
+
+- **フレームワーク**: Flutter 必須
+- **言語**: Dart 言語での実装
+- **IDE**: Android Studio または VS Code 推奨
+
+#### CON002: ターゲットプラットフォーム
+
+- **Android**: API Level 35 以上
+- **iOS**: iOS 18.0 以上
+
+#### CON003: オフライン動作
+
+- **ネットワーク**: インターネット接続不要
+- **データ**: 全てローカルストレージに保存
+- **更新**: アプリ更新時のみネットワーク使用
+
+### 4.2 運用制約（CON011-CON015）
+
+#### CON011: 開発期間
+
+- **MVP 版**: 4 ヶ月以内に完成（ステージシステム追加により延長）
+- **機能追加**: 2 ヶ月サイクルでのアップデート
+- **保守**: 継続的なバグ修正対応
+
+#### CON012: 開発体制
+
+- **開発者**: 1 名での開発
+- **テスト**: 友人・知人による実機テスト
+- **フィードバック**: ユーザーレビューによる改善
+
+### 4.3 ビジネス制約（CON021-CON025）
+
+#### CON021: 収益化
+
+- **初期**: 無料アプリとしてリリース
+- **将来**: 広告表示または有料版の検討
+- **教育**: 教育機関向けライセンスの可能性
+
+#### CON022: 法的制約
+
+- **著作権**: オリジナルコンテンツのみ使用
+- **プライバシー**: 個人情報の収集なし
+- **年齢制限**: 年齢制限なし（全年齢対象）
+
+## 5. 成功指標
+
+### 5.1 定量指標
+
+- **ダウンロード数**: 初年度 1 万ダウンロード
+- **継続率**: 1 週間後の継続率 30%以上
+- **平均プレイ時間**: 1 セッション 15 分以上
+- **レビュー評価**: 4.0 以上の評価維持
+- **勝利判定精度**: ユーザーの正解率 70%以上
+- **ステージクリア率**: 各ステージ 50%以上のクリア率
+
+### 5.2 定性指標
+
+- **教育効果**: 素因数分解の理解向上
+- **満足度**: ユーザーレビューでの肯定的評価
+- **話題性**: SNS での自然な言及・シェア
+- **学習効果**: 素数判定能力の向上
+- **戦略性**: アイテム選択の戦略的思考力向上
+
+## 6. リスクと対策
+
+### 6.1 技術リスク
+
+- **リスク**: Flutter での複雑なアニメーション実装
+- **対策**: プロトタイプでの事前検証、シンプルな代替案準備
+
+### 6.2 ゲームデザインリスク
+
+- **リスク**: アイテム没収システムによるユーザーの過度なストレス
+- **対策**: 段階的なペナルティ導入、プレイテストでの調整
+- **リスク**: ステージバランスの調整困難
+- **対策**: データ分析に基づく動的な難易度調整
+
+### 6.3 教育効果リスク
+
+- **リスク**: アイテム選択が複雑すぎてユーザーが離脱
+- **対策**: 段階的な機能解放、チュートリアルの充実
+
+### 6.4 開発リスク
+
+- **リスク**: 1 人開発によるスケジュール遅延
+- **対策**: MVP 機能の絞り込み、段階的リリース
+- **リスク**: ステージシステム追加による開発負荷増加
+- **対策**: シンプルなステージエディター機能の導入
+
+## 7. 今後の拡張計画
+
+### 7.1 短期（3-6 ヶ月）
+
+- iOS 版の追加開発
+- UI/UX の改善
+- 新しいステージタイプの追加
+- アイテム交換システム
+
+### 7.2 中期（6-12 ヶ月）
+
+- オンライン機能の追加
+- より大きな数値への対応
+- 教育機関向け機能
+- マルチプレイヤーモード
+
+### 7.3 長期（1 年以上）
+
+- 他の数学概念への拡張
+- 多言語対応
+- プラットフォーム拡張（Web 版等）
+- AI 対戦機能

@@ -391,10 +391,14 @@ class _StageItemSelectionScreenState
     // 選択されたアイテムで一時的なインベントリを作成
     final selectedInventory = _createSelectedInventory();
 
+    // 現在のメインインベントリを取得
+    final originalMainInventory = ref.read(inventoryProvider);
+
     // バトルセッションを開始（選択されたアイテムのみ）
     ref.read(battleSessionProvider.notifier).startStageWithSelectedItems(
           widget.stage.stageNumber,
           selectedInventory,
+          originalMainInventory,
         );
 
     // バトル画面に遷移

@@ -63,6 +63,7 @@ class StageClearResult with _$StageClearResult {
     required List<int> defeatedEnemies,
     required bool isPerfect,
     required bool isNewRecord,
+    @Default([]) List<int> rewardItems, // 獲得した報酬アイテム
   }) = _StageClearResult;
 }
 

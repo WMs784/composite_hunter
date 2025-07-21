@@ -37,13 +37,17 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
 
     try {
       final List<dynamic> inventoryData = json.decode(inventoryJson);
-      state = inventoryData.map((item) {
+      final loadedInventory = inventoryData.map((item) {
         return Prime(
           value: item['value'],
           count: item['count'],
           firstObtained: DateTime.parse(item['firstObtained']),
         );
       }).toList();
+
+      // 値の小さい順にソート
+      loadedInventory.sort((a, b) => a.value.compareTo(b.value));
+      state = loadedInventory;
     } catch (e) {
       // データが破損している場合は初期化
       _initializeInventory();
@@ -95,15 +99,15 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
     final existingIndex =
         state.indexWhere((prime) => prime.value == primeValue);
 
+    List<Prime> updatedInventory;
     if (existingIndex >= 0) {
       // 既に所持している素数の場合は個数を増やす
-      final updatedInventory = state.map((prime) {
+      updatedInventory = state.map((prime) {
         if (prime.value == primeValue) {
           return prime.copyWith(count: prime.count + 1);
         }
         return prime;
       }).toList();
-      state = updatedInventory;
     } else {
       // 新しい素数の場合は追加
       final newPrime = Prime(
@@ -111,8 +115,12 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
         count: 1,
         firstObtained: DateTime.now(),
       );
-      state = [...state, newPrime];
+      updatedInventory = [...state, newPrime];
     }
+
+    // 値の小さい順にソート
+    updatedInventory.sort((a, b) => a.value.compareTo(b.value));
+    state = updatedInventory;
 
     // 非同期保存（エラーハンドリング付き）
     _saveInventory().catchError((error) {
@@ -145,7 +153,10 @@ class InventoryNotifier extends StateNotifier<List<Prime>> {
 
   /// アイテム状態を指定した状態に復元
   void restoreInventory(List<Prime> savedInventory) {
-    state = List.from(savedInventory);
+    final sortedInventory = List<Prime>.from(savedInventory);
+    // 値の小さい順にソート
+    sortedInventory.sort((a, b) => a.value.compareTo(b.value));
+    state = sortedInventory;
     _saveInventory();
   }
 

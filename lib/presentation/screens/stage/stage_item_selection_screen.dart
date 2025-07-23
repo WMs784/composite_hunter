@@ -60,7 +60,8 @@ class _StageItemSelectionScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.selectItems(widget.stage.stageNumber.toString())),
+        title: Text(AppLocalizations.of(context)!
+            .selectItems(widget.stage.stageNumber.toString())),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -160,12 +161,15 @@ class _StageItemSelectionScreenState
             children: [
               _buildInfoChip(
                 Icons.numbers,
-                AppLocalizations.of(context)!.itemRange(widget.stage.enemyRangeMin.toString(), widget.stage.enemyRangeMax.toString()),
+                AppLocalizations.of(context)!.itemRange(
+                    widget.stage.enemyRangeMin.toString(),
+                    widget.stage.enemyRangeMax.toString()),
               ),
               const SizedBox(width: Dimensions.spacingS),
               _buildInfoChip(
                 Icons.timer,
-                AppLocalizations.of(context)!.timeLimit(widget.stage.timeLimit.toString()),
+                AppLocalizations.of(context)!
+                    .timeLimit(widget.stage.timeLimit.toString()),
               ),
             ],
           ),

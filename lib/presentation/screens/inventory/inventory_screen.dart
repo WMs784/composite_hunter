@@ -116,9 +116,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           child: ListView.builder(
             padding:
                 const EdgeInsets.symmetric(horizontal: Dimensions.paddingM),
-            itemCount: inventory.length,
+            itemCount: availablePrimes.length,
             itemBuilder: (context, index) {
-              final prime = inventory[index];
+              final prime = availablePrimes[index];
               final usage = usageStats[prime.value] ?? 0;
               return _buildPrimeItem(prime, usage, l10n);
             },
@@ -132,12 +132,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
     final l10n = AppLocalizations.of(context)!;
     final inventory = ref.watch(inventoryProvider);
     final usageStats = ref.watch(primeUsageProvider);
+    final availableItems = inventory.where((prime) => prime.count > 0).toList();
 
     return ListView.builder(
       padding: const EdgeInsets.all(Dimensions.paddingM),
-      itemCount: inventory.length,
+      itemCount: availableItems.length,
       itemBuilder: (context, index) {
-        final prime = inventory[index];
+        final prime = availableItems[index];
         final usage = usageStats[prime.value] ?? 0;
         final isUnlocked = usage > 0 || prime.count > 0;
         final daysSinceObtained =
@@ -208,6 +209,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
     final usageNotifier = ref.read(primeUsageProvider.notifier);
     final totalUsage = usageNotifier.totalUsage;
     final mostUsedPrime = usageNotifier.mostUsedPrime;
+    final availablePrimes = inventory.where((p) => p.count > 0).toList();
 
     return Padding(
       padding: const EdgeInsets.all(Dimensions.paddingM),
@@ -251,9 +253,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           const SizedBox(height: Dimensions.spacingM),
           Expanded(
             child: ListView.builder(
-              itemCount: inventory.length,
+              itemCount: availablePrimes.length,
               itemBuilder: (context, index) {
-                final prime = inventory[index];
+                final prime = availablePrimes[index];
                 final usage = usageStats[prime.value] ?? 0;
                 final percentage = totalUsage > 0 ? usage / totalUsage : 0.0;
 

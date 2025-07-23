@@ -320,15 +320,18 @@ final battleInventoryProvider = Provider<List<Prime>>((ref) {
       }
     }
 
-    // リストに変換してソート
-    final battleInventory = battleInventoryMap.values.toList();
+    // リストに変換してソート、count > 0のアイテムのみフィルタリング
+    final battleInventory =
+        battleInventoryMap.values.where((prime) => prime.count > 0).toList();
     battleInventory.sort((a, b) => a.value.compareTo(b.value));
 
     return battleInventory;
   }
 
-  // 練習モードまたはステージ選択なしの場合は通常のインベントリを使用
-  final sortedInventory = List<Prime>.from(mainInventory);
+  // 練習モードまたはステージ選択なしの場合は通常のインベントリを使用、count > 0のアイテムのみフィルタリング
+  final sortedInventory = List<Prime>.from(mainInventory)
+      .where((prime) => prime.count > 0)
+      .toList();
   sortedInventory.sort((a, b) => a.value.compareTo(b.value));
   return sortedInventory;
 });

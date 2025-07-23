@@ -100,7 +100,8 @@ class GameNotifier extends StateNotifier<GameState> {
       }
 
       Logger.debug(
-          'Victory recorded: level=$newLevel, experience=${finalPlayer.experience}');
+        'Victory recorded: level=$newLevel, experience=${finalPlayer.experience}',
+      );
     } catch (e, stackTrace) {
       Logger.error('Failed to record victory', e, stackTrace);
     }
@@ -116,7 +117,8 @@ class GameNotifier extends StateNotifier<GameState> {
         totalBattles: state.player.totalBattles + 1,
         totalVictories: state.player.totalVictories + 1,
         totalPowerEnemiesDefeated: state.player.totalPowerEnemiesDefeated + 1,
-        experience: state.player.experience +
+        experience:
+            state.player.experience +
             GameConstants.baseVictoryExperience +
             bonusExperience,
         lastPlayedAt: DateTime.now(),
@@ -190,7 +192,8 @@ class GameNotifier extends StateNotifier<GameState> {
 
       // Award tutorial completion experience
       final updatedPlayer = state.player.copyWith(
-        experience: state.player.experience +
+        experience:
+            state.player.experience +
             GameConstants.tutorialCompletionExperience,
       );
 
@@ -336,9 +339,7 @@ class GameNotifier extends StateNotifier<GameState> {
 
   /// Update last played time
   Future<void> updateLastPlayed() async {
-    final updatedPlayer = state.player.copyWith(
-      lastPlayedAt: DateTime.now(),
-    );
+    final updatedPlayer = state.player.copyWith(lastPlayedAt: DateTime.now());
 
     state = state.copyWith(player: updatedPlayer);
     await _saveGameState();
@@ -450,13 +451,7 @@ final timeOutRateProvider = Provider<double>((ref) {
 });
 
 /// Player rank enumeration
-enum PlayerRank {
-  beginner,
-  intermediate,
-  advanced,
-  expert,
-  master,
-}
+enum PlayerRank { beginner, intermediate, advanced, expert, master }
 
 extension PlayerRankExtension on PlayerRank {
   String get displayName {

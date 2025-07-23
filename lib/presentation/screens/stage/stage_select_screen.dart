@@ -162,13 +162,15 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   itemBuilder: (context, index) {
                     final stage = stages[index];
                     return Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: Dimensions.spacingM),
+                      padding: const EdgeInsets.only(
+                        bottom: Dimensions.spacingM,
+                      ),
                       child: _StageCard(
                         stage: stage,
                         l10n: l10n,
-                        onTap:
-                            stage.isUnlocked ? () => _startStage(stage) : null,
+                        onTap: stage.isUnlocked
+                            ? () => _startStage(stage)
+                            : null,
                       ),
                     );
                   },
@@ -185,7 +187,8 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                   label: Text(l10n.practiceMode),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        vertical: Dimensions.paddingM),
+                      vertical: Dimensions.paddingM,
+                    ),
                   ),
                 ),
               ),
@@ -293,11 +296,7 @@ class _StageCard extends StatelessWidget {
   final AppLocalizations l10n;
   final VoidCallback? onTap;
 
-  const _StageCard({
-    required this.stage,
-    required this.l10n,
-    this.onTap,
-  });
+  const _StageCard({required this.stage, required this.l10n, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -326,8 +325,8 @@ class _StageCard extends StatelessWidget {
                   color: isLocked
                       ? AppColors.outline
                       : (stage.isCompleted
-                          ? AppColors.victoryGreen
-                          : AppColors.primary),
+                            ? AppColors.victoryGreen
+                            : AppColors.primary),
                   borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 ),
                 child: Center(
@@ -387,10 +386,7 @@ class _StageCard extends StatelessWidget {
                             '${stage.enemyRangeMin}-${stage.enemyRangeMax}',
                           ),
                           const SizedBox(width: Dimensions.spacingS),
-                          _buildInfoChip(
-                            Icons.timer,
-                            '${stage.timeLimit}s',
-                          ),
+                          _buildInfoChip(Icons.timer, '${stage.timeLimit}s'),
                         ],
                       ),
                     ],
@@ -440,11 +436,7 @@ class _StageCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: AppColors.onPrimaryContainer,
-          ),
+          Icon(icon, size: 14, color: AppColors.onPrimaryContainer),
           const SizedBox(width: 4),
           Text(
             text,

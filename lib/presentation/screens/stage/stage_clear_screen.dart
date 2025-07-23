@@ -14,10 +14,7 @@ import '../../../core/utils/logger.dart';
 class StageClearScreen extends ConsumerStatefulWidget {
   final StageClearResult clearResult;
 
-  const StageClearScreen({
-    super.key,
-    required this.clearResult,
-  });
+  const StageClearScreen({super.key, required this.clearResult});
 
   @override
   ConsumerState<StageClearScreen> createState() => _StageClearScreenState();
@@ -46,29 +43,27 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
+      ),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+          ),
+        );
 
     // Save stage progress and start animations after widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -120,7 +115,8 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               child: Transform.scale(
                 scale: scaleValue,
                 child: Transform.translate(
-                  offset: _slideAnimation.value *
+                  offset:
+                      _slideAnimation.value *
                       MediaQuery.of(context).size.height,
                   child: _buildContent(context),
                 ),
@@ -205,8 +201,9 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
                       child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children:
-                              List.generate(widget.clearResult.stars, (index) {
+                          children: List.generate(widget.clearResult.stars, (
+                            index,
+                          ) {
                             return const Icon(
                               Icons.star,
                               color: Colors.amber,
@@ -251,7 +248,10 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
                 isSuccess: true,
                 onNextStage: widget.clearResult.stageNumber < 4
                     ? () => goToNextStage(
-                        context, ref, widget.clearResult.stageNumber)
+                        context,
+                        ref,
+                        widget.clearResult.stageNumber,
+                      )
                     : null,
                 onStageSelect: () => goToStageSelect(context, ref),
                 onRetry: () =>
@@ -274,9 +274,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(Dimensions.radiusL),
-        border: Border.all(
-          color: AppColors.outline.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.outline.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -338,19 +336,10 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 20,
-          ),
+          child: Icon(icon, color: color, size: 20),
         ),
         const SizedBox(width: Dimensions.spacingM),
-        Expanded(
-          child: Text(
-            label,
-            style: AppTextStyles.bodyLarge,
-          ),
-        ),
+        Expanded(child: Text(label, style: AppTextStyles.bodyLarge)),
         Text(
           value,
           style: AppTextStyles.titleMedium.copyWith(
@@ -377,11 +366,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.celebration,
-            color: Colors.amber,
-            size: 32,
-          ),
+          const Icon(Icons.celebration, color: Colors.amber, size: 32),
           const SizedBox(height: Dimensions.spacingS),
           if (widget.clearResult.isPerfect) ...[
             Text(
@@ -393,9 +378,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             ),
             Text(
               l10n.noEscapesOrWrongClaims,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: Colors.amber[600],
-              ),
+              style: AppTextStyles.bodySmall.copyWith(color: Colors.amber[600]),
             ),
           ],
           if (widget.clearResult.isNewRecord) ...[
@@ -410,9 +393,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             ),
             Text(
               l10n.bestPerformance,
-              style: AppTextStyles.bodySmall.copyWith(
-                color: Colors.amber[600],
-              ),
+              style: AppTextStyles.bodySmall.copyWith(color: Colors.amber[600]),
             ),
           ],
         ],
@@ -422,10 +403,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
 
   Widget _buildRewardsSection(AppLocalizations l10n) {
     // デバッグ: 受け取った報酬データをログ出力
-    Logger.logBattle('Stage clear screen - displaying rewards', data: {
-      'total_reward_items': widget.clearResult.rewardItems.length,
-      'reward_items': widget.clearResult.rewardItems.join(', ')
-    });
+    Logger.logBattle(
+      'Stage clear screen - displaying rewards',
+      data: {
+        'total_reward_items': widget.clearResult.rewardItems.length,
+        'reward_items': widget.clearResult.rewardItems.join(', '),
+      },
+    );
 
     // 報酬アイテムを集計（同じ値をまとめる）
     final rewardMap = <int, int>{};
@@ -493,7 +477,8 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(Dimensions.radiusS),
                   border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.5)),
+                    color: AppColors.primary.withValues(alpha: 0.5),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withValues(alpha: 0.1),

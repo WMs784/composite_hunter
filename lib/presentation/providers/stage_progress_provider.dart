@@ -6,54 +6,53 @@ import '../screens/stage/stage_select_screen.dart';
 /// ステージ進行状況の永続化
 class StageProgressNotifier extends StateNotifier<List<StageInfo>> {
   StageProgressNotifier()
-      : super([
-          const StageInfo(
-            stageNumber: 1,
-            title: 'Basic Battle',
-            description:
-                'Fight small composite numbers and learn prime factorization',
-            enemyRangeMin: 6,
-            enemyRangeMax: 20,
-            timeLimit: 30,
-            isUnlocked: true,
-            isCompleted: false,
-            stars: 0,
-          ),
-          const StageInfo(
-            stageNumber: 2,
-            title: 'Intermediate Challenge',
-            description: 'Face medium composite numbers with strategic attacks',
-            enemyRangeMin: 21,
-            enemyRangeMax: 100,
-            timeLimit: 60,
-            isUnlocked: false,
-            isCompleted: false,
-            stars: 0,
-          ),
-          const StageInfo(
-            stageNumber: 3,
-            title: 'Advanced Path',
-            description:
-                'Engage in serious battles with large composite numbers',
-            enemyRangeMin: 101,
-            enemyRangeMax: 1000,
-            timeLimit: 90,
-            isUnlocked: false,
-            isCompleted: false,
-            stars: 0,
-          ),
-          const StageInfo(
-            stageNumber: 4,
-            title: 'Expert Mode',
-            description: 'Ultimate challenge for advanced players',
-            enemyRangeMin: 1001,
-            enemyRangeMax: 10000,
-            timeLimit: 120,
-            isUnlocked: false,
-            isCompleted: false,
-            stars: 0,
-          ),
-        ]) {
+    : super([
+        const StageInfo(
+          stageNumber: 1,
+          title: 'Basic Battle',
+          description:
+              'Fight small composite numbers and learn prime factorization',
+          enemyRangeMin: 6,
+          enemyRangeMax: 20,
+          timeLimit: 30,
+          isUnlocked: true,
+          isCompleted: false,
+          stars: 0,
+        ),
+        const StageInfo(
+          stageNumber: 2,
+          title: 'Intermediate Challenge',
+          description: 'Face medium composite numbers with strategic attacks',
+          enemyRangeMin: 21,
+          enemyRangeMax: 100,
+          timeLimit: 60,
+          isUnlocked: false,
+          isCompleted: false,
+          stars: 0,
+        ),
+        const StageInfo(
+          stageNumber: 3,
+          title: 'Advanced Path',
+          description: 'Engage in serious battles with large composite numbers',
+          enemyRangeMin: 101,
+          enemyRangeMax: 1000,
+          timeLimit: 90,
+          isUnlocked: false,
+          isCompleted: false,
+          stars: 0,
+        ),
+        const StageInfo(
+          stageNumber: 4,
+          title: 'Expert Mode',
+          description: 'Ultimate challenge for advanced players',
+          enemyRangeMin: 1001,
+          enemyRangeMax: 10000,
+          timeLimit: 120,
+          isUnlocked: false,
+          isCompleted: false,
+          stars: 0,
+        ),
+      ]) {
     _loadProgress();
   }
 
@@ -93,17 +92,21 @@ class StageProgressNotifier extends StateNotifier<List<StageInfo>> {
     final bestScore = prefs.getInt('${key}_best_score') ?? 0;
 
     // より良い記録の場合のみ更新
-    final newStars =
-        clearResult.stars > currentStars ? clearResult.stars : currentStars;
-    final newBestScore =
-        clearResult.score > bestScore ? clearResult.score : bestScore;
+    final newStars = clearResult.stars > currentStars
+        ? clearResult.stars
+        : currentStars;
+    final newBestScore = clearResult.score > bestScore
+        ? clearResult.score
+        : bestScore;
 
     // 保存
     await prefs.setBool('${key}_completed', true);
     await prefs.setInt('${key}_stars', newStars);
     await prefs.setInt('${key}_best_score', newBestScore);
     await prefs.setString(
-        '${key}_completed_at', DateTime.now().toIso8601String());
+      '${key}_completed_at',
+      DateTime.now().toIso8601String(),
+    );
 
     // 状態を更新
     final updatedStages = state.map((stage) {
@@ -169,5 +172,5 @@ class StageProgressNotifier extends StateNotifier<List<StageInfo>> {
 
 final stageProgressProvider =
     StateNotifierProvider<StageProgressNotifier, List<StageInfo>>(
-  (ref) => StageProgressNotifier(),
-);
+      (ref) => StageProgressNotifier(),
+    );

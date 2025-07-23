@@ -55,17 +55,21 @@ class VictoryValidator {
     if (!timerState.isActive || timerState.isExpired) return false;
 
     Logger.debug(
-        'Victory can be claimed for enemy ${enemy.currentValue} with ${timerState.remainingSeconds}s remaining');
+      'Victory can be claimed for enemy ${enemy.currentValue} with ${timerState.remainingSeconds}s remaining',
+    );
 
     return true;
   }
 
   /// Validate that the claimed value matches the actual enemy value
   static VictoryValidationResult validateExactClaim(
-      int claimedValue, int actualValue) {
+    int claimedValue,
+    int actualValue,
+  ) {
     if (claimedValue != actualValue) {
       Logger.debug(
-          'Victory claim mismatch: claimed $claimedValue but actual is $actualValue');
+        'Victory claim mismatch: claimed $claimedValue but actual is $actualValue',
+      );
 
       final penalty = TimePenalty(
         seconds: TimerConstants.wrongVictoryClaimPenalty,
@@ -226,7 +230,9 @@ class VictoryValidator {
 
   /// Generate victory message based on performance
   static String generateVictoryMessage(
-      VictoryScore score, List<SpecialVictoryCondition> conditions) {
+    VictoryScore score,
+    List<SpecialVictoryCondition> conditions,
+  ) {
     String message = 'Victory! ';
 
     // Base message from rank
@@ -310,13 +316,7 @@ class VictoryScore {
 }
 
 /// Victory performance ranks
-enum VictoryRank {
-  perfect,
-  excellent,
-  good,
-  average,
-  poor,
-}
+enum VictoryRank { perfect, excellent, good, average, poor }
 
 /// Special victory conditions
 enum SpecialVictoryCondition {

@@ -10,7 +10,10 @@ import '../../providers/stage_progress_provider.dart';
 mixin ResultScreenMixin {
   /// 次のステージに進む
   void goToNextStage(
-      BuildContext context, WidgetRef ref, int currentStageNumber) {
+    BuildContext context,
+    WidgetRef ref,
+    int currentStageNumber,
+  ) {
     final nextStageNumber = currentStageNumber + 1;
 
     // バトルセッションをリセット
@@ -133,7 +136,8 @@ class ResultScreenButtons extends StatelessWidget {
                   label: const Text('Next Stage'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        vertical: Dimensions.paddingM),
+                      vertical: Dimensions.paddingM,
+                    ),
                   ),
                 ),
               ),
@@ -149,8 +153,9 @@ class ResultScreenButtons extends StatelessWidget {
             icon: const Icon(Icons.list),
             label: const Text('Stage Select'),
             style: OutlinedButton.styleFrom(
-              padding:
-                  const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimensions.paddingM,
+              ),
             ),
           ),
         ),
@@ -165,8 +170,9 @@ class ResultScreenButtons extends StatelessWidget {
             icon: const Icon(Icons.refresh),
             label: Text(isSuccess ? 'Play Again' : 'Try Again'),
             style: ElevatedButton.styleFrom(
-              padding:
-                  const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimensions.paddingM,
+              ),
             ),
           ),
         ),

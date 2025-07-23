@@ -12,7 +12,8 @@ part of 'stage.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$Stage {
@@ -38,19 +39,20 @@ abstract class $StageCopyWith<$Res> {
   factory $StageCopyWith(Stage value, $Res Function(Stage) then) =
       _$StageCopyWithImpl<$Res, Stage>;
   @useResult
-  $Res call(
-      {int stageNumber,
-      String title,
-      String description,
-      int enemyRangeMin,
-      int enemyRangeMax,
-      int timeLimit,
-      StageClearCondition clearCondition,
-      bool isUnlocked,
-      bool isCompleted,
-      int stars,
-      int bestScore,
-      DateTime? completedAt});
+  $Res call({
+    int stageNumber,
+    String title,
+    String description,
+    int enemyRangeMin,
+    int enemyRangeMax,
+    int timeLimit,
+    StageClearCondition clearCondition,
+    bool isUnlocked,
+    bool isCompleted,
+    int stars,
+    int bestScore,
+    DateTime? completedAt,
+  });
 
   $StageClearConditionCopyWith<$Res> get clearCondition;
 }
@@ -81,56 +83,59 @@ class _$StageCopyWithImpl<$Res, $Val extends Stage>
     Object? bestScore = null,
     Object? completedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      stageNumber: null == stageNumber
-          ? _value.stageNumber
-          : stageNumber // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      enemyRangeMin: null == enemyRangeMin
-          ? _value.enemyRangeMin
-          : enemyRangeMin // ignore: cast_nullable_to_non_nullable
-              as int,
-      enemyRangeMax: null == enemyRangeMax
-          ? _value.enemyRangeMax
-          : enemyRangeMax // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeLimit: null == timeLimit
-          ? _value.timeLimit
-          : timeLimit // ignore: cast_nullable_to_non_nullable
-              as int,
-      clearCondition: null == clearCondition
-          ? _value.clearCondition
-          : clearCondition // ignore: cast_nullable_to_non_nullable
-              as StageClearCondition,
-      isUnlocked: null == isUnlocked
-          ? _value.isUnlocked
-          : isUnlocked // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isCompleted: null == isCompleted
-          ? _value.isCompleted
-          : isCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      stars: null == stars
-          ? _value.stars
-          : stars // ignore: cast_nullable_to_non_nullable
-              as int,
-      bestScore: null == bestScore
-          ? _value.bestScore
-          : bestScore // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            stageNumber: null == stageNumber
+                ? _value.stageNumber
+                : stageNumber // ignore: cast_nullable_to_non_nullable
+                      as int,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: null == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String,
+            enemyRangeMin: null == enemyRangeMin
+                ? _value.enemyRangeMin
+                : enemyRangeMin // ignore: cast_nullable_to_non_nullable
+                      as int,
+            enemyRangeMax: null == enemyRangeMax
+                ? _value.enemyRangeMax
+                : enemyRangeMax // ignore: cast_nullable_to_non_nullable
+                      as int,
+            timeLimit: null == timeLimit
+                ? _value.timeLimit
+                : timeLimit // ignore: cast_nullable_to_non_nullable
+                      as int,
+            clearCondition: null == clearCondition
+                ? _value.clearCondition
+                : clearCondition // ignore: cast_nullable_to_non_nullable
+                      as StageClearCondition,
+            isUnlocked: null == isUnlocked
+                ? _value.isUnlocked
+                : isUnlocked // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isCompleted: null == isCompleted
+                ? _value.isCompleted
+                : isCompleted // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            stars: null == stars
+                ? _value.stars
+                : stars // ignore: cast_nullable_to_non_nullable
+                      as int,
+            bestScore: null == bestScore
+                ? _value.bestScore
+                : bestScore // ignore: cast_nullable_to_non_nullable
+                      as int,
+            completedAt: freezed == completedAt
+                ? _value.completedAt
+                : completedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 
   @override
@@ -145,35 +150,36 @@ class _$StageCopyWithImpl<$Res, $Val extends Stage>
 /// @nodoc
 abstract class _$$StageImplCopyWith<$Res> implements $StageCopyWith<$Res> {
   factory _$$StageImplCopyWith(
-          _$StageImpl value, $Res Function(_$StageImpl) then) =
-      __$$StageImplCopyWithImpl<$Res>;
+    _$StageImpl value,
+    $Res Function(_$StageImpl) then,
+  ) = _$$StageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int stageNumber,
-      String title,
-      String description,
-      int enemyRangeMin,
-      int enemyRangeMax,
-      int timeLimit,
-      StageClearCondition clearCondition,
-      bool isUnlocked,
-      bool isCompleted,
-      int stars,
-      int bestScore,
-      DateTime? completedAt});
+  $Res call({
+    int stageNumber,
+    String title,
+    String description,
+    int enemyRangeMin,
+    int enemyRangeMax,
+    int timeLimit,
+    StageClearCondition clearCondition,
+    bool isUnlocked,
+    bool isCompleted,
+    int stars,
+    int bestScore,
+    DateTime? completedAt,
+  });
 
   @override
   $StageClearConditionCopyWith<$Res> get clearCondition;
 }
 
 /// @nodoc
-class __$$StageImplCopyWithImpl<$Res>
+class _$$StageImplCopyWithImpl<$Res>
     extends _$StageCopyWithImpl<$Res, _$StageImpl>
     implements _$$StageImplCopyWith<$Res> {
-  __$$StageImplCopyWithImpl(
-      _$StageImpl _value, $Res Function(_$StageImpl) _then)
-      : super(_value, _then);
+  _$$StageImplCopyWithImpl(_$StageImpl _value, $Res Function(_$StageImpl) _then)
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -191,75 +197,78 @@ class __$$StageImplCopyWithImpl<$Res>
     Object? bestScore = null,
     Object? completedAt = freezed,
   }) {
-    return _then(_$StageImpl(
-      stageNumber: null == stageNumber
-          ? _value.stageNumber
-          : stageNumber // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: null == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      enemyRangeMin: null == enemyRangeMin
-          ? _value.enemyRangeMin
-          : enemyRangeMin // ignore: cast_nullable_to_non_nullable
-              as int,
-      enemyRangeMax: null == enemyRangeMax
-          ? _value.enemyRangeMax
-          : enemyRangeMax // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeLimit: null == timeLimit
-          ? _value.timeLimit
-          : timeLimit // ignore: cast_nullable_to_non_nullable
-              as int,
-      clearCondition: null == clearCondition
-          ? _value.clearCondition
-          : clearCondition // ignore: cast_nullable_to_non_nullable
-              as StageClearCondition,
-      isUnlocked: null == isUnlocked
-          ? _value.isUnlocked
-          : isUnlocked // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isCompleted: null == isCompleted
-          ? _value.isCompleted
-          : isCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      stars: null == stars
-          ? _value.stars
-          : stars // ignore: cast_nullable_to_non_nullable
-              as int,
-      bestScore: null == bestScore
-          ? _value.bestScore
-          : bestScore // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$StageImpl(
+        stageNumber: null == stageNumber
+            ? _value.stageNumber
+            : stageNumber // ignore: cast_nullable_to_non_nullable
+                  as int,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: null == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String,
+        enemyRangeMin: null == enemyRangeMin
+            ? _value.enemyRangeMin
+            : enemyRangeMin // ignore: cast_nullable_to_non_nullable
+                  as int,
+        enemyRangeMax: null == enemyRangeMax
+            ? _value.enemyRangeMax
+            : enemyRangeMax // ignore: cast_nullable_to_non_nullable
+                  as int,
+        timeLimit: null == timeLimit
+            ? _value.timeLimit
+            : timeLimit // ignore: cast_nullable_to_non_nullable
+                  as int,
+        clearCondition: null == clearCondition
+            ? _value.clearCondition
+            : clearCondition // ignore: cast_nullable_to_non_nullable
+                  as StageClearCondition,
+        isUnlocked: null == isUnlocked
+            ? _value.isUnlocked
+            : isUnlocked // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isCompleted: null == isCompleted
+            ? _value.isCompleted
+            : isCompleted // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        stars: null == stars
+            ? _value.stars
+            : stars // ignore: cast_nullable_to_non_nullable
+                  as int,
+        bestScore: null == bestScore
+            ? _value.bestScore
+            : bestScore // ignore: cast_nullable_to_non_nullable
+                  as int,
+        completedAt: freezed == completedAt
+            ? _value.completedAt
+            : completedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$StageImpl implements _Stage {
-  const _$StageImpl(
-      {required this.stageNumber,
-      required this.title,
-      required this.description,
-      required this.enemyRangeMin,
-      required this.enemyRangeMax,
-      required this.timeLimit,
-      required this.clearCondition,
-      required this.isUnlocked,
-      required this.isCompleted,
-      required this.stars,
-      required this.bestScore,
-      required this.completedAt});
+  const _$StageImpl({
+    required this.stageNumber,
+    required this.title,
+    required this.description,
+    required this.enemyRangeMin,
+    required this.enemyRangeMax,
+    required this.timeLimit,
+    required this.clearCondition,
+    required this.isUnlocked,
+    required this.isCompleted,
+    required this.stars,
+    required this.bestScore,
+    required this.completedAt,
+  });
 
   @override
   final int stageNumber;
@@ -322,41 +331,43 @@ class _$StageImpl implements _Stage {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      stageNumber,
-      title,
-      description,
-      enemyRangeMin,
-      enemyRangeMax,
-      timeLimit,
-      clearCondition,
-      isUnlocked,
-      isCompleted,
-      stars,
-      bestScore,
-      completedAt);
+    runtimeType,
+    stageNumber,
+    title,
+    description,
+    enemyRangeMin,
+    enemyRangeMax,
+    timeLimit,
+    clearCondition,
+    isUnlocked,
+    isCompleted,
+    stars,
+    bestScore,
+    completedAt,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$StageImplCopyWith<_$StageImpl> get copyWith =>
-      __$$StageImplCopyWithImpl<_$StageImpl>(this, _$identity);
+      _$$StageImplCopyWithImpl<_$StageImpl>(this, _$identity);
 }
 
 abstract class _Stage implements Stage {
-  const factory _Stage(
-      {required final int stageNumber,
-      required final String title,
-      required final String description,
-      required final int enemyRangeMin,
-      required final int enemyRangeMax,
-      required final int timeLimit,
-      required final StageClearCondition clearCondition,
-      required final bool isUnlocked,
-      required final bool isCompleted,
-      required final int stars,
-      required final int bestScore,
-      required final DateTime? completedAt}) = _$StageImpl;
+  const factory _Stage({
+    required final int stageNumber,
+    required final String title,
+    required final String description,
+    required final int enemyRangeMin,
+    required final int enemyRangeMax,
+    required final int timeLimit,
+    required final StageClearCondition clearCondition,
+    required final bool isUnlocked,
+    required final bool isCompleted,
+    required final int stars,
+    required final int bestScore,
+    required final DateTime? completedAt,
+  }) = _$StageImpl;
 
   @override
   int get stageNumber;
@@ -404,15 +415,17 @@ mixin _$StageClearCondition {
 /// @nodoc
 abstract class $StageClearConditionCopyWith<$Res> {
   factory $StageClearConditionCopyWith(
-          StageClearCondition value, $Res Function(StageClearCondition) then) =
-      _$StageClearConditionCopyWithImpl<$Res, StageClearCondition>;
+    StageClearCondition value,
+    $Res Function(StageClearCondition) then,
+  ) = _$StageClearConditionCopyWithImpl<$Res, StageClearCondition>;
   @useResult
-  $Res call(
-      {int requiredVictories,
-      int timeLimit,
-      int maxEscapes,
-      int maxWrongClaims,
-      StageClearType clearType});
+  $Res call({
+    int requiredVictories,
+    int timeLimit,
+    int maxEscapes,
+    int maxWrongClaims,
+    StageClearType clearType,
+  });
 }
 
 /// @nodoc
@@ -434,54 +447,60 @@ class _$StageClearConditionCopyWithImpl<$Res, $Val extends StageClearCondition>
     Object? maxWrongClaims = null,
     Object? clearType = null,
   }) {
-    return _then(_value.copyWith(
-      requiredVictories: null == requiredVictories
-          ? _value.requiredVictories
-          : requiredVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeLimit: null == timeLimit
-          ? _value.timeLimit
-          : timeLimit // ignore: cast_nullable_to_non_nullable
-              as int,
-      maxEscapes: null == maxEscapes
-          ? _value.maxEscapes
-          : maxEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      maxWrongClaims: null == maxWrongClaims
-          ? _value.maxWrongClaims
-          : maxWrongClaims // ignore: cast_nullable_to_non_nullable
-              as int,
-      clearType: null == clearType
-          ? _value.clearType
-          : clearType // ignore: cast_nullable_to_non_nullable
-              as StageClearType,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            requiredVictories: null == requiredVictories
+                ? _value.requiredVictories
+                : requiredVictories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            timeLimit: null == timeLimit
+                ? _value.timeLimit
+                : timeLimit // ignore: cast_nullable_to_non_nullable
+                      as int,
+            maxEscapes: null == maxEscapes
+                ? _value.maxEscapes
+                : maxEscapes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            maxWrongClaims: null == maxWrongClaims
+                ? _value.maxWrongClaims
+                : maxWrongClaims // ignore: cast_nullable_to_non_nullable
+                      as int,
+            clearType: null == clearType
+                ? _value.clearType
+                : clearType // ignore: cast_nullable_to_non_nullable
+                      as StageClearType,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$StageClearConditionImplCopyWith<$Res>
     implements $StageClearConditionCopyWith<$Res> {
-  factory _$$StageClearConditionImplCopyWith(_$StageClearConditionImpl value,
-          $Res Function(_$StageClearConditionImpl) then) =
-      __$$StageClearConditionImplCopyWithImpl<$Res>;
+  factory _$$StageClearConditionImplCopyWith(
+    _$StageClearConditionImpl value,
+    $Res Function(_$StageClearConditionImpl) then,
+  ) = _$$StageClearConditionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int requiredVictories,
-      int timeLimit,
-      int maxEscapes,
-      int maxWrongClaims,
-      StageClearType clearType});
+  $Res call({
+    int requiredVictories,
+    int timeLimit,
+    int maxEscapes,
+    int maxWrongClaims,
+    StageClearType clearType,
+  });
 }
 
 /// @nodoc
-class __$$StageClearConditionImplCopyWithImpl<$Res>
+class _$$StageClearConditionImplCopyWithImpl<$Res>
     extends _$StageClearConditionCopyWithImpl<$Res, _$StageClearConditionImpl>
     implements _$$StageClearConditionImplCopyWith<$Res> {
-  __$$StageClearConditionImplCopyWithImpl(_$StageClearConditionImpl _value,
-      $Res Function(_$StageClearConditionImpl) _then)
-      : super(_value, _then);
+  _$$StageClearConditionImplCopyWithImpl(
+    _$StageClearConditionImpl _value,
+    $Res Function(_$StageClearConditionImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -492,53 +511,56 @@ class __$$StageClearConditionImplCopyWithImpl<$Res>
     Object? maxWrongClaims = null,
     Object? clearType = null,
   }) {
-    return _then(_$StageClearConditionImpl(
-      requiredVictories: null == requiredVictories
-          ? _value.requiredVictories
-          : requiredVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      timeLimit: null == timeLimit
-          ? _value.timeLimit
-          : timeLimit // ignore: cast_nullable_to_non_nullable
-              as int,
-      maxEscapes: null == maxEscapes
-          ? _value.maxEscapes
-          : maxEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      maxWrongClaims: null == maxWrongClaims
-          ? _value.maxWrongClaims
-          : maxWrongClaims // ignore: cast_nullable_to_non_nullable
-              as int,
-      clearType: null == clearType
-          ? _value.clearType
-          : clearType // ignore: cast_nullable_to_non_nullable
-              as StageClearType,
-    ));
+    return _then(
+      _$StageClearConditionImpl(
+        requiredVictories: null == requiredVictories
+            ? _value.requiredVictories
+            : requiredVictories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        timeLimit: null == timeLimit
+            ? _value.timeLimit
+            : timeLimit // ignore: cast_nullable_to_non_nullable
+                  as int,
+        maxEscapes: null == maxEscapes
+            ? _value.maxEscapes
+            : maxEscapes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        maxWrongClaims: null == maxWrongClaims
+            ? _value.maxWrongClaims
+            : maxWrongClaims // ignore: cast_nullable_to_non_nullable
+                  as int,
+        clearType: null == clearType
+            ? _value.clearType
+            : clearType // ignore: cast_nullable_to_non_nullable
+                  as StageClearType,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$StageClearConditionImpl implements _StageClearCondition {
-  const _$StageClearConditionImpl(
-      {required this.requiredVictories,
-      required this.timeLimit,
-      required this.maxEscapes,
-      required this.maxWrongClaims,
-      required this.clearType});
+  const _$StageClearConditionImpl({
+    required this.requiredVictories,
+    required this.timeLimit,
+    required this.maxEscapes,
+    required this.maxWrongClaims,
+    required this.clearType,
+  });
 
   @override
   final int requiredVictories;
-// 必要勝利数
+  // 必要勝利数
   @override
   final int timeLimit;
-// 制限時間（秒）
+  // 制限時間（秒）
   @override
   final int maxEscapes;
-// 最大逃走回数
+  // 最大逃走回数
   @override
   final int maxWrongClaims;
-// 最大誤判定回数
+  // 最大誤判定回数
   @override
   final StageClearType clearType;
 
@@ -565,24 +587,33 @@ class _$StageClearConditionImpl implements _StageClearCondition {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, requiredVictories, timeLimit,
-      maxEscapes, maxWrongClaims, clearType);
+  int get hashCode => Object.hash(
+    runtimeType,
+    requiredVictories,
+    timeLimit,
+    maxEscapes,
+    maxWrongClaims,
+    clearType,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$StageClearConditionImplCopyWith<_$StageClearConditionImpl> get copyWith =>
-      __$$StageClearConditionImplCopyWithImpl<_$StageClearConditionImpl>(
-          this, _$identity);
+      _$$StageClearConditionImplCopyWithImpl<_$StageClearConditionImpl>(
+        this,
+        _$identity,
+      );
 }
 
 abstract class _StageClearCondition implements StageClearCondition {
-  const factory _StageClearCondition(
-      {required final int requiredVictories,
-      required final int timeLimit,
-      required final int maxEscapes,
-      required final int maxWrongClaims,
-      required final StageClearType clearType}) = _$StageClearConditionImpl;
+  const factory _StageClearCondition({
+    required final int requiredVictories,
+    required final int timeLimit,
+    required final int maxEscapes,
+    required final int maxWrongClaims,
+    required final StageClearType clearType,
+  }) = _$StageClearConditionImpl;
 
   @override
   int get requiredVictories;
@@ -623,22 +654,24 @@ mixin _$StageClearResult {
 /// @nodoc
 abstract class $StageClearResultCopyWith<$Res> {
   factory $StageClearResultCopyWith(
-          StageClearResult value, $Res Function(StageClearResult) then) =
-      _$StageClearResultCopyWithImpl<$Res, StageClearResult>;
+    StageClearResult value,
+    $Res Function(StageClearResult) then,
+  ) = _$StageClearResultCopyWithImpl<$Res, StageClearResult>;
   @useResult
-  $Res call(
-      {int stageNumber,
-      bool isCleared,
-      int stars,
-      int score,
-      int victories,
-      int escapes,
-      int wrongClaims,
-      Duration totalTime,
-      List<int> defeatedEnemies,
-      bool isPerfect,
-      bool isNewRecord,
-      List<int> rewardItems});
+  $Res call({
+    int stageNumber,
+    bool isCleared,
+    int stars,
+    int score,
+    int victories,
+    int escapes,
+    int wrongClaims,
+    Duration totalTime,
+    List<int> defeatedEnemies,
+    bool isPerfect,
+    bool isNewRecord,
+    List<int> rewardItems,
+  });
 }
 
 /// @nodoc
@@ -667,89 +700,95 @@ class _$StageClearResultCopyWithImpl<$Res, $Val extends StageClearResult>
     Object? isNewRecord = null,
     Object? rewardItems = null,
   }) {
-    return _then(_value.copyWith(
-      stageNumber: null == stageNumber
-          ? _value.stageNumber
-          : stageNumber // ignore: cast_nullable_to_non_nullable
-              as int,
-      isCleared: null == isCleared
-          ? _value.isCleared
-          : isCleared // ignore: cast_nullable_to_non_nullable
-              as bool,
-      stars: null == stars
-          ? _value.stars
-          : stars // ignore: cast_nullable_to_non_nullable
-              as int,
-      score: null == score
-          ? _value.score
-          : score // ignore: cast_nullable_to_non_nullable
-              as int,
-      victories: null == victories
-          ? _value.victories
-          : victories // ignore: cast_nullable_to_non_nullable
-              as int,
-      escapes: null == escapes
-          ? _value.escapes
-          : escapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      wrongClaims: null == wrongClaims
-          ? _value.wrongClaims
-          : wrongClaims // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTime: null == totalTime
-          ? _value.totalTime
-          : totalTime // ignore: cast_nullable_to_non_nullable
-              as Duration,
-      defeatedEnemies: null == defeatedEnemies
-          ? _value.defeatedEnemies
-          : defeatedEnemies // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      isPerfect: null == isPerfect
-          ? _value.isPerfect
-          : isPerfect // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isNewRecord: null == isNewRecord
-          ? _value.isNewRecord
-          : isNewRecord // ignore: cast_nullable_to_non_nullable
-              as bool,
-      rewardItems: null == rewardItems
-          ? _value.rewardItems
-          : rewardItems // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            stageNumber: null == stageNumber
+                ? _value.stageNumber
+                : stageNumber // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isCleared: null == isCleared
+                ? _value.isCleared
+                : isCleared // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            stars: null == stars
+                ? _value.stars
+                : stars // ignore: cast_nullable_to_non_nullable
+                      as int,
+            score: null == score
+                ? _value.score
+                : score // ignore: cast_nullable_to_non_nullable
+                      as int,
+            victories: null == victories
+                ? _value.victories
+                : victories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            escapes: null == escapes
+                ? _value.escapes
+                : escapes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            wrongClaims: null == wrongClaims
+                ? _value.wrongClaims
+                : wrongClaims // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTime: null == totalTime
+                ? _value.totalTime
+                : totalTime // ignore: cast_nullable_to_non_nullable
+                      as Duration,
+            defeatedEnemies: null == defeatedEnemies
+                ? _value.defeatedEnemies
+                : defeatedEnemies // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
+            isPerfect: null == isPerfect
+                ? _value.isPerfect
+                : isPerfect // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isNewRecord: null == isNewRecord
+                ? _value.isNewRecord
+                : isNewRecord // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            rewardItems: null == rewardItems
+                ? _value.rewardItems
+                : rewardItems // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$StageClearResultImplCopyWith<$Res>
     implements $StageClearResultCopyWith<$Res> {
-  factory _$$StageClearResultImplCopyWith(_$StageClearResultImpl value,
-          $Res Function(_$StageClearResultImpl) then) =
-      __$$StageClearResultImplCopyWithImpl<$Res>;
+  factory _$$StageClearResultImplCopyWith(
+    _$StageClearResultImpl value,
+    $Res Function(_$StageClearResultImpl) then,
+  ) = _$$StageClearResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int stageNumber,
-      bool isCleared,
-      int stars,
-      int score,
-      int victories,
-      int escapes,
-      int wrongClaims,
-      Duration totalTime,
-      List<int> defeatedEnemies,
-      bool isPerfect,
-      bool isNewRecord,
-      List<int> rewardItems});
+  $Res call({
+    int stageNumber,
+    bool isCleared,
+    int stars,
+    int score,
+    int victories,
+    int escapes,
+    int wrongClaims,
+    Duration totalTime,
+    List<int> defeatedEnemies,
+    bool isPerfect,
+    bool isNewRecord,
+    List<int> rewardItems,
+  });
 }
 
 /// @nodoc
-class __$$StageClearResultImplCopyWithImpl<$Res>
+class _$$StageClearResultImplCopyWithImpl<$Res>
     extends _$StageClearResultCopyWithImpl<$Res, _$StageClearResultImpl>
     implements _$$StageClearResultImplCopyWith<$Res> {
-  __$$StageClearResultImplCopyWithImpl(_$StageClearResultImpl _value,
-      $Res Function(_$StageClearResultImpl) _then)
-      : super(_value, _then);
+  _$$StageClearResultImplCopyWithImpl(
+    _$StageClearResultImpl _value,
+    $Res Function(_$StageClearResultImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -767,77 +806,79 @@ class __$$StageClearResultImplCopyWithImpl<$Res>
     Object? isNewRecord = null,
     Object? rewardItems = null,
   }) {
-    return _then(_$StageClearResultImpl(
-      stageNumber: null == stageNumber
-          ? _value.stageNumber
-          : stageNumber // ignore: cast_nullable_to_non_nullable
-              as int,
-      isCleared: null == isCleared
-          ? _value.isCleared
-          : isCleared // ignore: cast_nullable_to_non_nullable
-              as bool,
-      stars: null == stars
-          ? _value.stars
-          : stars // ignore: cast_nullable_to_non_nullable
-              as int,
-      score: null == score
-          ? _value.score
-          : score // ignore: cast_nullable_to_non_nullable
-              as int,
-      victories: null == victories
-          ? _value.victories
-          : victories // ignore: cast_nullable_to_non_nullable
-              as int,
-      escapes: null == escapes
-          ? _value.escapes
-          : escapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      wrongClaims: null == wrongClaims
-          ? _value.wrongClaims
-          : wrongClaims // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTime: null == totalTime
-          ? _value.totalTime
-          : totalTime // ignore: cast_nullable_to_non_nullable
-              as Duration,
-      defeatedEnemies: null == defeatedEnemies
-          ? _value._defeatedEnemies
-          : defeatedEnemies // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      isPerfect: null == isPerfect
-          ? _value.isPerfect
-          : isPerfect // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isNewRecord: null == isNewRecord
-          ? _value.isNewRecord
-          : isNewRecord // ignore: cast_nullable_to_non_nullable
-              as bool,
-      rewardItems: null == rewardItems
-          ? _value._rewardItems
-          : rewardItems // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-    ));
+    return _then(
+      _$StageClearResultImpl(
+        stageNumber: null == stageNumber
+            ? _value.stageNumber
+            : stageNumber // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isCleared: null == isCleared
+            ? _value.isCleared
+            : isCleared // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        stars: null == stars
+            ? _value.stars
+            : stars // ignore: cast_nullable_to_non_nullable
+                  as int,
+        score: null == score
+            ? _value.score
+            : score // ignore: cast_nullable_to_non_nullable
+                  as int,
+        victories: null == victories
+            ? _value.victories
+            : victories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        escapes: null == escapes
+            ? _value.escapes
+            : escapes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        wrongClaims: null == wrongClaims
+            ? _value.wrongClaims
+            : wrongClaims // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTime: null == totalTime
+            ? _value.totalTime
+            : totalTime // ignore: cast_nullable_to_non_nullable
+                  as Duration,
+        defeatedEnemies: null == defeatedEnemies
+            ? _value._defeatedEnemies
+            : defeatedEnemies // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
+        isPerfect: null == isPerfect
+            ? _value.isPerfect
+            : isPerfect // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isNewRecord: null == isNewRecord
+            ? _value.isNewRecord
+            : isNewRecord // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        rewardItems: null == rewardItems
+            ? _value._rewardItems
+            : rewardItems // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$StageClearResultImpl implements _StageClearResult {
-  const _$StageClearResultImpl(
-      {required this.stageNumber,
-      required this.isCleared,
-      required this.stars,
-      required this.score,
-      required this.victories,
-      required this.escapes,
-      required this.wrongClaims,
-      required this.totalTime,
-      required final List<int> defeatedEnemies,
-      required this.isPerfect,
-      required this.isNewRecord,
-      final List<int> rewardItems = const []})
-      : _defeatedEnemies = defeatedEnemies,
-        _rewardItems = rewardItems;
+  const _$StageClearResultImpl({
+    required this.stageNumber,
+    required this.isCleared,
+    required this.stars,
+    required this.score,
+    required this.victories,
+    required this.escapes,
+    required this.wrongClaims,
+    required this.totalTime,
+    required final List<int> defeatedEnemies,
+    required this.isPerfect,
+    required this.isNewRecord,
+    final List<int> rewardItems = const [],
+  }) : _defeatedEnemies = defeatedEnemies,
+       _rewardItems = rewardItems;
 
   @override
   final int stageNumber;
@@ -899,54 +940,62 @@ class _$StageClearResultImpl implements _StageClearResult {
                 other.wrongClaims == wrongClaims) &&
             (identical(other.totalTime, totalTime) ||
                 other.totalTime == totalTime) &&
-            const DeepCollectionEquality()
-                .equals(other._defeatedEnemies, _defeatedEnemies) &&
+            const DeepCollectionEquality().equals(
+              other._defeatedEnemies,
+              _defeatedEnemies,
+            ) &&
             (identical(other.isPerfect, isPerfect) ||
                 other.isPerfect == isPerfect) &&
             (identical(other.isNewRecord, isNewRecord) ||
                 other.isNewRecord == isNewRecord) &&
-            const DeepCollectionEquality()
-                .equals(other._rewardItems, _rewardItems));
+            const DeepCollectionEquality().equals(
+              other._rewardItems,
+              _rewardItems,
+            ));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      stageNumber,
-      isCleared,
-      stars,
-      score,
-      victories,
-      escapes,
-      wrongClaims,
-      totalTime,
-      const DeepCollectionEquality().hash(_defeatedEnemies),
-      isPerfect,
-      isNewRecord,
-      const DeepCollectionEquality().hash(_rewardItems));
+    runtimeType,
+    stageNumber,
+    isCleared,
+    stars,
+    score,
+    victories,
+    escapes,
+    wrongClaims,
+    totalTime,
+    const DeepCollectionEquality().hash(_defeatedEnemies),
+    isPerfect,
+    isNewRecord,
+    const DeepCollectionEquality().hash(_rewardItems),
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$StageClearResultImplCopyWith<_$StageClearResultImpl> get copyWith =>
-      __$$StageClearResultImplCopyWithImpl<_$StageClearResultImpl>(
-          this, _$identity);
+      _$$StageClearResultImplCopyWithImpl<_$StageClearResultImpl>(
+        this,
+        _$identity,
+      );
 }
 
 abstract class _StageClearResult implements StageClearResult {
-  const factory _StageClearResult(
-      {required final int stageNumber,
-      required final bool isCleared,
-      required final int stars,
-      required final int score,
-      required final int victories,
-      required final int escapes,
-      required final int wrongClaims,
-      required final Duration totalTime,
-      required final List<int> defeatedEnemies,
-      required final bool isPerfect,
-      required final bool isNewRecord,
-      final List<int> rewardItems}) = _$StageClearResultImpl;
+  const factory _StageClearResult({
+    required final int stageNumber,
+    required final bool isCleared,
+    required final int stars,
+    required final int score,
+    required final int victories,
+    required final int escapes,
+    required final int wrongClaims,
+    required final Duration totalTime,
+    required final List<int> defeatedEnemies,
+    required final bool isPerfect,
+    required final bool isNewRecord,
+    final List<int> rewardItems,
+  }) = _$StageClearResultImpl;
 
   @override
   int get stageNumber;

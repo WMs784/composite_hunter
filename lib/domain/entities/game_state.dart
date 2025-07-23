@@ -50,18 +50,10 @@ class GameState with _$GameState {
 }
 
 /// Game difficulty levels
-enum GameDifficulty {
-  easy,
-  normal,
-  hard,
-  expert,
-}
+enum GameDifficulty { easy, normal, hard, expert }
 
 /// Game language options
-enum GameLanguage {
-  japanese,
-  english,
-}
+enum GameLanguage { japanese, english }
 
 /// Game event types
 @freezed

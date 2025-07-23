@@ -15,10 +15,7 @@ import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 class StageItemSelectionScreen extends ConsumerStatefulWidget {
   final StageInfo stage;
 
-  const StageItemSelectionScreen({
-    super.key,
-    required this.stage,
-  });
+  const StageItemSelectionScreen({super.key, required this.stage});
 
   @override
   ConsumerState<StageItemSelectionScreen> createState() =>
@@ -55,13 +52,17 @@ class _StageItemSelectionScreenState
   @override
   Widget build(BuildContext context) {
     final allPrimes = ref.watch(inventoryProvider);
-    final availablePrimes =
-        allPrimes.where((prime) => prime.count > 0).toList();
+    final availablePrimes = allPrimes
+        .where((prime) => prime.count > 0)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!
-            .selectItems(widget.stage.stageNumber.toString())),
+        title: Text(
+          AppLocalizations.of(
+            context,
+          )!.selectItems(widget.stage.stageNumber.toString()),
+        ),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -82,9 +83,7 @@ class _StageItemSelectionScreenState
             const SizedBox(height: Dimensions.spacingM),
 
             // アイテム選択グリッド
-            Expanded(
-              child: _buildItemSelectionGrid(availablePrimes),
-            ),
+            Expanded(child: _buildItemSelectionGrid(availablePrimes)),
 
             const SizedBox(height: Dimensions.spacingM),
 
@@ -162,14 +161,16 @@ class _StageItemSelectionScreenState
               _buildInfoChip(
                 Icons.numbers,
                 AppLocalizations.of(context)!.itemRange(
-                    widget.stage.enemyRangeMin.toString(),
-                    widget.stage.enemyRangeMax.toString()),
+                  widget.stage.enemyRangeMin.toString(),
+                  widget.stage.enemyRangeMax.toString(),
+                ),
               ),
               const SizedBox(width: Dimensions.spacingS),
               _buildInfoChip(
                 Icons.timer,
-                AppLocalizations.of(context)!
-                    .timeLimit(widget.stage.timeLimit.toString()),
+                AppLocalizations.of(
+                  context,
+                )!.timeLimit(widget.stage.timeLimit.toString()),
               ),
             ],
           ),
@@ -220,16 +221,18 @@ class _StageItemSelectionScreenState
                     Text(
                       ' / $maxSelectableCount',
                       style: AppTextStyles.titleMedium.copyWith(
-                        color:
-                            AppColors.onPrimaryContainer.withValues(alpha: 0.7),
+                        color: AppColors.onPrimaryContainer.withValues(
+                          alpha: 0.7,
+                        ),
                       ),
                     ),
                     const SizedBox(width: Dimensions.spacingS),
                     Text(
                       '($remainingCount ${AppLocalizations.of(context)!.remaining})',
                       style: AppTextStyles.labelSmall.copyWith(
-                        color:
-                            AppColors.onPrimaryContainer.withValues(alpha: 0.6),
+                        color: AppColors.onPrimaryContainer.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                   ],
@@ -348,11 +351,7 @@ class _StageItemSelectionScreenState
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: AppColors.primary,
-          ),
+          Icon(icon, size: 14, color: AppColors.primary),
           const SizedBox(width: 4),
           Text(
             text,
@@ -390,10 +389,14 @@ class _StageItemSelectionScreenState
 
   /// 選択されたアイテムでバトル開始
   void _startBattleWithSelectedItems() {
-    Logger.logBattle('Starting battle with selected counts',
-        data: {'selected_counts': selectedCounts});
-    Logger.logBattle('Total selected count',
-        data: {'total_count': totalSelectedCount});
+    Logger.logBattle(
+      'Starting battle with selected counts',
+      data: {'selected_counts': selectedCounts},
+    );
+    Logger.logBattle(
+      'Total selected count',
+      data: {'total_count': totalSelectedCount},
+    );
 
     // 選択されたアイテムで一時的なインベントリを作成
     final selectedInventory = _createSelectedInventory();
@@ -402,7 +405,9 @@ class _StageItemSelectionScreenState
     final originalMainInventory = ref.read(inventoryProvider);
 
     // バトルセッションを開始（選択されたアイテムのみ）
-    ref.read(battleSessionProvider.notifier).startStageWithSelectedItems(
+    ref
+        .read(battleSessionProvider.notifier)
+        .startStageWithSelectedItems(
           widget.stage.stageNumber,
           selectedInventory,
           originalMainInventory,
@@ -429,11 +434,13 @@ class _StageItemSelectionScreenState
       );
 
       if (selectedCount > 0) {
-        selectedInventory.add(Prime(
-          value: primeValue,
-          count: selectedCount,
-          firstObtained: originalPrime.firstObtained,
-        ));
+        selectedInventory.add(
+          Prime(
+            value: primeValue,
+            count: selectedCount,
+            firstObtained: originalPrime.firstObtained,
+          ),
+        );
       }
     }
 
@@ -467,10 +474,7 @@ class _SelectableItemCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: _getBackgroundColor(),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(
-          color: _getBorderColor(),
-          width: isSelected ? 3 : 1,
-        ),
+        border: Border.all(color: _getBorderColor(), width: isSelected ? 3 : 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

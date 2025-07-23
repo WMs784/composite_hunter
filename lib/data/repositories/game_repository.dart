@@ -20,8 +20,8 @@ class GameRepository {
     LocalDatabase? database,
     SharedPreferencesService? preferences,
     // GameMapper? mapper, // Future feature
-  })  : _database = database ?? LocalDatabase(),
-        _preferences = preferences ?? SharedPreferencesService();
+  }) : _database = database ?? LocalDatabase(),
+       _preferences = preferences ?? SharedPreferencesService();
   // _mapper = mapper ?? GameMapper(); // Future feature
 
   // ========== PLAYER OPERATIONS ==========
@@ -131,11 +131,13 @@ class GameRepository {
             : DateTime.now(),
         lastLevelUpAt: playerData['last_level_up_at'] != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                playerData['last_level_up_at'])
+                playerData['last_level_up_at'],
+              )
             : null,
         lastAchievementAt: playerData['last_achievement_at'] != null
             ? DateTime.fromMillisecondsSinceEpoch(
-                playerData['last_achievement_at'])
+                playerData['last_achievement_at'],
+              )
             : null,
       );
     } catch (e, stackTrace) {
@@ -172,7 +174,8 @@ class GameRepository {
         'speed_victories': player.speedVictories,
         'efficient_victories': player.efficientVictories,
         'comeback_victories': player.combackVictories,
-        'last_played_at': player.lastPlayedAt?.millisecondsSinceEpoch ??
+        'last_played_at':
+            player.lastPlayedAt?.millisecondsSinceEpoch ??
             DateTime.now().millisecondsSinceEpoch,
         'last_level_up_at': player.lastLevelUpAt?.millisecondsSinceEpoch,
         'last_achievement_at': player.lastAchievementAt?.millisecondsSinceEpoch,
@@ -227,8 +230,9 @@ class GameRepository {
         return Prime(
           value: data['value'],
           count: data['count'],
-          firstObtained:
-              DateTime.fromMillisecondsSinceEpoch(data['first_obtained']),
+          firstObtained: DateTime.fromMillisecondsSinceEpoch(
+            data['first_obtained'],
+          ),
           usageCount: data['usage_count'] ?? 0,
         );
       }).toList();
@@ -296,10 +300,7 @@ class GameRepository {
   // ========== BATTLE OPERATIONS ==========
 
   /// Start a new battle
-  Future<int> startBattle({
-    required int enemyId,
-    int? playerId,
-  }) async {
+  Future<int> startBattle({required int enemyId, int? playerId}) async {
     try {
       final currentPlayerId = playerId ?? await getCurrentOrCreatePlayer();
       Logger.info('Starting battle for player: $currentPlayerId');
@@ -358,8 +359,9 @@ class GameRepository {
         'time_used': timeUsed,
         'primes_used': jsonEncode(primesUsed),
         'victory_claim_value': victoryClaimValue,
-        'victory_claim_correct':
-            victoryClaimCorrect != null ? (victoryClaimCorrect ? 1 : 0) : null,
+        'victory_claim_correct': victoryClaimCorrect != null
+            ? (victoryClaimCorrect ? 1 : 0)
+            : null,
         'penalties_applied': jsonEncode(penalties ?? []),
         'score': score,
         'experience_gained': experienceGained,
@@ -410,14 +412,18 @@ class GameRepository {
   }
 
   /// Get battle history
-  Future<List<BattleResultModel>> loadBattleHistory(
-      {int? limit, int? playerId}) async {
+  Future<List<BattleResultModel>> loadBattleHistory({
+    int? limit,
+    int? playerId,
+  }) async {
     try {
       final currentPlayerId = playerId ?? await getCurrentOrCreatePlayer();
       Logger.info('Loading battle history for player: $currentPlayerId');
 
-      final historyData =
-          await _database.getPlayerBattleHistory(currentPlayerId, limit: limit);
+      final historyData = await _database.getPlayerBattleHistory(
+        currentPlayerId,
+        limit: limit,
+      );
 
       final results = historyData.map((data) {
         // Convert battle history data to BattleResultModel
@@ -439,7 +445,8 @@ class GameRepository {
               ),
               rewardPrime: enemyValue,
               completedAt: DateTime.fromMillisecondsSinceEpoch(
-                  completedAt ?? DateTime.now().millisecondsSinceEpoch),
+                completedAt ?? DateTime.now().millisecondsSinceEpoch,
+              ),
               battleDuration: duration,
             );
           case 'defeat':
@@ -471,8 +478,9 @@ class GameRepository {
       final currentPlayerId = playerId ?? await getCurrentOrCreatePlayer();
       Logger.info('Loading achievements for player: $currentPlayerId');
 
-      final achievementsData =
-          await _database.getPlayerAchievementProgress(currentPlayerId);
+      final achievementsData = await _database.getPlayerAchievementProgress(
+        currentPlayerId,
+      );
 
       final achievements = achievementsData.map((data) {
         return Achievement(
@@ -485,7 +493,10 @@ class GameRepository {
           currentProgress: data['current_progress'],
           isUnlocked: data['is_unlocked'] == 1,
           reward: _mapAchievementReward(
-              data['reward_type'], data['reward_value'], data['reward_count']),
+            data['reward_type'],
+            data['reward_value'],
+            data['reward_count'],
+          ),
           unlockedAt: data['unlocked_at'] != null
               ? DateTime.fromMillisecondsSinceEpoch(data['unlocked_at'])
               : null,
@@ -510,10 +521,12 @@ class GameRepository {
     try {
       final currentPlayerId = playerId ?? await getCurrentOrCreatePlayer();
       Logger.info(
-          'Updating achievement progress: $achievementId for player: $currentPlayerId');
+        'Updating achievement progress: $achievementId for player: $currentPlayerId',
+      );
 
-      final unlockedAt =
-          isUnlocked == true ? DateTime.now().millisecondsSinceEpoch : null;
+      final unlockedAt = isUnlocked == true
+          ? DateTime.now().millisecondsSinceEpoch
+          : null;
 
       await _database.updateAchievementProgress(
         currentPlayerId,
@@ -545,8 +558,12 @@ class GameRepository {
   }
 
   /// Set game setting
-  Future<void> setGameSetting(String key, String value, String type,
-      [int? playerId]) async {
+  Future<void> setGameSetting(
+    String key,
+    String value,
+    String type, [
+    int? playerId,
+  ]) async {
     try {
       final currentPlayerId = playerId ?? await getCurrentOrCreatePlayer();
       await _database.setGameSetting(currentPlayerId, key, value, type);
@@ -648,8 +665,10 @@ class GameRepository {
   }
 
   /// Import game data
-  Future<void> importGameData(Map<String, dynamic> data,
-      [int? playerId]) async {
+  Future<void> importGameData(
+    Map<String, dynamic> data, [
+    int? playerId,
+  ]) async {
     try {
       final currentPlayerId = playerId ?? await getCurrentOrCreatePlayer();
       Logger.info('Importing game data for player: $currentPlayerId');

@@ -12,7 +12,8 @@ part of 'enemy_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 EnemyModel _$EnemyModelFromJson(Map<String, dynamic> json) {
   return _EnemyModel.fromJson(json);
@@ -37,17 +38,19 @@ mixin _$EnemyModel {
 /// @nodoc
 abstract class $EnemyModelCopyWith<$Res> {
   factory $EnemyModelCopyWith(
-          EnemyModel value, $Res Function(EnemyModel) then) =
-      _$EnemyModelCopyWithImpl<$Res, EnemyModel>;
+    EnemyModel value,
+    $Res Function(EnemyModel) then,
+  ) = _$EnemyModelCopyWithImpl<$Res, EnemyModel>;
   @useResult
-  $Res call(
-      {int currentValue,
-      int originalValue,
-      EnemyType type,
-      List<int> primeFactors,
-      bool isPowerEnemy,
-      int? powerBase,
-      int? powerExponent});
+  $Res call({
+    int currentValue,
+    int originalValue,
+    EnemyType type,
+    List<int> primeFactors,
+    bool isPowerEnemy,
+    int? powerBase,
+    int? powerExponent,
+  });
 }
 
 /// @nodoc
@@ -71,36 +74,39 @@ class _$EnemyModelCopyWithImpl<$Res, $Val extends EnemyModel>
     Object? powerBase = freezed,
     Object? powerExponent = freezed,
   }) {
-    return _then(_value.copyWith(
-      currentValue: null == currentValue
-          ? _value.currentValue
-          : currentValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      originalValue: null == originalValue
-          ? _value.originalValue
-          : originalValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as EnemyType,
-      primeFactors: null == primeFactors
-          ? _value.primeFactors
-          : primeFactors // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      isPowerEnemy: null == isPowerEnemy
-          ? _value.isPowerEnemy
-          : isPowerEnemy // ignore: cast_nullable_to_non_nullable
-              as bool,
-      powerBase: freezed == powerBase
-          ? _value.powerBase
-          : powerBase // ignore: cast_nullable_to_non_nullable
-              as int?,
-      powerExponent: freezed == powerExponent
-          ? _value.powerExponent
-          : powerExponent // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            currentValue: null == currentValue
+                ? _value.currentValue
+                : currentValue // ignore: cast_nullable_to_non_nullable
+                      as int,
+            originalValue: null == originalValue
+                ? _value.originalValue
+                : originalValue // ignore: cast_nullable_to_non_nullable
+                      as int,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as EnemyType,
+            primeFactors: null == primeFactors
+                ? _value.primeFactors
+                : primeFactors // ignore: cast_nullable_to_non_nullable
+                      as List<int>,
+            isPowerEnemy: null == isPowerEnemy
+                ? _value.isPowerEnemy
+                : isPowerEnemy // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            powerBase: freezed == powerBase
+                ? _value.powerBase
+                : powerBase // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            powerExponent: freezed == powerExponent
+                ? _value.powerExponent
+                : powerExponent // ignore: cast_nullable_to_non_nullable
+                      as int?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -108,27 +114,30 @@ class _$EnemyModelCopyWithImpl<$Res, $Val extends EnemyModel>
 abstract class _$$EnemyModelImplCopyWith<$Res>
     implements $EnemyModelCopyWith<$Res> {
   factory _$$EnemyModelImplCopyWith(
-          _$EnemyModelImpl value, $Res Function(_$EnemyModelImpl) then) =
-      __$$EnemyModelImplCopyWithImpl<$Res>;
+    _$EnemyModelImpl value,
+    $Res Function(_$EnemyModelImpl) then,
+  ) = _$$EnemyModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int currentValue,
-      int originalValue,
-      EnemyType type,
-      List<int> primeFactors,
-      bool isPowerEnemy,
-      int? powerBase,
-      int? powerExponent});
+  $Res call({
+    int currentValue,
+    int originalValue,
+    EnemyType type,
+    List<int> primeFactors,
+    bool isPowerEnemy,
+    int? powerBase,
+    int? powerExponent,
+  });
 }
 
 /// @nodoc
-class __$$EnemyModelImplCopyWithImpl<$Res>
+class _$$EnemyModelImplCopyWithImpl<$Res>
     extends _$EnemyModelCopyWithImpl<$Res, _$EnemyModelImpl>
     implements _$$EnemyModelImplCopyWith<$Res> {
-  __$$EnemyModelImplCopyWithImpl(
-      _$EnemyModelImpl _value, $Res Function(_$EnemyModelImpl) _then)
-      : super(_value, _then);
+  _$$EnemyModelImplCopyWithImpl(
+    _$EnemyModelImpl _value,
+    $Res Function(_$EnemyModelImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -141,51 +150,53 @@ class __$$EnemyModelImplCopyWithImpl<$Res>
     Object? powerBase = freezed,
     Object? powerExponent = freezed,
   }) {
-    return _then(_$EnemyModelImpl(
-      currentValue: null == currentValue
-          ? _value.currentValue
-          : currentValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      originalValue: null == originalValue
-          ? _value.originalValue
-          : originalValue // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as EnemyType,
-      primeFactors: null == primeFactors
-          ? _value._primeFactors
-          : primeFactors // ignore: cast_nullable_to_non_nullable
-              as List<int>,
-      isPowerEnemy: null == isPowerEnemy
-          ? _value.isPowerEnemy
-          : isPowerEnemy // ignore: cast_nullable_to_non_nullable
-              as bool,
-      powerBase: freezed == powerBase
-          ? _value.powerBase
-          : powerBase // ignore: cast_nullable_to_non_nullable
-              as int?,
-      powerExponent: freezed == powerExponent
-          ? _value.powerExponent
-          : powerExponent // ignore: cast_nullable_to_non_nullable
-              as int?,
-    ));
+    return _then(
+      _$EnemyModelImpl(
+        currentValue: null == currentValue
+            ? _value.currentValue
+            : currentValue // ignore: cast_nullable_to_non_nullable
+                  as int,
+        originalValue: null == originalValue
+            ? _value.originalValue
+            : originalValue // ignore: cast_nullable_to_non_nullable
+                  as int,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as EnemyType,
+        primeFactors: null == primeFactors
+            ? _value._primeFactors
+            : primeFactors // ignore: cast_nullable_to_non_nullable
+                  as List<int>,
+        isPowerEnemy: null == isPowerEnemy
+            ? _value.isPowerEnemy
+            : isPowerEnemy // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        powerBase: freezed == powerBase
+            ? _value.powerBase
+            : powerBase // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        powerExponent: freezed == powerExponent
+            ? _value.powerExponent
+            : powerExponent // ignore: cast_nullable_to_non_nullable
+                  as int?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EnemyModelImpl implements _EnemyModel {
-  const _$EnemyModelImpl(
-      {required this.currentValue,
-      required this.originalValue,
-      required this.type,
-      required final List<int> primeFactors,
-      this.isPowerEnemy = false,
-      this.powerBase,
-      this.powerExponent})
-      : _primeFactors = primeFactors;
+  const _$EnemyModelImpl({
+    required this.currentValue,
+    required this.originalValue,
+    required this.type,
+    required final List<int> primeFactors,
+    this.isPowerEnemy = false,
+    this.powerBase,
+    this.powerExponent,
+  }) : _primeFactors = primeFactors;
 
   factory _$EnemyModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$EnemyModelImplFromJson(json);
@@ -227,8 +238,10 @@ class _$EnemyModelImpl implements _EnemyModel {
             (identical(other.originalValue, originalValue) ||
                 other.originalValue == originalValue) &&
             (identical(other.type, type) || other.type == type) &&
-            const DeepCollectionEquality()
-                .equals(other._primeFactors, _primeFactors) &&
+            const DeepCollectionEquality().equals(
+              other._primeFactors,
+              _primeFactors,
+            ) &&
             (identical(other.isPowerEnemy, isPowerEnemy) ||
                 other.isPowerEnemy == isPowerEnemy) &&
             (identical(other.powerBase, powerBase) ||
@@ -240,38 +253,38 @@ class _$EnemyModelImpl implements _EnemyModel {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      currentValue,
-      originalValue,
-      type,
-      const DeepCollectionEquality().hash(_primeFactors),
-      isPowerEnemy,
-      powerBase,
-      powerExponent);
+    runtimeType,
+    currentValue,
+    originalValue,
+    type,
+    const DeepCollectionEquality().hash(_primeFactors),
+    isPowerEnemy,
+    powerBase,
+    powerExponent,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$EnemyModelImplCopyWith<_$EnemyModelImpl> get copyWith =>
-      __$$EnemyModelImplCopyWithImpl<_$EnemyModelImpl>(this, _$identity);
+      _$$EnemyModelImplCopyWithImpl<_$EnemyModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EnemyModelImplToJson(
-      this,
-    );
+    return _$$EnemyModelImplToJson(this);
   }
 }
 
 abstract class _EnemyModel implements EnemyModel {
-  const factory _EnemyModel(
-      {required final int currentValue,
-      required final int originalValue,
-      required final EnemyType type,
-      required final List<int> primeFactors,
-      final bool isPowerEnemy,
-      final int? powerBase,
-      final int? powerExponent}) = _$EnemyModelImpl;
+  const factory _EnemyModel({
+    required final int currentValue,
+    required final int originalValue,
+    required final EnemyType type,
+    required final List<int> primeFactors,
+    final bool isPowerEnemy,
+    final int? powerBase,
+    final int? powerExponent,
+  }) = _$EnemyModelImpl;
 
   factory _EnemyModel.fromJson(Map<String, dynamic> json) =
       _$EnemyModelImpl.fromJson;

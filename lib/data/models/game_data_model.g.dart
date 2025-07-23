@@ -16,13 +16,16 @@ _$GameDataModelImpl _$$GameDataModelImplFromJson(Map<String, dynamic> json) =>
       totalTimeOuts: (json['totalTimeOuts'] as num?)?.toInt() ?? 0,
       totalPowerEnemiesDefeated:
           (json['totalPowerEnemiesDefeated'] as num?)?.toInt() ?? 0,
-      inventory: (json['inventory'] as List<dynamic>?)
+      inventory:
+          (json['inventory'] as List<dynamic>?)
               ?.map((e) => PrimeModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      battleHistory: (json['battleHistory'] as List<dynamic>?)
+      battleHistory:
+          (json['battleHistory'] as List<dynamic>?)
               ?.map(
-                  (e) => BattleResultModel.fromJson(e as Map<String, dynamic>))
+                (e) => BattleResultModel.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           const [],
       tutorialCompleted: json['tutorialCompleted'] as bool? ?? false,

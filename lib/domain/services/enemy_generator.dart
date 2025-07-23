@@ -13,14 +13,16 @@ class EnemyGenerator {
   /// Generate an enemy appropriate for the player's level and inventory
   Enemy generateEnemy(List<Prime> playerInventory, int playerLevel) {
     Logger.debug(
-        'Generating enemy for player level $playerLevel with ${playerInventory.length} primes');
+      'Generating enemy for player level $playerLevel with ${playerInventory.length} primes',
+    );
 
     // 10% chance to generate a power enemy
     if (_random.nextDouble() < GameConstants.powerEnemySpawnRate) {
       final powerEnemy = _generatePowerEnemy(playerInventory, playerLevel);
       if (powerEnemy != null) {
         Logger.debug(
-            'Generated power enemy with value ${powerEnemy.currentValue}');
+          'Generated power enemy with value ${powerEnemy.currentValue}',
+        );
         return powerEnemy;
       }
     }
@@ -28,7 +30,8 @@ class EnemyGenerator {
     // Generate normal enemy
     final normalEnemy = _generateNormalEnemy(playerInventory, playerLevel);
     Logger.debug(
-        'Generated normal enemy with value ${normalEnemy.currentValue} of type ${normalEnemy.type.name}');
+      'Generated normal enemy with value ${normalEnemy.currentValue} of type ${normalEnemy.type.name}',
+    );
     return normalEnemy;
   }
 
@@ -44,9 +47,12 @@ class EnemyGenerator {
     final basePrime = availablePrimes[_random.nextInt(availablePrimes.length)];
 
     // Determine exponent based on player level
-    final maxExponent = math.min(GameConstants.maxPowerExponent,
-        GameConstants.minPowerExponent + (playerLevel ~/ 5));
-    final exponent = GameConstants.minPowerExponent +
+    final maxExponent = math.min(
+      GameConstants.maxPowerExponent,
+      GameConstants.minPowerExponent + (playerLevel ~/ 5),
+    );
+    final exponent =
+        GameConstants.minPowerExponent +
         _random.nextInt(maxExponent - GameConstants.minPowerExponent + 1);
 
     return PowerEnemyDetector.createPowerEnemy(basePrime, exponent);
@@ -205,7 +211,7 @@ class EnemyGenerator {
       45,
       48,
       49,
-      50
+      50,
     ];
     return mediumComposites[_random.nextInt(mediumComposites.length)];
   }
@@ -214,9 +220,11 @@ class EnemyGenerator {
     // Generate from large composite range
     int value;
     do {
-      value = GameConstants.largeEnemyMin +
+      value =
+          GameConstants.largeEnemyMin +
           _random.nextInt(
-              GameConstants.largeEnemyMax - GameConstants.largeEnemyMin + 1);
+            GameConstants.largeEnemyMax - GameConstants.largeEnemyMin + 1,
+          );
     } while (PrimeCalculator.isPrime(value));
 
     return value;
@@ -224,7 +232,10 @@ class EnemyGenerator {
 
   /// Generate an enemy with specific difficulty constraints
   Enemy generateEnemyWithDifficulty(
-      List<Prime> playerInventory, int playerLevel, EnemyType targetType) {
+    List<Prime> playerInventory,
+    int playerLevel,
+    EnemyType targetType,
+  ) {
     switch (targetType) {
       case EnemyType.small:
         final value = _generateSmallEnemy(_getAvailablePrimes(playerInventory));
@@ -236,8 +247,9 @@ class EnemyGenerator {
         );
 
       case EnemyType.medium:
-        final value =
-            _generateMediumEnemy(_getAvailablePrimes(playerInventory));
+        final value = _generateMediumEnemy(
+          _getAvailablePrimes(playerInventory),
+        );
         return Enemy(
           currentValue: value,
           originalValue: value,
@@ -257,7 +269,10 @@ class EnemyGenerator {
       case EnemyType.power:
         return _generatePowerEnemy(playerInventory, playerLevel) ??
             generateEnemyWithDifficulty(
-                playerInventory, playerLevel, EnemyType.small);
+              playerInventory,
+              playerLevel,
+              EnemyType.small,
+            );
 
       case EnemyType.special:
         // Generate a special enemy with unique characteristics
@@ -319,7 +334,8 @@ class EnemyGenerator {
     // Adjust based on available attacks
     final availableAttacks = playerInventory
         .where(
-            (prime) => prime.isAvailable && enemy.canBeAttackedBy(prime.value))
+          (prime) => prime.isAvailable && enemy.canBeAttackedBy(prime.value),
+        )
         .length;
 
     if (availableAttacks == 0) {

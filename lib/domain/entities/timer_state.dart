@@ -60,7 +60,8 @@ class TimerState with _$TimerState {
     final newRemainingSeconds = remainingSeconds - 1;
     return copyWith(
       remainingSeconds: newRemainingSeconds,
-      isWarning: newRemainingSeconds <= TimerConstants.warningThreshold &&
+      isWarning:
+          newRemainingSeconds <= TimerConstants.warningThreshold &&
           newRemainingSeconds > TimerConstants.criticalThreshold,
     );
   }
@@ -106,9 +107,4 @@ class TimerState with _$TimerState {
   }
 }
 
-enum TimerDisplayState {
-  normal,
-  warning,
-  critical,
-  expired,
-}
+enum TimerDisplayState { normal, warning, critical, expired }

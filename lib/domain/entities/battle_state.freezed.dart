@@ -12,7 +12,8 @@ part of 'battle_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$BattleState {
@@ -33,18 +34,20 @@ mixin _$BattleState {
 /// @nodoc
 abstract class $BattleStateCopyWith<$Res> {
   factory $BattleStateCopyWith(
-          BattleState value, $Res Function(BattleState) then) =
-      _$BattleStateCopyWithImpl<$Res, BattleState>;
+    BattleState value,
+    $Res Function(BattleState) then,
+  ) = _$BattleStateCopyWithImpl<$Res, BattleState>;
   @useResult
-  $Res call(
-      {Enemy? currentEnemy,
-      List<Item> usedPrimes,
-      BattleStatus status,
-      int turnCount,
-      DateTime? battleStartTime,
-      TimerState? timerState,
-      VictoryClaim? victoryClaim,
-      List<TimePenalty> battlePenalties});
+  $Res call({
+    Enemy? currentEnemy,
+    List<Item> usedPrimes,
+    BattleStatus status,
+    int turnCount,
+    DateTime? battleStartTime,
+    TimerState? timerState,
+    VictoryClaim? victoryClaim,
+    List<TimePenalty> battlePenalties,
+  });
 
   $EnemyCopyWith<$Res>? get currentEnemy;
   $TimerStateCopyWith<$Res>? get timerState;
@@ -73,40 +76,43 @@ class _$BattleStateCopyWithImpl<$Res, $Val extends BattleState>
     Object? victoryClaim = freezed,
     Object? battlePenalties = null,
   }) {
-    return _then(_value.copyWith(
-      currentEnemy: freezed == currentEnemy
-          ? _value.currentEnemy
-          : currentEnemy // ignore: cast_nullable_to_non_nullable
-              as Enemy?,
-      usedPrimes: null == usedPrimes
-          ? _value.usedPrimes
-          : usedPrimes // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as BattleStatus,
-      turnCount: null == turnCount
-          ? _value.turnCount
-          : turnCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      battleStartTime: freezed == battleStartTime
-          ? _value.battleStartTime
-          : battleStartTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      timerState: freezed == timerState
-          ? _value.timerState
-          : timerState // ignore: cast_nullable_to_non_nullable
-              as TimerState?,
-      victoryClaim: freezed == victoryClaim
-          ? _value.victoryClaim
-          : victoryClaim // ignore: cast_nullable_to_non_nullable
-              as VictoryClaim?,
-      battlePenalties: null == battlePenalties
-          ? _value.battlePenalties
-          : battlePenalties // ignore: cast_nullable_to_non_nullable
-              as List<TimePenalty>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            currentEnemy: freezed == currentEnemy
+                ? _value.currentEnemy
+                : currentEnemy // ignore: cast_nullable_to_non_nullable
+                      as Enemy?,
+            usedPrimes: null == usedPrimes
+                ? _value.usedPrimes
+                : usedPrimes // ignore: cast_nullable_to_non_nullable
+                      as List<Item>,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as BattleStatus,
+            turnCount: null == turnCount
+                ? _value.turnCount
+                : turnCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            battleStartTime: freezed == battleStartTime
+                ? _value.battleStartTime
+                : battleStartTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            timerState: freezed == timerState
+                ? _value.timerState
+                : timerState // ignore: cast_nullable_to_non_nullable
+                      as TimerState?,
+            victoryClaim: freezed == victoryClaim
+                ? _value.victoryClaim
+                : victoryClaim // ignore: cast_nullable_to_non_nullable
+                      as VictoryClaim?,
+            battlePenalties: null == battlePenalties
+                ? _value.battlePenalties
+                : battlePenalties // ignore: cast_nullable_to_non_nullable
+                      as List<TimePenalty>,
+          )
+          as $Val,
+    );
   }
 
   @override
@@ -150,19 +156,21 @@ class _$BattleStateCopyWithImpl<$Res, $Val extends BattleState>
 abstract class _$$BattleStateImplCopyWith<$Res>
     implements $BattleStateCopyWith<$Res> {
   factory _$$BattleStateImplCopyWith(
-          _$BattleStateImpl value, $Res Function(_$BattleStateImpl) then) =
-      __$$BattleStateImplCopyWithImpl<$Res>;
+    _$BattleStateImpl value,
+    $Res Function(_$BattleStateImpl) then,
+  ) = _$$BattleStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {Enemy? currentEnemy,
-      List<Item> usedPrimes,
-      BattleStatus status,
-      int turnCount,
-      DateTime? battleStartTime,
-      TimerState? timerState,
-      VictoryClaim? victoryClaim,
-      List<TimePenalty> battlePenalties});
+  $Res call({
+    Enemy? currentEnemy,
+    List<Item> usedPrimes,
+    BattleStatus status,
+    int turnCount,
+    DateTime? battleStartTime,
+    TimerState? timerState,
+    VictoryClaim? victoryClaim,
+    List<TimePenalty> battlePenalties,
+  });
 
   @override
   $EnemyCopyWith<$Res>? get currentEnemy;
@@ -173,12 +181,13 @@ abstract class _$$BattleStateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$BattleStateImplCopyWithImpl<$Res>
+class _$$BattleStateImplCopyWithImpl<$Res>
     extends _$BattleStateCopyWithImpl<$Res, _$BattleStateImpl>
     implements _$$BattleStateImplCopyWith<$Res> {
-  __$$BattleStateImplCopyWithImpl(
-      _$BattleStateImpl _value, $Res Function(_$BattleStateImpl) _then)
-      : super(_value, _then);
+  _$$BattleStateImplCopyWithImpl(
+    _$BattleStateImpl _value,
+    $Res Function(_$BattleStateImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -192,58 +201,60 @@ class __$$BattleStateImplCopyWithImpl<$Res>
     Object? victoryClaim = freezed,
     Object? battlePenalties = null,
   }) {
-    return _then(_$BattleStateImpl(
-      currentEnemy: freezed == currentEnemy
-          ? _value.currentEnemy
-          : currentEnemy // ignore: cast_nullable_to_non_nullable
-              as Enemy?,
-      usedPrimes: null == usedPrimes
-          ? _value._usedPrimes
-          : usedPrimes // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as BattleStatus,
-      turnCount: null == turnCount
-          ? _value.turnCount
-          : turnCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      battleStartTime: freezed == battleStartTime
-          ? _value.battleStartTime
-          : battleStartTime // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      timerState: freezed == timerState
-          ? _value.timerState
-          : timerState // ignore: cast_nullable_to_non_nullable
-              as TimerState?,
-      victoryClaim: freezed == victoryClaim
-          ? _value.victoryClaim
-          : victoryClaim // ignore: cast_nullable_to_non_nullable
-              as VictoryClaim?,
-      battlePenalties: null == battlePenalties
-          ? _value._battlePenalties
-          : battlePenalties // ignore: cast_nullable_to_non_nullable
-              as List<TimePenalty>,
-    ));
+    return _then(
+      _$BattleStateImpl(
+        currentEnemy: freezed == currentEnemy
+            ? _value.currentEnemy
+            : currentEnemy // ignore: cast_nullable_to_non_nullable
+                  as Enemy?,
+        usedPrimes: null == usedPrimes
+            ? _value._usedPrimes
+            : usedPrimes // ignore: cast_nullable_to_non_nullable
+                  as List<Item>,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as BattleStatus,
+        turnCount: null == turnCount
+            ? _value.turnCount
+            : turnCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        battleStartTime: freezed == battleStartTime
+            ? _value.battleStartTime
+            : battleStartTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        timerState: freezed == timerState
+            ? _value.timerState
+            : timerState // ignore: cast_nullable_to_non_nullable
+                  as TimerState?,
+        victoryClaim: freezed == victoryClaim
+            ? _value.victoryClaim
+            : victoryClaim // ignore: cast_nullable_to_non_nullable
+                  as VictoryClaim?,
+        battlePenalties: null == battlePenalties
+            ? _value._battlePenalties
+            : battlePenalties // ignore: cast_nullable_to_non_nullable
+                  as List<TimePenalty>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$BattleStateImpl extends _BattleState {
-  const _$BattleStateImpl(
-      {this.currentEnemy,
-      final List<Item> usedPrimes = const [],
-      this.status = BattleStatus.waiting,
-      this.turnCount = 0,
-      this.battleStartTime,
-      this.timerState,
-      this.victoryClaim,
-      final List<TimePenalty> battlePenalties = const []})
-      : _usedPrimes = usedPrimes,
-        _battlePenalties = battlePenalties,
-        super._();
+  const _$BattleStateImpl({
+    this.currentEnemy,
+    final List<Item> usedPrimes = const [],
+    this.status = BattleStatus.waiting,
+    this.turnCount = 0,
+    this.battleStartTime,
+    this.timerState,
+    this.victoryClaim,
+    final List<TimePenalty> battlePenalties = const [],
+  }) : _usedPrimes = usedPrimes,
+       _battlePenalties = battlePenalties,
+       super._();
 
   @override
   final Enemy? currentEnemy;
@@ -284,8 +295,10 @@ class _$BattleStateImpl extends _BattleState {
             other is _$BattleStateImpl &&
             (identical(other.currentEnemy, currentEnemy) ||
                 other.currentEnemy == currentEnemy) &&
-            const DeepCollectionEquality()
-                .equals(other._usedPrimes, _usedPrimes) &&
+            const DeepCollectionEquality().equals(
+              other._usedPrimes,
+              _usedPrimes,
+            ) &&
             (identical(other.status, status) || other.status == status) &&
             (identical(other.turnCount, turnCount) ||
                 other.turnCount == turnCount) &&
@@ -295,39 +308,43 @@ class _$BattleStateImpl extends _BattleState {
                 other.timerState == timerState) &&
             (identical(other.victoryClaim, victoryClaim) ||
                 other.victoryClaim == victoryClaim) &&
-            const DeepCollectionEquality()
-                .equals(other._battlePenalties, _battlePenalties));
+            const DeepCollectionEquality().equals(
+              other._battlePenalties,
+              _battlePenalties,
+            ));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      currentEnemy,
-      const DeepCollectionEquality().hash(_usedPrimes),
-      status,
-      turnCount,
-      battleStartTime,
-      timerState,
-      victoryClaim,
-      const DeepCollectionEquality().hash(_battlePenalties));
+    runtimeType,
+    currentEnemy,
+    const DeepCollectionEquality().hash(_usedPrimes),
+    status,
+    turnCount,
+    battleStartTime,
+    timerState,
+    victoryClaim,
+    const DeepCollectionEquality().hash(_battlePenalties),
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$BattleStateImplCopyWith<_$BattleStateImpl> get copyWith =>
-      __$$BattleStateImplCopyWithImpl<_$BattleStateImpl>(this, _$identity);
+      _$$BattleStateImplCopyWithImpl<_$BattleStateImpl>(this, _$identity);
 }
 
 abstract class _BattleState extends BattleState {
-  const factory _BattleState(
-      {final Enemy? currentEnemy,
-      final List<Item> usedPrimes,
-      final BattleStatus status,
-      final int turnCount,
-      final DateTime? battleStartTime,
-      final TimerState? timerState,
-      final VictoryClaim? victoryClaim,
-      final List<TimePenalty> battlePenalties}) = _$BattleStateImpl;
+  const factory _BattleState({
+    final Enemy? currentEnemy,
+    final List<Item> usedPrimes,
+    final BattleStatus status,
+    final int turnCount,
+    final DateTime? battleStartTime,
+    final TimerState? timerState,
+    final VictoryClaim? victoryClaim,
+    final List<TimePenalty> battlePenalties,
+  }) = _$BattleStateImpl;
   const _BattleState._() : super._();
 
   @override
@@ -370,17 +387,19 @@ mixin _$BattleSummary {
 /// @nodoc
 abstract class $BattleSummaryCopyWith<$Res> {
   factory $BattleSummaryCopyWith(
-          BattleSummary value, $Res Function(BattleSummary) then) =
-      _$BattleSummaryCopyWithImpl<$Res, BattleSummary>;
+    BattleSummary value,
+    $Res Function(BattleSummary) then,
+  ) = _$BattleSummaryCopyWithImpl<$Res, BattleSummary>;
   @useResult
-  $Res call(
-      {Enemy? enemy,
-      int turnsUsed,
-      int primesUsed,
-      Duration? duration,
-      int penalties,
-      BattleStatus result,
-      VictoryClaim? victoryClaim});
+  $Res call({
+    Enemy? enemy,
+    int turnsUsed,
+    int primesUsed,
+    Duration? duration,
+    int penalties,
+    BattleStatus result,
+    VictoryClaim? victoryClaim,
+  });
 
   $EnemyCopyWith<$Res>? get enemy;
   $VictoryClaimCopyWith<$Res>? get victoryClaim;
@@ -407,36 +426,39 @@ class _$BattleSummaryCopyWithImpl<$Res, $Val extends BattleSummary>
     Object? result = null,
     Object? victoryClaim = freezed,
   }) {
-    return _then(_value.copyWith(
-      enemy: freezed == enemy
-          ? _value.enemy
-          : enemy // ignore: cast_nullable_to_non_nullable
-              as Enemy?,
-      turnsUsed: null == turnsUsed
-          ? _value.turnsUsed
-          : turnsUsed // ignore: cast_nullable_to_non_nullable
-              as int,
-      primesUsed: null == primesUsed
-          ? _value.primesUsed
-          : primesUsed // ignore: cast_nullable_to_non_nullable
-              as int,
-      duration: freezed == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-      penalties: null == penalties
-          ? _value.penalties
-          : penalties // ignore: cast_nullable_to_non_nullable
-              as int,
-      result: null == result
-          ? _value.result
-          : result // ignore: cast_nullable_to_non_nullable
-              as BattleStatus,
-      victoryClaim: freezed == victoryClaim
-          ? _value.victoryClaim
-          : victoryClaim // ignore: cast_nullable_to_non_nullable
-              as VictoryClaim?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            enemy: freezed == enemy
+                ? _value.enemy
+                : enemy // ignore: cast_nullable_to_non_nullable
+                      as Enemy?,
+            turnsUsed: null == turnsUsed
+                ? _value.turnsUsed
+                : turnsUsed // ignore: cast_nullable_to_non_nullable
+                      as int,
+            primesUsed: null == primesUsed
+                ? _value.primesUsed
+                : primesUsed // ignore: cast_nullable_to_non_nullable
+                      as int,
+            duration: freezed == duration
+                ? _value.duration
+                : duration // ignore: cast_nullable_to_non_nullable
+                      as Duration?,
+            penalties: null == penalties
+                ? _value.penalties
+                : penalties // ignore: cast_nullable_to_non_nullable
+                      as int,
+            result: null == result
+                ? _value.result
+                : result // ignore: cast_nullable_to_non_nullable
+                      as BattleStatus,
+            victoryClaim: freezed == victoryClaim
+                ? _value.victoryClaim
+                : victoryClaim // ignore: cast_nullable_to_non_nullable
+                      as VictoryClaim?,
+          )
+          as $Val,
+    );
   }
 
   @override
@@ -468,18 +490,20 @@ class _$BattleSummaryCopyWithImpl<$Res, $Val extends BattleSummary>
 abstract class _$$BattleSummaryImplCopyWith<$Res>
     implements $BattleSummaryCopyWith<$Res> {
   factory _$$BattleSummaryImplCopyWith(
-          _$BattleSummaryImpl value, $Res Function(_$BattleSummaryImpl) then) =
-      __$$BattleSummaryImplCopyWithImpl<$Res>;
+    _$BattleSummaryImpl value,
+    $Res Function(_$BattleSummaryImpl) then,
+  ) = _$$BattleSummaryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {Enemy? enemy,
-      int turnsUsed,
-      int primesUsed,
-      Duration? duration,
-      int penalties,
-      BattleStatus result,
-      VictoryClaim? victoryClaim});
+  $Res call({
+    Enemy? enemy,
+    int turnsUsed,
+    int primesUsed,
+    Duration? duration,
+    int penalties,
+    BattleStatus result,
+    VictoryClaim? victoryClaim,
+  });
 
   @override
   $EnemyCopyWith<$Res>? get enemy;
@@ -488,12 +512,13 @@ abstract class _$$BattleSummaryImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$BattleSummaryImplCopyWithImpl<$Res>
+class _$$BattleSummaryImplCopyWithImpl<$Res>
     extends _$BattleSummaryCopyWithImpl<$Res, _$BattleSummaryImpl>
     implements _$$BattleSummaryImplCopyWith<$Res> {
-  __$$BattleSummaryImplCopyWithImpl(
-      _$BattleSummaryImpl _value, $Res Function(_$BattleSummaryImpl) _then)
-      : super(_value, _then);
+  _$$BattleSummaryImplCopyWithImpl(
+    _$BattleSummaryImpl _value,
+    $Res Function(_$BattleSummaryImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -506,51 +531,53 @@ class __$$BattleSummaryImplCopyWithImpl<$Res>
     Object? result = null,
     Object? victoryClaim = freezed,
   }) {
-    return _then(_$BattleSummaryImpl(
-      enemy: freezed == enemy
-          ? _value.enemy
-          : enemy // ignore: cast_nullable_to_non_nullable
-              as Enemy?,
-      turnsUsed: null == turnsUsed
-          ? _value.turnsUsed
-          : turnsUsed // ignore: cast_nullable_to_non_nullable
-              as int,
-      primesUsed: null == primesUsed
-          ? _value.primesUsed
-          : primesUsed // ignore: cast_nullable_to_non_nullable
-              as int,
-      duration: freezed == duration
-          ? _value.duration
-          : duration // ignore: cast_nullable_to_non_nullable
-              as Duration?,
-      penalties: null == penalties
-          ? _value.penalties
-          : penalties // ignore: cast_nullable_to_non_nullable
-              as int,
-      result: null == result
-          ? _value.result
-          : result // ignore: cast_nullable_to_non_nullable
-              as BattleStatus,
-      victoryClaim: freezed == victoryClaim
-          ? _value.victoryClaim
-          : victoryClaim // ignore: cast_nullable_to_non_nullable
-              as VictoryClaim?,
-    ));
+    return _then(
+      _$BattleSummaryImpl(
+        enemy: freezed == enemy
+            ? _value.enemy
+            : enemy // ignore: cast_nullable_to_non_nullable
+                  as Enemy?,
+        turnsUsed: null == turnsUsed
+            ? _value.turnsUsed
+            : turnsUsed // ignore: cast_nullable_to_non_nullable
+                  as int,
+        primesUsed: null == primesUsed
+            ? _value.primesUsed
+            : primesUsed // ignore: cast_nullable_to_non_nullable
+                  as int,
+        duration: freezed == duration
+            ? _value.duration
+            : duration // ignore: cast_nullable_to_non_nullable
+                  as Duration?,
+        penalties: null == penalties
+            ? _value.penalties
+            : penalties // ignore: cast_nullable_to_non_nullable
+                  as int,
+        result: null == result
+            ? _value.result
+            : result // ignore: cast_nullable_to_non_nullable
+                  as BattleStatus,
+        victoryClaim: freezed == victoryClaim
+            ? _value.victoryClaim
+            : victoryClaim // ignore: cast_nullable_to_non_nullable
+                  as VictoryClaim?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$BattleSummaryImpl extends _BattleSummary {
-  const _$BattleSummaryImpl(
-      {this.enemy,
-      required this.turnsUsed,
-      required this.primesUsed,
-      this.duration,
-      required this.penalties,
-      required this.result,
-      this.victoryClaim})
-      : super._();
+  const _$BattleSummaryImpl({
+    this.enemy,
+    required this.turnsUsed,
+    required this.primesUsed,
+    this.duration,
+    required this.penalties,
+    required this.result,
+    this.victoryClaim,
+  }) : super._();
 
   @override
   final Enemy? enemy;
@@ -592,25 +619,34 @@ class _$BattleSummaryImpl extends _BattleSummary {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, enemy, turnsUsed, primesUsed,
-      duration, penalties, result, victoryClaim);
+  int get hashCode => Object.hash(
+    runtimeType,
+    enemy,
+    turnsUsed,
+    primesUsed,
+    duration,
+    penalties,
+    result,
+    victoryClaim,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$BattleSummaryImplCopyWith<_$BattleSummaryImpl> get copyWith =>
-      __$$BattleSummaryImplCopyWithImpl<_$BattleSummaryImpl>(this, _$identity);
+      _$$BattleSummaryImplCopyWithImpl<_$BattleSummaryImpl>(this, _$identity);
 }
 
 abstract class _BattleSummary extends BattleSummary {
-  const factory _BattleSummary(
-      {final Enemy? enemy,
-      required final int turnsUsed,
-      required final int primesUsed,
-      final Duration? duration,
-      required final int penalties,
-      required final BattleStatus result,
-      final VictoryClaim? victoryClaim}) = _$BattleSummaryImpl;
+  const factory _BattleSummary({
+    final Enemy? enemy,
+    required final int turnsUsed,
+    required final int primesUsed,
+    final Duration? duration,
+    required final int penalties,
+    required final BattleStatus result,
+    final VictoryClaim? victoryClaim,
+  }) = _$BattleSummaryImpl;
   const _BattleSummary._() : super._();
 
   @override

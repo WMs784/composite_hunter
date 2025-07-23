@@ -17,17 +17,12 @@ class AnimatedStars extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
         final delay = index * 0.2;
-        final starAnimation = Tween<double>(
-          begin: 0.0,
-          end: 1.0,
-        ).animate(CurvedAnimation(
-          parent: animation,
-          curve: Interval(
-            delay,
-            delay + 0.4,
-            curve: Curves.elasticOut,
+        final starAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: animation,
+            curve: Interval(delay, delay + 0.4, curve: Curves.elasticOut),
           ),
-        ));
+        );
 
         return AnimatedBuilder(
           animation: starAnimation,
@@ -35,8 +30,9 @@ class AnimatedStars extends StatelessWidget {
             final isActive = index < stars;
             // Clamp animation values to prevent layout errors
             final scale = isActive ? starAnimation.value.clamp(0.0, 2.0) : 0.8;
-            final opacity =
-                isActive ? starAnimation.value.clamp(0.0, 1.0) : 0.3;
+            final opacity = isActive
+                ? starAnimation.value.clamp(0.0, 1.0)
+                : 0.3;
 
             return Transform.scale(
               scale: scale,

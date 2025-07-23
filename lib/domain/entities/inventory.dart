@@ -6,9 +6,7 @@ part 'inventory.freezed.dart';
 
 @freezed
 class Inventory with _$Inventory {
-  const factory Inventory({
-    @Default([]) List<Prime> primes,
-  }) = _Inventory;
+  const factory Inventory({@Default([]) List<Prime> primes}) = _Inventory;
 
   const Inventory._();
 
@@ -62,8 +60,10 @@ class Inventory with _$Inventory {
           ? GameConstants.maxSmallPrimeCount
           : GameConstants.maxLargePrimeCount;
 
-      final newCount =
-          (existingPrime.count + newPrime.count).clamp(0, maxCount);
+      final newCount = (existingPrime.count + newPrime.count).clamp(
+        0,
+        maxCount,
+      );
       final updatedPrime = existingPrime.copyWith(count: newCount);
 
       final updatedPrimes = primes
@@ -97,13 +97,15 @@ class Inventory with _$Inventory {
 
     if (updatedPrime.count == 0) {
       // Remove prime if count reaches 0
-      updatedPrimes =
-          primes.where((prime) => prime.value != primeToUse.value).toList();
+      updatedPrimes = primes
+          .where((prime) => prime.value != primeToUse.value)
+          .toList();
     } else {
       // Update the prime
       updatedPrimes = primes
           .map(
-              (prime) => prime.value == primeToUse.value ? updatedPrime : prime)
+            (prime) => prime.value == primeToUse.value ? updatedPrime : prime,
+          )
           .toList();
     }
 
@@ -112,8 +114,9 @@ class Inventory with _$Inventory {
 
   /// Remove a prime completely from inventory
   Inventory removePrime(int value) {
-    final updatedPrimes =
-        primes.where((prime) => prime.value != value).toList();
+    final updatedPrimes = primes
+        .where((prime) => prime.value != value)
+        .toList();
 
     return copyWith(primes: updatedPrimes);
   }

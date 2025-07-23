@@ -77,11 +77,7 @@ class AppRouter {
     String routeName, {
     Object? arguments,
   }) {
-    return Navigator.pushNamed<T>(
-      context,
-      routeName,
-      arguments: arguments,
-    );
+    return Navigator.pushNamed<T>(context, routeName, arguments: arguments);
   }
 
   static Future<T?> pushReplacementNamed<T extends Object?, TO extends Object?>(
@@ -150,7 +146,9 @@ class AppRouter {
   }
 
   static Future<void> goToStageItemSelection(
-      BuildContext context, StageInfo stage) {
+    BuildContext context,
+    StageInfo stage,
+  ) {
     return pushNamed(context, RouteNames.stageItemSelection, arguments: stage);
   }
 }
@@ -161,25 +159,16 @@ class _UnknownScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Unknown Route'),
-      ),
+      appBar: AppBar(title: const Text('Unknown Route')),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
+            Icon(Icons.error_outline, size: 64, color: Colors.red),
             SizedBox(height: 16),
             Text(
               'Unknown Route',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(

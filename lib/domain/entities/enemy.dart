@@ -4,19 +4,9 @@ import '../../core/exceptions/game_exception.dart';
 
 part 'enemy.freezed.dart';
 
-enum EnemyType {
-  small,
-  medium,
-  large,
-  power,
-  special,
-}
+enum EnemyType { small, medium, large, power, special }
 
-enum EnemySize {
-  small,
-  medium,
-  large,
-}
+enum EnemySize { small, medium, large }
 
 @freezed
 class Enemy with _$Enemy {
@@ -54,9 +44,9 @@ class Enemy with _$Enemy {
   /// Get available attacks for this enemy
   List<int> get availableAttacks {
     if (isPrime) return [];
-    return MathUtils.getFactors(currentValue)
-        .where((f) => f > 1 && f < currentValue)
-        .toList();
+    return MathUtils.getFactors(
+      currentValue,
+    ).where((f) => f > 1 && f < currentValue).toList();
   }
 
   /// Get power reward prime (for power enemies)
@@ -108,10 +98,7 @@ class Enemy with _$Enemy {
   }
 
   /// Create a normal enemy
-  factory Enemy.normal({
-    required int value,
-    required EnemyType type,
-  }) {
+  factory Enemy.normal({required int value, required EnemyType type}) {
     return Enemy(
       currentValue: value,
       originalValue: value,

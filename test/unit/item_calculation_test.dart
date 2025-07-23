@@ -47,11 +47,7 @@ void main() {
 
     test('multiple battles should accumulate correctly', () {
       // 初期状態
-      Map<int, int> inventory = {
-        2: 5,
-        3: 2,
-        5: 1,
-      };
+      Map<int, int> inventory = {2: 5, 3: 2, 5: 1};
 
       // バトル1: 敵10 → 5 (10÷2=5, 5は素数)
       // 使用: [2], 獲得: 5
@@ -85,10 +81,7 @@ void main() {
       // コストと利益の計算が正しいかテスト
 
       // シナリオ: 素数2を5個、素数3を1個持っている
-      Map<int, int> preBattleInventory = {
-        2: 5,
-        3: 1,
-      };
+      Map<int, int> preBattleInventory = {2: 5, 3: 1};
 
       // 敵12と戦う場合の複数の攻略方法
 
@@ -122,10 +115,14 @@ void main() {
       expect(bestStrategyInventory[3], expectedBestResult[3]);
 
       // 総アイテム数の変化を確認
-      int preBattleTotal =
-          preBattleInventory.values.fold(0, (sum, count) => sum + count);
-      int postBattleTotal =
-          bestStrategyInventory.values.fold(0, (sum, count) => sum + count);
+      int preBattleTotal = preBattleInventory.values.fold(
+        0,
+        (sum, count) => sum + count,
+      );
+      int postBattleTotal = bestStrategyInventory.values.fold(
+        0,
+        (sum, count) => sum + count,
+      );
 
       expect(postBattleTotal, preBattleTotal - 1); // 1個減少（コスト）
     });

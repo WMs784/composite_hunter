@@ -22,33 +22,31 @@ class AchievementScreen extends ConsumerWidget {
     final unlockedCount = ref.watch(unlockedCountProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.achievements),
-      ),
+      appBar: AppBar(title: Text(l10n.achievements)),
       body: ListView(
         padding: const EdgeInsets.all(Dimensions.paddingM),
         children: [
           _buildProgressSummary(
-              l10n, completionPercentage, unlockedCount, totalCount),
+            l10n,
+            completionPercentage,
+            unlockedCount,
+            totalCount,
+          ),
           const SizedBox(height: Dimensions.spacingL),
           if (battleAchievements.isNotEmpty) ...[
-            Text(
-              l10n.battleAchievements,
-              style: AppTextStyles.titleLarge,
-            ),
+            Text(l10n.battleAchievements, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
-            ...battleAchievements
-                .map((achievement) => _buildAchievementItem(achievement)),
+            ...battleAchievements.map(
+              (achievement) => _buildAchievementItem(achievement),
+            ),
             const SizedBox(height: Dimensions.spacingL),
           ],
           if (speedAchievements.isNotEmpty) ...[
-            Text(
-              l10n.speedAchievements,
-              style: AppTextStyles.titleLarge,
-            ),
+            Text(l10n.speedAchievements, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
-            ...speedAchievements
-                .map((achievement) => _buildAchievementItem(achievement)),
+            ...speedAchievements.map(
+              (achievement) => _buildAchievementItem(achievement),
+            ),
             const SizedBox(height: Dimensions.spacingL),
           ],
           if (collectionAchievements.isNotEmpty) ...[
@@ -57,26 +55,29 @@ class AchievementScreen extends ConsumerWidget {
               style: AppTextStyles.titleLarge,
             ),
             const SizedBox(height: Dimensions.spacingM),
-            ...collectionAchievements
-                .map((achievement) => _buildAchievementItem(achievement)),
+            ...collectionAchievements.map(
+              (achievement) => _buildAchievementItem(achievement),
+            ),
             const SizedBox(height: Dimensions.spacingL),
           ],
           if (specialAchievements.isNotEmpty) ...[
-            Text(
-              l10n.specialAchievements,
-              style: AppTextStyles.titleLarge,
-            ),
+            Text(l10n.specialAchievements, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
-            ...specialAchievements
-                .map((achievement) => _buildAchievementItem(achievement)),
+            ...specialAchievements.map(
+              (achievement) => _buildAchievementItem(achievement),
+            ),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildProgressSummary(AppLocalizations l10n, double progress,
-      int unlockedCount, int totalCount) {
+  Widget _buildProgressSummary(
+    AppLocalizations l10n,
+    double progress,
+    int unlockedCount,
+    int totalCount,
+  ) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(Dimensions.paddingL),
@@ -102,7 +103,9 @@ class AchievementScreen extends ConsumerWidget {
                       const SizedBox(height: Dimensions.spacingXs),
                       Text(
                         l10n.achievementsUnlocked(
-                            unlockedCount.toString(), totalCount.toString()),
+                          unlockedCount.toString(),
+                          totalCount.toString(),
+                        ),
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: AppColors.onSurfaceVariant,
                         ),

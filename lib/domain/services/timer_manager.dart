@@ -11,8 +11,10 @@ class TimerManager {
   Timer? _timer;
   final StreamController<TimerState> _timerController =
       StreamController<TimerState>.broadcast();
-  TimerState _currentState =
-      const TimerState(remainingSeconds: 0, originalSeconds: 0);
+  TimerState _currentState = const TimerState(
+    remainingSeconds: 0,
+    originalSeconds: 0,
+  );
 
   /// Stream of timer state updates
   Stream<TimerState> get timerStream => _timerController.stream;
@@ -145,8 +147,10 @@ class TimerManager {
   /// Calculate adjusted timer duration with penalties applied
   static int getAdjustedTimeForEnemy(Enemy enemy, List<TimePenalty> penalties) {
     final baseTime = getBaseTimeForEnemy(enemy);
-    final totalPenalty =
-        penalties.fold(0, (sum, penalty) => sum + penalty.seconds);
+    final totalPenalty = penalties.fold(
+      0,
+      (sum, penalty) => sum + penalty.seconds,
+    );
 
     final adjustedTime = baseTime - totalPenalty;
     return adjustedTime < TimerConstants.minimumTimerDuration
@@ -202,8 +206,9 @@ class TimerManager {
     Logger.logTimer('Restoring from snapshot');
 
     // Calculate elapsed time since snapshot
-    final elapsedSinceSnapshot =
-        DateTime.now().difference(snapshot.snapshotTime).inSeconds;
+    final elapsedSinceSnapshot = DateTime.now()
+        .difference(snapshot.snapshotTime)
+        .inSeconds;
 
     int adjustedRemaining = snapshot.remainingSeconds;
     if (snapshot.isActive) {
@@ -280,12 +285,14 @@ class TimerSnapshot {
       'originalSeconds': originalSeconds,
       'isActive': isActive,
       'penalties': penalties
-          .map((p) => {
-                'seconds': p.seconds,
-                'type': p.type.name,
-                'appliedAt': p.appliedAt.toIso8601String(),
-                'reason': p.reason,
-              })
+          .map(
+            (p) => {
+              'seconds': p.seconds,
+              'type': p.type.name,
+              'appliedAt': p.appliedAt.toIso8601String(),
+              'reason': p.reason,
+            },
+          )
           .toList(),
       'snapshotTime': snapshotTime.toIso8601String(),
     };
@@ -297,12 +304,14 @@ class TimerSnapshot {
       originalSeconds: json['originalSeconds'] as int,
       isActive: json['isActive'] as bool,
       penalties: (json['penalties'] as List)
-          .map((p) => TimePenalty(
-                seconds: p['seconds'] as int,
-                type: PenaltyType.values.firstWhere((t) => t.name == p['type']),
-                appliedAt: DateTime.parse(p['appliedAt'] as String),
-                reason: p['reason'] as String?,
-              ))
+          .map(
+            (p) => TimePenalty(
+              seconds: p['seconds'] as int,
+              type: PenaltyType.values.firstWhere((t) => t.name == p['type']),
+              appliedAt: DateTime.parse(p['appliedAt'] as String),
+              reason: p['reason'] as String?,
+            ),
+          )
           .toList(),
       snapshotTime: DateTime.parse(json['snapshotTime'] as String),
     );

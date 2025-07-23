@@ -46,11 +46,7 @@ class TimePenalty with _$TimePenalty {
   }
 }
 
-enum PenaltyType {
-  escape,
-  wrongVictoryClaim,
-  timeOut,
-}
+enum PenaltyType { escape, wrongVictoryClaim, timeOut }
 
 @freezed
 class PenaltyState with _$PenaltyState {

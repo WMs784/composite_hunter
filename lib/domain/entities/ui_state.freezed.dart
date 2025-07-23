@@ -12,11 +12,12 @@ part of 'ui_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$UiState {
-// Loading state
+  // Loading state
   bool get isLoading => throw _privateConstructorUsedError;
   String? get loadingMessage =>
       throw _privateConstructorUsedError; // Error dialog state
@@ -79,48 +80,49 @@ abstract class $UiStateCopyWith<$Res> {
   factory $UiStateCopyWith(UiState value, $Res Function(UiState) then) =
       _$UiStateCopyWithImpl<$Res, UiState>;
   @useResult
-  $Res call(
-      {bool isLoading,
-      String? loadingMessage,
-      bool showErrorDialog,
-      String? errorMessage,
-      String? errorTitle,
-      bool showSuccessMessage,
-      String? successMessage,
-      bool showInfoMessage,
-      String? infoMessage,
-      bool showConfirmationDialog,
-      String? confirmationMessage,
-      String? confirmationTitle,
-      String? confirmationConfirmText,
-      String? confirmationCancelText,
-      bool showTutorialOverlay,
-      String? tutorialKey,
-      String? tutorialContent,
-      bool showAchievementNotification,
-      String? achievementTitle,
-      String? achievementDescription,
-      bool showLevelUpNotification,
-      int? levelUpNewLevel,
-      bool showBattleResultScreen,
-      bool? battleResultIsVictory,
-      int? battleResultScore,
-      String? battleResultMessage,
-      List<String>? battleResultRewards,
-      bool showSettingsScreen,
-      bool showInventoryScreen,
-      bool showAchievementScreen,
-      bool showStatisticsScreen,
-      int bottomNavIndex,
-      String currentScreen,
-      bool isDebugMode,
-      ThemeMode themeMode,
-      bool soundEffectsEnabled,
-      bool musicEnabled,
-      double soundVolume,
-      double musicVolume,
-      bool hapticFeedbackEnabled,
-      double animationSpeed});
+  $Res call({
+    bool isLoading,
+    String? loadingMessage,
+    bool showErrorDialog,
+    String? errorMessage,
+    String? errorTitle,
+    bool showSuccessMessage,
+    String? successMessage,
+    bool showInfoMessage,
+    String? infoMessage,
+    bool showConfirmationDialog,
+    String? confirmationMessage,
+    String? confirmationTitle,
+    String? confirmationConfirmText,
+    String? confirmationCancelText,
+    bool showTutorialOverlay,
+    String? tutorialKey,
+    String? tutorialContent,
+    bool showAchievementNotification,
+    String? achievementTitle,
+    String? achievementDescription,
+    bool showLevelUpNotification,
+    int? levelUpNewLevel,
+    bool showBattleResultScreen,
+    bool? battleResultIsVictory,
+    int? battleResultScore,
+    String? battleResultMessage,
+    List<String>? battleResultRewards,
+    bool showSettingsScreen,
+    bool showInventoryScreen,
+    bool showAchievementScreen,
+    bool showStatisticsScreen,
+    int bottomNavIndex,
+    String currentScreen,
+    bool isDebugMode,
+    ThemeMode themeMode,
+    bool soundEffectsEnabled,
+    bool musicEnabled,
+    double soundVolume,
+    double musicVolume,
+    bool hapticFeedbackEnabled,
+    double animationSpeed,
+  });
 }
 
 /// @nodoc
@@ -178,233 +180,239 @@ class _$UiStateCopyWithImpl<$Res, $Val extends UiState>
     Object? hapticFeedbackEnabled = null,
     Object? animationSpeed = null,
   }) {
-    return _then(_value.copyWith(
-      isLoading: null == isLoading
-          ? _value.isLoading
-          : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      loadingMessage: freezed == loadingMessage
-          ? _value.loadingMessage
-          : loadingMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showErrorDialog: null == showErrorDialog
-          ? _value.showErrorDialog
-          : showErrorDialog // ignore: cast_nullable_to_non_nullable
-              as bool,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      errorTitle: freezed == errorTitle
-          ? _value.errorTitle
-          : errorTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showSuccessMessage: null == showSuccessMessage
-          ? _value.showSuccessMessage
-          : showSuccessMessage // ignore: cast_nullable_to_non_nullable
-              as bool,
-      successMessage: freezed == successMessage
-          ? _value.successMessage
-          : successMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showInfoMessage: null == showInfoMessage
-          ? _value.showInfoMessage
-          : showInfoMessage // ignore: cast_nullable_to_non_nullable
-              as bool,
-      infoMessage: freezed == infoMessage
-          ? _value.infoMessage
-          : infoMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showConfirmationDialog: null == showConfirmationDialog
-          ? _value.showConfirmationDialog
-          : showConfirmationDialog // ignore: cast_nullable_to_non_nullable
-              as bool,
-      confirmationMessage: freezed == confirmationMessage
-          ? _value.confirmationMessage
-          : confirmationMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      confirmationTitle: freezed == confirmationTitle
-          ? _value.confirmationTitle
-          : confirmationTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      confirmationConfirmText: freezed == confirmationConfirmText
-          ? _value.confirmationConfirmText
-          : confirmationConfirmText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      confirmationCancelText: freezed == confirmationCancelText
-          ? _value.confirmationCancelText
-          : confirmationCancelText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showTutorialOverlay: null == showTutorialOverlay
-          ? _value.showTutorialOverlay
-          : showTutorialOverlay // ignore: cast_nullable_to_non_nullable
-              as bool,
-      tutorialKey: freezed == tutorialKey
-          ? _value.tutorialKey
-          : tutorialKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tutorialContent: freezed == tutorialContent
-          ? _value.tutorialContent
-          : tutorialContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showAchievementNotification: null == showAchievementNotification
-          ? _value.showAchievementNotification
-          : showAchievementNotification // ignore: cast_nullable_to_non_nullable
-              as bool,
-      achievementTitle: freezed == achievementTitle
-          ? _value.achievementTitle
-          : achievementTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      achievementDescription: freezed == achievementDescription
-          ? _value.achievementDescription
-          : achievementDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showLevelUpNotification: null == showLevelUpNotification
-          ? _value.showLevelUpNotification
-          : showLevelUpNotification // ignore: cast_nullable_to_non_nullable
-              as bool,
-      levelUpNewLevel: freezed == levelUpNewLevel
-          ? _value.levelUpNewLevel
-          : levelUpNewLevel // ignore: cast_nullable_to_non_nullable
-              as int?,
-      showBattleResultScreen: null == showBattleResultScreen
-          ? _value.showBattleResultScreen
-          : showBattleResultScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      battleResultIsVictory: freezed == battleResultIsVictory
-          ? _value.battleResultIsVictory
-          : battleResultIsVictory // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      battleResultScore: freezed == battleResultScore
-          ? _value.battleResultScore
-          : battleResultScore // ignore: cast_nullable_to_non_nullable
-              as int?,
-      battleResultMessage: freezed == battleResultMessage
-          ? _value.battleResultMessage
-          : battleResultMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      battleResultRewards: freezed == battleResultRewards
-          ? _value.battleResultRewards
-          : battleResultRewards // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      showSettingsScreen: null == showSettingsScreen
-          ? _value.showSettingsScreen
-          : showSettingsScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showInventoryScreen: null == showInventoryScreen
-          ? _value.showInventoryScreen
-          : showInventoryScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showAchievementScreen: null == showAchievementScreen
-          ? _value.showAchievementScreen
-          : showAchievementScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showStatisticsScreen: null == showStatisticsScreen
-          ? _value.showStatisticsScreen
-          : showStatisticsScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      bottomNavIndex: null == bottomNavIndex
-          ? _value.bottomNavIndex
-          : bottomNavIndex // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentScreen: null == currentScreen
-          ? _value.currentScreen
-          : currentScreen // ignore: cast_nullable_to_non_nullable
-              as String,
-      isDebugMode: null == isDebugMode
-          ? _value.isDebugMode
-          : isDebugMode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      themeMode: null == themeMode
-          ? _value.themeMode
-          : themeMode // ignore: cast_nullable_to_non_nullable
-              as ThemeMode,
-      soundEffectsEnabled: null == soundEffectsEnabled
-          ? _value.soundEffectsEnabled
-          : soundEffectsEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      musicEnabled: null == musicEnabled
-          ? _value.musicEnabled
-          : musicEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      soundVolume: null == soundVolume
-          ? _value.soundVolume
-          : soundVolume // ignore: cast_nullable_to_non_nullable
-              as double,
-      musicVolume: null == musicVolume
-          ? _value.musicVolume
-          : musicVolume // ignore: cast_nullable_to_non_nullable
-              as double,
-      hapticFeedbackEnabled: null == hapticFeedbackEnabled
-          ? _value.hapticFeedbackEnabled
-          : hapticFeedbackEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      animationSpeed: null == animationSpeed
-          ? _value.animationSpeed
-          : animationSpeed // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            isLoading: null == isLoading
+                ? _value.isLoading
+                : isLoading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            loadingMessage: freezed == loadingMessage
+                ? _value.loadingMessage
+                : loadingMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showErrorDialog: null == showErrorDialog
+                ? _value.showErrorDialog
+                : showErrorDialog // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            errorMessage: freezed == errorMessage
+                ? _value.errorMessage
+                : errorMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            errorTitle: freezed == errorTitle
+                ? _value.errorTitle
+                : errorTitle // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showSuccessMessage: null == showSuccessMessage
+                ? _value.showSuccessMessage
+                : showSuccessMessage // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            successMessage: freezed == successMessage
+                ? _value.successMessage
+                : successMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showInfoMessage: null == showInfoMessage
+                ? _value.showInfoMessage
+                : showInfoMessage // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            infoMessage: freezed == infoMessage
+                ? _value.infoMessage
+                : infoMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showConfirmationDialog: null == showConfirmationDialog
+                ? _value.showConfirmationDialog
+                : showConfirmationDialog // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            confirmationMessage: freezed == confirmationMessage
+                ? _value.confirmationMessage
+                : confirmationMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            confirmationTitle: freezed == confirmationTitle
+                ? _value.confirmationTitle
+                : confirmationTitle // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            confirmationConfirmText: freezed == confirmationConfirmText
+                ? _value.confirmationConfirmText
+                : confirmationConfirmText // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            confirmationCancelText: freezed == confirmationCancelText
+                ? _value.confirmationCancelText
+                : confirmationCancelText // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showTutorialOverlay: null == showTutorialOverlay
+                ? _value.showTutorialOverlay
+                : showTutorialOverlay // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            tutorialKey: freezed == tutorialKey
+                ? _value.tutorialKey
+                : tutorialKey // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            tutorialContent: freezed == tutorialContent
+                ? _value.tutorialContent
+                : tutorialContent // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showAchievementNotification: null == showAchievementNotification
+                ? _value.showAchievementNotification
+                : showAchievementNotification // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            achievementTitle: freezed == achievementTitle
+                ? _value.achievementTitle
+                : achievementTitle // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            achievementDescription: freezed == achievementDescription
+                ? _value.achievementDescription
+                : achievementDescription // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            showLevelUpNotification: null == showLevelUpNotification
+                ? _value.showLevelUpNotification
+                : showLevelUpNotification // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            levelUpNewLevel: freezed == levelUpNewLevel
+                ? _value.levelUpNewLevel
+                : levelUpNewLevel // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            showBattleResultScreen: null == showBattleResultScreen
+                ? _value.showBattleResultScreen
+                : showBattleResultScreen // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            battleResultIsVictory: freezed == battleResultIsVictory
+                ? _value.battleResultIsVictory
+                : battleResultIsVictory // ignore: cast_nullable_to_non_nullable
+                      as bool?,
+            battleResultScore: freezed == battleResultScore
+                ? _value.battleResultScore
+                : battleResultScore // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            battleResultMessage: freezed == battleResultMessage
+                ? _value.battleResultMessage
+                : battleResultMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            battleResultRewards: freezed == battleResultRewards
+                ? _value.battleResultRewards
+                : battleResultRewards // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            showSettingsScreen: null == showSettingsScreen
+                ? _value.showSettingsScreen
+                : showSettingsScreen // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showInventoryScreen: null == showInventoryScreen
+                ? _value.showInventoryScreen
+                : showInventoryScreen // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showAchievementScreen: null == showAchievementScreen
+                ? _value.showAchievementScreen
+                : showAchievementScreen // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showStatisticsScreen: null == showStatisticsScreen
+                ? _value.showStatisticsScreen
+                : showStatisticsScreen // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            bottomNavIndex: null == bottomNavIndex
+                ? _value.bottomNavIndex
+                : bottomNavIndex // ignore: cast_nullable_to_non_nullable
+                      as int,
+            currentScreen: null == currentScreen
+                ? _value.currentScreen
+                : currentScreen // ignore: cast_nullable_to_non_nullable
+                      as String,
+            isDebugMode: null == isDebugMode
+                ? _value.isDebugMode
+                : isDebugMode // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            themeMode: null == themeMode
+                ? _value.themeMode
+                : themeMode // ignore: cast_nullable_to_non_nullable
+                      as ThemeMode,
+            soundEffectsEnabled: null == soundEffectsEnabled
+                ? _value.soundEffectsEnabled
+                : soundEffectsEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            musicEnabled: null == musicEnabled
+                ? _value.musicEnabled
+                : musicEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            soundVolume: null == soundVolume
+                ? _value.soundVolume
+                : soundVolume // ignore: cast_nullable_to_non_nullable
+                      as double,
+            musicVolume: null == musicVolume
+                ? _value.musicVolume
+                : musicVolume // ignore: cast_nullable_to_non_nullable
+                      as double,
+            hapticFeedbackEnabled: null == hapticFeedbackEnabled
+                ? _value.hapticFeedbackEnabled
+                : hapticFeedbackEnabled // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            animationSpeed: null == animationSpeed
+                ? _value.animationSpeed
+                : animationSpeed // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$UiStateImplCopyWith<$Res> implements $UiStateCopyWith<$Res> {
   factory _$$UiStateImplCopyWith(
-          _$UiStateImpl value, $Res Function(_$UiStateImpl) then) =
-      __$$UiStateImplCopyWithImpl<$Res>;
+    _$UiStateImpl value,
+    $Res Function(_$UiStateImpl) then,
+  ) = _$$UiStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isLoading,
-      String? loadingMessage,
-      bool showErrorDialog,
-      String? errorMessage,
-      String? errorTitle,
-      bool showSuccessMessage,
-      String? successMessage,
-      bool showInfoMessage,
-      String? infoMessage,
-      bool showConfirmationDialog,
-      String? confirmationMessage,
-      String? confirmationTitle,
-      String? confirmationConfirmText,
-      String? confirmationCancelText,
-      bool showTutorialOverlay,
-      String? tutorialKey,
-      String? tutorialContent,
-      bool showAchievementNotification,
-      String? achievementTitle,
-      String? achievementDescription,
-      bool showLevelUpNotification,
-      int? levelUpNewLevel,
-      bool showBattleResultScreen,
-      bool? battleResultIsVictory,
-      int? battleResultScore,
-      String? battleResultMessage,
-      List<String>? battleResultRewards,
-      bool showSettingsScreen,
-      bool showInventoryScreen,
-      bool showAchievementScreen,
-      bool showStatisticsScreen,
-      int bottomNavIndex,
-      String currentScreen,
-      bool isDebugMode,
-      ThemeMode themeMode,
-      bool soundEffectsEnabled,
-      bool musicEnabled,
-      double soundVolume,
-      double musicVolume,
-      bool hapticFeedbackEnabled,
-      double animationSpeed});
+  $Res call({
+    bool isLoading,
+    String? loadingMessage,
+    bool showErrorDialog,
+    String? errorMessage,
+    String? errorTitle,
+    bool showSuccessMessage,
+    String? successMessage,
+    bool showInfoMessage,
+    String? infoMessage,
+    bool showConfirmationDialog,
+    String? confirmationMessage,
+    String? confirmationTitle,
+    String? confirmationConfirmText,
+    String? confirmationCancelText,
+    bool showTutorialOverlay,
+    String? tutorialKey,
+    String? tutorialContent,
+    bool showAchievementNotification,
+    String? achievementTitle,
+    String? achievementDescription,
+    bool showLevelUpNotification,
+    int? levelUpNewLevel,
+    bool showBattleResultScreen,
+    bool? battleResultIsVictory,
+    int? battleResultScore,
+    String? battleResultMessage,
+    List<String>? battleResultRewards,
+    bool showSettingsScreen,
+    bool showInventoryScreen,
+    bool showAchievementScreen,
+    bool showStatisticsScreen,
+    int bottomNavIndex,
+    String currentScreen,
+    bool isDebugMode,
+    ThemeMode themeMode,
+    bool soundEffectsEnabled,
+    bool musicEnabled,
+    double soundVolume,
+    double musicVolume,
+    bool hapticFeedbackEnabled,
+    double animationSpeed,
+  });
 }
 
 /// @nodoc
-class __$$UiStateImplCopyWithImpl<$Res>
+class _$$UiStateImplCopyWithImpl<$Res>
     extends _$UiStateCopyWithImpl<$Res, _$UiStateImpl>
     implements _$$UiStateImplCopyWith<$Res> {
-  __$$UiStateImplCopyWithImpl(
-      _$UiStateImpl _value, $Res Function(_$UiStateImpl) _then)
-      : super(_value, _then);
+  _$$UiStateImplCopyWithImpl(
+    _$UiStateImpl _value,
+    $Res Function(_$UiStateImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -451,229 +459,231 @@ class __$$UiStateImplCopyWithImpl<$Res>
     Object? hapticFeedbackEnabled = null,
     Object? animationSpeed = null,
   }) {
-    return _then(_$UiStateImpl(
-      isLoading: null == isLoading
-          ? _value.isLoading
-          : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      loadingMessage: freezed == loadingMessage
-          ? _value.loadingMessage
-          : loadingMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showErrorDialog: null == showErrorDialog
-          ? _value.showErrorDialog
-          : showErrorDialog // ignore: cast_nullable_to_non_nullable
-              as bool,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      errorTitle: freezed == errorTitle
-          ? _value.errorTitle
-          : errorTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showSuccessMessage: null == showSuccessMessage
-          ? _value.showSuccessMessage
-          : showSuccessMessage // ignore: cast_nullable_to_non_nullable
-              as bool,
-      successMessage: freezed == successMessage
-          ? _value.successMessage
-          : successMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showInfoMessage: null == showInfoMessage
-          ? _value.showInfoMessage
-          : showInfoMessage // ignore: cast_nullable_to_non_nullable
-              as bool,
-      infoMessage: freezed == infoMessage
-          ? _value.infoMessage
-          : infoMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showConfirmationDialog: null == showConfirmationDialog
-          ? _value.showConfirmationDialog
-          : showConfirmationDialog // ignore: cast_nullable_to_non_nullable
-              as bool,
-      confirmationMessage: freezed == confirmationMessage
-          ? _value.confirmationMessage
-          : confirmationMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      confirmationTitle: freezed == confirmationTitle
-          ? _value.confirmationTitle
-          : confirmationTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      confirmationConfirmText: freezed == confirmationConfirmText
-          ? _value.confirmationConfirmText
-          : confirmationConfirmText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      confirmationCancelText: freezed == confirmationCancelText
-          ? _value.confirmationCancelText
-          : confirmationCancelText // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showTutorialOverlay: null == showTutorialOverlay
-          ? _value.showTutorialOverlay
-          : showTutorialOverlay // ignore: cast_nullable_to_non_nullable
-              as bool,
-      tutorialKey: freezed == tutorialKey
-          ? _value.tutorialKey
-          : tutorialKey // ignore: cast_nullable_to_non_nullable
-              as String?,
-      tutorialContent: freezed == tutorialContent
-          ? _value.tutorialContent
-          : tutorialContent // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showAchievementNotification: null == showAchievementNotification
-          ? _value.showAchievementNotification
-          : showAchievementNotification // ignore: cast_nullable_to_non_nullable
-              as bool,
-      achievementTitle: freezed == achievementTitle
-          ? _value.achievementTitle
-          : achievementTitle // ignore: cast_nullable_to_non_nullable
-              as String?,
-      achievementDescription: freezed == achievementDescription
-          ? _value.achievementDescription
-          : achievementDescription // ignore: cast_nullable_to_non_nullable
-              as String?,
-      showLevelUpNotification: null == showLevelUpNotification
-          ? _value.showLevelUpNotification
-          : showLevelUpNotification // ignore: cast_nullable_to_non_nullable
-              as bool,
-      levelUpNewLevel: freezed == levelUpNewLevel
-          ? _value.levelUpNewLevel
-          : levelUpNewLevel // ignore: cast_nullable_to_non_nullable
-              as int?,
-      showBattleResultScreen: null == showBattleResultScreen
-          ? _value.showBattleResultScreen
-          : showBattleResultScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      battleResultIsVictory: freezed == battleResultIsVictory
-          ? _value.battleResultIsVictory
-          : battleResultIsVictory // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      battleResultScore: freezed == battleResultScore
-          ? _value.battleResultScore
-          : battleResultScore // ignore: cast_nullable_to_non_nullable
-              as int?,
-      battleResultMessage: freezed == battleResultMessage
-          ? _value.battleResultMessage
-          : battleResultMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      battleResultRewards: freezed == battleResultRewards
-          ? _value._battleResultRewards
-          : battleResultRewards // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      showSettingsScreen: null == showSettingsScreen
-          ? _value.showSettingsScreen
-          : showSettingsScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showInventoryScreen: null == showInventoryScreen
-          ? _value.showInventoryScreen
-          : showInventoryScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showAchievementScreen: null == showAchievementScreen
-          ? _value.showAchievementScreen
-          : showAchievementScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showStatisticsScreen: null == showStatisticsScreen
-          ? _value.showStatisticsScreen
-          : showStatisticsScreen // ignore: cast_nullable_to_non_nullable
-              as bool,
-      bottomNavIndex: null == bottomNavIndex
-          ? _value.bottomNavIndex
-          : bottomNavIndex // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentScreen: null == currentScreen
-          ? _value.currentScreen
-          : currentScreen // ignore: cast_nullable_to_non_nullable
-              as String,
-      isDebugMode: null == isDebugMode
-          ? _value.isDebugMode
-          : isDebugMode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      themeMode: null == themeMode
-          ? _value.themeMode
-          : themeMode // ignore: cast_nullable_to_non_nullable
-              as ThemeMode,
-      soundEffectsEnabled: null == soundEffectsEnabled
-          ? _value.soundEffectsEnabled
-          : soundEffectsEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      musicEnabled: null == musicEnabled
-          ? _value.musicEnabled
-          : musicEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      soundVolume: null == soundVolume
-          ? _value.soundVolume
-          : soundVolume // ignore: cast_nullable_to_non_nullable
-              as double,
-      musicVolume: null == musicVolume
-          ? _value.musicVolume
-          : musicVolume // ignore: cast_nullable_to_non_nullable
-              as double,
-      hapticFeedbackEnabled: null == hapticFeedbackEnabled
-          ? _value.hapticFeedbackEnabled
-          : hapticFeedbackEnabled // ignore: cast_nullable_to_non_nullable
-              as bool,
-      animationSpeed: null == animationSpeed
-          ? _value.animationSpeed
-          : animationSpeed // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$UiStateImpl(
+        isLoading: null == isLoading
+            ? _value.isLoading
+            : isLoading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        loadingMessage: freezed == loadingMessage
+            ? _value.loadingMessage
+            : loadingMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showErrorDialog: null == showErrorDialog
+            ? _value.showErrorDialog
+            : showErrorDialog // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        errorMessage: freezed == errorMessage
+            ? _value.errorMessage
+            : errorMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        errorTitle: freezed == errorTitle
+            ? _value.errorTitle
+            : errorTitle // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showSuccessMessage: null == showSuccessMessage
+            ? _value.showSuccessMessage
+            : showSuccessMessage // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        successMessage: freezed == successMessage
+            ? _value.successMessage
+            : successMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showInfoMessage: null == showInfoMessage
+            ? _value.showInfoMessage
+            : showInfoMessage // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        infoMessage: freezed == infoMessage
+            ? _value.infoMessage
+            : infoMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showConfirmationDialog: null == showConfirmationDialog
+            ? _value.showConfirmationDialog
+            : showConfirmationDialog // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        confirmationMessage: freezed == confirmationMessage
+            ? _value.confirmationMessage
+            : confirmationMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        confirmationTitle: freezed == confirmationTitle
+            ? _value.confirmationTitle
+            : confirmationTitle // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        confirmationConfirmText: freezed == confirmationConfirmText
+            ? _value.confirmationConfirmText
+            : confirmationConfirmText // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        confirmationCancelText: freezed == confirmationCancelText
+            ? _value.confirmationCancelText
+            : confirmationCancelText // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showTutorialOverlay: null == showTutorialOverlay
+            ? _value.showTutorialOverlay
+            : showTutorialOverlay // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        tutorialKey: freezed == tutorialKey
+            ? _value.tutorialKey
+            : tutorialKey // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        tutorialContent: freezed == tutorialContent
+            ? _value.tutorialContent
+            : tutorialContent // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showAchievementNotification: null == showAchievementNotification
+            ? _value.showAchievementNotification
+            : showAchievementNotification // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        achievementTitle: freezed == achievementTitle
+            ? _value.achievementTitle
+            : achievementTitle // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        achievementDescription: freezed == achievementDescription
+            ? _value.achievementDescription
+            : achievementDescription // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        showLevelUpNotification: null == showLevelUpNotification
+            ? _value.showLevelUpNotification
+            : showLevelUpNotification // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        levelUpNewLevel: freezed == levelUpNewLevel
+            ? _value.levelUpNewLevel
+            : levelUpNewLevel // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        showBattleResultScreen: null == showBattleResultScreen
+            ? _value.showBattleResultScreen
+            : showBattleResultScreen // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        battleResultIsVictory: freezed == battleResultIsVictory
+            ? _value.battleResultIsVictory
+            : battleResultIsVictory // ignore: cast_nullable_to_non_nullable
+                  as bool?,
+        battleResultScore: freezed == battleResultScore
+            ? _value.battleResultScore
+            : battleResultScore // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        battleResultMessage: freezed == battleResultMessage
+            ? _value.battleResultMessage
+            : battleResultMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        battleResultRewards: freezed == battleResultRewards
+            ? _value._battleResultRewards
+            : battleResultRewards // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        showSettingsScreen: null == showSettingsScreen
+            ? _value.showSettingsScreen
+            : showSettingsScreen // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showInventoryScreen: null == showInventoryScreen
+            ? _value.showInventoryScreen
+            : showInventoryScreen // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showAchievementScreen: null == showAchievementScreen
+            ? _value.showAchievementScreen
+            : showAchievementScreen // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showStatisticsScreen: null == showStatisticsScreen
+            ? _value.showStatisticsScreen
+            : showStatisticsScreen // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        bottomNavIndex: null == bottomNavIndex
+            ? _value.bottomNavIndex
+            : bottomNavIndex // ignore: cast_nullable_to_non_nullable
+                  as int,
+        currentScreen: null == currentScreen
+            ? _value.currentScreen
+            : currentScreen // ignore: cast_nullable_to_non_nullable
+                  as String,
+        isDebugMode: null == isDebugMode
+            ? _value.isDebugMode
+            : isDebugMode // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        themeMode: null == themeMode
+            ? _value.themeMode
+            : themeMode // ignore: cast_nullable_to_non_nullable
+                  as ThemeMode,
+        soundEffectsEnabled: null == soundEffectsEnabled
+            ? _value.soundEffectsEnabled
+            : soundEffectsEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        musicEnabled: null == musicEnabled
+            ? _value.musicEnabled
+            : musicEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        soundVolume: null == soundVolume
+            ? _value.soundVolume
+            : soundVolume // ignore: cast_nullable_to_non_nullable
+                  as double,
+        musicVolume: null == musicVolume
+            ? _value.musicVolume
+            : musicVolume // ignore: cast_nullable_to_non_nullable
+                  as double,
+        hapticFeedbackEnabled: null == hapticFeedbackEnabled
+            ? _value.hapticFeedbackEnabled
+            : hapticFeedbackEnabled // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        animationSpeed: null == animationSpeed
+            ? _value.animationSpeed
+            : animationSpeed // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$UiStateImpl implements _UiState {
-  const _$UiStateImpl(
-      {this.isLoading = false,
-      this.loadingMessage,
-      this.showErrorDialog = false,
-      this.errorMessage,
-      this.errorTitle,
-      this.showSuccessMessage = false,
-      this.successMessage,
-      this.showInfoMessage = false,
-      this.infoMessage,
-      this.showConfirmationDialog = false,
-      this.confirmationMessage,
-      this.confirmationTitle,
-      this.confirmationConfirmText,
-      this.confirmationCancelText,
-      this.showTutorialOverlay = false,
-      this.tutorialKey,
-      this.tutorialContent,
-      this.showAchievementNotification = false,
-      this.achievementTitle,
-      this.achievementDescription,
-      this.showLevelUpNotification = false,
-      this.levelUpNewLevel,
-      this.showBattleResultScreen = false,
-      this.battleResultIsVictory,
-      this.battleResultScore,
-      this.battleResultMessage,
-      final List<String>? battleResultRewards,
-      this.showSettingsScreen = false,
-      this.showInventoryScreen = false,
-      this.showAchievementScreen = false,
-      this.showStatisticsScreen = false,
-      this.bottomNavIndex = 0,
-      this.currentScreen = 'home',
-      this.isDebugMode = false,
-      this.themeMode = ThemeMode.system,
-      this.soundEffectsEnabled = true,
-      this.musicEnabled = true,
-      this.soundVolume = 0.8,
-      this.musicVolume = 0.6,
-      this.hapticFeedbackEnabled = true,
-      this.animationSpeed = 1.0})
-      : _battleResultRewards = battleResultRewards;
+  const _$UiStateImpl({
+    this.isLoading = false,
+    this.loadingMessage,
+    this.showErrorDialog = false,
+    this.errorMessage,
+    this.errorTitle,
+    this.showSuccessMessage = false,
+    this.successMessage,
+    this.showInfoMessage = false,
+    this.infoMessage,
+    this.showConfirmationDialog = false,
+    this.confirmationMessage,
+    this.confirmationTitle,
+    this.confirmationConfirmText,
+    this.confirmationCancelText,
+    this.showTutorialOverlay = false,
+    this.tutorialKey,
+    this.tutorialContent,
+    this.showAchievementNotification = false,
+    this.achievementTitle,
+    this.achievementDescription,
+    this.showLevelUpNotification = false,
+    this.levelUpNewLevel,
+    this.showBattleResultScreen = false,
+    this.battleResultIsVictory,
+    this.battleResultScore,
+    this.battleResultMessage,
+    final List<String>? battleResultRewards,
+    this.showSettingsScreen = false,
+    this.showInventoryScreen = false,
+    this.showAchievementScreen = false,
+    this.showStatisticsScreen = false,
+    this.bottomNavIndex = 0,
+    this.currentScreen = 'home',
+    this.isDebugMode = false,
+    this.themeMode = ThemeMode.system,
+    this.soundEffectsEnabled = true,
+    this.musicEnabled = true,
+    this.soundVolume = 0.8,
+    this.musicVolume = 0.6,
+    this.hapticFeedbackEnabled = true,
+    this.animationSpeed = 1.0,
+  }) : _battleResultRewards = battleResultRewards;
 
-// Loading state
+  // Loading state
   @override
   @JsonKey()
   final bool isLoading;
   @override
   final String? loadingMessage;
-// Error dialog state
+  // Error dialog state
   @override
   @JsonKey()
   final bool showErrorDialog;
@@ -681,19 +691,19 @@ class _$UiStateImpl implements _UiState {
   final String? errorMessage;
   @override
   final String? errorTitle;
-// Success message state
+  // Success message state
   @override
   @JsonKey()
   final bool showSuccessMessage;
   @override
   final String? successMessage;
-// Info message state
+  // Info message state
   @override
   @JsonKey()
   final bool showInfoMessage;
   @override
   final String? infoMessage;
-// Confirmation dialog state
+  // Confirmation dialog state
   @override
   @JsonKey()
   final bool showConfirmationDialog;
@@ -705,7 +715,7 @@ class _$UiStateImpl implements _UiState {
   final String? confirmationConfirmText;
   @override
   final String? confirmationCancelText;
-// Tutorial overlay state
+  // Tutorial overlay state
   @override
   @JsonKey()
   final bool showTutorialOverlay;
@@ -713,7 +723,7 @@ class _$UiStateImpl implements _UiState {
   final String? tutorialKey;
   @override
   final String? tutorialContent;
-// Achievement notification state
+  // Achievement notification state
   @override
   @JsonKey()
   final bool showAchievementNotification;
@@ -721,13 +731,13 @@ class _$UiStateImpl implements _UiState {
   final String? achievementTitle;
   @override
   final String? achievementDescription;
-// Level up notification state
+  // Level up notification state
   @override
   @JsonKey()
   final bool showLevelUpNotification;
   @override
   final int? levelUpNewLevel;
-// Battle result screen state
+  // Battle result screen state
   @override
   @JsonKey()
   final bool showBattleResultScreen;
@@ -748,7 +758,7 @@ class _$UiStateImpl implements _UiState {
     return EqualUnmodifiableListView(value);
   }
 
-// Screen visibility state
+  // Screen visibility state
   @override
   @JsonKey()
   final bool showSettingsScreen;
@@ -761,14 +771,14 @@ class _$UiStateImpl implements _UiState {
   @override
   @JsonKey()
   final bool showStatisticsScreen;
-// Navigation state
+  // Navigation state
   @override
   @JsonKey()
   final int bottomNavIndex;
   @override
   @JsonKey()
   final String currentScreen;
-// Settings state
+  // Settings state
   @override
   @JsonKey()
   final bool isDebugMode;
@@ -828,7 +838,10 @@ class _$UiStateImpl implements _UiState {
                 other.confirmationMessage == confirmationMessage) &&
             (identical(other.confirmationTitle, confirmationTitle) ||
                 other.confirmationTitle == confirmationTitle) &&
-            (identical(other.confirmationConfirmText, confirmationConfirmText) ||
+            (identical(
+                  other.confirmationConfirmText,
+                  confirmationConfirmText,
+                ) ||
                 other.confirmationConfirmText == confirmationConfirmText) &&
             (identical(other.confirmationCancelText, confirmationCancelText) ||
                 other.confirmationCancelText == confirmationCancelText) &&
@@ -838,14 +851,20 @@ class _$UiStateImpl implements _UiState {
                 other.tutorialKey == tutorialKey) &&
             (identical(other.tutorialContent, tutorialContent) ||
                 other.tutorialContent == tutorialContent) &&
-            (identical(other.showAchievementNotification, showAchievementNotification) ||
+            (identical(
+                  other.showAchievementNotification,
+                  showAchievementNotification,
+                ) ||
                 other.showAchievementNotification ==
                     showAchievementNotification) &&
             (identical(other.achievementTitle, achievementTitle) ||
                 other.achievementTitle == achievementTitle) &&
             (identical(other.achievementDescription, achievementDescription) ||
                 other.achievementDescription == achievementDescription) &&
-            (identical(other.showLevelUpNotification, showLevelUpNotification) ||
+            (identical(
+                  other.showLevelUpNotification,
+                  showLevelUpNotification,
+                ) ||
                 other.showLevelUpNotification == showLevelUpNotification) &&
             (identical(other.levelUpNewLevel, levelUpNewLevel) ||
                 other.levelUpNewLevel == levelUpNewLevel) &&
@@ -857,8 +876,10 @@ class _$UiStateImpl implements _UiState {
                 other.battleResultScore == battleResultScore) &&
             (identical(other.battleResultMessage, battleResultMessage) ||
                 other.battleResultMessage == battleResultMessage) &&
-            const DeepCollectionEquality()
-                .equals(other._battleResultRewards, _battleResultRewards) &&
+            const DeepCollectionEquality().equals(
+              other._battleResultRewards,
+              _battleResultRewards,
+            ) &&
             (identical(other.showSettingsScreen, showSettingsScreen) ||
                 other.showSettingsScreen == showSettingsScreen) &&
             (identical(other.showInventoryScreen, showInventoryScreen) ||
@@ -871,112 +892,121 @@ class _$UiStateImpl implements _UiState {
                 other.bottomNavIndex == bottomNavIndex) &&
             (identical(other.currentScreen, currentScreen) ||
                 other.currentScreen == currentScreen) &&
-            (identical(other.isDebugMode, isDebugMode) || other.isDebugMode == isDebugMode) &&
-            (identical(other.themeMode, themeMode) || other.themeMode == themeMode) &&
-            (identical(other.soundEffectsEnabled, soundEffectsEnabled) || other.soundEffectsEnabled == soundEffectsEnabled) &&
-            (identical(other.musicEnabled, musicEnabled) || other.musicEnabled == musicEnabled) &&
-            (identical(other.soundVolume, soundVolume) || other.soundVolume == soundVolume) &&
-            (identical(other.musicVolume, musicVolume) || other.musicVolume == musicVolume) &&
-            (identical(other.hapticFeedbackEnabled, hapticFeedbackEnabled) || other.hapticFeedbackEnabled == hapticFeedbackEnabled) &&
-            (identical(other.animationSpeed, animationSpeed) || other.animationSpeed == animationSpeed));
+            (identical(other.isDebugMode, isDebugMode) ||
+                other.isDebugMode == isDebugMode) &&
+            (identical(other.themeMode, themeMode) ||
+                other.themeMode == themeMode) &&
+            (identical(other.soundEffectsEnabled, soundEffectsEnabled) ||
+                other.soundEffectsEnabled == soundEffectsEnabled) &&
+            (identical(other.musicEnabled, musicEnabled) ||
+                other.musicEnabled == musicEnabled) &&
+            (identical(other.soundVolume, soundVolume) ||
+                other.soundVolume == soundVolume) &&
+            (identical(other.musicVolume, musicVolume) ||
+                other.musicVolume == musicVolume) &&
+            (identical(other.hapticFeedbackEnabled, hapticFeedbackEnabled) ||
+                other.hapticFeedbackEnabled == hapticFeedbackEnabled) &&
+            (identical(other.animationSpeed, animationSpeed) ||
+                other.animationSpeed == animationSpeed));
   }
 
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        isLoading,
-        loadingMessage,
-        showErrorDialog,
-        errorMessage,
-        errorTitle,
-        showSuccessMessage,
-        successMessage,
-        showInfoMessage,
-        infoMessage,
-        showConfirmationDialog,
-        confirmationMessage,
-        confirmationTitle,
-        confirmationConfirmText,
-        confirmationCancelText,
-        showTutorialOverlay,
-        tutorialKey,
-        tutorialContent,
-        showAchievementNotification,
-        achievementTitle,
-        achievementDescription,
-        showLevelUpNotification,
-        levelUpNewLevel,
-        showBattleResultScreen,
-        battleResultIsVictory,
-        battleResultScore,
-        battleResultMessage,
-        const DeepCollectionEquality().hash(_battleResultRewards),
-        showSettingsScreen,
-        showInventoryScreen,
-        showAchievementScreen,
-        showStatisticsScreen,
-        bottomNavIndex,
-        currentScreen,
-        isDebugMode,
-        themeMode,
-        soundEffectsEnabled,
-        musicEnabled,
-        soundVolume,
-        musicVolume,
-        hapticFeedbackEnabled,
-        animationSpeed
-      ]);
+    runtimeType,
+    isLoading,
+    loadingMessage,
+    showErrorDialog,
+    errorMessage,
+    errorTitle,
+    showSuccessMessage,
+    successMessage,
+    showInfoMessage,
+    infoMessage,
+    showConfirmationDialog,
+    confirmationMessage,
+    confirmationTitle,
+    confirmationConfirmText,
+    confirmationCancelText,
+    showTutorialOverlay,
+    tutorialKey,
+    tutorialContent,
+    showAchievementNotification,
+    achievementTitle,
+    achievementDescription,
+    showLevelUpNotification,
+    levelUpNewLevel,
+    showBattleResultScreen,
+    battleResultIsVictory,
+    battleResultScore,
+    battleResultMessage,
+    const DeepCollectionEquality().hash(_battleResultRewards),
+    showSettingsScreen,
+    showInventoryScreen,
+    showAchievementScreen,
+    showStatisticsScreen,
+    bottomNavIndex,
+    currentScreen,
+    isDebugMode,
+    themeMode,
+    soundEffectsEnabled,
+    musicEnabled,
+    soundVolume,
+    musicVolume,
+    hapticFeedbackEnabled,
+    animationSpeed,
+  ]);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$UiStateImplCopyWith<_$UiStateImpl> get copyWith =>
-      __$$UiStateImplCopyWithImpl<_$UiStateImpl>(this, _$identity);
+      _$$UiStateImplCopyWithImpl<_$UiStateImpl>(this, _$identity);
 }
 
 abstract class _UiState implements UiState {
-  const factory _UiState(
-      {final bool isLoading,
-      final String? loadingMessage,
-      final bool showErrorDialog,
-      final String? errorMessage,
-      final String? errorTitle,
-      final bool showSuccessMessage,
-      final String? successMessage,
-      final bool showInfoMessage,
-      final String? infoMessage,
-      final bool showConfirmationDialog,
-      final String? confirmationMessage,
-      final String? confirmationTitle,
-      final String? confirmationConfirmText,
-      final String? confirmationCancelText,
-      final bool showTutorialOverlay,
-      final String? tutorialKey,
-      final String? tutorialContent,
-      final bool showAchievementNotification,
-      final String? achievementTitle,
-      final String? achievementDescription,
-      final bool showLevelUpNotification,
-      final int? levelUpNewLevel,
-      final bool showBattleResultScreen,
-      final bool? battleResultIsVictory,
-      final int? battleResultScore,
-      final String? battleResultMessage,
-      final List<String>? battleResultRewards,
-      final bool showSettingsScreen,
-      final bool showInventoryScreen,
-      final bool showAchievementScreen,
-      final bool showStatisticsScreen,
-      final int bottomNavIndex,
-      final String currentScreen,
-      final bool isDebugMode,
-      final ThemeMode themeMode,
-      final bool soundEffectsEnabled,
-      final bool musicEnabled,
-      final double soundVolume,
-      final double musicVolume,
-      final bool hapticFeedbackEnabled,
-      final double animationSpeed}) = _$UiStateImpl;
+  const factory _UiState({
+    final bool isLoading,
+    final String? loadingMessage,
+    final bool showErrorDialog,
+    final String? errorMessage,
+    final String? errorTitle,
+    final bool showSuccessMessage,
+    final String? successMessage,
+    final bool showInfoMessage,
+    final String? infoMessage,
+    final bool showConfirmationDialog,
+    final String? confirmationMessage,
+    final String? confirmationTitle,
+    final String? confirmationConfirmText,
+    final String? confirmationCancelText,
+    final bool showTutorialOverlay,
+    final String? tutorialKey,
+    final String? tutorialContent,
+    final bool showAchievementNotification,
+    final String? achievementTitle,
+    final String? achievementDescription,
+    final bool showLevelUpNotification,
+    final int? levelUpNewLevel,
+    final bool showBattleResultScreen,
+    final bool? battleResultIsVictory,
+    final int? battleResultScore,
+    final String? battleResultMessage,
+    final List<String>? battleResultRewards,
+    final bool showSettingsScreen,
+    final bool showInventoryScreen,
+    final bool showAchievementScreen,
+    final bool showStatisticsScreen,
+    final int bottomNavIndex,
+    final String currentScreen,
+    final bool isDebugMode,
+    final ThemeMode themeMode,
+    final bool soundEffectsEnabled,
+    final bool musicEnabled,
+    final double soundVolume,
+    final double musicVolume,
+    final bool hapticFeedbackEnabled,
+    final double animationSpeed,
+  }) = _$UiStateImpl;
 
   @override // Loading state
   bool get isLoading;

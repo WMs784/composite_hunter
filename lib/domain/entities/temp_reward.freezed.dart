@@ -12,7 +12,8 @@ part of 'temp_reward.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$TempReward {
@@ -28,8 +29,9 @@ mixin _$TempReward {
 /// @nodoc
 abstract class $TempRewardCopyWith<$Res> {
   factory $TempRewardCopyWith(
-          TempReward value, $Res Function(TempReward) then) =
-      _$TempRewardCopyWithImpl<$Res, TempReward>;
+    TempReward value,
+    $Res Function(TempReward) then,
+  ) = _$TempRewardCopyWithImpl<$Res, TempReward>;
   @useResult
   $Res call({List<Item> tempItems, DateTime battleStartTime, bool isFinalized});
 }
@@ -51,20 +53,23 @@ class _$TempRewardCopyWithImpl<$Res, $Val extends TempReward>
     Object? battleStartTime = null,
     Object? isFinalized = null,
   }) {
-    return _then(_value.copyWith(
-      tempItems: null == tempItems
-          ? _value.tempItems
-          : tempItems // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      battleStartTime: null == battleStartTime
-          ? _value.battleStartTime
-          : battleStartTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      isFinalized: null == isFinalized
-          ? _value.isFinalized
-          : isFinalized // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            tempItems: null == tempItems
+                ? _value.tempItems
+                : tempItems // ignore: cast_nullable_to_non_nullable
+                      as List<Item>,
+            battleStartTime: null == battleStartTime
+                ? _value.battleStartTime
+                : battleStartTime // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            isFinalized: null == isFinalized
+                ? _value.isFinalized
+                : isFinalized // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -72,20 +77,22 @@ class _$TempRewardCopyWithImpl<$Res, $Val extends TempReward>
 abstract class _$$TempRewardImplCopyWith<$Res>
     implements $TempRewardCopyWith<$Res> {
   factory _$$TempRewardImplCopyWith(
-          _$TempRewardImpl value, $Res Function(_$TempRewardImpl) then) =
-      __$$TempRewardImplCopyWithImpl<$Res>;
+    _$TempRewardImpl value,
+    $Res Function(_$TempRewardImpl) then,
+  ) = _$$TempRewardImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({List<Item> tempItems, DateTime battleStartTime, bool isFinalized});
 }
 
 /// @nodoc
-class __$$TempRewardImplCopyWithImpl<$Res>
+class _$$TempRewardImplCopyWithImpl<$Res>
     extends _$TempRewardCopyWithImpl<$Res, _$TempRewardImpl>
     implements _$$TempRewardImplCopyWith<$Res> {
-  __$$TempRewardImplCopyWithImpl(
-      _$TempRewardImpl _value, $Res Function(_$TempRewardImpl) _then)
-      : super(_value, _then);
+  _$$TempRewardImplCopyWithImpl(
+    _$TempRewardImpl _value,
+    $Res Function(_$TempRewardImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -94,32 +101,34 @@ class __$$TempRewardImplCopyWithImpl<$Res>
     Object? battleStartTime = null,
     Object? isFinalized = null,
   }) {
-    return _then(_$TempRewardImpl(
-      tempItems: null == tempItems
-          ? _value._tempItems
-          : tempItems // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      battleStartTime: null == battleStartTime
-          ? _value.battleStartTime
-          : battleStartTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      isFinalized: null == isFinalized
-          ? _value.isFinalized
-          : isFinalized // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$TempRewardImpl(
+        tempItems: null == tempItems
+            ? _value._tempItems
+            : tempItems // ignore: cast_nullable_to_non_nullable
+                  as List<Item>,
+        battleStartTime: null == battleStartTime
+            ? _value.battleStartTime
+            : battleStartTime // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        isFinalized: null == isFinalized
+            ? _value.isFinalized
+            : isFinalized // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$TempRewardImpl extends _TempReward {
-  const _$TempRewardImpl(
-      {required final List<Item> tempItems,
-      required this.battleStartTime,
-      this.isFinalized = false})
-      : _tempItems = tempItems,
-        super._();
+  const _$TempRewardImpl({
+    required final List<Item> tempItems,
+    required this.battleStartTime,
+    this.isFinalized = false,
+  }) : _tempItems = tempItems,
+       super._();
 
   final List<Item> _tempItems;
   @override
@@ -145,8 +154,10 @@ class _$TempRewardImpl extends _TempReward {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$TempRewardImpl &&
-            const DeepCollectionEquality()
-                .equals(other._tempItems, _tempItems) &&
+            const DeepCollectionEquality().equals(
+              other._tempItems,
+              _tempItems,
+            ) &&
             (identical(other.battleStartTime, battleStartTime) ||
                 other.battleStartTime == battleStartTime) &&
             (identical(other.isFinalized, isFinalized) ||
@@ -155,23 +166,25 @@ class _$TempRewardImpl extends _TempReward {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_tempItems),
-      battleStartTime,
-      isFinalized);
+    runtimeType,
+    const DeepCollectionEquality().hash(_tempItems),
+    battleStartTime,
+    isFinalized,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$TempRewardImplCopyWith<_$TempRewardImpl> get copyWith =>
-      __$$TempRewardImplCopyWithImpl<_$TempRewardImpl>(this, _$identity);
+      _$$TempRewardImplCopyWithImpl<_$TempRewardImpl>(this, _$identity);
 }
 
 abstract class _TempReward extends TempReward {
-  const factory _TempReward(
-      {required final List<Item> tempItems,
-      required final DateTime battleStartTime,
-      final bool isFinalized}) = _$TempRewardImpl;
+  const factory _TempReward({
+    required final List<Item> tempItems,
+    required final DateTime battleStartTime,
+    final bool isFinalized,
+  }) = _$TempRewardImpl;
   const _TempReward._() : super._();
 
   @override

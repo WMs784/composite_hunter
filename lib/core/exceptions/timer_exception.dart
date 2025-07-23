@@ -14,5 +14,5 @@ class TimerNotActiveException extends TimerException {
 
 class InvalidTimerDurationException extends TimerException {
   const InvalidTimerDurationException(int duration)
-      : super('Invalid timer duration: $duration seconds');
+    : super('Invalid timer duration: $duration seconds');
 }

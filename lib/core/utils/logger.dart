@@ -1,11 +1,6 @@
 import 'dart:developer' as developer;
 
-enum LogLevel {
-  debug,
-  info,
-  warning,
-  error,
-}
+enum LogLevel { debug, info, warning, error }
 
 class Logger {
   static const String _name = 'CompositeHunter';

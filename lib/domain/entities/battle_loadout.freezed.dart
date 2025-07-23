@@ -12,7 +12,8 @@ part of 'battle_loadout.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$BattleLoadout {
@@ -30,15 +31,17 @@ mixin _$BattleLoadout {
 /// @nodoc
 abstract class $BattleLoadoutCopyWith<$Res> {
   factory $BattleLoadoutCopyWith(
-          BattleLoadout value, $Res Function(BattleLoadout) then) =
-      _$BattleLoadoutCopyWithImpl<$Res, BattleLoadout>;
+    BattleLoadout value,
+    $Res Function(BattleLoadout) then,
+  ) = _$BattleLoadoutCopyWithImpl<$Res, BattleLoadout>;
   @useResult
-  $Res call(
-      {List<Item> battleItems,
-      List<Item> originalItems,
-      int maxSlots,
-      Stage targetStage,
-      DateTime createdAt});
+  $Res call({
+    List<Item> battleItems,
+    List<Item> originalItems,
+    int maxSlots,
+    Stage targetStage,
+    DateTime createdAt,
+  });
 
   $StageCopyWith<$Res> get targetStage;
 }
@@ -62,28 +65,31 @@ class _$BattleLoadoutCopyWithImpl<$Res, $Val extends BattleLoadout>
     Object? targetStage = null,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      battleItems: null == battleItems
-          ? _value.battleItems
-          : battleItems // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      originalItems: null == originalItems
-          ? _value.originalItems
-          : originalItems // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      maxSlots: null == maxSlots
-          ? _value.maxSlots
-          : maxSlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      targetStage: null == targetStage
-          ? _value.targetStage
-          : targetStage // ignore: cast_nullable_to_non_nullable
-              as Stage,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            battleItems: null == battleItems
+                ? _value.battleItems
+                : battleItems // ignore: cast_nullable_to_non_nullable
+                      as List<Item>,
+            originalItems: null == originalItems
+                ? _value.originalItems
+                : originalItems // ignore: cast_nullable_to_non_nullable
+                      as List<Item>,
+            maxSlots: null == maxSlots
+                ? _value.maxSlots
+                : maxSlots // ignore: cast_nullable_to_non_nullable
+                      as int,
+            targetStage: null == targetStage
+                ? _value.targetStage
+                : targetStage // ignore: cast_nullable_to_non_nullable
+                      as Stage,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 
   @override
@@ -99,28 +105,31 @@ class _$BattleLoadoutCopyWithImpl<$Res, $Val extends BattleLoadout>
 abstract class _$$BattleLoadoutImplCopyWith<$Res>
     implements $BattleLoadoutCopyWith<$Res> {
   factory _$$BattleLoadoutImplCopyWith(
-          _$BattleLoadoutImpl value, $Res Function(_$BattleLoadoutImpl) then) =
-      __$$BattleLoadoutImplCopyWithImpl<$Res>;
+    _$BattleLoadoutImpl value,
+    $Res Function(_$BattleLoadoutImpl) then,
+  ) = _$$BattleLoadoutImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {List<Item> battleItems,
-      List<Item> originalItems,
-      int maxSlots,
-      Stage targetStage,
-      DateTime createdAt});
+  $Res call({
+    List<Item> battleItems,
+    List<Item> originalItems,
+    int maxSlots,
+    Stage targetStage,
+    DateTime createdAt,
+  });
 
   @override
   $StageCopyWith<$Res> get targetStage;
 }
 
 /// @nodoc
-class __$$BattleLoadoutImplCopyWithImpl<$Res>
+class _$$BattleLoadoutImplCopyWithImpl<$Res>
     extends _$BattleLoadoutCopyWithImpl<$Res, _$BattleLoadoutImpl>
     implements _$$BattleLoadoutImplCopyWith<$Res> {
-  __$$BattleLoadoutImplCopyWithImpl(
-      _$BattleLoadoutImpl _value, $Res Function(_$BattleLoadoutImpl) _then)
-      : super(_value, _then);
+  _$$BattleLoadoutImplCopyWithImpl(
+    _$BattleLoadoutImpl _value,
+    $Res Function(_$BattleLoadoutImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -131,43 +140,45 @@ class __$$BattleLoadoutImplCopyWithImpl<$Res>
     Object? targetStage = null,
     Object? createdAt = null,
   }) {
-    return _then(_$BattleLoadoutImpl(
-      battleItems: null == battleItems
-          ? _value._battleItems
-          : battleItems // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      originalItems: null == originalItems
-          ? _value._originalItems
-          : originalItems // ignore: cast_nullable_to_non_nullable
-              as List<Item>,
-      maxSlots: null == maxSlots
-          ? _value.maxSlots
-          : maxSlots // ignore: cast_nullable_to_non_nullable
-              as int,
-      targetStage: null == targetStage
-          ? _value.targetStage
-          : targetStage // ignore: cast_nullable_to_non_nullable
-              as Stage,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$BattleLoadoutImpl(
+        battleItems: null == battleItems
+            ? _value._battleItems
+            : battleItems // ignore: cast_nullable_to_non_nullable
+                  as List<Item>,
+        originalItems: null == originalItems
+            ? _value._originalItems
+            : originalItems // ignore: cast_nullable_to_non_nullable
+                  as List<Item>,
+        maxSlots: null == maxSlots
+            ? _value.maxSlots
+            : maxSlots // ignore: cast_nullable_to_non_nullable
+                  as int,
+        targetStage: null == targetStage
+            ? _value.targetStage
+            : targetStage // ignore: cast_nullable_to_non_nullable
+                  as Stage,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$BattleLoadoutImpl extends _BattleLoadout {
-  const _$BattleLoadoutImpl(
-      {required final List<Item> battleItems,
-      required final List<Item> originalItems,
-      required this.maxSlots,
-      required this.targetStage,
-      required this.createdAt})
-      : _battleItems = battleItems,
-        _originalItems = originalItems,
-        super._();
+  const _$BattleLoadoutImpl({
+    required final List<Item> battleItems,
+    required final List<Item> originalItems,
+    required this.maxSlots,
+    required this.targetStage,
+    required this.createdAt,
+  }) : _battleItems = battleItems,
+       _originalItems = originalItems,
+       super._();
 
   final List<Item> _battleItems;
   @override
@@ -202,10 +213,14 @@ class _$BattleLoadoutImpl extends _BattleLoadout {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$BattleLoadoutImpl &&
-            const DeepCollectionEquality()
-                .equals(other._battleItems, _battleItems) &&
-            const DeepCollectionEquality()
-                .equals(other._originalItems, _originalItems) &&
+            const DeepCollectionEquality().equals(
+              other._battleItems,
+              _battleItems,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._originalItems,
+              _originalItems,
+            ) &&
             (identical(other.maxSlots, maxSlots) ||
                 other.maxSlots == maxSlots) &&
             (identical(other.targetStage, targetStage) ||
@@ -216,27 +231,29 @@ class _$BattleLoadoutImpl extends _BattleLoadout {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_battleItems),
-      const DeepCollectionEquality().hash(_originalItems),
-      maxSlots,
-      targetStage,
-      createdAt);
+    runtimeType,
+    const DeepCollectionEquality().hash(_battleItems),
+    const DeepCollectionEquality().hash(_originalItems),
+    maxSlots,
+    targetStage,
+    createdAt,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$BattleLoadoutImplCopyWith<_$BattleLoadoutImpl> get copyWith =>
-      __$$BattleLoadoutImplCopyWithImpl<_$BattleLoadoutImpl>(this, _$identity);
+      _$$BattleLoadoutImplCopyWithImpl<_$BattleLoadoutImpl>(this, _$identity);
 }
 
 abstract class _BattleLoadout extends BattleLoadout {
-  const factory _BattleLoadout(
-      {required final List<Item> battleItems,
-      required final List<Item> originalItems,
-      required final int maxSlots,
-      required final Stage targetStage,
-      required final DateTime createdAt}) = _$BattleLoadoutImpl;
+  const factory _BattleLoadout({
+    required final List<Item> battleItems,
+    required final List<Item> originalItems,
+    required final int maxSlots,
+    required final Stage targetStage,
+    required final DateTime createdAt,
+  }) = _$BattleLoadoutImpl;
   const _BattleLoadout._() : super._();
 
   @override

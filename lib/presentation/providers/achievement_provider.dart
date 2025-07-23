@@ -252,8 +252,11 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
     final inventory = Inventory(primes: inventoryList);
 
     state = state.map((achievement) {
-      final updatedProgress =
-          _calculateProgress(achievement, player, inventory);
+      final updatedProgress = _calculateProgress(
+        achievement,
+        player,
+        inventory,
+      );
       return achievement.copyWith(
         currentProgress: updatedProgress,
         isUnlocked: updatedProgress >= achievement.targetValue,
@@ -263,7 +266,10 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
 
   /// Calculate progress for a specific achievement
   int _calculateProgress(
-      Achievement achievement, Player player, Inventory inventory) {
+    Achievement achievement,
+    Player player,
+    Inventory inventory,
+  ) {
     switch (achievement.id) {
       // Battle achievements
       case 'first_victory':
@@ -470,21 +476,25 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   List<Achievement> getRecentlyUnlocked() {
     final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
     return state
-        .where((a) =>
-            a.isUnlocked &&
-            a.unlockedAt != null &&
-            a.unlockedAt!.isAfter(sevenDaysAgo))
+        .where(
+          (a) =>
+              a.isUnlocked &&
+              a.unlockedAt != null &&
+              a.unlockedAt!.isAfter(sevenDaysAgo),
+        )
         .toList();
   }
 
   /// Reset all achievements (for testing)
   void resetAllAchievements() {
     state = state
-        .map((achievement) => achievement.copyWith(
-              currentProgress: 0,
-              isUnlocked: false,
-              unlockedAt: null,
-            ))
+        .map(
+          (achievement) => achievement.copyWith(
+            currentProgress: 0,
+            isUnlocked: false,
+            unlockedAt: null,
+          ),
+        )
         .toList();
   }
 }
@@ -492,8 +502,8 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
 /// Achievement provider
 final achievementProvider =
     StateNotifierProvider<AchievementNotifier, List<Achievement>>((ref) {
-  return AchievementNotifier(ref);
-});
+      return AchievementNotifier(ref);
+    });
 
 /// Computed providers for achievements
 final unlockedAchievementsProvider = Provider<List<Achievement>>((ref) {

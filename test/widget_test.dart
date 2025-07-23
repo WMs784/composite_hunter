@@ -12,11 +12,7 @@ void main() {
   testWidgets('Basic widget test', (WidgetTester tester) async {
     // Build a simple widget
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: Text('Hello World'),
-        ),
-      ),
+      const MaterialApp(home: Scaffold(body: Text('Hello World'))),
     );
 
     // Verify that the widget loads without error

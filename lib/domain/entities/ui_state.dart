@@ -74,8 +74,4 @@ class UiState with _$UiState {
 }
 
 /// Theme mode enumeration
-enum ThemeMode {
-  system,
-  light,
-  dark,
-}
+enum ThemeMode { system, light, dark }

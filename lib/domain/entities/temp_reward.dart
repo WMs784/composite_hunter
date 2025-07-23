@@ -15,8 +15,9 @@ class TempReward with _$TempReward {
 
   /// Add a temporary item
   TempReward addTempItem(Item item) {
-    final existingIndex =
-        tempItems.indexWhere((tempItem) => tempItem.value == item.value);
+    final existingIndex = tempItems.indexWhere(
+      (tempItem) => tempItem.value == item.value,
+    );
 
     if (existingIndex >= 0) {
       // Update existing item
@@ -40,10 +41,7 @@ class TempReward with _$TempReward {
 
   /// Discard the temporary rewards
   TempReward discard() {
-    return copyWith(
-      tempItems: [],
-      isFinalized: false,
-    );
+    return copyWith(tempItems: [], isFinalized: false);
   }
 
   /// Get total count of temporary items

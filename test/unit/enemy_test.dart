@@ -180,7 +180,9 @@ void main() {
         final attacks = enemy.availableAttacks;
         expect(attacks, containsAll([2, 3]));
         expect(
-            attacks.where((p) => p == 2).length, 1); // Should appear only once
+          attacks.where((p) => p == 2).length,
+          1,
+        ); // Should appear only once
       });
     });
 

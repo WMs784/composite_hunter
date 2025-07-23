@@ -399,4 +399,36 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get startPlaying => 'ゲーム開始！';
+
+  @override
+  String selectItems(String stageNumber) {
+    return 'アイテム選択 - ステージ$stageNumber';
+  }
+
+  @override
+  String get selectedItems => '選択中のアイテム';
+
+  @override
+  String get remaining => '残り';
+
+  @override
+  String get noItemsAvailable => '選択可能なアイテムがありません';
+
+  @override
+  String get startBattle => 'バトル開始';
+
+  @override
+  String itemRange(String min, String max) {
+    return '範囲: $min-$max';
+  }
+
+  @override
+  String timeLimit(String seconds) {
+    return '制限時間: ${seconds}秒';
+  }
+
+  @override
+  String haveCount(String count) {
+    return '所持: ${count}個';
+  }
 }

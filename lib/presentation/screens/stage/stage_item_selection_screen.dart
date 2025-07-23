@@ -9,6 +9,7 @@ import '../../providers/inventory_provider.dart';
 import '../../../domain/entities/prime.dart';
 import 'stage_select_screen.dart';
 import '../../../core/utils/logger.dart';
+import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 /// ステージ用アイテム選択画面
 class StageItemSelectionScreen extends ConsumerStatefulWidget {
@@ -59,7 +60,8 @@ class _StageItemSelectionScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Select Items - Stage ${widget.stage.stageNumber}'),
+        title: Text(AppLocalizations.of(context)!
+            .selectItems(widget.stage.stageNumber.toString())),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -159,12 +161,15 @@ class _StageItemSelectionScreenState
             children: [
               _buildInfoChip(
                 Icons.numbers,
-                'Range: ${widget.stage.enemyRangeMin}-${widget.stage.enemyRangeMax}',
+                AppLocalizations.of(context)!.itemRange(
+                    widget.stage.enemyRangeMin.toString(),
+                    widget.stage.enemyRangeMax.toString()),
               ),
               const SizedBox(width: Dimensions.spacingS),
               _buildInfoChip(
                 Icons.timer,
-                'Time: ${widget.stage.timeLimit}s',
+                AppLocalizations.of(context)!
+                    .timeLimit(widget.stage.timeLimit.toString()),
               ),
             ],
           ),
@@ -197,7 +202,7 @@ class _StageItemSelectionScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Selected Items',
+                  AppLocalizations.of(context)!.selectedItems,
                   style: AppTextStyles.titleSmall.copyWith(
                     color: AppColors.onPrimaryContainer,
                   ),
@@ -220,7 +225,7 @@ class _StageItemSelectionScreenState
                     ),
                     const SizedBox(width: Dimensions.spacingS),
                     Text(
-                      '($remainingCount remaining)',
+                      '($remainingCount ${AppLocalizations.of(context)!.remaining})',
                       style: AppTextStyles.labelSmall.copyWith(
                         color: AppColors.onPrimaryContainer.withOpacity(0.6),
                       ),
@@ -257,9 +262,9 @@ class _StageItemSelectionScreenState
   /// アイテム選択グリッド
   Widget _buildItemSelectionGrid(List<Prime> availablePrimes) {
     if (availablePrimes.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'No items available for selection',
+          AppLocalizations.of(context)!.noItemsAvailable,
           style: AppTextStyles.bodyMedium,
         ),
       );
@@ -315,7 +320,7 @@ class _StageItemSelectionScreenState
             const Icon(Icons.play_arrow),
             const SizedBox(width: Dimensions.spacingS),
             Text(
-              'Start Battle',
+              AppLocalizations.of(context)!.startBattle,
               style: AppTextStyles.titleMedium.copyWith(
                 color: AppColors.onPrimary,
                 fontWeight: FontWeight.bold,
@@ -482,7 +487,7 @@ class _SelectableItemCard extends StatelessWidget {
 
           // 所持数表示
           Text(
-            'Have: ${prime.count}',
+            AppLocalizations.of(context)!.haveCount(prime.count.toString()),
             style: AppTextStyles.labelSmall.copyWith(
               color: _getTextColor().withOpacity(0.7),
               fontSize: 9,

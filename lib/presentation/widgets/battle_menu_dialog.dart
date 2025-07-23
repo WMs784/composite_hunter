@@ -24,7 +24,7 @@ class BattleMenuDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(Dimensions.radiusL),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -165,7 +165,7 @@ class _MenuOption extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(Dimensions.paddingM),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
               ),
               child: Icon(

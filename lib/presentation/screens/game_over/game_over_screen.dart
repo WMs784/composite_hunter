@@ -131,9 +131,9 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.error.withOpacity(0.1),
+            AppColors.error.withValues(alpha: 0.1),
             AppColors.surface,
-            AppColors.errorContainer.withOpacity(0.1),
+            AppColors.errorContainer.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -158,7 +158,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.error.withOpacity(0.3),
+                            color: AppColors.error.withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),
@@ -245,10 +245,10 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant.withOpacity(0.5),
+        color: AppColors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(Dimensions.radiusL),
         border: Border.all(
-          color: AppColors.outline.withOpacity(0.3),
+          color: AppColors.outline.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -310,7 +310,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
           child: Icon(
@@ -355,10 +355,10 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
-        color: AppColors.primaryContainer.withOpacity(0.3),
+        color: AppColors.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
         border: Border.all(
-          color: AppColors.primary.withOpacity(0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Column(

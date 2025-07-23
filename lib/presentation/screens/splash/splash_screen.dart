@@ -91,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen>
                             BorderRadius.circular(Dimensions.radiusXl),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -121,7 +121,7 @@ class _SplashScreenState extends State<SplashScreen>
                     Text(
                       '合成数ハンター',
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.8),
+                        color: AppColors.onPrimary.withValues(alpha: 0.8),
                       ),
                     ),
 
@@ -145,7 +145,7 @@ class _SplashScreenState extends State<SplashScreen>
                     Text(
                       'Loading...',
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.7),
+                        color: AppColors.onPrimary.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

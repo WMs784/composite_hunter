@@ -143,9 +143,9 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.victoryGreen.withOpacity(0.1),
+            AppColors.victoryGreen.withValues(alpha: 0.1),
             AppColors.surface,
-            AppColors.primaryContainer.withOpacity(0.1),
+            AppColors.primaryContainer.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -165,7 +165,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.victoryGreen.withOpacity(0.3),
+                      color: AppColors.victoryGreen.withValues(alpha: 0.3),
                       blurRadius: 20,
                       spreadRadius: 5,
                     ),
@@ -272,10 +272,10 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant.withOpacity(0.5),
+        color: AppColors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(Dimensions.radiusL),
         border: Border.all(
-          color: AppColors.outline.withOpacity(0.3),
+          color: AppColors.outline.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -335,7 +335,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
           ),
           child: Icon(
@@ -368,8 +368,8 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Colors.amber.withOpacity(0.1),
-            Colors.amber.withOpacity(0.2),
+            Colors.amber.withValues(alpha: 0.1),
+            Colors.amber.withValues(alpha: 0.2),
           ],
         ),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
@@ -443,14 +443,14 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary.withOpacity(0.1),
-            AppColors.primaryContainer.withOpacity(0.3),
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.primaryContainer.withValues(alpha: 0.3),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,10 +492,11 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(Dimensions.radiusS),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.5)),
+                  border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.5)),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),

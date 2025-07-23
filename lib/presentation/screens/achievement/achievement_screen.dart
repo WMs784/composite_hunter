@@ -151,7 +151,7 @@ class AchievementScreen extends ConsumerWidget {
               height: 60,
               decoration: BoxDecoration(
                 color: achievement.isUnlocked
-                    ? AppColors.victoryGreen.withOpacity(0.1)
+                    ? AppColors.victoryGreen.withValues(alpha: 0.1)
                     : AppColors.surfaceVariant,
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 border: achievement.isUnlocked

@@ -219,7 +219,7 @@ class _TutorialPage extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(Dimensions.radiusXl),
             ),
             child: Icon(
@@ -271,7 +271,7 @@ class _TutorialPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(Dimensions.paddingM),
               decoration: BoxDecoration(
-                color: AppColors.victoryGreen.withOpacity(0.1),
+                color: AppColors.victoryGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 border: Border.all(color: AppColors.victoryGreen),
               ),

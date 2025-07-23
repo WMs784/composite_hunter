@@ -7,7 +7,6 @@ import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/stage_progress_provider.dart';
 import '../../providers/inventory_provider.dart';
-import '../battle/battle_screen.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/utils/logger.dart';
 
@@ -106,11 +105,6 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
             icon: const Icon(Icons.emoji_events),
             onPressed: () => AppRouter.goToAchievements(context),
             tooltip: l10n.achievements,
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => _resetInventory(),
-            tooltip: l10n.resetInventory,
           ),
         ],
       ),
@@ -212,75 +206,6 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
     AppRouter.goToBattle(context);
   }
 
-  void _resetInventory() {
-    final l10n = AppLocalizations.of(context)!;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.resetGameData),
-        content: Text(l10n.resetConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-
-              try {
-                // Reset battle session first
-                ref.read(battleSessionProvider.notifier).resetSession();
-
-                // Reset battle screen providers
-                ref.read(battleEnemyProvider.notifier).state = 12;
-                ref.read(battleTimerProvider.notifier).state = 90;
-
-                // Reset inventory
-                await ref.read(inventoryProvider.notifier).resetInventory();
-
-                // Reset stage progress
-                await ref.read(stageProgressProvider.notifier).resetProgress();
-
-                // Wait a bit for providers to update
-                await Future.delayed(const Duration(milliseconds: 100));
-
-                // Force UI refresh by triggering a rebuild
-                if (mounted) {
-                  setState(() {});
-                }
-
-                // Additional delay before showing message
-                await Future.delayed(const Duration(milliseconds: 100));
-
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.gameDataResetSuccess),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-              } catch (e) {
-                Logger.error('Error during reset: $e');
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(l10n.errorDuringReset(e.toString())),
-                      backgroundColor: Colors.red,
-                      duration: const Duration(seconds: 3),
-                    ),
-                  );
-                }
-              }
-            },
-            child: Text(l10n.reset),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _StageCard extends StatelessWidget {

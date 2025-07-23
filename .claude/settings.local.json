@@ -31,7 +31,8 @@
       "Bash(true)",
       "Bash(pkill -f flutter)",
       "WebFetch(domain:pub.dev)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

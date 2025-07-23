@@ -229,6 +229,11 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
             onPressed: () async {
               Navigator.pop(context);
 
+              // Capture context-dependent objects before async operations
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
+              final successMessage = l10n.gameDataResetSuccess;
+              final errorMessageTemplate = l10n.errorDuringReset;
+
               try {
                 // Reset battle session first
                 ref.read(battleSessionProvider.notifier).resetSession();
@@ -255,9 +260,9 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                 await Future.delayed(const Duration(milliseconds: 100));
 
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
-                      content: Text(l10n.gameDataResetSuccess),
+                      content: Text(successMessage),
                       duration: const Duration(seconds: 2),
                     ),
                   );
@@ -265,9 +270,9 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
               } catch (e) {
                 Logger.error('Error during reset: $e');
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  scaffoldMessenger.showSnackBar(
                     SnackBar(
-                      content: Text(l10n.errorDuringReset(e.toString())),
+                      content: Text(errorMessageTemplate(e.toString())),
                       backgroundColor: Colors.red,
                       duration: const Duration(seconds: 3),
                     ),
@@ -307,7 +312,9 @@ class _StageCard extends StatelessWidget {
           padding: const EdgeInsets.all(Dimensions.paddingL),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
-            color: isLocked ? AppColors.surfaceVariant.withOpacity(0.5) : null,
+            color: isLocked
+                ? AppColors.surfaceVariant.withValues(alpha: 0.5)
+                : null,
           ),
           child: Row(
             children: [
@@ -367,7 +374,7 @@ class _StageCard extends StatelessWidget {
                       stage.getLocalizedDescription(l10n),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: isLocked
-                            ? AppColors.onSurfaceVariant.withOpacity(0.7)
+                            ? AppColors.onSurfaceVariant.withValues(alpha: 0.7)
                             : AppColors.onSurfaceVariant,
                       ),
                     ),

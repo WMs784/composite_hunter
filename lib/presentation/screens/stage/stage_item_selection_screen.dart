@@ -148,7 +148,7 @@ class _StageItemSelectionScreenState
                     Text(
                       widget.stage.description,
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.onPrimary.withOpacity(0.9),
+                        color: AppColors.onPrimary.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -220,14 +220,16 @@ class _StageItemSelectionScreenState
                     Text(
                       ' / $maxSelectableCount',
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.onPrimaryContainer.withOpacity(0.7),
+                        color:
+                            AppColors.onPrimaryContainer.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(width: Dimensions.spacingS),
                     Text(
                       '($remainingCount ${AppLocalizations.of(context)!.remaining})',
                       style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.onPrimaryContainer.withOpacity(0.6),
+                        color:
+                            AppColors.onPrimaryContainer.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -340,7 +342,7 @@ class _StageItemSelectionScreenState
         vertical: Dimensions.paddingXs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.9),
+        color: AppColors.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(Dimensions.radiusS),
       ),
       child: Row(
@@ -489,7 +491,7 @@ class _SelectableItemCard extends StatelessWidget {
           Text(
             AppLocalizations.of(context)!.haveCount(prime.count.toString()),
             style: AppTextStyles.labelSmall.copyWith(
-              color: _getTextColor().withOpacity(0.7),
+              color: _getTextColor().withValues(alpha: 0.7),
               fontSize: 9,
             ),
           ),

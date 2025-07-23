@@ -723,10 +723,10 @@ class _TimerSection extends ConsumerWidget {
 
     if (timer <= 10) {
       timerColor = AppColors.timerCritical;
-      backgroundColor = AppColors.timerCritical.withOpacity(0.1);
+      backgroundColor = AppColors.timerCritical.withValues(alpha: 0.1);
     } else if (timer <= 30) {
       timerColor = AppColors.timerWarning;
-      backgroundColor = AppColors.timerWarning.withOpacity(0.1);
+      backgroundColor = AppColors.timerWarning.withValues(alpha: 0.1);
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
@@ -851,7 +851,7 @@ class _EnemySection extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(Dimensions.radiusL),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -938,7 +938,7 @@ class _EnemySection extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(Dimensions.radiusL),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
@@ -1092,8 +1092,8 @@ class _PrimeButton extends ConsumerWidget {
 
     return Material(
       color: isAvailable
-          ? AppColors.primeAvailable.withOpacity(0.1)
-          : AppColors.primeUnavailable.withOpacity(0.3),
+          ? AppColors.primeAvailable.withValues(alpha: 0.1)
+          : AppColors.primeUnavailable.withValues(alpha: 0.3),
       borderRadius: BorderRadius.circular(Dimensions.radiusM),
       child: InkWell(
         onTap: isAvailable ? onPressed : null,
@@ -1130,7 +1130,7 @@ class _PrimeButton extends ConsumerWidget {
                     ),
                     decoration: BoxDecoration(
                       color: isAvailable
-                          ? AppColors.primeAvailable.withOpacity(0.2)
+                          ? AppColors.primeAvailable.withValues(alpha: 0.2)
                           : AppColors.surface,
                       borderRadius: BorderRadius.circular(Dimensions.radiusS),
                       border: Border.all(

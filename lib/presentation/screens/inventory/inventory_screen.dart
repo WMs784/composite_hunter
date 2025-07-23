@@ -179,7 +179,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
               padding: const EdgeInsets.all(Dimensions.paddingXs),
               decoration: BoxDecoration(
                 color: isUnlocked
-                    ? AppColors.victoryGreen.withOpacity(0.1)
+                    ? AppColors.victoryGreen.withValues(alpha: 0.1)
                     : AppColors.surface,
                 borderRadius: BorderRadius.circular(Dimensions.radiusS),
                 border: Border.all(
@@ -307,7 +307,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
         Container(
           padding: const EdgeInsets.all(Dimensions.paddingS),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
           child: Icon(
@@ -440,10 +440,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 border: Border.all(
-                  color: color.withOpacity(0.3),
+                  color: color.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),

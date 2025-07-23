@@ -47,7 +47,7 @@ class AppTheme {
           textStyle: AppTextStyles.labelLarge,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Dimensions.radiusM),
@@ -60,7 +60,7 @@ class AppTheme {
         ),
         contentPadding: const EdgeInsets.all(Dimensions.paddingM),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Dimensions.radiusL),
         ),
@@ -116,7 +116,7 @@ class AppTheme {
           textStyle: AppTextStyles.labelLarge,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.darkSurface,
         elevation: 2,
         shape: RoundedRectangleBorder(
@@ -124,7 +124,7 @@ class AppTheme {
         ),
         margin: const EdgeInsets.all(Dimensions.spacingS),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: AppColors.darkSurface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Dimensions.radiusL),

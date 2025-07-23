@@ -24,14 +24,6 @@ final battleTimerProvider = StateProvider<int>((ref) => 90);
 final recentlyAcquiredPrimesProvider =
     StateProvider<Map<int, DateTime>>((ref) => {});
 
-// Debug provider to track timer updates
-final timerDebugProvider = Provider<String>((ref) {
-  final timer = ref.watch(battleTimerProvider);
-  final debugInfo = 'Timer: $timer (${DateTime.now().millisecondsSinceEpoch})';
-  Logger.debug('Timer provider update: $debugInfo');
-  return debugInfo;
-});
-
 class BattleScreen extends ConsumerStatefulWidget {
   const BattleScreen({super.key});
 
@@ -78,8 +70,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
       // 直接的な状態更新
       final currentTime = ref.read(battleTimerProvider);
-      Logger.debug(
-          'Timer callback executed - currentTime: $currentTime, mounted: $mounted');
       if (currentTime > 0) {
         final newTime = currentTime - 1;
         ref.read(battleTimerProvider.notifier).state = newTime;
@@ -609,13 +599,6 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               // Timer display (only in stage mode)
               if (!session.isPracticeMode) const _TimerSection(),
 
-              // Debug info
-              Consumer(builder: (context, ref, child) {
-                final debugInfo = ref.watch(timerDebugProvider);
-                return Text(debugInfo,
-                    style: const TextStyle(fontSize: 10, color: Colors.grey));
-              }),
-
               const SizedBox(height: Dimensions.spacingL),
 
               // Enemy display
@@ -734,10 +717,6 @@ class _TimerSection extends ConsumerWidget {
     final formattedTime =
         '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     final l10n = AppLocalizations.of(context)!;
-
-    // Debug: Print timer value on each rebuild
-    Logger.debug(
-        'Timer UI rebuild: $timer ($formattedTime) at ${DateTime.now().millisecondsSinceEpoch}');
 
     Color timerColor = AppColors.timerNormal;
     Color backgroundColor = AppColors.surface;

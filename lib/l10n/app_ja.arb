@@ -121,5 +121,13 @@
   "tutorialReadyMessage": "合成数狩りの準備はできましたか？",
   "previous": "前へ",
   "next": "次へ",
-  "startPlaying": "ゲーム開始！"
+  "startPlaying": "ゲーム開始！",
+  "selectItems": "アイテム選択 - ステージ{stageNumber}",
+  "selectedItems": "選択中のアイテム",
+  "remaining": "残り",
+  "noItemsAvailable": "選択可能なアイテムがありません",
+  "startBattle": "バトル開始",
+  "itemRange": "範囲: {min}-{max}",
+  "timeLimit": "制限時間: {seconds}秒",
+  "haveCount": "所持: {count}個"
 }

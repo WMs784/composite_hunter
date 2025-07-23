@@ -408,4 +408,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startPlaying => 'Start Playing!';
+
+  @override
+  String selectItems(String stageNumber) {
+    return 'Select Items - Stage $stageNumber';
+  }
+
+  @override
+  String get selectedItems => 'Selected Items';
+
+  @override
+  String get remaining => 'remaining';
+
+  @override
+  String get noItemsAvailable => 'No items available for selection';
+
+  @override
+  String get startBattle => 'Start Battle';
+
+  @override
+  String itemRange(String min, String max) {
+    return 'Range: $min-$max';
+  }
+
+  @override
+  String timeLimit(String seconds) {
+    return 'Time: ${seconds}s';
+  }
+
+  @override
+  String haveCount(String count) {
+    return 'Have: $count';
+  }
 }

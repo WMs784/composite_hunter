@@ -676,5 +676,68 @@
   "startPlaying": "Start Playing!",
   "@startPlaying": {
     "description": "Start playing button"
+  },
+  
+  "selectItems": "Select Items - Stage {stageNumber}",
+  "@selectItems": {
+    "description": "Item selection screen title",
+    "placeholders": {
+      "stageNumber": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "selectedItems": "Selected Items",
+  "@selectedItems": {
+    "description": "Selected items header"
+  },
+  
+  "remaining": "remaining",
+  "@remaining": {
+    "description": "Remaining items count suffix"
+  },
+  
+  "noItemsAvailable": "No items available for selection",
+  "@noItemsAvailable": {
+    "description": "Message when no items are available"
+  },
+  
+  "startBattle": "Start Battle",
+  "@startBattle": {
+    "description": "Start battle button"
+  },
+  
+  "itemRange": "Range: {min}-{max}",
+  "@itemRange": {
+    "description": "Enemy range display",
+    "placeholders": {
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "timeLimit": "Time: {seconds}s",
+  "@timeLimit": {
+    "description": "Time limit display",
+    "placeholders": {
+      "seconds": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "haveCount": "Have: {count}",
+  "@haveCount": {
+    "description": "Item count display",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
   }
 }

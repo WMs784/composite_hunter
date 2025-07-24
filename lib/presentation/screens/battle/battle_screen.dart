@@ -21,8 +21,9 @@ final battleEnemyProvider = StateProvider<int>((ref) => 12);
 final battleTimerProvider = StateProvider<int>((ref) => 90);
 
 // Recently acquired primes (for visual feedback)
-final recentlyAcquiredPrimesProvider =
-    StateProvider<Map<int, DateTime>>((ref) => {});
+final recentlyAcquiredPrimesProvider = StateProvider<Map<int, DateTime>>(
+  (ref) => {},
+);
 
 class BattleScreen extends ConsumerStatefulWidget {
   const BattleScreen({super.key});
@@ -107,10 +108,8 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   void _showBattleMenu(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => BattleMenuDialog(
-        onRestart: _restartBattle,
-        onExit: _exitBattle,
-      ),
+      builder: (context) =>
+          BattleMenuDialog(onRestart: _restartBattle, onExit: _exitBattle),
     );
   }
 
@@ -177,15 +176,19 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       final enemy = _generateEnemyForRange(6, 20);
       ref.read(battleEnemyProvider.notifier).state = enemy;
       // 練習モードではタイマーを設定しない
-      Logger.logBattle('Practice mode initialized',
-          data: {'enemy': enemy, 'timer': 'disabled'});
+      Logger.logBattle(
+        'Practice mode initialized',
+        data: {'enemy': enemy, 'timer': 'disabled'},
+      );
     } else {
       final stageNumber = session.stageNumber ?? 1;
       final (enemy, timeLimit) = _getStageSettings(stageNumber);
       ref.read(battleEnemyProvider.notifier).state = enemy;
       ref.read(battleTimerProvider.notifier).state = timeLimit;
-      Logger.logBattle('Stage initialized',
-          data: {'stage': stageNumber, 'enemy': enemy, 'timer': timeLimit});
+      Logger.logBattle(
+        'Stage initialized',
+        data: {'stage': stageNumber, 'enemy': enemy, 'timer': timeLimit},
+      );
     }
   }
 
@@ -301,12 +304,13 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       96,
       98,
       99,
-      100
+      100,
     ];
 
     // 範囲内の合成数を探す
-    final validComposites =
-        composites.where((c) => c >= min && c <= max).toList();
+    final validComposites = composites
+        .where((c) => c >= min && c <= max)
+        .toList();
 
     if (validComposites.isNotEmpty) {
       final random = Random();
@@ -329,8 +333,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
     if (session.isPracticeMode) {
       // 練習モードはデフォルト設定
-      ref.read(battleEnemyProvider.notifier).state =
-          _generateEnemyForRange(6, 20);
+      ref.read(battleEnemyProvider.notifier).state = _generateEnemyForRange(
+        6,
+        20,
+      );
       ref.read(battleTimerProvider.notifier).state = 30;
     } else {
       final stageNumber = session.stageNumber ?? 1;
@@ -345,8 +351,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
     if (session.isPracticeMode) {
       // 練習モードは敵のみ生成、タイマーはそのまま
-      ref.read(battleEnemyProvider.notifier).state =
-          _generateEnemyForRange(6, 20);
+      ref.read(battleEnemyProvider.notifier).state = _generateEnemyForRange(
+        6,
+        20,
+      );
     } else {
       final stageNumber = session.stageNumber ?? 1;
       final (enemy, _) = _getStageSettings(stageNumber);
@@ -406,8 +414,10 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
           .read(inventoryProvider.notifier)
           .restoreInventory(session.originalMainInventory!);
 
-      Logger.logInventory('Inventory restored',
-          count: session.originalMainInventory!.length);
+      Logger.logInventory(
+        'Inventory restored',
+        count: session.originalMainInventory!.length,
+      );
     }
   }
 
@@ -436,8 +446,9 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   void _showInvalidAttackFeedback(BuildContext context, int prime, int enemy) {
     // まず素因数を計算
     final factors = _getFactors(enemy);
-    final factorsText =
-        factors.isNotEmpty ? factors.join(' × ') : 'No factors found';
+    final factorsText = factors.isNotEmpty
+        ? factors.join(' × ')
+        : 'No factors found';
 
     showDialog(
       context: context,
@@ -445,11 +456,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       builder: (context) => AlertDialog(
         title: const Row(
           children: [
-            Icon(
-              Icons.info_outline,
-              color: AppColors.timerWarning,
-              size: 24,
-            ),
+            Icon(Icons.info_outline, color: AppColors.timerWarning, size: 24),
             SizedBox(width: 8),
             Text('Attack Failed!'),
           ],
@@ -465,10 +472,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Why?',
-              style: AppTextStyles.titleSmall,
-            ),
+            const Text('Why?', style: AppTextStyles.titleSmall),
             const SizedBox(height: 4),
             Text(
               '$enemy is not divisible by $prime.',
@@ -564,9 +568,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(session.isPracticeMode
-            ? l10n.practiceMode
-            : l10n.stage(session.stageNumber?.toString() ?? '?')),
+        title: Text(
+          session.isPracticeMode
+              ? l10n.practiceMode
+              : l10n.stage(session.stageNumber?.toString() ?? '?'),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _showBattleMenu(context),
@@ -602,10 +608,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
               const SizedBox(height: Dimensions.spacingL),
 
               // Enemy display
-              const Expanded(
-                flex: 2,
-                child: _EnemySection(),
-              ),
+              const Expanded(flex: 2, child: _EnemySection()),
 
               const SizedBox(height: Dimensions.spacingL),
 
@@ -674,25 +677,15 @@ class _SessionProgressSection extends ConsumerWidget {
             ),
           ),
           if (session.escapes > 0) ...[
-            const Icon(
-              Icons.directions_run,
-              color: AppColors.error,
-              size: 16,
-            ),
+            const Icon(Icons.directions_run, color: AppColors.error, size: 16),
             Text(
               '${session.escapes}',
-              style: AppTextStyles.labelSmall.copyWith(
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.labelSmall.copyWith(color: AppColors.error),
             ),
             const SizedBox(width: Dimensions.spacingS),
           ],
           if (session.wrongClaims > 0) ...[
-            const Icon(
-              Icons.error,
-              color: AppColors.timerWarning,
-              size: 16,
-            ),
+            const Icon(Icons.error, color: AppColors.timerWarning, size: 16),
             Text(
               '${session.wrongClaims}',
               style: AppTextStyles.labelSmall.copyWith(
@@ -736,13 +729,11 @@ class _TimerSection extends ConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      constraints: const BoxConstraints(
-        minHeight: 60,
-        maxHeight: 100,
-      ),
+      constraints: const BoxConstraints(minHeight: 60, maxHeight: 100),
       padding: EdgeInsets.symmetric(
-        horizontal:
-            screenWidth < 350 ? Dimensions.paddingS : Dimensions.paddingM,
+        horizontal: screenWidth < 350
+            ? Dimensions.paddingS
+            : Dimensions.paddingM,
         vertical: Dimensions.paddingS,
       ),
       decoration: BoxDecoration(
@@ -805,8 +796,8 @@ class _EnemySection extends ConsumerWidget {
     final enemyDisplaySize = screenWidth < 350
         ? Dimensions.enemyDisplaySize * 0.7
         : screenHeight < 600
-            ? Dimensions.enemyDisplaySize * 0.8
-            : Dimensions.enemyDisplaySize;
+        ? Dimensions.enemyDisplaySize * 0.8
+        : Dimensions.enemyDisplaySize;
 
     // 敵の数値の桁数に応じたフォントサイズ調整
     final enemyString = enemy.toString();
@@ -814,8 +805,8 @@ class _EnemySection extends ConsumerWidget {
     final adjustedFontSize = enemyString.length > 4
         ? baseFontSize * 0.8
         : enemyString.length > 2
-            ? baseFontSize * 0.9
-            : baseFontSize;
+        ? baseFontSize * 0.9
+        : baseFontSize;
 
     return Card(
       child: Container(
@@ -825,10 +816,12 @@ class _EnemySection extends ConsumerWidget {
           maxHeight: screenHeight * 0.25,
         ),
         padding: EdgeInsets.symmetric(
-          horizontal:
-              screenWidth < 350 ? Dimensions.paddingS : Dimensions.paddingM,
-          vertical:
-              screenWidth < 350 ? Dimensions.paddingXs : Dimensions.paddingS,
+          horizontal: screenWidth < 350
+              ? Dimensions.paddingS
+              : Dimensions.paddingM,
+          vertical: screenWidth < 350
+              ? Dimensions.paddingXs
+              : Dimensions.paddingS,
         ),
         child: session.isPracticeMode
             ? SingleChildScrollView(
@@ -876,9 +869,10 @@ class _EnemySection extends ConsumerWidget {
                     ),
 
                     SizedBox(
-                        height: screenWidth < 350
-                            ? Dimensions.spacingXs
-                            : Dimensions.spacingS),
+                      height: screenWidth < 350
+                          ? Dimensions.spacingXs
+                          : Dimensions.spacingS,
+                    ),
 
                     // Prime/Composite Number タイトル（練習モードのみ表示）
                     Flexible(
@@ -895,7 +889,8 @@ class _EnemySection extends ConsumerWidget {
                     ),
 
                     SizedBox(
-                        height: screenWidth < 350 ? 2 : Dimensions.spacingXs),
+                      height: screenWidth < 350 ? 2 : Dimensions.spacingXs,
+                    ),
 
                     // 説明文（練習モードのみ表示）
                     Flexible(
@@ -985,10 +980,7 @@ class _PrimeGridSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.yourPrimeNumbers,
-          style: AppTextStyles.titleMedium,
-        ),
+        Text(l10n.yourPrimeNumbers, style: AppTextStyles.titleMedium),
         const SizedBox(height: Dimensions.spacingM),
         Expanded(
           child: primes.isEmpty
@@ -1012,19 +1004,24 @@ class _PrimeGridSection extends ConsumerWidget {
                     return _PrimeButton(
                       prime: prime,
                       onPressed: () {
-                        Logger.logBattle('Prime attack attempt',
-                            data: {'prime': prime.value, 'enemy': enemy});
+                        Logger.logBattle(
+                          'Prime attack attempt',
+                          data: {'prime': prime.value, 'enemy': enemy},
+                        );
                         if (prime.count > 0) {
                           final canAttack =
                               enemy % prime.value == 0 && !_isPrime(enemy);
 
                           if (canAttack) {
                             // 有効な攻撃：敵の数値を更新
-                            Logger.logBattle('Valid attack', data: {
-                              'enemy': enemy,
-                              'prime': prime.value,
-                              'result': enemy ~/ prime.value
-                            });
+                            Logger.logBattle(
+                              'Valid attack',
+                              data: {
+                                'enemy': enemy,
+                                'prime': prime.value,
+                                'result': enemy ~/ prime.value,
+                              },
+                            );
                             ref.read(battleEnemyProvider.notifier).state =
                                 enemy ~/ prime.value;
 
@@ -1043,14 +1040,18 @@ class _PrimeGridSection extends ConsumerWidget {
                                 .recordUsedPrime(prime.value);
 
                             // ゲームオーバー条件をチェック（少し遅延してUI更新を確実に）
-                            Future.delayed(const Duration(milliseconds: 200),
-                                () {
-                              onGameOverCheck();
-                            });
+                            Future.delayed(
+                              const Duration(milliseconds: 200),
+                              () {
+                                onGameOverCheck();
+                              },
+                            );
                           } else {
                             // 無効な攻撃：教育的フィードバックを提供
-                            Logger.logBattle('Invalid attack',
-                                data: {'enemy': enemy, 'prime': prime.value});
+                            Logger.logBattle(
+                              'Invalid attack',
+                              data: {'enemy': enemy, 'prime': prime.value},
+                            );
                             onInvalidAttack(context, prime.value, enemy);
 
                             // バトル中はアイテムを実際に消費しない
@@ -1081,10 +1082,7 @@ class _PrimeButton extends ConsumerWidget {
   final Prime prime;
   final VoidCallback? onPressed;
 
-  const _PrimeButton({
-    required this.prime,
-    this.onPressed,
-  });
+  const _PrimeButton({required this.prime, this.onPressed});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1192,8 +1190,10 @@ class _ActionButtonsSection extends ConsumerWidget {
 
               // Apply time penalty (reduce timer by 10 seconds)
               final currentTime = ref.read(battleTimerProvider);
-              final newTime =
-                  (currentTime - 10).clamp(1, currentTime); // 最低1秒は残す
+              final newTime = (currentTime - 10).clamp(
+                1,
+                currentTime,
+              ); // 最低1秒は残す
               ref.read(battleTimerProvider.notifier).state = newTime;
 
               // Generate new enemy without resetting timer or items
@@ -1218,8 +1218,14 @@ class _ActionButtonsSection extends ConsumerWidget {
             onPressed: () {
               // 複数回の連続クリックを防ぐ
               if (context.mounted) {
-                _claimVictory(context, ref, enemy, onStopTimer, onRestartTimer,
-                    onGenerateNewEnemy);
+                _claimVictory(
+                  context,
+                  ref,
+                  enemy,
+                  onStopTimer,
+                  onRestartTimer,
+                  onGenerateNewEnemy,
+                );
               }
             },
             child: Text(l10n.claimVictory),
@@ -1230,12 +1236,13 @@ class _ActionButtonsSection extends ConsumerWidget {
   }
 
   void _claimVictory(
-      BuildContext context,
-      WidgetRef ref,
-      int enemy,
-      VoidCallback onStopTimer,
-      VoidCallback onRestartTimer,
-      VoidCallback onGenerateNewEnemy) {
+    BuildContext context,
+    WidgetRef ref,
+    int enemy,
+    VoidCallback onStopTimer,
+    VoidCallback onRestartTimer,
+    VoidCallback onGenerateNewEnemy,
+  ) {
     Logger.logBattle('Claim Victory button pressed');
     final l10n = AppLocalizations.of(context)!;
 
@@ -1249,40 +1256,49 @@ class _ActionButtonsSection extends ConsumerWidget {
       if (!session.isPracticeMode) {
         // ステージモード：一時的な報酬として追加（ステージクリア時に確定）
         ref.read(battleTempRewardsProvider.notifier).addTempReward(enemy);
-        Logger.logBattle('Stage mode victory reward (temp)',
-            data: {'final_prime': enemy});
+        Logger.logBattle(
+          'Stage mode victory reward (temp)',
+          data: {'final_prime': enemy},
+        );
 
         // Track recently acquired primes for visual feedback
         final now = DateTime.now();
-        final currentMap =
-            Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
+        final currentMap = Map<int, DateTime>.from(
+          ref.read(recentlyAcquiredPrimesProvider),
+        );
         for (final prime in [enemy, ...usedPrimes]) {
           currentMap[prime] = now;
         }
         currentMap.removeWhere(
-            (key, timestamp) => now.difference(timestamp).inSeconds > 2);
+          (key, timestamp) => now.difference(timestamp).inSeconds > 2,
+        );
         ref.read(recentlyAcquiredPrimesProvider.notifier).state = currentMap;
       } else {
         // 練習モード：最終素数のみ獲得（アイテムは消費されない）
         ref.read(inventoryProvider.notifier).addPrime(enemy);
         // バトル中の一時的な報酬としても追加（UI表示用）
         ref.read(battleTempRewardsProvider.notifier).addTempReward(enemy);
-        Logger.logBattle('Practice mode victory reward (immediate)',
-            data: {'final_prime': enemy});
+        Logger.logBattle(
+          'Practice mode victory reward (immediate)',
+          data: {'final_prime': enemy},
+        );
 
         // Track recently acquired prime for visual feedback
         final now = DateTime.now();
-        final currentMap =
-            Map<int, DateTime>.from(ref.read(recentlyAcquiredPrimesProvider));
+        final currentMap = Map<int, DateTime>.from(
+          ref.read(recentlyAcquiredPrimesProvider),
+        );
         currentMap[enemy] = now;
         currentMap.removeWhere(
-            (key, timestamp) => now.difference(timestamp).inSeconds > 2);
+          (key, timestamp) => now.difference(timestamp).inSeconds > 2,
+        );
         ref.read(recentlyAcquiredPrimesProvider.notifier).state = currentMap;
       }
 
       // Check if stage is cleared
-      final clearResult =
-          ref.read(battleSessionProvider.notifier).checkClearCondition();
+      final clearResult = ref
+          .read(battleSessionProvider.notifier)
+          .checkClearCondition();
 
       if (clearResult != null) {
         // Stage cleared! Stop timer and navigate safely
@@ -1294,11 +1310,15 @@ class _ActionButtonsSection extends ConsumerWidget {
         if (!session.isPracticeMode) {
           // デバッグ: クリア前のメインインベントリ状態
           final beforeInventory = ref.read(inventoryProvider);
-          Logger.logBattle('Before stage clear - main inventory', data: {
-            'total_items': beforeInventory.length,
-            'items':
-                beforeInventory.map((p) => '${p.value}x${p.count}').join(', ')
-          });
+          Logger.logBattle(
+            'Before stage clear - main inventory',
+            data: {
+              'total_items': beforeInventory.length,
+              'items': beforeInventory
+                  .map((p) => '${p.value}x${p.count}')
+                  .join(', '),
+            },
+          );
 
           // 1. メインインベントリをオリジナル状態に復元
           if (session.originalMainInventory != null) {
@@ -1306,13 +1326,15 @@ class _ActionButtonsSection extends ConsumerWidget {
                 .read(inventoryProvider.notifier)
                 .restoreInventory(session.originalMainInventory!);
 
-            Logger.logBattle('Restored main inventory to original state',
-                data: {
-                  'restored_items': session.originalMainInventory!.length,
-                  'items': session.originalMainInventory!
-                      .map((p) => '${p.value}x${p.count}')
-                      .join(', ')
-                });
+            Logger.logBattle(
+              'Restored main inventory to original state',
+              data: {
+                'restored_items': session.originalMainInventory!.length,
+                'items': session.originalMainInventory!
+                    .map((p) => '${p.value}x${p.count}')
+                    .join(', '),
+              },
+            );
           }
 
           // 2. 一時的な報酬をメインインベントリに追加
@@ -1320,32 +1342,44 @@ class _ActionButtonsSection extends ConsumerWidget {
               .read(battleTempRewardsProvider.notifier)
               .finalizeTempRewards();
 
-          Logger.logBattle('Adding rewards to main inventory', data: {
-            'temp_rewards_count': tempRewards.length,
-            'temp_rewards':
-                tempRewards.map((r) => '${r.value}x${r.count}').join(', ')
-          });
+          Logger.logBattle(
+            'Adding rewards to main inventory',
+            data: {
+              'temp_rewards_count': tempRewards.length,
+              'temp_rewards': tempRewards
+                  .map((r) => '${r.value}x${r.count}')
+                  .join(', '),
+            },
+          );
 
           for (final reward in tempRewards) {
             for (int i = 0; i < reward.count; i++) {
               ref.read(inventoryProvider.notifier).addPrime(reward.value);
               rewardItems.add(reward.value); // 報酬リストに追加
-              Logger.logBattle('Added reward to main inventory', data: {
-                'prime': reward.value,
-                'total_in_reward_list': rewardItems.length
-              });
+              Logger.logBattle(
+                'Added reward to main inventory',
+                data: {
+                  'prime': reward.value,
+                  'total_in_reward_list': rewardItems.length,
+                },
+              );
             }
           }
 
           // デバッグ: クリア後のメインインベントリ状態
           final afterInventory = ref.read(inventoryProvider);
-          Logger.logBattle('After stage clear - main inventory', data: {
-            'total_items': afterInventory.length,
-            'items':
-                afterInventory.map((p) => '${p.value}x${p.count}').join(', '),
-            'temp_rewards':
-                tempRewards.map((r) => '${r.value}x${r.count}').join(', ')
-          });
+          Logger.logBattle(
+            'After stage clear - main inventory',
+            data: {
+              'total_items': afterInventory.length,
+              'items': afterInventory
+                  .map((p) => '${p.value}x${p.count}')
+                  .join(', '),
+              'temp_rewards': tempRewards
+                  .map((r) => '${r.value}x${r.count}')
+                  .join(', '),
+            },
+          );
         } else {
           // 練習モード - 一時的な報酬のみクリア
           ref.read(battleTempRewardsProvider.notifier).finalizeTempRewards();
@@ -1357,11 +1391,13 @@ class _ActionButtonsSection extends ConsumerWidget {
         // 4. originalMainInventoryをクリアして、後続の復元処理を防ぐ
         ref.read(battleSessionProvider.notifier).clearOriginalInventory();
         Logger.logBattle(
-            'Cleared originalMainInventory to prevent restoration after stage clear');
+          'Cleared originalMainInventory to prevent restoration after stage clear',
+        );
 
         // 5. 報酬データを含む新しいStageClearResultを作成
-        final clearResultWithRewards =
-            clearResult.copyWith(rewardItems: rewardItems);
+        final clearResultWithRewards = clearResult.copyWith(
+          rewardItems: rewardItems,
+        );
 
         // Delay navigation to ensure current frame completes
         WidgetsBinding.instance.addPostFrameCallback((_) {

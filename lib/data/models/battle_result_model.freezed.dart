@@ -12,7 +12,8 @@ part of 'battle_result_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 BattleResultModel _$BattleResultModelFromJson(Map<String, dynamic> json) {
   switch (json['runtimeType']) {
@@ -34,8 +35,12 @@ BattleResultModel _$BattleResultModelFromJson(Map<String, dynamic> json) {
       return _Error.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(json, 'runtimeType', 'BattleResultModel',
-          'Invalid union type "${json['runtimeType']}"!');
+      throw CheckedFromJsonException(
+        json,
+        'runtimeType',
+        'BattleResultModel',
+        'Invalid union type "${json['runtimeType']}"!',
+      );
   }
 }
 
@@ -43,63 +48,89 @@ BattleResultModel _$BattleResultModelFromJson(Map<String, dynamic> json) {
 mixin _$BattleResultModel {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Victory value) victory,
@@ -110,8 +141,7 @@ mixin _$BattleResultModel {
     required TResult Function(_Escape value) escape,
     required TResult Function(_TimeOut value) timeOut,
     required TResult Function(_Error value) error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Victory value)? victory,
@@ -122,8 +152,7 @@ mixin _$BattleResultModel {
     TResult? Function(_Escape value)? escape,
     TResult? Function(_TimeOut value)? timeOut,
     TResult? Function(_Error value)? error,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Victory value)? victory,
@@ -135,16 +164,16 @@ mixin _$BattleResultModel {
     TResult Function(_TimeOut value)? timeOut,
     TResult Function(_Error value)? error,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $BattleResultModelCopyWith<$Res> {
   factory $BattleResultModelCopyWith(
-          BattleResultModel value, $Res Function(BattleResultModel) then) =
-      _$BattleResultModelCopyWithImpl<$Res, BattleResultModel>;
+    BattleResultModel value,
+    $Res Function(BattleResultModel) then,
+  ) = _$BattleResultModelCopyWithImpl<$Res, BattleResultModel>;
 }
 
 /// @nodoc
@@ -161,25 +190,28 @@ class _$BattleResultModelCopyWithImpl<$Res, $Val extends BattleResultModel>
 /// @nodoc
 abstract class _$$VictoryImplCopyWith<$Res> {
   factory _$$VictoryImplCopyWith(
-          _$VictoryImpl value, $Res Function(_$VictoryImpl) then) =
-      __$$VictoryImplCopyWithImpl<$Res>;
+    _$VictoryImpl value,
+    $Res Function(_$VictoryImpl) then,
+  ) = _$$VictoryImplCopyWithImpl<$Res>;
   @useResult
-  $Res call(
-      {EnemyModel defeatedEnemy,
-      int rewardPrime,
-      DateTime completedAt,
-      int battleDuration});
+  $Res call({
+    EnemyModel defeatedEnemy,
+    int rewardPrime,
+    DateTime completedAt,
+    int battleDuration,
+  });
 
   $EnemyModelCopyWith<$Res> get defeatedEnemy;
 }
 
 /// @nodoc
-class __$$VictoryImplCopyWithImpl<$Res>
+class _$$VictoryImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$VictoryImpl>
     implements _$$VictoryImplCopyWith<$Res> {
-  __$$VictoryImplCopyWithImpl(
-      _$VictoryImpl _value, $Res Function(_$VictoryImpl) _then)
-      : super(_value, _then);
+  _$$VictoryImplCopyWithImpl(
+    _$VictoryImpl _value,
+    $Res Function(_$VictoryImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -189,24 +221,26 @@ class __$$VictoryImplCopyWithImpl<$Res>
     Object? completedAt = null,
     Object? battleDuration = null,
   }) {
-    return _then(_$VictoryImpl(
-      defeatedEnemy: null == defeatedEnemy
-          ? _value.defeatedEnemy
-          : defeatedEnemy // ignore: cast_nullable_to_non_nullable
-              as EnemyModel,
-      rewardPrime: null == rewardPrime
-          ? _value.rewardPrime
-          : rewardPrime // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedAt: null == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      battleDuration: null == battleDuration
-          ? _value.battleDuration
-          : battleDuration // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+    return _then(
+      _$VictoryImpl(
+        defeatedEnemy: null == defeatedEnemy
+            ? _value.defeatedEnemy
+            : defeatedEnemy // ignore: cast_nullable_to_non_nullable
+                  as EnemyModel,
+        rewardPrime: null == rewardPrime
+            ? _value.rewardPrime
+            : rewardPrime // ignore: cast_nullable_to_non_nullable
+                  as int,
+        completedAt: null == completedAt
+            ? _value.completedAt
+            : completedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        battleDuration: null == battleDuration
+            ? _value.battleDuration
+            : battleDuration // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
   }
 
   @override
@@ -221,13 +255,13 @@ class __$$VictoryImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$VictoryImpl implements _Victory {
-  const _$VictoryImpl(
-      {required this.defeatedEnemy,
-      required this.rewardPrime,
-      required this.completedAt,
-      required this.battleDuration,
-      final String? $type})
-      : $type = $type ?? 'victory';
+  const _$VictoryImpl({
+    required this.defeatedEnemy,
+    required this.rewardPrime,
+    required this.completedAt,
+    required this.battleDuration,
+    final String? $type,
+  }) : $type = $type ?? 'victory';
 
   factory _$VictoryImpl.fromJson(Map<String, dynamic> json) =>
       _$$VictoryImplFromJson(json);
@@ -267,34 +301,50 @@ class _$VictoryImpl implements _Victory {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, defeatedEnemy, rewardPrime, completedAt, battleDuration);
+    runtimeType,
+    defeatedEnemy,
+    rewardPrime,
+    completedAt,
+    battleDuration,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$VictoryImplCopyWith<_$VictoryImpl> get copyWith =>
-      __$$VictoryImplCopyWithImpl<_$VictoryImpl>(this, _$identity);
+      _$$VictoryImplCopyWithImpl<_$VictoryImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return victory(defeatedEnemy, rewardPrime, completedAt, battleDuration);
@@ -303,39 +353,61 @@ class _$VictoryImpl implements _Victory {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
   }) {
     return victory?.call(
-        defeatedEnemy, rewardPrime, completedAt, battleDuration);
+      defeatedEnemy,
+      rewardPrime,
+      completedAt,
+      battleDuration,
+    );
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -398,18 +470,17 @@ class _$VictoryImpl implements _Victory {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$VictoryImplToJson(
-      this,
-    );
+    return _$$VictoryImplToJson(this);
   }
 }
 
 abstract class _Victory implements BattleResultModel {
-  const factory _Victory(
-      {required final EnemyModel defeatedEnemy,
-      required final int rewardPrime,
-      required final DateTime completedAt,
-      required final int battleDuration}) = _$VictoryImpl;
+  const factory _Victory({
+    required final EnemyModel defeatedEnemy,
+    required final int rewardPrime,
+    required final DateTime completedAt,
+    required final int battleDuration,
+  }) = _$VictoryImpl;
 
   factory _Victory.fromJson(Map<String, dynamic> json) = _$VictoryImpl.fromJson;
 
@@ -425,26 +496,29 @@ abstract class _Victory implements BattleResultModel {
 /// @nodoc
 abstract class _$$PowerVictoryImplCopyWith<$Res> {
   factory _$$PowerVictoryImplCopyWith(
-          _$PowerVictoryImpl value, $Res Function(_$PowerVictoryImpl) then) =
-      __$$PowerVictoryImplCopyWithImpl<$Res>;
+    _$PowerVictoryImpl value,
+    $Res Function(_$PowerVictoryImpl) then,
+  ) = _$$PowerVictoryImplCopyWithImpl<$Res>;
   @useResult
-  $Res call(
-      {EnemyModel defeatedEnemy,
-      int rewardPrime,
-      int rewardCount,
-      DateTime completedAt,
-      int battleDuration});
+  $Res call({
+    EnemyModel defeatedEnemy,
+    int rewardPrime,
+    int rewardCount,
+    DateTime completedAt,
+    int battleDuration,
+  });
 
   $EnemyModelCopyWith<$Res> get defeatedEnemy;
 }
 
 /// @nodoc
-class __$$PowerVictoryImplCopyWithImpl<$Res>
+class _$$PowerVictoryImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$PowerVictoryImpl>
     implements _$$PowerVictoryImplCopyWith<$Res> {
-  __$$PowerVictoryImplCopyWithImpl(
-      _$PowerVictoryImpl _value, $Res Function(_$PowerVictoryImpl) _then)
-      : super(_value, _then);
+  _$$PowerVictoryImplCopyWithImpl(
+    _$PowerVictoryImpl _value,
+    $Res Function(_$PowerVictoryImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -455,28 +529,30 @@ class __$$PowerVictoryImplCopyWithImpl<$Res>
     Object? completedAt = null,
     Object? battleDuration = null,
   }) {
-    return _then(_$PowerVictoryImpl(
-      defeatedEnemy: null == defeatedEnemy
-          ? _value.defeatedEnemy
-          : defeatedEnemy // ignore: cast_nullable_to_non_nullable
-              as EnemyModel,
-      rewardPrime: null == rewardPrime
-          ? _value.rewardPrime
-          : rewardPrime // ignore: cast_nullable_to_non_nullable
-              as int,
-      rewardCount: null == rewardCount
-          ? _value.rewardCount
-          : rewardCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      completedAt: null == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      battleDuration: null == battleDuration
-          ? _value.battleDuration
-          : battleDuration // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+    return _then(
+      _$PowerVictoryImpl(
+        defeatedEnemy: null == defeatedEnemy
+            ? _value.defeatedEnemy
+            : defeatedEnemy // ignore: cast_nullable_to_non_nullable
+                  as EnemyModel,
+        rewardPrime: null == rewardPrime
+            ? _value.rewardPrime
+            : rewardPrime // ignore: cast_nullable_to_non_nullable
+                  as int,
+        rewardCount: null == rewardCount
+            ? _value.rewardCount
+            : rewardCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        completedAt: null == completedAt
+            ? _value.completedAt
+            : completedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        battleDuration: null == battleDuration
+            ? _value.battleDuration
+            : battleDuration // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
   }
 
   @override
@@ -491,14 +567,14 @@ class __$$PowerVictoryImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$PowerVictoryImpl implements _PowerVictory {
-  const _$PowerVictoryImpl(
-      {required this.defeatedEnemy,
-      required this.rewardPrime,
-      required this.rewardCount,
-      required this.completedAt,
-      required this.battleDuration,
-      final String? $type})
-      : $type = $type ?? 'powerVictory';
+  const _$PowerVictoryImpl({
+    required this.defeatedEnemy,
+    required this.rewardPrime,
+    required this.rewardCount,
+    required this.completedAt,
+    required this.battleDuration,
+    final String? $type,
+  }) : $type = $type ?? 'powerVictory';
 
   factory _$PowerVictoryImpl.fromJson(Map<String, dynamic> json) =>
       _$$PowerVictoryImplFromJson(json);
@@ -541,77 +617,122 @@ class _$PowerVictoryImpl implements _PowerVictory {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, defeatedEnemy, rewardPrime,
-      rewardCount, completedAt, battleDuration);
+  int get hashCode => Object.hash(
+    runtimeType,
+    defeatedEnemy,
+    rewardPrime,
+    rewardCount,
+    completedAt,
+    battleDuration,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PowerVictoryImplCopyWith<_$PowerVictoryImpl> get copyWith =>
-      __$$PowerVictoryImplCopyWithImpl<_$PowerVictoryImpl>(this, _$identity);
+      _$$PowerVictoryImplCopyWithImpl<_$PowerVictoryImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return powerVictory(
-        defeatedEnemy, rewardPrime, rewardCount, completedAt, battleDuration);
+      defeatedEnemy,
+      rewardPrime,
+      rewardCount,
+      completedAt,
+      battleDuration,
+    );
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
   }) {
     return powerVictory?.call(
-        defeatedEnemy, rewardPrime, rewardCount, completedAt, battleDuration);
+      defeatedEnemy,
+      rewardPrime,
+      rewardCount,
+      completedAt,
+      battleDuration,
+    );
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -619,7 +740,12 @@ class _$PowerVictoryImpl implements _PowerVictory {
   }) {
     if (powerVictory != null) {
       return powerVictory(
-          defeatedEnemy, rewardPrime, rewardCount, completedAt, battleDuration);
+        defeatedEnemy,
+        rewardPrime,
+        rewardCount,
+        completedAt,
+        battleDuration,
+      );
     }
     return orElse();
   }
@@ -675,19 +801,18 @@ class _$PowerVictoryImpl implements _PowerVictory {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PowerVictoryImplToJson(
-      this,
-    );
+    return _$$PowerVictoryImplToJson(this);
   }
 }
 
 abstract class _PowerVictory implements BattleResultModel {
-  const factory _PowerVictory(
-      {required final EnemyModel defeatedEnemy,
-      required final int rewardPrime,
-      required final int rewardCount,
-      required final DateTime completedAt,
-      required final int battleDuration}) = _$PowerVictoryImpl;
+  const factory _PowerVictory({
+    required final EnemyModel defeatedEnemy,
+    required final int rewardPrime,
+    required final int rewardCount,
+    required final DateTime completedAt,
+    required final int battleDuration,
+  }) = _$PowerVictoryImpl;
 
   factory _PowerVictory.fromJson(Map<String, dynamic> json) =
       _$PowerVictoryImpl.fromJson;
@@ -705,8 +830,9 @@ abstract class _PowerVictory implements BattleResultModel {
 /// @nodoc
 abstract class _$$ContinueImplCopyWith<$Res> {
   factory _$$ContinueImplCopyWith(
-          _$ContinueImpl value, $Res Function(_$ContinueImpl) then) =
-      __$$ContinueImplCopyWithImpl<$Res>;
+    _$ContinueImpl value,
+    $Res Function(_$ContinueImpl) then,
+  ) = _$$ContinueImplCopyWithImpl<$Res>;
   @useResult
   $Res call({EnemyModel newEnemy, PrimeModel usedPrime});
 
@@ -715,29 +841,29 @@ abstract class _$$ContinueImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$ContinueImplCopyWithImpl<$Res>
+class _$$ContinueImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$ContinueImpl>
     implements _$$ContinueImplCopyWith<$Res> {
-  __$$ContinueImplCopyWithImpl(
-      _$ContinueImpl _value, $Res Function(_$ContinueImpl) _then)
-      : super(_value, _then);
+  _$$ContinueImplCopyWithImpl(
+    _$ContinueImpl _value,
+    $Res Function(_$ContinueImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? newEnemy = null,
-    Object? usedPrime = null,
-  }) {
-    return _then(_$ContinueImpl(
-      newEnemy: null == newEnemy
-          ? _value.newEnemy
-          : newEnemy // ignore: cast_nullable_to_non_nullable
-              as EnemyModel,
-      usedPrime: null == usedPrime
-          ? _value.usedPrime
-          : usedPrime // ignore: cast_nullable_to_non_nullable
-              as PrimeModel,
-    ));
+  $Res call({Object? newEnemy = null, Object? usedPrime = null}) {
+    return _then(
+      _$ContinueImpl(
+        newEnemy: null == newEnemy
+            ? _value.newEnemy
+            : newEnemy // ignore: cast_nullable_to_non_nullable
+                  as EnemyModel,
+        usedPrime: null == usedPrime
+            ? _value.usedPrime
+            : usedPrime // ignore: cast_nullable_to_non_nullable
+                  as PrimeModel,
+      ),
+    );
   }
 
   @override
@@ -760,9 +886,11 @@ class __$$ContinueImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ContinueImpl implements _Continue {
-  const _$ContinueImpl(
-      {required this.newEnemy, required this.usedPrime, final String? $type})
-      : $type = $type ?? 'continue_';
+  const _$ContinueImpl({
+    required this.newEnemy,
+    required this.usedPrime,
+    final String? $type,
+  }) : $type = $type ?? 'continue_';
 
   factory _$ContinueImpl.fromJson(Map<String, dynamic> json) =>
       _$$ContinueImplFromJson(json);
@@ -799,28 +927,39 @@ class _$ContinueImpl implements _Continue {
   @override
   @pragma('vm:prefer-inline')
   _$$ContinueImplCopyWith<_$ContinueImpl> get copyWith =>
-      __$$ContinueImplCopyWithImpl<_$ContinueImpl>(this, _$identity);
+      _$$ContinueImplCopyWithImpl<_$ContinueImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return continue_(newEnemy, usedPrime);
@@ -829,17 +968,26 @@ class _$ContinueImpl implements _Continue {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
@@ -850,17 +998,26 @@ class _$ContinueImpl implements _Continue {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -923,16 +1080,15 @@ class _$ContinueImpl implements _Continue {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ContinueImplToJson(
-      this,
-    );
+    return _$$ContinueImplToJson(this);
   }
 }
 
 abstract class _Continue implements BattleResultModel {
-  const factory _Continue(
-      {required final EnemyModel newEnemy,
-      required final PrimeModel usedPrime}) = _$ContinueImpl;
+  const factory _Continue({
+    required final EnemyModel newEnemy,
+    required final PrimeModel usedPrime,
+  }) = _$ContinueImpl;
 
   factory _Continue.fromJson(Map<String, dynamic> json) =
       _$ContinueImpl.fromJson;
@@ -946,9 +1102,10 @@ abstract class _Continue implements BattleResultModel {
 
 /// @nodoc
 abstract class _$$AwaitingVictoryClaimImplCopyWith<$Res> {
-  factory _$$AwaitingVictoryClaimImplCopyWith(_$AwaitingVictoryClaimImpl value,
-          $Res Function(_$AwaitingVictoryClaimImpl) then) =
-      __$$AwaitingVictoryClaimImplCopyWithImpl<$Res>;
+  factory _$$AwaitingVictoryClaimImplCopyWith(
+    _$AwaitingVictoryClaimImpl value,
+    $Res Function(_$AwaitingVictoryClaimImpl) then,
+  ) = _$$AwaitingVictoryClaimImplCopyWithImpl<$Res>;
   @useResult
   $Res call({EnemyModel newEnemy, PrimeModel usedPrime});
 
@@ -957,29 +1114,29 @@ abstract class _$$AwaitingVictoryClaimImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$AwaitingVictoryClaimImplCopyWithImpl<$Res>
+class _$$AwaitingVictoryClaimImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$AwaitingVictoryClaimImpl>
     implements _$$AwaitingVictoryClaimImplCopyWith<$Res> {
-  __$$AwaitingVictoryClaimImplCopyWithImpl(_$AwaitingVictoryClaimImpl _value,
-      $Res Function(_$AwaitingVictoryClaimImpl) _then)
-      : super(_value, _then);
+  _$$AwaitingVictoryClaimImplCopyWithImpl(
+    _$AwaitingVictoryClaimImpl _value,
+    $Res Function(_$AwaitingVictoryClaimImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? newEnemy = null,
-    Object? usedPrime = null,
-  }) {
-    return _then(_$AwaitingVictoryClaimImpl(
-      newEnemy: null == newEnemy
-          ? _value.newEnemy
-          : newEnemy // ignore: cast_nullable_to_non_nullable
-              as EnemyModel,
-      usedPrime: null == usedPrime
-          ? _value.usedPrime
-          : usedPrime // ignore: cast_nullable_to_non_nullable
-              as PrimeModel,
-    ));
+  $Res call({Object? newEnemy = null, Object? usedPrime = null}) {
+    return _then(
+      _$AwaitingVictoryClaimImpl(
+        newEnemy: null == newEnemy
+            ? _value.newEnemy
+            : newEnemy // ignore: cast_nullable_to_non_nullable
+                  as EnemyModel,
+        usedPrime: null == usedPrime
+            ? _value.usedPrime
+            : usedPrime // ignore: cast_nullable_to_non_nullable
+                  as PrimeModel,
+      ),
+    );
   }
 
   @override
@@ -1002,9 +1159,11 @@ class __$$AwaitingVictoryClaimImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AwaitingVictoryClaimImpl implements _AwaitingVictoryClaim {
-  const _$AwaitingVictoryClaimImpl(
-      {required this.newEnemy, required this.usedPrime, final String? $type})
-      : $type = $type ?? 'awaitingVictoryClaim';
+  const _$AwaitingVictoryClaimImpl({
+    required this.newEnemy,
+    required this.usedPrime,
+    final String? $type,
+  }) : $type = $type ?? 'awaitingVictoryClaim';
 
   factory _$AwaitingVictoryClaimImpl.fromJson(Map<String, dynamic> json) =>
       _$$AwaitingVictoryClaimImplFromJson(json);
@@ -1041,30 +1200,43 @@ class _$AwaitingVictoryClaimImpl implements _AwaitingVictoryClaim {
   @override
   @pragma('vm:prefer-inline')
   _$$AwaitingVictoryClaimImplCopyWith<_$AwaitingVictoryClaimImpl>
-      get copyWith =>
-          __$$AwaitingVictoryClaimImplCopyWithImpl<_$AwaitingVictoryClaimImpl>(
-              this, _$identity);
+  get copyWith =>
+      _$$AwaitingVictoryClaimImplCopyWithImpl<_$AwaitingVictoryClaimImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return awaitingVictoryClaim(newEnemy, usedPrime);
@@ -1073,17 +1245,26 @@ class _$AwaitingVictoryClaimImpl implements _AwaitingVictoryClaim {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
@@ -1094,17 +1275,26 @@ class _$AwaitingVictoryClaimImpl implements _AwaitingVictoryClaim {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -1167,16 +1357,15 @@ class _$AwaitingVictoryClaimImpl implements _AwaitingVictoryClaim {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AwaitingVictoryClaimImplToJson(
-      this,
-    );
+    return _$$AwaitingVictoryClaimImplToJson(this);
   }
 }
 
 abstract class _AwaitingVictoryClaim implements BattleResultModel {
-  const factory _AwaitingVictoryClaim(
-      {required final EnemyModel newEnemy,
-      required final PrimeModel usedPrime}) = _$AwaitingVictoryClaimImpl;
+  const factory _AwaitingVictoryClaim({
+    required final EnemyModel newEnemy,
+    required final PrimeModel usedPrime,
+  }) = _$AwaitingVictoryClaimImpl;
 
   factory _AwaitingVictoryClaim.fromJson(Map<String, dynamic> json) =
       _$AwaitingVictoryClaimImpl.fromJson;
@@ -1185,14 +1374,15 @@ abstract class _AwaitingVictoryClaim implements BattleResultModel {
   PrimeModel get usedPrime;
   @JsonKey(ignore: true)
   _$$AwaitingVictoryClaimImplCopyWith<_$AwaitingVictoryClaimImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$WrongClaimImplCopyWith<$Res> {
   factory _$$WrongClaimImplCopyWith(
-          _$WrongClaimImpl value, $Res Function(_$WrongClaimImpl) then) =
-      __$$WrongClaimImplCopyWithImpl<$Res>;
+    _$WrongClaimImpl value,
+    $Res Function(_$WrongClaimImpl) then,
+  ) = _$$WrongClaimImplCopyWithImpl<$Res>;
   @useResult
   $Res call({PenaltyRecordModel penalty, EnemyModel currentEnemy});
 
@@ -1201,29 +1391,29 @@ abstract class _$$WrongClaimImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$WrongClaimImplCopyWithImpl<$Res>
+class _$$WrongClaimImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$WrongClaimImpl>
     implements _$$WrongClaimImplCopyWith<$Res> {
-  __$$WrongClaimImplCopyWithImpl(
-      _$WrongClaimImpl _value, $Res Function(_$WrongClaimImpl) _then)
-      : super(_value, _then);
+  _$$WrongClaimImplCopyWithImpl(
+    _$WrongClaimImpl _value,
+    $Res Function(_$WrongClaimImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? penalty = null,
-    Object? currentEnemy = null,
-  }) {
-    return _then(_$WrongClaimImpl(
-      penalty: null == penalty
-          ? _value.penalty
-          : penalty // ignore: cast_nullable_to_non_nullable
-              as PenaltyRecordModel,
-      currentEnemy: null == currentEnemy
-          ? _value.currentEnemy
-          : currentEnemy // ignore: cast_nullable_to_non_nullable
-              as EnemyModel,
-    ));
+  $Res call({Object? penalty = null, Object? currentEnemy = null}) {
+    return _then(
+      _$WrongClaimImpl(
+        penalty: null == penalty
+            ? _value.penalty
+            : penalty // ignore: cast_nullable_to_non_nullable
+                  as PenaltyRecordModel,
+        currentEnemy: null == currentEnemy
+            ? _value.currentEnemy
+            : currentEnemy // ignore: cast_nullable_to_non_nullable
+                  as EnemyModel,
+      ),
+    );
   }
 
   @override
@@ -1246,9 +1436,11 @@ class __$$WrongClaimImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$WrongClaimImpl implements _WrongClaim {
-  const _$WrongClaimImpl(
-      {required this.penalty, required this.currentEnemy, final String? $type})
-      : $type = $type ?? 'wrongClaim';
+  const _$WrongClaimImpl({
+    required this.penalty,
+    required this.currentEnemy,
+    final String? $type,
+  }) : $type = $type ?? 'wrongClaim';
 
   factory _$WrongClaimImpl.fromJson(Map<String, dynamic> json) =>
       _$$WrongClaimImplFromJson(json);
@@ -1284,28 +1476,39 @@ class _$WrongClaimImpl implements _WrongClaim {
   @override
   @pragma('vm:prefer-inline')
   _$$WrongClaimImplCopyWith<_$WrongClaimImpl> get copyWith =>
-      __$$WrongClaimImplCopyWithImpl<_$WrongClaimImpl>(this, _$identity);
+      _$$WrongClaimImplCopyWithImpl<_$WrongClaimImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return wrongClaim(penalty, currentEnemy);
@@ -1314,17 +1517,26 @@ class _$WrongClaimImpl implements _WrongClaim {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
@@ -1335,17 +1547,26 @@ class _$WrongClaimImpl implements _WrongClaim {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -1408,16 +1629,15 @@ class _$WrongClaimImpl implements _WrongClaim {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$WrongClaimImplToJson(
-      this,
-    );
+    return _$$WrongClaimImplToJson(this);
   }
 }
 
 abstract class _WrongClaim implements BattleResultModel {
-  const factory _WrongClaim(
-      {required final PenaltyRecordModel penalty,
-      required final EnemyModel currentEnemy}) = _$WrongClaimImpl;
+  const factory _WrongClaim({
+    required final PenaltyRecordModel penalty,
+    required final EnemyModel currentEnemy,
+  }) = _$WrongClaimImpl;
 
   factory _WrongClaim.fromJson(Map<String, dynamic> json) =
       _$WrongClaimImpl.fromJson;
@@ -1432,8 +1652,9 @@ abstract class _WrongClaim implements BattleResultModel {
 /// @nodoc
 abstract class _$$EscapeImplCopyWith<$Res> {
   factory _$$EscapeImplCopyWith(
-          _$EscapeImpl value, $Res Function(_$EscapeImpl) then) =
-      __$$EscapeImplCopyWithImpl<$Res>;
+    _$EscapeImpl value,
+    $Res Function(_$EscapeImpl) then,
+  ) = _$$EscapeImplCopyWithImpl<$Res>;
   @useResult
   $Res call({PenaltyRecordModel penalty, DateTime escapedAt});
 
@@ -1441,29 +1662,29 @@ abstract class _$$EscapeImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$EscapeImplCopyWithImpl<$Res>
+class _$$EscapeImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$EscapeImpl>
     implements _$$EscapeImplCopyWith<$Res> {
-  __$$EscapeImplCopyWithImpl(
-      _$EscapeImpl _value, $Res Function(_$EscapeImpl) _then)
-      : super(_value, _then);
+  _$$EscapeImplCopyWithImpl(
+    _$EscapeImpl _value,
+    $Res Function(_$EscapeImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? penalty = null,
-    Object? escapedAt = null,
-  }) {
-    return _then(_$EscapeImpl(
-      penalty: null == penalty
-          ? _value.penalty
-          : penalty // ignore: cast_nullable_to_non_nullable
-              as PenaltyRecordModel,
-      escapedAt: null == escapedAt
-          ? _value.escapedAt
-          : escapedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+  $Res call({Object? penalty = null, Object? escapedAt = null}) {
+    return _then(
+      _$EscapeImpl(
+        penalty: null == penalty
+            ? _value.penalty
+            : penalty // ignore: cast_nullable_to_non_nullable
+                  as PenaltyRecordModel,
+        escapedAt: null == escapedAt
+            ? _value.escapedAt
+            : escapedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 
   @override
@@ -1478,9 +1699,11 @@ class __$$EscapeImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$EscapeImpl implements _Escape {
-  const _$EscapeImpl(
-      {required this.penalty, required this.escapedAt, final String? $type})
-      : $type = $type ?? 'escape';
+  const _$EscapeImpl({
+    required this.penalty,
+    required this.escapedAt,
+    final String? $type,
+  }) : $type = $type ?? 'escape';
 
   factory _$EscapeImpl.fromJson(Map<String, dynamic> json) =>
       _$$EscapeImplFromJson(json);
@@ -1516,28 +1739,39 @@ class _$EscapeImpl implements _Escape {
   @override
   @pragma('vm:prefer-inline')
   _$$EscapeImplCopyWith<_$EscapeImpl> get copyWith =>
-      __$$EscapeImplCopyWithImpl<_$EscapeImpl>(this, _$identity);
+      _$$EscapeImplCopyWithImpl<_$EscapeImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return escape(penalty, escapedAt);
@@ -1546,17 +1780,26 @@ class _$EscapeImpl implements _Escape {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
@@ -1567,17 +1810,26 @@ class _$EscapeImpl implements _Escape {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -1640,16 +1892,15 @@ class _$EscapeImpl implements _Escape {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EscapeImplToJson(
-      this,
-    );
+    return _$$EscapeImplToJson(this);
   }
 }
 
 abstract class _Escape implements BattleResultModel {
-  const factory _Escape(
-      {required final PenaltyRecordModel penalty,
-      required final DateTime escapedAt}) = _$EscapeImpl;
+  const factory _Escape({
+    required final PenaltyRecordModel penalty,
+    required final DateTime escapedAt,
+  }) = _$EscapeImpl;
 
   factory _Escape.fromJson(Map<String, dynamic> json) = _$EscapeImpl.fromJson;
 
@@ -1663,8 +1914,9 @@ abstract class _Escape implements BattleResultModel {
 /// @nodoc
 abstract class _$$TimeOutImplCopyWith<$Res> {
   factory _$$TimeOutImplCopyWith(
-          _$TimeOutImpl value, $Res Function(_$TimeOutImpl) then) =
-      __$$TimeOutImplCopyWithImpl<$Res>;
+    _$TimeOutImpl value,
+    $Res Function(_$TimeOutImpl) then,
+  ) = _$$TimeOutImplCopyWithImpl<$Res>;
   @useResult
   $Res call({PenaltyRecordModel penalty, DateTime timedOutAt});
 
@@ -1672,29 +1924,29 @@ abstract class _$$TimeOutImplCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$TimeOutImplCopyWithImpl<$Res>
+class _$$TimeOutImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$TimeOutImpl>
     implements _$$TimeOutImplCopyWith<$Res> {
-  __$$TimeOutImplCopyWithImpl(
-      _$TimeOutImpl _value, $Res Function(_$TimeOutImpl) _then)
-      : super(_value, _then);
+  _$$TimeOutImplCopyWithImpl(
+    _$TimeOutImpl _value,
+    $Res Function(_$TimeOutImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? penalty = null,
-    Object? timedOutAt = null,
-  }) {
-    return _then(_$TimeOutImpl(
-      penalty: null == penalty
-          ? _value.penalty
-          : penalty // ignore: cast_nullable_to_non_nullable
-              as PenaltyRecordModel,
-      timedOutAt: null == timedOutAt
-          ? _value.timedOutAt
-          : timedOutAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+  $Res call({Object? penalty = null, Object? timedOutAt = null}) {
+    return _then(
+      _$TimeOutImpl(
+        penalty: null == penalty
+            ? _value.penalty
+            : penalty // ignore: cast_nullable_to_non_nullable
+                  as PenaltyRecordModel,
+        timedOutAt: null == timedOutAt
+            ? _value.timedOutAt
+            : timedOutAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 
   @override
@@ -1709,9 +1961,11 @@ class __$$TimeOutImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$TimeOutImpl implements _TimeOut {
-  const _$TimeOutImpl(
-      {required this.penalty, required this.timedOutAt, final String? $type})
-      : $type = $type ?? 'timeOut';
+  const _$TimeOutImpl({
+    required this.penalty,
+    required this.timedOutAt,
+    final String? $type,
+  }) : $type = $type ?? 'timeOut';
 
   factory _$TimeOutImpl.fromJson(Map<String, dynamic> json) =>
       _$$TimeOutImplFromJson(json);
@@ -1747,28 +2001,39 @@ class _$TimeOutImpl implements _TimeOut {
   @override
   @pragma('vm:prefer-inline')
   _$$TimeOutImplCopyWith<_$TimeOutImpl> get copyWith =>
-      __$$TimeOutImplCopyWithImpl<_$TimeOutImpl>(this, _$identity);
+      _$$TimeOutImplCopyWithImpl<_$TimeOutImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return timeOut(penalty, timedOutAt);
@@ -1777,17 +2042,26 @@ class _$TimeOutImpl implements _TimeOut {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
@@ -1798,17 +2072,26 @@ class _$TimeOutImpl implements _TimeOut {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -1871,16 +2154,15 @@ class _$TimeOutImpl implements _TimeOut {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TimeOutImplToJson(
-      this,
-    );
+    return _$$TimeOutImplToJson(this);
   }
 }
 
 abstract class _TimeOut implements BattleResultModel {
-  const factory _TimeOut(
-      {required final PenaltyRecordModel penalty,
-      required final DateTime timedOutAt}) = _$TimeOutImpl;
+  const factory _TimeOut({
+    required final PenaltyRecordModel penalty,
+    required final DateTime timedOutAt,
+  }) = _$TimeOutImpl;
 
   factory _TimeOut.fromJson(Map<String, dynamic> json) = _$TimeOutImpl.fromJson;
 
@@ -1894,36 +2176,35 @@ abstract class _TimeOut implements BattleResultModel {
 /// @nodoc
 abstract class _$$ErrorImplCopyWith<$Res> {
   factory _$$ErrorImplCopyWith(
-          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
-      __$$ErrorImplCopyWithImpl<$Res>;
+    _$ErrorImpl value,
+    $Res Function(_$ErrorImpl) then,
+  ) = _$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message, String? details});
 }
 
 /// @nodoc
-class __$$ErrorImplCopyWithImpl<$Res>
+class _$$ErrorImplCopyWithImpl<$Res>
     extends _$BattleResultModelCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
-  __$$ErrorImplCopyWithImpl(
-      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
-      : super(_value, _then);
+  _$$ErrorImplCopyWithImpl(_$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? message = null,
-    Object? details = freezed,
-  }) {
-    return _then(_$ErrorImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      details: freezed == details
-          ? _value.details
-          : details // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+  $Res call({Object? message = null, Object? details = freezed}) {
+    return _then(
+      _$ErrorImpl(
+        message: null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String,
+        details: freezed == details
+            ? _value.details
+            : details // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
@@ -1931,7 +2212,7 @@ class __$$ErrorImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ErrorImpl implements _Error {
   const _$ErrorImpl({required this.message, this.details, final String? $type})
-      : $type = $type ?? 'error';
+    : $type = $type ?? 'error';
 
   factory _$ErrorImpl.fromJson(Map<String, dynamic> json) =>
       _$$ErrorImplFromJson(json);
@@ -1966,28 +2247,39 @@ class _$ErrorImpl implements _Error {
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
-      __$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
+      _$$ErrorImplCopyWithImpl<_$ErrorImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)
-        victory,
-    required TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)
-        powerVictory,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        continue_,
-    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
-        awaitingVictoryClaim,
     required TResult Function(
-            PenaltyRecordModel penalty, EnemyModel currentEnemy)
-        wrongClaim,
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    victory,
+    required TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )
+    powerVictory,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    continue_,
+    required TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)
+    awaitingVictoryClaim,
+    required TResult Function(
+      PenaltyRecordModel penalty,
+      EnemyModel currentEnemy,
+    )
+    wrongClaim,
     required TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)
-        escape,
+    escape,
     required TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)
-        timeOut,
+    timeOut,
     required TResult Function(String message, String? details) error,
   }) {
     return error(message, details);
@@ -1996,17 +2288,26 @@ class _$ErrorImpl implements _Error {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult? Function(EnemyModel defeatedEnemy, int rewardPrime,
-            int rewardCount, DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult? Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult? Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult? Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult? Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult? Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult? Function(String message, String? details)? error,
@@ -2017,17 +2318,26 @@ class _$ErrorImpl implements _Error {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime,
-            DateTime completedAt, int battleDuration)?
-        victory,
-    TResult Function(EnemyModel defeatedEnemy, int rewardPrime, int rewardCount,
-            DateTime completedAt, int battleDuration)?
-        powerVictory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    victory,
+    TResult Function(
+      EnemyModel defeatedEnemy,
+      int rewardPrime,
+      int rewardCount,
+      DateTime completedAt,
+      int battleDuration,
+    )?
+    powerVictory,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)? continue_,
     TResult Function(EnemyModel newEnemy, PrimeModel usedPrime)?
-        awaitingVictoryClaim,
+    awaitingVictoryClaim,
     TResult Function(PenaltyRecordModel penalty, EnemyModel currentEnemy)?
-        wrongClaim,
+    wrongClaim,
     TResult Function(PenaltyRecordModel penalty, DateTime escapedAt)? escape,
     TResult Function(PenaltyRecordModel penalty, DateTime timedOutAt)? timeOut,
     TResult Function(String message, String? details)? error,
@@ -2090,9 +2400,7 @@ class _$ErrorImpl implements _Error {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ErrorImplToJson(
-      this,
-    );
+    return _$$ErrorImplToJson(this);
   }
 }
 

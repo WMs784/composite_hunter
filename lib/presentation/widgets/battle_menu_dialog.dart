@@ -7,11 +7,7 @@ class BattleMenuDialog extends StatelessWidget {
   final VoidCallback? onRestart;
   final VoidCallback? onExit;
 
-  const BattleMenuDialog({
-    super.key,
-    this.onRestart,
-    this.onExit,
-  });
+  const BattleMenuDialog({super.key, this.onRestart, this.onExit});
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +32,7 @@ class BattleMenuDialog extends StatelessWidget {
             // ヘッダー
             Row(
               children: [
-                const Icon(
-                  Icons.menu,
-                  color: AppColors.primary,
-                  size: 28,
-                ),
+                const Icon(Icons.menu, color: AppColors.primary, size: 28),
                 const SizedBox(width: Dimensions.spacingM),
                 Expanded(
                   child: Text(
@@ -93,8 +85,9 @@ class BattleMenuDialog extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: OutlinedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: Dimensions.paddingM,
+                  ),
                 ),
                 child: const Text('Back'),
               ),
@@ -111,7 +104,8 @@ class BattleMenuDialog extends StatelessWidget {
       builder: (context) => AlertDialog(
         title: const Text('Exit Battle?'),
         content: const Text(
-            'Your current progress will not be saved. Are you sure you want to exit?'),
+          'Your current progress will not be saved. Are you sure you want to exit?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -122,9 +116,7 @@ class BattleMenuDialog extends StatelessWidget {
               Navigator.of(context).pop(); // Close confirmation dialog
               onExit?.call();
             },
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             child: const Text('Exit'),
           ),
         ],
@@ -168,11 +160,7 @@ class _MenuOption extends StatelessWidget {
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: 24,
-              ),
+              child: Icon(icon, color: color, size: 24),
             ),
             const SizedBox(width: Dimensions.spacingM),
             Expanded(

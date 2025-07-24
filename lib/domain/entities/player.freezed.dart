@@ -12,11 +12,12 @@ part of 'player.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$Player {
-// Basic player info
+  // Basic player info
   int get level => throw _privateConstructorUsedError;
   int get experience => throw _privateConstructorUsedError; // Battle statistics
   int get totalBattles => throw _privateConstructorUsedError;
@@ -46,7 +47,7 @@ mixin _$Player {
       throw _privateConstructorUsedError; // battles won in <= 3 turns
   int get combackVictories =>
       throw _privateConstructorUsedError; // battles won with < 5 seconds remaining
-// Timestamps
+  // Timestamps
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get lastPlayedAt => throw _privateConstructorUsedError;
   DateTime? get lastLevelUpAt => throw _privateConstructorUsedError;
@@ -63,34 +64,35 @@ abstract class $PlayerCopyWith<$Res> {
   factory $PlayerCopyWith(Player value, $Res Function(Player) then) =
       _$PlayerCopyWithImpl<$Res, Player>;
   @useResult
-  $Res call(
-      {int level,
-      int experience,
-      int totalBattles,
-      int totalVictories,
-      int totalEscapes,
-      int totalTimeOuts,
-      int totalPowerEnemiesDefeated,
-      int totalTurnsUsed,
-      int totalTimeSpent,
-      int perfectBattles,
-      int fastestBattleTime,
-      int longestWinStreak,
-      int currentWinStreak,
-      int totalPrimesCollected,
-      int uniquePrimesCollected,
-      int largestPrimeCollected,
-      int smallestEnemyDefeated,
-      int largestEnemyDefeated,
-      int giantEnemiesDefeated,
-      int speedVictories,
-      int efficientVictories,
-      int combackVictories,
-      DateTime? createdAt,
-      DateTime? lastPlayedAt,
-      DateTime? lastLevelUpAt,
-      DateTime? lastAchievementAt,
-      PlayerPreferences preferences});
+  $Res call({
+    int level,
+    int experience,
+    int totalBattles,
+    int totalVictories,
+    int totalEscapes,
+    int totalTimeOuts,
+    int totalPowerEnemiesDefeated,
+    int totalTurnsUsed,
+    int totalTimeSpent,
+    int perfectBattles,
+    int fastestBattleTime,
+    int longestWinStreak,
+    int currentWinStreak,
+    int totalPrimesCollected,
+    int uniquePrimesCollected,
+    int largestPrimeCollected,
+    int smallestEnemyDefeated,
+    int largestEnemyDefeated,
+    int giantEnemiesDefeated,
+    int speedVictories,
+    int efficientVictories,
+    int combackVictories,
+    DateTime? createdAt,
+    DateTime? lastPlayedAt,
+    DateTime? lastLevelUpAt,
+    DateTime? lastAchievementAt,
+    PlayerPreferences preferences,
+  });
 
   $PlayerPreferencesCopyWith<$Res> get preferences;
 }
@@ -136,116 +138,119 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
     Object? lastAchievementAt = freezed,
     Object? preferences = null,
   }) {
-    return _then(_value.copyWith(
-      level: null == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as int,
-      experience: null == experience
-          ? _value.experience
-          : experience // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalBattles: null == totalBattles
-          ? _value.totalBattles
-          : totalBattles // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalVictories: null == totalVictories
-          ? _value.totalVictories
-          : totalVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalEscapes: null == totalEscapes
-          ? _value.totalEscapes
-          : totalEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTimeOuts: null == totalTimeOuts
-          ? _value.totalTimeOuts
-          : totalTimeOuts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
-          ? _value.totalPowerEnemiesDefeated
-          : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTurnsUsed: null == totalTurnsUsed
-          ? _value.totalTurnsUsed
-          : totalTurnsUsed // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTimeSpent: null == totalTimeSpent
-          ? _value.totalTimeSpent
-          : totalTimeSpent // ignore: cast_nullable_to_non_nullable
-              as int,
-      perfectBattles: null == perfectBattles
-          ? _value.perfectBattles
-          : perfectBattles // ignore: cast_nullable_to_non_nullable
-              as int,
-      fastestBattleTime: null == fastestBattleTime
-          ? _value.fastestBattleTime
-          : fastestBattleTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      longestWinStreak: null == longestWinStreak
-          ? _value.longestWinStreak
-          : longestWinStreak // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentWinStreak: null == currentWinStreak
-          ? _value.currentWinStreak
-          : currentWinStreak // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPrimesCollected: null == totalPrimesCollected
-          ? _value.totalPrimesCollected
-          : totalPrimesCollected // ignore: cast_nullable_to_non_nullable
-              as int,
-      uniquePrimesCollected: null == uniquePrimesCollected
-          ? _value.uniquePrimesCollected
-          : uniquePrimesCollected // ignore: cast_nullable_to_non_nullable
-              as int,
-      largestPrimeCollected: null == largestPrimeCollected
-          ? _value.largestPrimeCollected
-          : largestPrimeCollected // ignore: cast_nullable_to_non_nullable
-              as int,
-      smallestEnemyDefeated: null == smallestEnemyDefeated
-          ? _value.smallestEnemyDefeated
-          : smallestEnemyDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      largestEnemyDefeated: null == largestEnemyDefeated
-          ? _value.largestEnemyDefeated
-          : largestEnemyDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      giantEnemiesDefeated: null == giantEnemiesDefeated
-          ? _value.giantEnemiesDefeated
-          : giantEnemiesDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      speedVictories: null == speedVictories
-          ? _value.speedVictories
-          : speedVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      efficientVictories: null == efficientVictories
-          ? _value.efficientVictories
-          : efficientVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      combackVictories: null == combackVictories
-          ? _value.combackVictories
-          : combackVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastPlayedAt: freezed == lastPlayedAt
-          ? _value.lastPlayedAt
-          : lastPlayedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastLevelUpAt: freezed == lastLevelUpAt
-          ? _value.lastLevelUpAt
-          : lastLevelUpAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastAchievementAt: freezed == lastAchievementAt
-          ? _value.lastAchievementAt
-          : lastAchievementAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      preferences: null == preferences
-          ? _value.preferences
-          : preferences // ignore: cast_nullable_to_non_nullable
-              as PlayerPreferences,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            level: null == level
+                ? _value.level
+                : level // ignore: cast_nullable_to_non_nullable
+                      as int,
+            experience: null == experience
+                ? _value.experience
+                : experience // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBattles: null == totalBattles
+                ? _value.totalBattles
+                : totalBattles // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalVictories: null == totalVictories
+                ? _value.totalVictories
+                : totalVictories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalEscapes: null == totalEscapes
+                ? _value.totalEscapes
+                : totalEscapes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTimeOuts: null == totalTimeOuts
+                ? _value.totalTimeOuts
+                : totalTimeOuts // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
+                ? _value.totalPowerEnemiesDefeated
+                : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTurnsUsed: null == totalTurnsUsed
+                ? _value.totalTurnsUsed
+                : totalTurnsUsed // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTimeSpent: null == totalTimeSpent
+                ? _value.totalTimeSpent
+                : totalTimeSpent // ignore: cast_nullable_to_non_nullable
+                      as int,
+            perfectBattles: null == perfectBattles
+                ? _value.perfectBattles
+                : perfectBattles // ignore: cast_nullable_to_non_nullable
+                      as int,
+            fastestBattleTime: null == fastestBattleTime
+                ? _value.fastestBattleTime
+                : fastestBattleTime // ignore: cast_nullable_to_non_nullable
+                      as int,
+            longestWinStreak: null == longestWinStreak
+                ? _value.longestWinStreak
+                : longestWinStreak // ignore: cast_nullable_to_non_nullable
+                      as int,
+            currentWinStreak: null == currentWinStreak
+                ? _value.currentWinStreak
+                : currentWinStreak // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalPrimesCollected: null == totalPrimesCollected
+                ? _value.totalPrimesCollected
+                : totalPrimesCollected // ignore: cast_nullable_to_non_nullable
+                      as int,
+            uniquePrimesCollected: null == uniquePrimesCollected
+                ? _value.uniquePrimesCollected
+                : uniquePrimesCollected // ignore: cast_nullable_to_non_nullable
+                      as int,
+            largestPrimeCollected: null == largestPrimeCollected
+                ? _value.largestPrimeCollected
+                : largestPrimeCollected // ignore: cast_nullable_to_non_nullable
+                      as int,
+            smallestEnemyDefeated: null == smallestEnemyDefeated
+                ? _value.smallestEnemyDefeated
+                : smallestEnemyDefeated // ignore: cast_nullable_to_non_nullable
+                      as int,
+            largestEnemyDefeated: null == largestEnemyDefeated
+                ? _value.largestEnemyDefeated
+                : largestEnemyDefeated // ignore: cast_nullable_to_non_nullable
+                      as int,
+            giantEnemiesDefeated: null == giantEnemiesDefeated
+                ? _value.giantEnemiesDefeated
+                : giantEnemiesDefeated // ignore: cast_nullable_to_non_nullable
+                      as int,
+            speedVictories: null == speedVictories
+                ? _value.speedVictories
+                : speedVictories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            efficientVictories: null == efficientVictories
+                ? _value.efficientVictories
+                : efficientVictories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            combackVictories: null == combackVictories
+                ? _value.combackVictories
+                : combackVictories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            lastPlayedAt: freezed == lastPlayedAt
+                ? _value.lastPlayedAt
+                : lastPlayedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            lastLevelUpAt: freezed == lastLevelUpAt
+                ? _value.lastLevelUpAt
+                : lastLevelUpAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            lastAchievementAt: freezed == lastAchievementAt
+                ? _value.lastAchievementAt
+                : lastAchievementAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            preferences: null == preferences
+                ? _value.preferences
+                : preferences // ignore: cast_nullable_to_non_nullable
+                      as PlayerPreferences,
+          )
+          as $Val,
+    );
   }
 
   @override
@@ -260,50 +265,53 @@ class _$PlayerCopyWithImpl<$Res, $Val extends Player>
 /// @nodoc
 abstract class _$$PlayerImplCopyWith<$Res> implements $PlayerCopyWith<$Res> {
   factory _$$PlayerImplCopyWith(
-          _$PlayerImpl value, $Res Function(_$PlayerImpl) then) =
-      __$$PlayerImplCopyWithImpl<$Res>;
+    _$PlayerImpl value,
+    $Res Function(_$PlayerImpl) then,
+  ) = _$$PlayerImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int level,
-      int experience,
-      int totalBattles,
-      int totalVictories,
-      int totalEscapes,
-      int totalTimeOuts,
-      int totalPowerEnemiesDefeated,
-      int totalTurnsUsed,
-      int totalTimeSpent,
-      int perfectBattles,
-      int fastestBattleTime,
-      int longestWinStreak,
-      int currentWinStreak,
-      int totalPrimesCollected,
-      int uniquePrimesCollected,
-      int largestPrimeCollected,
-      int smallestEnemyDefeated,
-      int largestEnemyDefeated,
-      int giantEnemiesDefeated,
-      int speedVictories,
-      int efficientVictories,
-      int combackVictories,
-      DateTime? createdAt,
-      DateTime? lastPlayedAt,
-      DateTime? lastLevelUpAt,
-      DateTime? lastAchievementAt,
-      PlayerPreferences preferences});
+  $Res call({
+    int level,
+    int experience,
+    int totalBattles,
+    int totalVictories,
+    int totalEscapes,
+    int totalTimeOuts,
+    int totalPowerEnemiesDefeated,
+    int totalTurnsUsed,
+    int totalTimeSpent,
+    int perfectBattles,
+    int fastestBattleTime,
+    int longestWinStreak,
+    int currentWinStreak,
+    int totalPrimesCollected,
+    int uniquePrimesCollected,
+    int largestPrimeCollected,
+    int smallestEnemyDefeated,
+    int largestEnemyDefeated,
+    int giantEnemiesDefeated,
+    int speedVictories,
+    int efficientVictories,
+    int combackVictories,
+    DateTime? createdAt,
+    DateTime? lastPlayedAt,
+    DateTime? lastLevelUpAt,
+    DateTime? lastAchievementAt,
+    PlayerPreferences preferences,
+  });
 
   @override
   $PlayerPreferencesCopyWith<$Res> get preferences;
 }
 
 /// @nodoc
-class __$$PlayerImplCopyWithImpl<$Res>
+class _$$PlayerImplCopyWithImpl<$Res>
     extends _$PlayerCopyWithImpl<$Res, _$PlayerImpl>
     implements _$$PlayerImplCopyWith<$Res> {
-  __$$PlayerImplCopyWithImpl(
-      _$PlayerImpl _value, $Res Function(_$PlayerImpl) _then)
-      : super(_value, _then);
+  _$$PlayerImplCopyWithImpl(
+    _$PlayerImpl _value,
+    $Res Function(_$PlayerImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -336,159 +344,162 @@ class __$$PlayerImplCopyWithImpl<$Res>
     Object? lastAchievementAt = freezed,
     Object? preferences = null,
   }) {
-    return _then(_$PlayerImpl(
-      level: null == level
-          ? _value.level
-          : level // ignore: cast_nullable_to_non_nullable
-              as int,
-      experience: null == experience
-          ? _value.experience
-          : experience // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalBattles: null == totalBattles
-          ? _value.totalBattles
-          : totalBattles // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalVictories: null == totalVictories
-          ? _value.totalVictories
-          : totalVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalEscapes: null == totalEscapes
-          ? _value.totalEscapes
-          : totalEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTimeOuts: null == totalTimeOuts
-          ? _value.totalTimeOuts
-          : totalTimeOuts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
-          ? _value.totalPowerEnemiesDefeated
-          : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTurnsUsed: null == totalTurnsUsed
-          ? _value.totalTurnsUsed
-          : totalTurnsUsed // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTimeSpent: null == totalTimeSpent
-          ? _value.totalTimeSpent
-          : totalTimeSpent // ignore: cast_nullable_to_non_nullable
-              as int,
-      perfectBattles: null == perfectBattles
-          ? _value.perfectBattles
-          : perfectBattles // ignore: cast_nullable_to_non_nullable
-              as int,
-      fastestBattleTime: null == fastestBattleTime
-          ? _value.fastestBattleTime
-          : fastestBattleTime // ignore: cast_nullable_to_non_nullable
-              as int,
-      longestWinStreak: null == longestWinStreak
-          ? _value.longestWinStreak
-          : longestWinStreak // ignore: cast_nullable_to_non_nullable
-              as int,
-      currentWinStreak: null == currentWinStreak
-          ? _value.currentWinStreak
-          : currentWinStreak // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPrimesCollected: null == totalPrimesCollected
-          ? _value.totalPrimesCollected
-          : totalPrimesCollected // ignore: cast_nullable_to_non_nullable
-              as int,
-      uniquePrimesCollected: null == uniquePrimesCollected
-          ? _value.uniquePrimesCollected
-          : uniquePrimesCollected // ignore: cast_nullable_to_non_nullable
-              as int,
-      largestPrimeCollected: null == largestPrimeCollected
-          ? _value.largestPrimeCollected
-          : largestPrimeCollected // ignore: cast_nullable_to_non_nullable
-              as int,
-      smallestEnemyDefeated: null == smallestEnemyDefeated
-          ? _value.smallestEnemyDefeated
-          : smallestEnemyDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      largestEnemyDefeated: null == largestEnemyDefeated
-          ? _value.largestEnemyDefeated
-          : largestEnemyDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      giantEnemiesDefeated: null == giantEnemiesDefeated
-          ? _value.giantEnemiesDefeated
-          : giantEnemiesDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      speedVictories: null == speedVictories
-          ? _value.speedVictories
-          : speedVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      efficientVictories: null == efficientVictories
-          ? _value.efficientVictories
-          : efficientVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      combackVictories: null == combackVictories
-          ? _value.combackVictories
-          : combackVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastPlayedAt: freezed == lastPlayedAt
-          ? _value.lastPlayedAt
-          : lastPlayedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastLevelUpAt: freezed == lastLevelUpAt
-          ? _value.lastLevelUpAt
-          : lastLevelUpAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      lastAchievementAt: freezed == lastAchievementAt
-          ? _value.lastAchievementAt
-          : lastAchievementAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      preferences: null == preferences
-          ? _value.preferences
-          : preferences // ignore: cast_nullable_to_non_nullable
-              as PlayerPreferences,
-    ));
+    return _then(
+      _$PlayerImpl(
+        level: null == level
+            ? _value.level
+            : level // ignore: cast_nullable_to_non_nullable
+                  as int,
+        experience: null == experience
+            ? _value.experience
+            : experience // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBattles: null == totalBattles
+            ? _value.totalBattles
+            : totalBattles // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalVictories: null == totalVictories
+            ? _value.totalVictories
+            : totalVictories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalEscapes: null == totalEscapes
+            ? _value.totalEscapes
+            : totalEscapes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTimeOuts: null == totalTimeOuts
+            ? _value.totalTimeOuts
+            : totalTimeOuts // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
+            ? _value.totalPowerEnemiesDefeated
+            : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTurnsUsed: null == totalTurnsUsed
+            ? _value.totalTurnsUsed
+            : totalTurnsUsed // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTimeSpent: null == totalTimeSpent
+            ? _value.totalTimeSpent
+            : totalTimeSpent // ignore: cast_nullable_to_non_nullable
+                  as int,
+        perfectBattles: null == perfectBattles
+            ? _value.perfectBattles
+            : perfectBattles // ignore: cast_nullable_to_non_nullable
+                  as int,
+        fastestBattleTime: null == fastestBattleTime
+            ? _value.fastestBattleTime
+            : fastestBattleTime // ignore: cast_nullable_to_non_nullable
+                  as int,
+        longestWinStreak: null == longestWinStreak
+            ? _value.longestWinStreak
+            : longestWinStreak // ignore: cast_nullable_to_non_nullable
+                  as int,
+        currentWinStreak: null == currentWinStreak
+            ? _value.currentWinStreak
+            : currentWinStreak // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalPrimesCollected: null == totalPrimesCollected
+            ? _value.totalPrimesCollected
+            : totalPrimesCollected // ignore: cast_nullable_to_non_nullable
+                  as int,
+        uniquePrimesCollected: null == uniquePrimesCollected
+            ? _value.uniquePrimesCollected
+            : uniquePrimesCollected // ignore: cast_nullable_to_non_nullable
+                  as int,
+        largestPrimeCollected: null == largestPrimeCollected
+            ? _value.largestPrimeCollected
+            : largestPrimeCollected // ignore: cast_nullable_to_non_nullable
+                  as int,
+        smallestEnemyDefeated: null == smallestEnemyDefeated
+            ? _value.smallestEnemyDefeated
+            : smallestEnemyDefeated // ignore: cast_nullable_to_non_nullable
+                  as int,
+        largestEnemyDefeated: null == largestEnemyDefeated
+            ? _value.largestEnemyDefeated
+            : largestEnemyDefeated // ignore: cast_nullable_to_non_nullable
+                  as int,
+        giantEnemiesDefeated: null == giantEnemiesDefeated
+            ? _value.giantEnemiesDefeated
+            : giantEnemiesDefeated // ignore: cast_nullable_to_non_nullable
+                  as int,
+        speedVictories: null == speedVictories
+            ? _value.speedVictories
+            : speedVictories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        efficientVictories: null == efficientVictories
+            ? _value.efficientVictories
+            : efficientVictories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        combackVictories: null == combackVictories
+            ? _value.combackVictories
+            : combackVictories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        lastPlayedAt: freezed == lastPlayedAt
+            ? _value.lastPlayedAt
+            : lastPlayedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        lastLevelUpAt: freezed == lastLevelUpAt
+            ? _value.lastLevelUpAt
+            : lastLevelUpAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        lastAchievementAt: freezed == lastAchievementAt
+            ? _value.lastAchievementAt
+            : lastAchievementAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        preferences: null == preferences
+            ? _value.preferences
+            : preferences // ignore: cast_nullable_to_non_nullable
+                  as PlayerPreferences,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$PlayerImpl implements _Player {
-  const _$PlayerImpl(
-      {this.level = 1,
-      this.experience = 0,
-      this.totalBattles = 0,
-      this.totalVictories = 0,
-      this.totalEscapes = 0,
-      this.totalTimeOuts = 0,
-      this.totalPowerEnemiesDefeated = 0,
-      this.totalTurnsUsed = 0,
-      this.totalTimeSpent = 0,
-      this.perfectBattles = 0,
-      this.fastestBattleTime = 0,
-      this.longestWinStreak = 0,
-      this.currentWinStreak = 0,
-      this.totalPrimesCollected = 0,
-      this.uniquePrimesCollected = 0,
-      this.largestPrimeCollected = 0,
-      this.smallestEnemyDefeated = 0,
-      this.largestEnemyDefeated = 0,
-      this.giantEnemiesDefeated = 0,
-      this.speedVictories = 0,
-      this.efficientVictories = 0,
-      this.combackVictories = 0,
-      this.createdAt,
-      this.lastPlayedAt,
-      this.lastLevelUpAt,
-      this.lastAchievementAt,
-      this.preferences = const PlayerPreferences()});
+  const _$PlayerImpl({
+    this.level = 1,
+    this.experience = 0,
+    this.totalBattles = 0,
+    this.totalVictories = 0,
+    this.totalEscapes = 0,
+    this.totalTimeOuts = 0,
+    this.totalPowerEnemiesDefeated = 0,
+    this.totalTurnsUsed = 0,
+    this.totalTimeSpent = 0,
+    this.perfectBattles = 0,
+    this.fastestBattleTime = 0,
+    this.longestWinStreak = 0,
+    this.currentWinStreak = 0,
+    this.totalPrimesCollected = 0,
+    this.uniquePrimesCollected = 0,
+    this.largestPrimeCollected = 0,
+    this.smallestEnemyDefeated = 0,
+    this.largestEnemyDefeated = 0,
+    this.giantEnemiesDefeated = 0,
+    this.speedVictories = 0,
+    this.efficientVictories = 0,
+    this.combackVictories = 0,
+    this.createdAt,
+    this.lastPlayedAt,
+    this.lastLevelUpAt,
+    this.lastAchievementAt,
+    this.preferences = const PlayerPreferences(),
+  });
 
-// Basic player info
+  // Basic player info
   @override
   @JsonKey()
   final int level;
   @override
   @JsonKey()
   final int experience;
-// Battle statistics
+  // Battle statistics
   @override
   @JsonKey()
   final int totalBattles;
@@ -504,28 +515,28 @@ class _$PlayerImpl implements _Player {
   @override
   @JsonKey()
   final int totalPowerEnemiesDefeated;
-// Performance statistics
+  // Performance statistics
   @override
   @JsonKey()
   final int totalTurnsUsed;
   @override
   @JsonKey()
   final int totalTimeSpent;
-// in seconds
+  // in seconds
   @override
   @JsonKey()
   final int perfectBattles;
   @override
   @JsonKey()
   final int fastestBattleTime;
-// in seconds
+  // in seconds
   @override
   @JsonKey()
   final int longestWinStreak;
   @override
   @JsonKey()
   final int currentWinStreak;
-// Prime collection statistics
+  // Prime collection statistics
   @override
   @JsonKey()
   final int totalPrimesCollected;
@@ -541,24 +552,24 @@ class _$PlayerImpl implements _Player {
   @override
   @JsonKey()
   final int largestEnemyDefeated;
-// Special achievements
+  // Special achievements
   @override
   @JsonKey()
   final int giantEnemiesDefeated;
-// enemies > 1000
+  // enemies > 1000
   @override
   @JsonKey()
   final int speedVictories;
-// battles won in < 10 seconds
+  // battles won in < 10 seconds
   @override
   @JsonKey()
   final int efficientVictories;
-// battles won in <= 3 turns
+  // battles won in <= 3 turns
   @override
   @JsonKey()
   final int combackVictories;
-// battles won with < 5 seconds remaining
-// Timestamps
+  // battles won with < 5 seconds remaining
+  // Timestamps
   @override
   final DateTime? createdAt;
   @override
@@ -567,7 +578,7 @@ class _$PlayerImpl implements _Player {
   final DateTime? lastLevelUpAt;
   @override
   final DateTime? lastAchievementAt;
-// Preferences
+  // Preferences
   @override
   @JsonKey()
   final PlayerPreferences preferences;
@@ -593,8 +604,10 @@ class _$PlayerImpl implements _Player {
                 other.totalEscapes == totalEscapes) &&
             (identical(other.totalTimeOuts, totalTimeOuts) ||
                 other.totalTimeOuts == totalTimeOuts) &&
-            (identical(other.totalPowerEnemiesDefeated,
-                    totalPowerEnemiesDefeated) ||
+            (identical(
+                  other.totalPowerEnemiesDefeated,
+                  totalPowerEnemiesDefeated,
+                ) ||
                 other.totalPowerEnemiesDefeated == totalPowerEnemiesDefeated) &&
             (identical(other.totalTurnsUsed, totalTurnsUsed) ||
                 other.totalTurnsUsed == totalTurnsUsed) &&
@@ -640,72 +653,73 @@ class _$PlayerImpl implements _Player {
 
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        level,
-        experience,
-        totalBattles,
-        totalVictories,
-        totalEscapes,
-        totalTimeOuts,
-        totalPowerEnemiesDefeated,
-        totalTurnsUsed,
-        totalTimeSpent,
-        perfectBattles,
-        fastestBattleTime,
-        longestWinStreak,
-        currentWinStreak,
-        totalPrimesCollected,
-        uniquePrimesCollected,
-        largestPrimeCollected,
-        smallestEnemyDefeated,
-        largestEnemyDefeated,
-        giantEnemiesDefeated,
-        speedVictories,
-        efficientVictories,
-        combackVictories,
-        createdAt,
-        lastPlayedAt,
-        lastLevelUpAt,
-        lastAchievementAt,
-        preferences
-      ]);
+    runtimeType,
+    level,
+    experience,
+    totalBattles,
+    totalVictories,
+    totalEscapes,
+    totalTimeOuts,
+    totalPowerEnemiesDefeated,
+    totalTurnsUsed,
+    totalTimeSpent,
+    perfectBattles,
+    fastestBattleTime,
+    longestWinStreak,
+    currentWinStreak,
+    totalPrimesCollected,
+    uniquePrimesCollected,
+    largestPrimeCollected,
+    smallestEnemyDefeated,
+    largestEnemyDefeated,
+    giantEnemiesDefeated,
+    speedVictories,
+    efficientVictories,
+    combackVictories,
+    createdAt,
+    lastPlayedAt,
+    lastLevelUpAt,
+    lastAchievementAt,
+    preferences,
+  ]);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PlayerImplCopyWith<_$PlayerImpl> get copyWith =>
-      __$$PlayerImplCopyWithImpl<_$PlayerImpl>(this, _$identity);
+      _$$PlayerImplCopyWithImpl<_$PlayerImpl>(this, _$identity);
 }
 
 abstract class _Player implements Player {
-  const factory _Player(
-      {final int level,
-      final int experience,
-      final int totalBattles,
-      final int totalVictories,
-      final int totalEscapes,
-      final int totalTimeOuts,
-      final int totalPowerEnemiesDefeated,
-      final int totalTurnsUsed,
-      final int totalTimeSpent,
-      final int perfectBattles,
-      final int fastestBattleTime,
-      final int longestWinStreak,
-      final int currentWinStreak,
-      final int totalPrimesCollected,
-      final int uniquePrimesCollected,
-      final int largestPrimeCollected,
-      final int smallestEnemyDefeated,
-      final int largestEnemyDefeated,
-      final int giantEnemiesDefeated,
-      final int speedVictories,
-      final int efficientVictories,
-      final int combackVictories,
-      final DateTime? createdAt,
-      final DateTime? lastPlayedAt,
-      final DateTime? lastLevelUpAt,
-      final DateTime? lastAchievementAt,
-      final PlayerPreferences preferences}) = _$PlayerImpl;
+  const factory _Player({
+    final int level,
+    final int experience,
+    final int totalBattles,
+    final int totalVictories,
+    final int totalEscapes,
+    final int totalTimeOuts,
+    final int totalPowerEnemiesDefeated,
+    final int totalTurnsUsed,
+    final int totalTimeSpent,
+    final int perfectBattles,
+    final int fastestBattleTime,
+    final int longestWinStreak,
+    final int currentWinStreak,
+    final int totalPrimesCollected,
+    final int uniquePrimesCollected,
+    final int largestPrimeCollected,
+    final int smallestEnemyDefeated,
+    final int largestEnemyDefeated,
+    final int giantEnemiesDefeated,
+    final int speedVictories,
+    final int efficientVictories,
+    final int combackVictories,
+    final DateTime? createdAt,
+    final DateTime? lastPlayedAt,
+    final DateTime? lastLevelUpAt,
+    final DateTime? lastAchievementAt,
+    final PlayerPreferences preferences,
+  }) = _$PlayerImpl;
 
   @override // Basic player info
   int get level;
@@ -752,7 +766,7 @@ abstract class _Player implements Player {
   @override // battles won in <= 3 turns
   int get combackVictories;
   @override // battles won with < 5 seconds remaining
-// Timestamps
+  // Timestamps
   DateTime? get createdAt;
   @override
   DateTime? get lastPlayedAt;
@@ -770,7 +784,7 @@ abstract class _Player implements Player {
 
 /// @nodoc
 mixin _$PlayerPreferences {
-// Gameplay preferences
+  // Gameplay preferences
   bool get showHints => throw _privateConstructorUsedError;
   bool get showAnimations => throw _privateConstructorUsedError;
   bool get autoSave => throw _privateConstructorUsedError;
@@ -799,26 +813,28 @@ mixin _$PlayerPreferences {
 /// @nodoc
 abstract class $PlayerPreferencesCopyWith<$Res> {
   factory $PlayerPreferencesCopyWith(
-          PlayerPreferences value, $Res Function(PlayerPreferences) then) =
-      _$PlayerPreferencesCopyWithImpl<$Res, PlayerPreferences>;
+    PlayerPreferences value,
+    $Res Function(PlayerPreferences) then,
+  ) = _$PlayerPreferencesCopyWithImpl<$Res, PlayerPreferences>;
   @useResult
-  $Res call(
-      {bool showHints,
-      bool showAnimations,
-      bool autoSave,
-      bool vibrateOnAttack,
-      bool soundEffects,
-      bool backgroundMusic,
-      bool showStatistics,
-      bool showTimer,
-      bool showProgress,
-      bool darkMode,
-      bool achievementNotifications,
-      bool levelUpNotifications,
-      bool dailyReminders,
-      bool skipTutorial,
-      bool showTips,
-      bool showControls});
+  $Res call({
+    bool showHints,
+    bool showAnimations,
+    bool autoSave,
+    bool vibrateOnAttack,
+    bool soundEffects,
+    bool backgroundMusic,
+    bool showStatistics,
+    bool showTimer,
+    bool showProgress,
+    bool darkMode,
+    bool achievementNotifications,
+    bool levelUpNotifications,
+    bool dailyReminders,
+    bool skipTutorial,
+    bool showTips,
+    bool showControls,
+  });
 }
 
 /// @nodoc
@@ -851,109 +867,115 @@ class _$PlayerPreferencesCopyWithImpl<$Res, $Val extends PlayerPreferences>
     Object? showTips = null,
     Object? showControls = null,
   }) {
-    return _then(_value.copyWith(
-      showHints: null == showHints
-          ? _value.showHints
-          : showHints // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showAnimations: null == showAnimations
-          ? _value.showAnimations
-          : showAnimations // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoSave: null == autoSave
-          ? _value.autoSave
-          : autoSave // ignore: cast_nullable_to_non_nullable
-              as bool,
-      vibrateOnAttack: null == vibrateOnAttack
-          ? _value.vibrateOnAttack
-          : vibrateOnAttack // ignore: cast_nullable_to_non_nullable
-              as bool,
-      soundEffects: null == soundEffects
-          ? _value.soundEffects
-          : soundEffects // ignore: cast_nullable_to_non_nullable
-              as bool,
-      backgroundMusic: null == backgroundMusic
-          ? _value.backgroundMusic
-          : backgroundMusic // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showStatistics: null == showStatistics
-          ? _value.showStatistics
-          : showStatistics // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showTimer: null == showTimer
-          ? _value.showTimer
-          : showTimer // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showProgress: null == showProgress
-          ? _value.showProgress
-          : showProgress // ignore: cast_nullable_to_non_nullable
-              as bool,
-      darkMode: null == darkMode
-          ? _value.darkMode
-          : darkMode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      achievementNotifications: null == achievementNotifications
-          ? _value.achievementNotifications
-          : achievementNotifications // ignore: cast_nullable_to_non_nullable
-              as bool,
-      levelUpNotifications: null == levelUpNotifications
-          ? _value.levelUpNotifications
-          : levelUpNotifications // ignore: cast_nullable_to_non_nullable
-              as bool,
-      dailyReminders: null == dailyReminders
-          ? _value.dailyReminders
-          : dailyReminders // ignore: cast_nullable_to_non_nullable
-              as bool,
-      skipTutorial: null == skipTutorial
-          ? _value.skipTutorial
-          : skipTutorial // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showTips: null == showTips
-          ? _value.showTips
-          : showTips // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showControls: null == showControls
-          ? _value.showControls
-          : showControls // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            showHints: null == showHints
+                ? _value.showHints
+                : showHints // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showAnimations: null == showAnimations
+                ? _value.showAnimations
+                : showAnimations // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            autoSave: null == autoSave
+                ? _value.autoSave
+                : autoSave // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            vibrateOnAttack: null == vibrateOnAttack
+                ? _value.vibrateOnAttack
+                : vibrateOnAttack // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            soundEffects: null == soundEffects
+                ? _value.soundEffects
+                : soundEffects // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            backgroundMusic: null == backgroundMusic
+                ? _value.backgroundMusic
+                : backgroundMusic // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showStatistics: null == showStatistics
+                ? _value.showStatistics
+                : showStatistics // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showTimer: null == showTimer
+                ? _value.showTimer
+                : showTimer // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showProgress: null == showProgress
+                ? _value.showProgress
+                : showProgress // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            darkMode: null == darkMode
+                ? _value.darkMode
+                : darkMode // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            achievementNotifications: null == achievementNotifications
+                ? _value.achievementNotifications
+                : achievementNotifications // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            levelUpNotifications: null == levelUpNotifications
+                ? _value.levelUpNotifications
+                : levelUpNotifications // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            dailyReminders: null == dailyReminders
+                ? _value.dailyReminders
+                : dailyReminders // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            skipTutorial: null == skipTutorial
+                ? _value.skipTutorial
+                : skipTutorial // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showTips: null == showTips
+                ? _value.showTips
+                : showTips // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            showControls: null == showControls
+                ? _value.showControls
+                : showControls // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PlayerPreferencesImplCopyWith<$Res>
     implements $PlayerPreferencesCopyWith<$Res> {
-  factory _$$PlayerPreferencesImplCopyWith(_$PlayerPreferencesImpl value,
-          $Res Function(_$PlayerPreferencesImpl) then) =
-      __$$PlayerPreferencesImplCopyWithImpl<$Res>;
+  factory _$$PlayerPreferencesImplCopyWith(
+    _$PlayerPreferencesImpl value,
+    $Res Function(_$PlayerPreferencesImpl) then,
+  ) = _$$PlayerPreferencesImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool showHints,
-      bool showAnimations,
-      bool autoSave,
-      bool vibrateOnAttack,
-      bool soundEffects,
-      bool backgroundMusic,
-      bool showStatistics,
-      bool showTimer,
-      bool showProgress,
-      bool darkMode,
-      bool achievementNotifications,
-      bool levelUpNotifications,
-      bool dailyReminders,
-      bool skipTutorial,
-      bool showTips,
-      bool showControls});
+  $Res call({
+    bool showHints,
+    bool showAnimations,
+    bool autoSave,
+    bool vibrateOnAttack,
+    bool soundEffects,
+    bool backgroundMusic,
+    bool showStatistics,
+    bool showTimer,
+    bool showProgress,
+    bool darkMode,
+    bool achievementNotifications,
+    bool levelUpNotifications,
+    bool dailyReminders,
+    bool skipTutorial,
+    bool showTips,
+    bool showControls,
+  });
 }
 
 /// @nodoc
-class __$$PlayerPreferencesImplCopyWithImpl<$Res>
+class _$$PlayerPreferencesImplCopyWithImpl<$Res>
     extends _$PlayerPreferencesCopyWithImpl<$Res, _$PlayerPreferencesImpl>
     implements _$$PlayerPreferencesImplCopyWith<$Res> {
-  __$$PlayerPreferencesImplCopyWithImpl(_$PlayerPreferencesImpl _value,
-      $Res Function(_$PlayerPreferencesImpl) _then)
-      : super(_value, _then);
+  _$$PlayerPreferencesImplCopyWithImpl(
+    _$PlayerPreferencesImpl _value,
+    $Res Function(_$PlayerPreferencesImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -975,97 +997,100 @@ class __$$PlayerPreferencesImplCopyWithImpl<$Res>
     Object? showTips = null,
     Object? showControls = null,
   }) {
-    return _then(_$PlayerPreferencesImpl(
-      showHints: null == showHints
-          ? _value.showHints
-          : showHints // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showAnimations: null == showAnimations
-          ? _value.showAnimations
-          : showAnimations // ignore: cast_nullable_to_non_nullable
-              as bool,
-      autoSave: null == autoSave
-          ? _value.autoSave
-          : autoSave // ignore: cast_nullable_to_non_nullable
-              as bool,
-      vibrateOnAttack: null == vibrateOnAttack
-          ? _value.vibrateOnAttack
-          : vibrateOnAttack // ignore: cast_nullable_to_non_nullable
-              as bool,
-      soundEffects: null == soundEffects
-          ? _value.soundEffects
-          : soundEffects // ignore: cast_nullable_to_non_nullable
-              as bool,
-      backgroundMusic: null == backgroundMusic
-          ? _value.backgroundMusic
-          : backgroundMusic // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showStatistics: null == showStatistics
-          ? _value.showStatistics
-          : showStatistics // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showTimer: null == showTimer
-          ? _value.showTimer
-          : showTimer // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showProgress: null == showProgress
-          ? _value.showProgress
-          : showProgress // ignore: cast_nullable_to_non_nullable
-              as bool,
-      darkMode: null == darkMode
-          ? _value.darkMode
-          : darkMode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      achievementNotifications: null == achievementNotifications
-          ? _value.achievementNotifications
-          : achievementNotifications // ignore: cast_nullable_to_non_nullable
-              as bool,
-      levelUpNotifications: null == levelUpNotifications
-          ? _value.levelUpNotifications
-          : levelUpNotifications // ignore: cast_nullable_to_non_nullable
-              as bool,
-      dailyReminders: null == dailyReminders
-          ? _value.dailyReminders
-          : dailyReminders // ignore: cast_nullable_to_non_nullable
-              as bool,
-      skipTutorial: null == skipTutorial
-          ? _value.skipTutorial
-          : skipTutorial // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showTips: null == showTips
-          ? _value.showTips
-          : showTips // ignore: cast_nullable_to_non_nullable
-              as bool,
-      showControls: null == showControls
-          ? _value.showControls
-          : showControls // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$PlayerPreferencesImpl(
+        showHints: null == showHints
+            ? _value.showHints
+            : showHints // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showAnimations: null == showAnimations
+            ? _value.showAnimations
+            : showAnimations // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        autoSave: null == autoSave
+            ? _value.autoSave
+            : autoSave // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        vibrateOnAttack: null == vibrateOnAttack
+            ? _value.vibrateOnAttack
+            : vibrateOnAttack // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        soundEffects: null == soundEffects
+            ? _value.soundEffects
+            : soundEffects // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        backgroundMusic: null == backgroundMusic
+            ? _value.backgroundMusic
+            : backgroundMusic // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showStatistics: null == showStatistics
+            ? _value.showStatistics
+            : showStatistics // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showTimer: null == showTimer
+            ? _value.showTimer
+            : showTimer // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showProgress: null == showProgress
+            ? _value.showProgress
+            : showProgress // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        darkMode: null == darkMode
+            ? _value.darkMode
+            : darkMode // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        achievementNotifications: null == achievementNotifications
+            ? _value.achievementNotifications
+            : achievementNotifications // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        levelUpNotifications: null == levelUpNotifications
+            ? _value.levelUpNotifications
+            : levelUpNotifications // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        dailyReminders: null == dailyReminders
+            ? _value.dailyReminders
+            : dailyReminders // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        skipTutorial: null == skipTutorial
+            ? _value.skipTutorial
+            : skipTutorial // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showTips: null == showTips
+            ? _value.showTips
+            : showTips // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        showControls: null == showControls
+            ? _value.showControls
+            : showControls // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$PlayerPreferencesImpl implements _PlayerPreferences {
-  const _$PlayerPreferencesImpl(
-      {this.showHints = true,
-      this.showAnimations = true,
-      this.autoSave = true,
-      this.vibrateOnAttack = true,
-      this.soundEffects = true,
-      this.backgroundMusic = true,
-      this.showStatistics = true,
-      this.showTimer = true,
-      this.showProgress = true,
-      this.darkMode = false,
-      this.achievementNotifications = true,
-      this.levelUpNotifications = true,
-      this.dailyReminders = false,
-      this.skipTutorial = false,
-      this.showTips = true,
-      this.showControls = true});
+  const _$PlayerPreferencesImpl({
+    this.showHints = true,
+    this.showAnimations = true,
+    this.autoSave = true,
+    this.vibrateOnAttack = true,
+    this.soundEffects = true,
+    this.backgroundMusic = true,
+    this.showStatistics = true,
+    this.showTimer = true,
+    this.showProgress = true,
+    this.darkMode = false,
+    this.achievementNotifications = true,
+    this.levelUpNotifications = true,
+    this.dailyReminders = false,
+    this.skipTutorial = false,
+    this.showTips = true,
+    this.showControls = true,
+  });
 
-// Gameplay preferences
+  // Gameplay preferences
   @override
   @JsonKey()
   final bool showHints;
@@ -1084,7 +1109,7 @@ class _$PlayerPreferencesImpl implements _PlayerPreferences {
   @override
   @JsonKey()
   final bool backgroundMusic;
-// Display preferences
+  // Display preferences
   @override
   @JsonKey()
   final bool showStatistics;
@@ -1097,7 +1122,7 @@ class _$PlayerPreferencesImpl implements _PlayerPreferences {
   @override
   @JsonKey()
   final bool darkMode;
-// Notification preferences
+  // Notification preferences
   @override
   @JsonKey()
   final bool achievementNotifications;
@@ -1107,7 +1132,7 @@ class _$PlayerPreferencesImpl implements _PlayerPreferences {
   @override
   @JsonKey()
   final bool dailyReminders;
-// Tutorial preferences
+  // Tutorial preferences
   @override
   @JsonKey()
   final bool skipTutorial;
@@ -1149,7 +1174,9 @@ class _$PlayerPreferencesImpl implements _PlayerPreferences {
             (identical(other.darkMode, darkMode) ||
                 other.darkMode == darkMode) &&
             (identical(
-                    other.achievementNotifications, achievementNotifications) ||
+                  other.achievementNotifications,
+                  achievementNotifications,
+                ) ||
                 other.achievementNotifications == achievementNotifications) &&
             (identical(other.levelUpNotifications, levelUpNotifications) ||
                 other.levelUpNotifications == levelUpNotifications) &&
@@ -1165,50 +1192,54 @@ class _$PlayerPreferencesImpl implements _PlayerPreferences {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      showHints,
-      showAnimations,
-      autoSave,
-      vibrateOnAttack,
-      soundEffects,
-      backgroundMusic,
-      showStatistics,
-      showTimer,
-      showProgress,
-      darkMode,
-      achievementNotifications,
-      levelUpNotifications,
-      dailyReminders,
-      skipTutorial,
-      showTips,
-      showControls);
+    runtimeType,
+    showHints,
+    showAnimations,
+    autoSave,
+    vibrateOnAttack,
+    soundEffects,
+    backgroundMusic,
+    showStatistics,
+    showTimer,
+    showProgress,
+    darkMode,
+    achievementNotifications,
+    levelUpNotifications,
+    dailyReminders,
+    skipTutorial,
+    showTips,
+    showControls,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PlayerPreferencesImplCopyWith<_$PlayerPreferencesImpl> get copyWith =>
-      __$$PlayerPreferencesImplCopyWithImpl<_$PlayerPreferencesImpl>(
-          this, _$identity);
+      _$$PlayerPreferencesImplCopyWithImpl<_$PlayerPreferencesImpl>(
+        this,
+        _$identity,
+      );
 }
 
 abstract class _PlayerPreferences implements PlayerPreferences {
-  const factory _PlayerPreferences(
-      {final bool showHints,
-      final bool showAnimations,
-      final bool autoSave,
-      final bool vibrateOnAttack,
-      final bool soundEffects,
-      final bool backgroundMusic,
-      final bool showStatistics,
-      final bool showTimer,
-      final bool showProgress,
-      final bool darkMode,
-      final bool achievementNotifications,
-      final bool levelUpNotifications,
-      final bool dailyReminders,
-      final bool skipTutorial,
-      final bool showTips,
-      final bool showControls}) = _$PlayerPreferencesImpl;
+  const factory _PlayerPreferences({
+    final bool showHints,
+    final bool showAnimations,
+    final bool autoSave,
+    final bool vibrateOnAttack,
+    final bool soundEffects,
+    final bool backgroundMusic,
+    final bool showStatistics,
+    final bool showTimer,
+    final bool showProgress,
+    final bool darkMode,
+    final bool achievementNotifications,
+    final bool levelUpNotifications,
+    final bool dailyReminders,
+    final bool skipTutorial,
+    final bool showTips,
+    final bool showControls,
+  }) = _$PlayerPreferencesImpl;
 
   @override // Gameplay preferences
   bool get showHints;

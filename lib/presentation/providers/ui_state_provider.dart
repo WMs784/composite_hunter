@@ -9,19 +9,13 @@ class UiStateNotifier extends StateNotifier<UiState> {
   /// Show loading state
   void showLoading({String? message}) {
     Logger.debug('Showing loading state: ${message ?? "no message"}');
-    state = state.copyWith(
-      isLoading: true,
-      loadingMessage: message,
-    );
+    state = state.copyWith(isLoading: true, loadingMessage: message);
   }
 
   /// Hide loading state
   void hideLoading() {
     Logger.debug('Hiding loading state');
-    state = state.copyWith(
-      isLoading: false,
-      loadingMessage: null,
-    );
+    state = state.copyWith(isLoading: false, loadingMessage: null);
   }
 
   /// Show error dialog
@@ -47,10 +41,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
   /// Show success message
   void showSuccess(String message, {Duration? duration}) {
     Logger.debug('Showing success message: $message');
-    state = state.copyWith(
-      showSuccessMessage: true,
-      successMessage: message,
-    );
+    state = state.copyWith(showSuccessMessage: true, successMessage: message);
 
     // Auto-hide after duration
     Future.delayed(duration ?? const Duration(seconds: 3), () {
@@ -63,19 +54,13 @@ class UiStateNotifier extends StateNotifier<UiState> {
   /// Hide success message
   void hideSuccess() {
     Logger.debug('Hiding success message');
-    state = state.copyWith(
-      showSuccessMessage: false,
-      successMessage: null,
-    );
+    state = state.copyWith(showSuccessMessage: false, successMessage: null);
   }
 
   /// Show info message
   void showInfo(String message, {Duration? duration}) {
     Logger.debug('Showing info message: $message');
-    state = state.copyWith(
-      showInfoMessage: true,
-      infoMessage: message,
-    );
+    state = state.copyWith(showInfoMessage: true, infoMessage: message);
 
     // Auto-hide after duration
     Future.delayed(duration ?? const Duration(seconds: 4), () {
@@ -88,10 +73,7 @@ class UiStateNotifier extends StateNotifier<UiState> {
   /// Hide info message
   void hideInfo() {
     Logger.debug('Hiding info message');
-    state = state.copyWith(
-      showInfoMessage: false,
-      infoMessage: null,
-    );
+    state = state.copyWith(showInfoMessage: false, infoMessage: null);
   }
 
   /// Show confirmation dialog

@@ -28,7 +28,11 @@
       "Bash(./gradlew:*)",
       "Bash(timeout 30 flutter test:*)",
       "Bash(timeout 30 flutter run --debug)",
-      "Bash(true)"
+      "Bash(true)",
+      "Bash(pkill -f flutter)",
+      "WebFetch(domain:pub.dev)",
+      "Bash(sed:*)",
+      "Bash(ls:*)"
     ],
     "deny": []
   }

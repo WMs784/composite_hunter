@@ -18,11 +18,8 @@ class BattleNotifier extends StateNotifier<BattleState> {
   final TimerManager _timerManager;
   final Ref _ref;
 
-  BattleNotifier(
-    this._enemyGenerator,
-    this._timerManager,
-    this._ref,
-  ) : super(const BattleState()) {
+  BattleNotifier(this._enemyGenerator, this._timerManager, this._ref)
+    : super(const BattleState()) {
     // Listen to timer updates
     _timerManager.timerStream.listen(_handleTimerUpdate);
   }
@@ -61,10 +58,10 @@ class BattleNotifier extends StateNotifier<BattleState> {
       // Update battle state
       state = state.startBattle(enemy, timerState);
 
-      Logger.logBattle('Battle started', data: {
-        'enemy': enemy.currentValue,
-        'duration': adjustedDuration,
-      });
+      Logger.logBattle(
+        'Battle started',
+        data: {'enemy': enemy.currentValue, 'duration': adjustedDuration},
+      );
     } catch (e, stackTrace) {
       Logger.error('Failed to start battle', e, stackTrace);
       state = state.copyWith(status: BattleStatus.defeat);
@@ -78,10 +75,10 @@ class BattleNotifier extends StateNotifier<BattleState> {
     }
 
     try {
-      Logger.logBattle('Executing attack', data: {
-        'prime': prime.value,
-        'enemy': state.currentEnemy!.currentValue,
-      });
+      Logger.logBattle(
+        'Executing attack',
+        data: {'prime': prime.value, 'enemy': state.currentEnemy!.currentValue},
+      );
 
       final result = BattleEngine.executeAttack(state.currentEnemy!, prime);
 
@@ -92,10 +89,14 @@ class BattleNotifier extends StateNotifier<BattleState> {
         },
         powerVictory:
             (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) async {
-          // This shouldn't happen - attacks should await victory claim
-          await _handlePowerVictory(
-              defeatedEnemy, rewardPrime, rewardCount, victoryClaim);
-        },
+              // This shouldn't happen - attacks should await victory claim
+              await _handlePowerVictory(
+                defeatedEnemy,
+                rewardPrime,
+                rewardCount,
+                victoryClaim,
+              );
+            },
         continue_: (newEnemy, usedPrime) async {
           await _handleContinue(newEnemy, usedPrime);
         },
@@ -128,9 +129,10 @@ class BattleNotifier extends StateNotifier<BattleState> {
     }
 
     try {
-      Logger.logBattle('Claiming victory', data: {
-        'enemyValue': state.currentEnemy!.currentValue,
-      });
+      Logger.logBattle(
+        'Claiming victory',
+        data: {'enemyValue': state.currentEnemy!.currentValue},
+      );
 
       final result = BattleEngine.processVictoryClaim(
         state.currentEnemy!,
@@ -143,9 +145,13 @@ class BattleNotifier extends StateNotifier<BattleState> {
         },
         powerVictory:
             (defeatedEnemy, rewardPrime, rewardCount, victoryClaim) async {
-          await _handlePowerVictory(
-              defeatedEnemy, rewardPrime, rewardCount, victoryClaim);
-        },
+              await _handlePowerVictory(
+                defeatedEnemy,
+                rewardPrime,
+                rewardCount,
+                victoryClaim,
+              );
+            },
         continue_: (newEnemy, usedPrime) async {
           // This shouldn't happen during victory claim
         },
@@ -236,7 +242,9 @@ class BattleNotifier extends StateNotifier<BattleState> {
 
   /// Handle awaiting victory claim state
   Future<void> _handleAwaitingVictoryClaim(
-      Enemy newEnemy, Prime usedPrime) async {
+    Enemy newEnemy,
+    Prime usedPrime,
+  ) async {
     // Play attack animation
     await _playAttackAnimation(usedPrime.value);
 
@@ -249,7 +257,10 @@ class BattleNotifier extends StateNotifier<BattleState> {
 
   /// Handle successful victory
   Future<void> _handleVictory(
-      Enemy defeatedEnemy, int rewardPrime, VictoryClaim victoryClaim) async {
+    Enemy defeatedEnemy,
+    int rewardPrime,
+    VictoryClaim victoryClaim,
+  ) async {
     // Play victory animation
     await _playVictoryAnimation();
 
@@ -303,7 +314,9 @@ class BattleNotifier extends StateNotifier<BattleState> {
 
   /// Handle wrong victory claim
   Future<void> _handleWrongClaim(
-      TimePenalty penalty, VictoryClaim victoryClaim) async {
+    TimePenalty penalty,
+    VictoryClaim victoryClaim,
+  ) async {
     // Play penalty animation
     await _playPenaltyAnimation();
 
@@ -311,11 +324,13 @@ class BattleNotifier extends StateNotifier<BattleState> {
     _timerManager.applyPenalty(penalty);
 
     // Update battle state
-    state =
-        state.applyTimePenalty(penalty).copyWith(victoryClaim: victoryClaim);
+    state = state
+        .applyTimePenalty(penalty)
+        .copyWith(victoryClaim: victoryClaim);
 
     _showPenaltyMessage(
-        'The value ${victoryClaim.claimedValue} is still composite. Continue attacking!');
+      'The value ${victoryClaim.claimedValue} is still composite. Continue attacking!',
+    );
   }
 
   /// Handle escape
@@ -399,13 +414,10 @@ class BattleNotifier extends StateNotifier<BattleState> {
 }
 
 /// Battle provider
-final battleProvider =
-    StateNotifierProvider<BattleNotifier, BattleState>((ref) {
-  return BattleNotifier(
-    EnemyGenerator(),
-    TimerManager(),
-    ref,
-  );
+final battleProvider = StateNotifierProvider<BattleNotifier, BattleState>((
+  ref,
+) {
+  return BattleNotifier(EnemyGenerator(), TimerManager(), ref);
 });
 
 /// Computed providers for battle state

@@ -12,7 +12,8 @@ part of 'penalty_record_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PenaltyRecordModel _$PenaltyRecordModelFromJson(Map<String, dynamic> json) {
   return _PenaltyRecordModel.fromJson(json);
@@ -34,11 +35,16 @@ mixin _$PenaltyRecordModel {
 /// @nodoc
 abstract class $PenaltyRecordModelCopyWith<$Res> {
   factory $PenaltyRecordModelCopyWith(
-          PenaltyRecordModel value, $Res Function(PenaltyRecordModel) then) =
-      _$PenaltyRecordModelCopyWithImpl<$Res, PenaltyRecordModel>;
+    PenaltyRecordModel value,
+    $Res Function(PenaltyRecordModel) then,
+  ) = _$PenaltyRecordModelCopyWithImpl<$Res, PenaltyRecordModel>;
   @useResult
-  $Res call(
-      {int seconds, PenaltyType type, DateTime appliedAt, String? reason});
+  $Res call({
+    int seconds,
+    PenaltyType type,
+    DateTime appliedAt,
+    String? reason,
+  });
 }
 
 /// @nodoc
@@ -59,46 +65,55 @@ class _$PenaltyRecordModelCopyWithImpl<$Res, $Val extends PenaltyRecordModel>
     Object? appliedAt = null,
     Object? reason = freezed,
   }) {
-    return _then(_value.copyWith(
-      seconds: null == seconds
-          ? _value.seconds
-          : seconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as PenaltyType,
-      appliedAt: null == appliedAt
-          ? _value.appliedAt
-          : appliedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            seconds: null == seconds
+                ? _value.seconds
+                : seconds // ignore: cast_nullable_to_non_nullable
+                      as int,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as PenaltyType,
+            appliedAt: null == appliedAt
+                ? _value.appliedAt
+                : appliedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            reason: freezed == reason
+                ? _value.reason
+                : reason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PenaltyRecordModelImplCopyWith<$Res>
     implements $PenaltyRecordModelCopyWith<$Res> {
-  factory _$$PenaltyRecordModelImplCopyWith(_$PenaltyRecordModelImpl value,
-          $Res Function(_$PenaltyRecordModelImpl) then) =
-      __$$PenaltyRecordModelImplCopyWithImpl<$Res>;
+  factory _$$PenaltyRecordModelImplCopyWith(
+    _$PenaltyRecordModelImpl value,
+    $Res Function(_$PenaltyRecordModelImpl) then,
+  ) = _$$PenaltyRecordModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int seconds, PenaltyType type, DateTime appliedAt, String? reason});
+  $Res call({
+    int seconds,
+    PenaltyType type,
+    DateTime appliedAt,
+    String? reason,
+  });
 }
 
 /// @nodoc
-class __$$PenaltyRecordModelImplCopyWithImpl<$Res>
+class _$$PenaltyRecordModelImplCopyWithImpl<$Res>
     extends _$PenaltyRecordModelCopyWithImpl<$Res, _$PenaltyRecordModelImpl>
     implements _$$PenaltyRecordModelImplCopyWith<$Res> {
-  __$$PenaltyRecordModelImplCopyWithImpl(_$PenaltyRecordModelImpl _value,
-      $Res Function(_$PenaltyRecordModelImpl) _then)
-      : super(_value, _then);
+  _$$PenaltyRecordModelImplCopyWithImpl(
+    _$PenaltyRecordModelImpl _value,
+    $Res Function(_$PenaltyRecordModelImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -108,35 +123,38 @@ class __$$PenaltyRecordModelImplCopyWithImpl<$Res>
     Object? appliedAt = null,
     Object? reason = freezed,
   }) {
-    return _then(_$PenaltyRecordModelImpl(
-      seconds: null == seconds
-          ? _value.seconds
-          : seconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as PenaltyType,
-      appliedAt: null == appliedAt
-          ? _value.appliedAt
-          : appliedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$PenaltyRecordModelImpl(
+        seconds: null == seconds
+            ? _value.seconds
+            : seconds // ignore: cast_nullable_to_non_nullable
+                  as int,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as PenaltyType,
+        appliedAt: null == appliedAt
+            ? _value.appliedAt
+            : appliedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        reason: freezed == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PenaltyRecordModelImpl implements _PenaltyRecordModel {
-  const _$PenaltyRecordModelImpl(
-      {required this.seconds,
-      required this.type,
-      required this.appliedAt,
-      this.reason});
+  const _$PenaltyRecordModelImpl({
+    required this.seconds,
+    required this.type,
+    required this.appliedAt,
+    this.reason,
+  });
 
   factory _$PenaltyRecordModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PenaltyRecordModelImplFromJson(json);
@@ -176,23 +194,24 @@ class _$PenaltyRecordModelImpl implements _PenaltyRecordModel {
   @override
   @pragma('vm:prefer-inline')
   _$$PenaltyRecordModelImplCopyWith<_$PenaltyRecordModelImpl> get copyWith =>
-      __$$PenaltyRecordModelImplCopyWithImpl<_$PenaltyRecordModelImpl>(
-          this, _$identity);
+      _$$PenaltyRecordModelImplCopyWithImpl<_$PenaltyRecordModelImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PenaltyRecordModelImplToJson(
-      this,
-    );
+    return _$$PenaltyRecordModelImplToJson(this);
   }
 }
 
 abstract class _PenaltyRecordModel implements PenaltyRecordModel {
-  const factory _PenaltyRecordModel(
-      {required final int seconds,
-      required final PenaltyType type,
-      required final DateTime appliedAt,
-      final String? reason}) = _$PenaltyRecordModelImpl;
+  const factory _PenaltyRecordModel({
+    required final int seconds,
+    required final PenaltyType type,
+    required final DateTime appliedAt,
+    final String? reason,
+  }) = _$PenaltyRecordModelImpl;
 
   factory _PenaltyRecordModel.fromJson(Map<String, dynamic> json) =
       _$PenaltyRecordModelImpl.fromJson;

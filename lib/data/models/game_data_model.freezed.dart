@@ -12,7 +12,8 @@ part of 'game_data_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 GameDataModel _$GameDataModelFromJson(Map<String, dynamic> json) {
   return _GameDataModel.fromJson(json);
@@ -43,22 +44,24 @@ mixin _$GameDataModel {
 /// @nodoc
 abstract class $GameDataModelCopyWith<$Res> {
   factory $GameDataModelCopyWith(
-          GameDataModel value, $Res Function(GameDataModel) then) =
-      _$GameDataModelCopyWithImpl<$Res, GameDataModel>;
+    GameDataModel value,
+    $Res Function(GameDataModel) then,
+  ) = _$GameDataModelCopyWithImpl<$Res, GameDataModel>;
   @useResult
-  $Res call(
-      {int playerLevel,
-      int experience,
-      int totalBattles,
-      int totalVictories,
-      int totalEscapes,
-      int totalTimeOuts,
-      int totalPowerEnemiesDefeated,
-      List<PrimeModel> inventory,
-      List<BattleResultModel> battleHistory,
-      bool tutorialCompleted,
-      DateTime createdAt,
-      DateTime lastPlayedAt});
+  $Res call({
+    int playerLevel,
+    int experience,
+    int totalBattles,
+    int totalVictories,
+    int totalEscapes,
+    int totalTimeOuts,
+    int totalPowerEnemiesDefeated,
+    List<PrimeModel> inventory,
+    List<BattleResultModel> battleHistory,
+    bool tutorialCompleted,
+    DateTime createdAt,
+    DateTime lastPlayedAt,
+  });
 }
 
 /// @nodoc
@@ -87,56 +90,59 @@ class _$GameDataModelCopyWithImpl<$Res, $Val extends GameDataModel>
     Object? createdAt = null,
     Object? lastPlayedAt = null,
   }) {
-    return _then(_value.copyWith(
-      playerLevel: null == playerLevel
-          ? _value.playerLevel
-          : playerLevel // ignore: cast_nullable_to_non_nullable
-              as int,
-      experience: null == experience
-          ? _value.experience
-          : experience // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalBattles: null == totalBattles
-          ? _value.totalBattles
-          : totalBattles // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalVictories: null == totalVictories
-          ? _value.totalVictories
-          : totalVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalEscapes: null == totalEscapes
-          ? _value.totalEscapes
-          : totalEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTimeOuts: null == totalTimeOuts
-          ? _value.totalTimeOuts
-          : totalTimeOuts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
-          ? _value.totalPowerEnemiesDefeated
-          : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      inventory: null == inventory
-          ? _value.inventory
-          : inventory // ignore: cast_nullable_to_non_nullable
-              as List<PrimeModel>,
-      battleHistory: null == battleHistory
-          ? _value.battleHistory
-          : battleHistory // ignore: cast_nullable_to_non_nullable
-              as List<BattleResultModel>,
-      tutorialCompleted: null == tutorialCompleted
-          ? _value.tutorialCompleted
-          : tutorialCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      lastPlayedAt: null == lastPlayedAt
-          ? _value.lastPlayedAt
-          : lastPlayedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            playerLevel: null == playerLevel
+                ? _value.playerLevel
+                : playerLevel // ignore: cast_nullable_to_non_nullable
+                      as int,
+            experience: null == experience
+                ? _value.experience
+                : experience // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalBattles: null == totalBattles
+                ? _value.totalBattles
+                : totalBattles // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalVictories: null == totalVictories
+                ? _value.totalVictories
+                : totalVictories // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalEscapes: null == totalEscapes
+                ? _value.totalEscapes
+                : totalEscapes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalTimeOuts: null == totalTimeOuts
+                ? _value.totalTimeOuts
+                : totalTimeOuts // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
+                ? _value.totalPowerEnemiesDefeated
+                : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
+                      as int,
+            inventory: null == inventory
+                ? _value.inventory
+                : inventory // ignore: cast_nullable_to_non_nullable
+                      as List<PrimeModel>,
+            battleHistory: null == battleHistory
+                ? _value.battleHistory
+                : battleHistory // ignore: cast_nullable_to_non_nullable
+                      as List<BattleResultModel>,
+            tutorialCompleted: null == tutorialCompleted
+                ? _value.tutorialCompleted
+                : tutorialCompleted // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            lastPlayedAt: null == lastPlayedAt
+                ? _value.lastPlayedAt
+                : lastPlayedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -144,32 +150,35 @@ class _$GameDataModelCopyWithImpl<$Res, $Val extends GameDataModel>
 abstract class _$$GameDataModelImplCopyWith<$Res>
     implements $GameDataModelCopyWith<$Res> {
   factory _$$GameDataModelImplCopyWith(
-          _$GameDataModelImpl value, $Res Function(_$GameDataModelImpl) then) =
-      __$$GameDataModelImplCopyWithImpl<$Res>;
+    _$GameDataModelImpl value,
+    $Res Function(_$GameDataModelImpl) then,
+  ) = _$$GameDataModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int playerLevel,
-      int experience,
-      int totalBattles,
-      int totalVictories,
-      int totalEscapes,
-      int totalTimeOuts,
-      int totalPowerEnemiesDefeated,
-      List<PrimeModel> inventory,
-      List<BattleResultModel> battleHistory,
-      bool tutorialCompleted,
-      DateTime createdAt,
-      DateTime lastPlayedAt});
+  $Res call({
+    int playerLevel,
+    int experience,
+    int totalBattles,
+    int totalVictories,
+    int totalEscapes,
+    int totalTimeOuts,
+    int totalPowerEnemiesDefeated,
+    List<PrimeModel> inventory,
+    List<BattleResultModel> battleHistory,
+    bool tutorialCompleted,
+    DateTime createdAt,
+    DateTime lastPlayedAt,
+  });
 }
 
 /// @nodoc
-class __$$GameDataModelImplCopyWithImpl<$Res>
+class _$$GameDataModelImplCopyWithImpl<$Res>
     extends _$GameDataModelCopyWithImpl<$Res, _$GameDataModelImpl>
     implements _$$GameDataModelImplCopyWith<$Res> {
-  __$$GameDataModelImplCopyWithImpl(
-      _$GameDataModelImpl _value, $Res Function(_$GameDataModelImpl) _then)
-      : super(_value, _then);
+  _$$GameDataModelImplCopyWithImpl(
+    _$GameDataModelImpl _value,
+    $Res Function(_$GameDataModelImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -187,77 +196,79 @@ class __$$GameDataModelImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? lastPlayedAt = null,
   }) {
-    return _then(_$GameDataModelImpl(
-      playerLevel: null == playerLevel
-          ? _value.playerLevel
-          : playerLevel // ignore: cast_nullable_to_non_nullable
-              as int,
-      experience: null == experience
-          ? _value.experience
-          : experience // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalBattles: null == totalBattles
-          ? _value.totalBattles
-          : totalBattles // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalVictories: null == totalVictories
-          ? _value.totalVictories
-          : totalVictories // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalEscapes: null == totalEscapes
-          ? _value.totalEscapes
-          : totalEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalTimeOuts: null == totalTimeOuts
-          ? _value.totalTimeOuts
-          : totalTimeOuts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
-          ? _value.totalPowerEnemiesDefeated
-          : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
-              as int,
-      inventory: null == inventory
-          ? _value._inventory
-          : inventory // ignore: cast_nullable_to_non_nullable
-              as List<PrimeModel>,
-      battleHistory: null == battleHistory
-          ? _value._battleHistory
-          : battleHistory // ignore: cast_nullable_to_non_nullable
-              as List<BattleResultModel>,
-      tutorialCompleted: null == tutorialCompleted
-          ? _value.tutorialCompleted
-          : tutorialCompleted // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      lastPlayedAt: null == lastPlayedAt
-          ? _value.lastPlayedAt
-          : lastPlayedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$GameDataModelImpl(
+        playerLevel: null == playerLevel
+            ? _value.playerLevel
+            : playerLevel // ignore: cast_nullable_to_non_nullable
+                  as int,
+        experience: null == experience
+            ? _value.experience
+            : experience // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalBattles: null == totalBattles
+            ? _value.totalBattles
+            : totalBattles // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalVictories: null == totalVictories
+            ? _value.totalVictories
+            : totalVictories // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalEscapes: null == totalEscapes
+            ? _value.totalEscapes
+            : totalEscapes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalTimeOuts: null == totalTimeOuts
+            ? _value.totalTimeOuts
+            : totalTimeOuts // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalPowerEnemiesDefeated: null == totalPowerEnemiesDefeated
+            ? _value.totalPowerEnemiesDefeated
+            : totalPowerEnemiesDefeated // ignore: cast_nullable_to_non_nullable
+                  as int,
+        inventory: null == inventory
+            ? _value._inventory
+            : inventory // ignore: cast_nullable_to_non_nullable
+                  as List<PrimeModel>,
+        battleHistory: null == battleHistory
+            ? _value._battleHistory
+            : battleHistory // ignore: cast_nullable_to_non_nullable
+                  as List<BattleResultModel>,
+        tutorialCompleted: null == tutorialCompleted
+            ? _value.tutorialCompleted
+            : tutorialCompleted // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        lastPlayedAt: null == lastPlayedAt
+            ? _value.lastPlayedAt
+            : lastPlayedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$GameDataModelImpl implements _GameDataModel {
-  const _$GameDataModelImpl(
-      {this.playerLevel = 1,
-      this.experience = 0,
-      this.totalBattles = 0,
-      this.totalVictories = 0,
-      this.totalEscapes = 0,
-      this.totalTimeOuts = 0,
-      this.totalPowerEnemiesDefeated = 0,
-      final List<PrimeModel> inventory = const [],
-      final List<BattleResultModel> battleHistory = const [],
-      this.tutorialCompleted = false,
-      required this.createdAt,
-      required this.lastPlayedAt})
-      : _inventory = inventory,
-        _battleHistory = battleHistory;
+  const _$GameDataModelImpl({
+    this.playerLevel = 1,
+    this.experience = 0,
+    this.totalBattles = 0,
+    this.totalVictories = 0,
+    this.totalEscapes = 0,
+    this.totalTimeOuts = 0,
+    this.totalPowerEnemiesDefeated = 0,
+    final List<PrimeModel> inventory = const [],
+    final List<BattleResultModel> battleHistory = const [],
+    this.tutorialCompleted = false,
+    required this.createdAt,
+    required this.lastPlayedAt,
+  }) : _inventory = inventory,
+       _battleHistory = battleHistory;
 
   factory _$GameDataModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$GameDataModelImplFromJson(json);
@@ -331,13 +342,19 @@ class _$GameDataModelImpl implements _GameDataModel {
                 other.totalEscapes == totalEscapes) &&
             (identical(other.totalTimeOuts, totalTimeOuts) ||
                 other.totalTimeOuts == totalTimeOuts) &&
-            (identical(other.totalPowerEnemiesDefeated,
-                    totalPowerEnemiesDefeated) ||
+            (identical(
+                  other.totalPowerEnemiesDefeated,
+                  totalPowerEnemiesDefeated,
+                ) ||
                 other.totalPowerEnemiesDefeated == totalPowerEnemiesDefeated) &&
-            const DeepCollectionEquality()
-                .equals(other._inventory, _inventory) &&
-            const DeepCollectionEquality()
-                .equals(other._battleHistory, _battleHistory) &&
+            const DeepCollectionEquality().equals(
+              other._inventory,
+              _inventory,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._battleHistory,
+              _battleHistory,
+            ) &&
             (identical(other.tutorialCompleted, tutorialCompleted) ||
                 other.tutorialCompleted == tutorialCompleted) &&
             (identical(other.createdAt, createdAt) ||
@@ -349,48 +366,48 @@ class _$GameDataModelImpl implements _GameDataModel {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      playerLevel,
-      experience,
-      totalBattles,
-      totalVictories,
-      totalEscapes,
-      totalTimeOuts,
-      totalPowerEnemiesDefeated,
-      const DeepCollectionEquality().hash(_inventory),
-      const DeepCollectionEquality().hash(_battleHistory),
-      tutorialCompleted,
-      createdAt,
-      lastPlayedAt);
+    runtimeType,
+    playerLevel,
+    experience,
+    totalBattles,
+    totalVictories,
+    totalEscapes,
+    totalTimeOuts,
+    totalPowerEnemiesDefeated,
+    const DeepCollectionEquality().hash(_inventory),
+    const DeepCollectionEquality().hash(_battleHistory),
+    tutorialCompleted,
+    createdAt,
+    lastPlayedAt,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$GameDataModelImplCopyWith<_$GameDataModelImpl> get copyWith =>
-      __$$GameDataModelImplCopyWithImpl<_$GameDataModelImpl>(this, _$identity);
+      _$$GameDataModelImplCopyWithImpl<_$GameDataModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$GameDataModelImplToJson(
-      this,
-    );
+    return _$$GameDataModelImplToJson(this);
   }
 }
 
 abstract class _GameDataModel implements GameDataModel {
-  const factory _GameDataModel(
-      {final int playerLevel,
-      final int experience,
-      final int totalBattles,
-      final int totalVictories,
-      final int totalEscapes,
-      final int totalTimeOuts,
-      final int totalPowerEnemiesDefeated,
-      final List<PrimeModel> inventory,
-      final List<BattleResultModel> battleHistory,
-      final bool tutorialCompleted,
-      required final DateTime createdAt,
-      required final DateTime lastPlayedAt}) = _$GameDataModelImpl;
+  const factory _GameDataModel({
+    final int playerLevel,
+    final int experience,
+    final int totalBattles,
+    final int totalVictories,
+    final int totalEscapes,
+    final int totalTimeOuts,
+    final int totalPowerEnemiesDefeated,
+    final List<PrimeModel> inventory,
+    final List<BattleResultModel> battleHistory,
+    final bool tutorialCompleted,
+    required final DateTime createdAt,
+    required final DateTime lastPlayedAt,
+  }) = _$GameDataModelImpl;
 
   factory _GameDataModel.fromJson(Map<String, dynamic> json) =
       _$GameDataModelImpl.fromJson;

@@ -29,11 +29,7 @@ class PowerEnemyDetector {
 
     Logger.debug('Analyzed power enemy: $value = $base^$exponent');
 
-    return PowerEnemyInfo(
-      base: base,
-      exponent: exponent,
-      value: value,
-    );
+    return PowerEnemyInfo(base: base, exponent: exponent, value: value);
   }
 
   /// Create a power enemy with specified base and exponent
@@ -99,7 +95,8 @@ class PowerEnemyDetector {
 
     if (actualMaxExponent < minExponent) {
       throw ArgumentError(
-          'Cannot generate power enemy with base $base within constraints');
+        'Cannot generate power enemy with base $base within constraints',
+      );
     }
 
     // Select random exponent
@@ -110,8 +107,11 @@ class PowerEnemyDetector {
   }
 
   /// Check if a power enemy can be created with given constraints
-  static bool canCreatePowerEnemy(int base, int exponent,
-      {int maxValue = 10000}) {
+  static bool canCreatePowerEnemy(
+    int base,
+    int exponent, {
+    int maxValue = 10000,
+  }) {
     if (!PrimeCalculator.isPrime(base)) return false;
     if (exponent < 2) return false;
     if (math.pow(base, exponent) > maxValue) return false;
@@ -121,7 +121,9 @@ class PowerEnemyDetector {
 
   /// Get all possible power enemies within a value range
   static List<PowerEnemyInfo> getAllPowerEnemiesInRange(
-      int minValue, int maxValue) {
+    int minValue,
+    int maxValue,
+  ) {
     final powerEnemies = <PowerEnemyInfo>[];
 
     // Check small primes as bases
@@ -135,11 +137,9 @@ class PowerEnemyDetector {
         if (value > maxValue) break;
 
         if (value >= minValue) {
-          powerEnemies.add(PowerEnemyInfo(
-            base: base,
-            exponent: exponent,
-            value: value,
-          ));
+          powerEnemies.add(
+            PowerEnemyInfo(base: base, exponent: exponent, value: value),
+          );
         }
 
         exponent++;

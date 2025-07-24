@@ -16,7 +16,7 @@ class MathUtils {
 
     return [
       for (int i = 2; i <= n; i++)
-        if (isPrime[i]) i
+        if (isPrime[i]) i,
     ];
   }
 

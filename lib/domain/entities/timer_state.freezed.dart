@@ -12,7 +12,8 @@ part of 'timer_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$TimerState {
@@ -30,15 +31,17 @@ mixin _$TimerState {
 /// @nodoc
 abstract class $TimerStateCopyWith<$Res> {
   factory $TimerStateCopyWith(
-          TimerState value, $Res Function(TimerState) then) =
-      _$TimerStateCopyWithImpl<$Res, TimerState>;
+    TimerState value,
+    $Res Function(TimerState) then,
+  ) = _$TimerStateCopyWithImpl<$Res, TimerState>;
   @useResult
-  $Res call(
-      {int remainingSeconds,
-      int originalSeconds,
-      bool isActive,
-      bool isWarning,
-      List<TimePenalty> penalties});
+  $Res call({
+    int remainingSeconds,
+    int originalSeconds,
+    bool isActive,
+    bool isWarning,
+    List<TimePenalty> penalties,
+  });
 }
 
 /// @nodoc
@@ -60,28 +63,31 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
     Object? isWarning = null,
     Object? penalties = null,
   }) {
-    return _then(_value.copyWith(
-      remainingSeconds: null == remainingSeconds
-          ? _value.remainingSeconds
-          : remainingSeconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      originalSeconds: null == originalSeconds
-          ? _value.originalSeconds
-          : originalSeconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isWarning: null == isWarning
-          ? _value.isWarning
-          : isWarning // ignore: cast_nullable_to_non_nullable
-              as bool,
-      penalties: null == penalties
-          ? _value.penalties
-          : penalties // ignore: cast_nullable_to_non_nullable
-              as List<TimePenalty>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            remainingSeconds: null == remainingSeconds
+                ? _value.remainingSeconds
+                : remainingSeconds // ignore: cast_nullable_to_non_nullable
+                      as int,
+            originalSeconds: null == originalSeconds
+                ? _value.originalSeconds
+                : originalSeconds // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isWarning: null == isWarning
+                ? _value.isWarning
+                : isWarning // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            penalties: null == penalties
+                ? _value.penalties
+                : penalties // ignore: cast_nullable_to_non_nullable
+                      as List<TimePenalty>,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -89,25 +95,28 @@ class _$TimerStateCopyWithImpl<$Res, $Val extends TimerState>
 abstract class _$$TimerStateImplCopyWith<$Res>
     implements $TimerStateCopyWith<$Res> {
   factory _$$TimerStateImplCopyWith(
-          _$TimerStateImpl value, $Res Function(_$TimerStateImpl) then) =
-      __$$TimerStateImplCopyWithImpl<$Res>;
+    _$TimerStateImpl value,
+    $Res Function(_$TimerStateImpl) then,
+  ) = _$$TimerStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int remainingSeconds,
-      int originalSeconds,
-      bool isActive,
-      bool isWarning,
-      List<TimePenalty> penalties});
+  $Res call({
+    int remainingSeconds,
+    int originalSeconds,
+    bool isActive,
+    bool isWarning,
+    List<TimePenalty> penalties,
+  });
 }
 
 /// @nodoc
-class __$$TimerStateImplCopyWithImpl<$Res>
+class _$$TimerStateImplCopyWithImpl<$Res>
     extends _$TimerStateCopyWithImpl<$Res, _$TimerStateImpl>
     implements _$$TimerStateImplCopyWith<$Res> {
-  __$$TimerStateImplCopyWithImpl(
-      _$TimerStateImpl _value, $Res Function(_$TimerStateImpl) _then)
-      : super(_value, _then);
+  _$$TimerStateImplCopyWithImpl(
+    _$TimerStateImpl _value,
+    $Res Function(_$TimerStateImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -118,42 +127,44 @@ class __$$TimerStateImplCopyWithImpl<$Res>
     Object? isWarning = null,
     Object? penalties = null,
   }) {
-    return _then(_$TimerStateImpl(
-      remainingSeconds: null == remainingSeconds
-          ? _value.remainingSeconds
-          : remainingSeconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      originalSeconds: null == originalSeconds
-          ? _value.originalSeconds
-          : originalSeconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isWarning: null == isWarning
-          ? _value.isWarning
-          : isWarning // ignore: cast_nullable_to_non_nullable
-              as bool,
-      penalties: null == penalties
-          ? _value._penalties
-          : penalties // ignore: cast_nullable_to_non_nullable
-              as List<TimePenalty>,
-    ));
+    return _then(
+      _$TimerStateImpl(
+        remainingSeconds: null == remainingSeconds
+            ? _value.remainingSeconds
+            : remainingSeconds // ignore: cast_nullable_to_non_nullable
+                  as int,
+        originalSeconds: null == originalSeconds
+            ? _value.originalSeconds
+            : originalSeconds // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isWarning: null == isWarning
+            ? _value.isWarning
+            : isWarning // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        penalties: null == penalties
+            ? _value._penalties
+            : penalties // ignore: cast_nullable_to_non_nullable
+                  as List<TimePenalty>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$TimerStateImpl extends _TimerState {
-  const _$TimerStateImpl(
-      {required this.remainingSeconds,
-      required this.originalSeconds,
-      this.isActive = false,
-      this.isWarning = false,
-      final List<TimePenalty> penalties = const []})
-      : _penalties = penalties,
-        super._();
+  const _$TimerStateImpl({
+    required this.remainingSeconds,
+    required this.originalSeconds,
+    this.isActive = false,
+    this.isWarning = false,
+    final List<TimePenalty> penalties = const [],
+  }) : _penalties = penalties,
+       super._();
 
   @override
   final int remainingSeconds;
@@ -187,33 +198,37 @@ class _$TimerStateImpl extends _TimerState {
                 other.isActive == isActive) &&
             (identical(other.isWarning, isWarning) ||
                 other.isWarning == isWarning) &&
-            const DeepCollectionEquality()
-                .equals(other._penalties, _penalties));
+            const DeepCollectionEquality().equals(
+              other._penalties,
+              _penalties,
+            ));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      remainingSeconds,
-      originalSeconds,
-      isActive,
-      isWarning,
-      const DeepCollectionEquality().hash(_penalties));
+    runtimeType,
+    remainingSeconds,
+    originalSeconds,
+    isActive,
+    isWarning,
+    const DeepCollectionEquality().hash(_penalties),
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$TimerStateImplCopyWith<_$TimerStateImpl> get copyWith =>
-      __$$TimerStateImplCopyWithImpl<_$TimerStateImpl>(this, _$identity);
+      _$$TimerStateImplCopyWithImpl<_$TimerStateImpl>(this, _$identity);
 }
 
 abstract class _TimerState extends TimerState {
-  const factory _TimerState(
-      {required final int remainingSeconds,
-      required final int originalSeconds,
-      final bool isActive,
-      final bool isWarning,
-      final List<TimePenalty> penalties}) = _$TimerStateImpl;
+  const factory _TimerState({
+    required final int remainingSeconds,
+    required final int originalSeconds,
+    final bool isActive,
+    final bool isWarning,
+    final List<TimePenalty> penalties,
+  }) = _$TimerStateImpl;
   const _TimerState._() : super._();
 
   @override

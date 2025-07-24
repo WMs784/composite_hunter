@@ -50,13 +50,7 @@ enum AchievementType {
 }
 
 /// Achievement rarity levels
-enum AchievementRarity {
-  common,
-  uncommon,
-  rare,
-  epic,
-  legendary,
-}
+enum AchievementRarity { common, uncommon, rare, epic, legendary }
 
 /// Achievement reward types
 @freezed

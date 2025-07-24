@@ -43,11 +43,11 @@ class BattleState with _$BattleState {
 
   /// Check if the battle is completed
   bool get isCompleted => [
-        BattleStatus.victory,
-        BattleStatus.escape,
-        BattleStatus.defeat,
-        BattleStatus.timeOut,
-      ].contains(status);
+    BattleStatus.victory,
+    BattleStatus.escape,
+    BattleStatus.defeat,
+    BattleStatus.timeOut,
+  ].contains(status);
 
   /// Get the current battle duration
   Duration? get battleDuration {
@@ -126,8 +126,10 @@ class BattleState with _$BattleState {
     if (currentEnemy == null) return [];
 
     return inventory
-        .where((prime) =>
-            prime.isAvailable && currentEnemy!.canBeAttackedBy(prime.value))
+        .where(
+          (prime) =>
+              prime.isAvailable && currentEnemy!.canBeAttackedBy(prime.value),
+        )
         .toList();
   }
 
@@ -137,14 +139,7 @@ class BattleState with _$BattleState {
   }
 }
 
-enum BattleStatus {
-  waiting,
-  fighting,
-  victory,
-  escape,
-  defeat,
-  timeOut,
-}
+enum BattleStatus { waiting, fighting, victory, escape, defeat, timeOut }
 
 @freezed
 class BattleSummary with _$BattleSummary {

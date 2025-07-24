@@ -7,10 +7,7 @@ import '../../providers/battle_session_provider.dart';
 import '../common/result_screen_base.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
-enum GameOverReason {
-  timeUp,
-  noItems,
-}
+enum GameOverReason { timeUp, noItems }
 
 class GameOverScreen extends ConsumerStatefulWidget with ResultScreenMixin {
   final GameOverReason reason;
@@ -51,37 +48,31 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.5,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainController,
+        curve: const Interval(0.2, 0.8, curve: Curves.elasticOut),
+      ),
+    );
 
-    _iconRotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _iconController,
-      curve: Curves.easeInOut,
-    ));
+    _iconRotationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _iconController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _mainController,
-      curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _mainController,
+            curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
+          ),
+        );
 
     // アニメーションを開始
     _mainController.forward();
@@ -241,15 +232,15 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
   }
 
   Widget _buildSessionResults(
-      BattleSessionState session, AppLocalizations l10n) {
+    BattleSessionState session,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(Dimensions.radiusL),
-        border: Border.all(
-          color: AppColors.outline.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.outline.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -313,19 +304,10 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 18,
-          ),
+          child: Icon(icon, color: color, size: 18),
         ),
         const SizedBox(width: Dimensions.spacingM),
-        Expanded(
-          child: Text(
-            label,
-            style: AppTextStyles.bodyMedium,
-          ),
-        ),
+        Expanded(child: Text(label, style: AppTextStyles.bodyMedium)),
         Text(
           value,
           style: AppTextStyles.titleSmall.copyWith(
@@ -357,17 +339,11 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
       decoration: BoxDecoration(
         color: AppColors.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: AppColors.primary,
-            size: 32,
-          ),
+          Icon(icon, color: AppColors.primary, size: 32),
           const SizedBox(height: Dimensions.spacingS),
           Text(
             l10n.tip,
@@ -447,7 +423,8 @@ class LocalizedResultScreenButtons extends StatelessWidget {
                   label: Text(l10n.nextStage),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        vertical: Dimensions.paddingM),
+                      vertical: Dimensions.paddingM,
+                    ),
                   ),
                 ),
               ),
@@ -463,8 +440,9 @@ class LocalizedResultScreenButtons extends StatelessWidget {
             icon: const Icon(Icons.list),
             label: Text(l10n.stageSelect),
             style: OutlinedButton.styleFrom(
-              padding:
-                  const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimensions.paddingM,
+              ),
             ),
           ),
         ),
@@ -479,8 +457,9 @@ class LocalizedResultScreenButtons extends StatelessWidget {
             icon: const Icon(Icons.refresh),
             label: Text(isSuccess ? l10n.playAgain : l10n.tryAgain),
             style: ElevatedButton.styleFrom(
-              padding:
-                  const EdgeInsets.symmetric(vertical: Dimensions.paddingM),
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimensions.paddingM,
+              ),
             ),
           ),
         ),

@@ -17,11 +17,9 @@ void main() {
       return ProviderScope(
         overrides: [
           inventoryProvider.overrideWith((ref) => InventoryNotifier()),
-          battleProvider.overrideWith((ref) => BattleNotifier(
-                EnemyGenerator(),
-                TimerManager(),
-                ref,
-              )),
+          battleProvider.overrideWith(
+            (ref) => BattleNotifier(EnemyGenerator(), TimerManager(), ref),
+          ),
           battleSessionProvider.overrideWith((ref) => BattleSessionNotifier()),
         ],
         child: MaterialApp(
@@ -32,10 +30,7 @@ void main() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('en', ''),
-            Locale('ja', ''),
-          ],
+          supportedLocales: const [Locale('en', ''), Locale('ja', '')],
           home: child,
         ),
       );

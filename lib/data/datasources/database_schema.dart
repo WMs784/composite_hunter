@@ -16,7 +16,8 @@ class DatabaseSchema {
   static const String playerStatisticsTable = 'player_statistics';
 
   /// Players table - プレイヤー情報
-  static const String createPlayersTable = '''
+  static const String createPlayersTable =
+      '''
     CREATE TABLE $playersTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
@@ -52,7 +53,8 @@ class DatabaseSchema {
   ''';
 
   /// Primes table - 素数インベントリ
-  static const String createPrimesTable = '''
+  static const String createPrimesTable =
+      '''
     CREATE TABLE $primesTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       player_id INTEGER NOT NULL,
@@ -69,7 +71,8 @@ class DatabaseSchema {
   ''';
 
   /// Enemies table - 敵情報
-  static const String createEnemiesTable = '''
+  static const String createEnemiesTable =
+      '''
     CREATE TABLE $enemiesTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       original_value INTEGER NOT NULL,
@@ -86,7 +89,8 @@ class DatabaseSchema {
   ''';
 
   /// Battles table - バトル記録
-  static const String createBattlesTable = '''
+  static const String createBattlesTable =
+      '''
     CREATE TABLE $battlesTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       player_id INTEGER NOT NULL,
@@ -111,7 +115,8 @@ class DatabaseSchema {
   ''';
 
   /// Achievements table - アチーブメント定義
-  static const String createAchievementsTable = '''
+  static const String createAchievementsTable =
+      '''
     CREATE TABLE $achievementsTable (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
@@ -133,7 +138,8 @@ class DatabaseSchema {
   ''';
 
   /// Player achievements table - プレイヤーアチーブメント進捗
-  static const String createPlayerAchievementsTable = '''
+  static const String createPlayerAchievementsTable =
+      '''
     CREATE TABLE $playerAchievementsTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       player_id INTEGER NOT NULL,
@@ -149,7 +155,8 @@ class DatabaseSchema {
   ''';
 
   /// Game settings table - ゲーム設定
-  static const String createGameSettingsTable = '''
+  static const String createGameSettingsTable =
+      '''
     CREATE TABLE $gameSettingsTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       player_id INTEGER NOT NULL,
@@ -163,7 +170,8 @@ class DatabaseSchema {
   ''';
 
   /// Game sessions table - ゲームセッション
-  static const String createGameSessionsTable = '''
+  static const String createGameSessionsTable =
+      '''
     CREATE TABLE $gameSessionsTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       player_id INTEGER NOT NULL,
@@ -182,7 +190,8 @@ class DatabaseSchema {
   ''';
 
   /// Battle actions table - バトルアクション詳細
-  static const String createBattleActionsTable = '''
+  static const String createBattleActionsTable =
+      '''
     CREATE TABLE $battleActionsTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       battle_id INTEGER NOT NULL,
@@ -200,7 +209,8 @@ class DatabaseSchema {
   ''';
 
   /// Player statistics table - プレイヤー統計情報
-  static const String createPlayerStatisticsTable = '''
+  static const String createPlayerStatisticsTable =
+      '''
     CREATE TABLE $playerStatisticsTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       player_id INTEGER NOT NULL,
@@ -247,7 +257,8 @@ class DatabaseSchema {
   ];
 
   // Views for common queries
-  static const String createPlayerStatsView = '''
+  static const String createPlayerStatsView =
+      '''
     CREATE VIEW player_stats_view AS
     SELECT 
       p.id,
@@ -272,7 +283,8 @@ class DatabaseSchema {
     GROUP BY p.id
   ''';
 
-  static const String createBattleHistoryView = '''
+  static const String createBattleHistoryView =
+      '''
     CREATE VIEW battle_history_view AS
     SELECT 
       b.id,
@@ -295,7 +307,8 @@ class DatabaseSchema {
     JOIN $enemiesTable e ON b.enemy_id = e.id
   ''';
 
-  static const String createAchievementProgressView = '''
+  static const String createAchievementProgressView =
+      '''
     CREATE VIEW achievement_progress_view AS
     SELECT 
       pa.player_id,
@@ -320,7 +333,8 @@ class DatabaseSchema {
   ''';
 
   // Triggers for automatic updates
-  static const String createUpdatePlayerStatsTriggger = '''
+  static const String createUpdatePlayerStatsTriggger =
+      '''
     CREATE TRIGGER update_player_stats_on_battle_complete
     AFTER UPDATE ON $battlesTable
     WHEN NEW.completed_at IS NOT NULL AND OLD.completed_at IS NULL
@@ -340,7 +354,8 @@ class DatabaseSchema {
     END
   ''';
 
-  static const String createUpdateWinStreakTrigger = '''
+  static const String createUpdateWinStreakTrigger =
+      '''
     CREATE TRIGGER update_win_streak_on_battle_complete
     AFTER UPDATE ON $battlesTable
     WHEN NEW.completed_at IS NOT NULL AND OLD.completed_at IS NULL
@@ -360,7 +375,8 @@ class DatabaseSchema {
     END
   ''';
 
-  static const String createUpdatePrimeUsageTrigger = '''
+  static const String createUpdatePrimeUsageTrigger =
+      '''
     CREATE TRIGGER update_prime_usage_on_battle_action
     AFTER INSERT ON $battleActionsTable
     WHEN NEW.prime_used IS NOT NULL AND NEW.is_successful = 1
@@ -376,31 +392,31 @@ class DatabaseSchema {
 
   // Get all table creation statements
   static List<String> get allTableCreationStatements => [
-        createPlayersTable,
-        createPrimesTable,
-        createEnemiesTable,
-        createBattlesTable,
-        createAchievementsTable,
-        createPlayerAchievementsTable,
-        createGameSettingsTable,
-        createGameSessionsTable,
-        createBattleActionsTable,
-        createPlayerStatisticsTable,
-      ];
+    createPlayersTable,
+    createPrimesTable,
+    createEnemiesTable,
+    createBattlesTable,
+    createAchievementsTable,
+    createPlayerAchievementsTable,
+    createGameSettingsTable,
+    createGameSessionsTable,
+    createBattleActionsTable,
+    createPlayerStatisticsTable,
+  ];
 
   // Get all view creation statements
   static List<String> get allViewCreationStatements => [
-        createPlayerStatsView,
-        createBattleHistoryView,
-        createAchievementProgressView,
-      ];
+    createPlayerStatsView,
+    createBattleHistoryView,
+    createAchievementProgressView,
+  ];
 
   // Get all trigger creation statements
   static List<String> get allTriggerCreationStatements => [
-        createUpdatePlayerStatsTriggger,
-        createUpdateWinStreakTrigger,
-        createUpdatePrimeUsageTrigger,
-      ];
+    createUpdatePlayerStatsTriggger,
+    createUpdateWinStreakTrigger,
+    createUpdatePrimeUsageTrigger,
+  ];
 
   // Default achievements data
   static const List<Map<String, dynamic>> defaultAchievements = [

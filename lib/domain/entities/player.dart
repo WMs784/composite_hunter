@@ -37,7 +37,6 @@ class Player with _$Player {
     @Default(0) int speedVictories, // battles won in < 10 seconds
     @Default(0) int efficientVictories, // battles won in <= 3 turns
     @Default(0) int combackVictories, // battles won with < 5 seconds remaining
-
     // Timestamps
     DateTime? createdAt,
     DateTime? lastPlayedAt,

@@ -12,7 +12,8 @@ part of 'penalty_state.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$TimePenalty {
@@ -29,11 +30,16 @@ mixin _$TimePenalty {
 /// @nodoc
 abstract class $TimePenaltyCopyWith<$Res> {
   factory $TimePenaltyCopyWith(
-          TimePenalty value, $Res Function(TimePenalty) then) =
-      _$TimePenaltyCopyWithImpl<$Res, TimePenalty>;
+    TimePenalty value,
+    $Res Function(TimePenalty) then,
+  ) = _$TimePenaltyCopyWithImpl<$Res, TimePenalty>;
   @useResult
-  $Res call(
-      {int seconds, PenaltyType type, DateTime appliedAt, String? reason});
+  $Res call({
+    int seconds,
+    PenaltyType type,
+    DateTime appliedAt,
+    String? reason,
+  });
 }
 
 /// @nodoc
@@ -54,24 +60,27 @@ class _$TimePenaltyCopyWithImpl<$Res, $Val extends TimePenalty>
     Object? appliedAt = null,
     Object? reason = freezed,
   }) {
-    return _then(_value.copyWith(
-      seconds: null == seconds
-          ? _value.seconds
-          : seconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as PenaltyType,
-      appliedAt: null == appliedAt
-          ? _value.appliedAt
-          : appliedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            seconds: null == seconds
+                ? _value.seconds
+                : seconds // ignore: cast_nullable_to_non_nullable
+                      as int,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as PenaltyType,
+            appliedAt: null == appliedAt
+                ? _value.appliedAt
+                : appliedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            reason: freezed == reason
+                ? _value.reason
+                : reason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -79,21 +88,27 @@ class _$TimePenaltyCopyWithImpl<$Res, $Val extends TimePenalty>
 abstract class _$$TimePenaltyImplCopyWith<$Res>
     implements $TimePenaltyCopyWith<$Res> {
   factory _$$TimePenaltyImplCopyWith(
-          _$TimePenaltyImpl value, $Res Function(_$TimePenaltyImpl) then) =
-      __$$TimePenaltyImplCopyWithImpl<$Res>;
+    _$TimePenaltyImpl value,
+    $Res Function(_$TimePenaltyImpl) then,
+  ) = _$$TimePenaltyImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int seconds, PenaltyType type, DateTime appliedAt, String? reason});
+  $Res call({
+    int seconds,
+    PenaltyType type,
+    DateTime appliedAt,
+    String? reason,
+  });
 }
 
 /// @nodoc
-class __$$TimePenaltyImplCopyWithImpl<$Res>
+class _$$TimePenaltyImplCopyWithImpl<$Res>
     extends _$TimePenaltyCopyWithImpl<$Res, _$TimePenaltyImpl>
     implements _$$TimePenaltyImplCopyWith<$Res> {
-  __$$TimePenaltyImplCopyWithImpl(
-      _$TimePenaltyImpl _value, $Res Function(_$TimePenaltyImpl) _then)
-      : super(_value, _then);
+  _$$TimePenaltyImplCopyWithImpl(
+    _$TimePenaltyImpl _value,
+    $Res Function(_$TimePenaltyImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -103,36 +118,38 @@ class __$$TimePenaltyImplCopyWithImpl<$Res>
     Object? appliedAt = null,
     Object? reason = freezed,
   }) {
-    return _then(_$TimePenaltyImpl(
-      seconds: null == seconds
-          ? _value.seconds
-          : seconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as PenaltyType,
-      appliedAt: null == appliedAt
-          ? _value.appliedAt
-          : appliedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$TimePenaltyImpl(
+        seconds: null == seconds
+            ? _value.seconds
+            : seconds // ignore: cast_nullable_to_non_nullable
+                  as int,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as PenaltyType,
+        appliedAt: null == appliedAt
+            ? _value.appliedAt
+            : appliedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        reason: freezed == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$TimePenaltyImpl extends _TimePenalty {
-  const _$TimePenaltyImpl(
-      {required this.seconds,
-      required this.type,
-      required this.appliedAt,
-      this.reason})
-      : super._();
+  const _$TimePenaltyImpl({
+    required this.seconds,
+    required this.type,
+    required this.appliedAt,
+    this.reason,
+  }) : super._();
 
   @override
   final int seconds;
@@ -163,15 +180,16 @@ class _$TimePenaltyImpl extends _TimePenalty {
   @override
   @pragma('vm:prefer-inline')
   _$$TimePenaltyImplCopyWith<_$TimePenaltyImpl> get copyWith =>
-      __$$TimePenaltyImplCopyWithImpl<_$TimePenaltyImpl>(this, _$identity);
+      _$$TimePenaltyImplCopyWithImpl<_$TimePenaltyImpl>(this, _$identity);
 }
 
 abstract class _TimePenalty extends TimePenalty {
-  const factory _TimePenalty(
-      {required final int seconds,
-      required final PenaltyType type,
-      required final DateTime appliedAt,
-      final String? reason}) = _$TimePenaltyImpl;
+  const factory _TimePenalty({
+    required final int seconds,
+    required final PenaltyType type,
+    required final DateTime appliedAt,
+    final String? reason,
+  }) = _$TimePenaltyImpl;
   const _TimePenalty._() : super._();
 
   @override
@@ -203,14 +221,16 @@ mixin _$PenaltyState {
 /// @nodoc
 abstract class $PenaltyStateCopyWith<$Res> {
   factory $PenaltyStateCopyWith(
-          PenaltyState value, $Res Function(PenaltyState) then) =
-      _$PenaltyStateCopyWithImpl<$Res, PenaltyState>;
+    PenaltyState value,
+    $Res Function(PenaltyState) then,
+  ) = _$PenaltyStateCopyWithImpl<$Res, PenaltyState>;
   @useResult
-  $Res call(
-      {List<TimePenalty> activePenalties,
-      int totalPenaltySeconds,
-      int consecutiveEscapes,
-      int consecutiveWrongClaims});
+  $Res call({
+    List<TimePenalty> activePenalties,
+    int totalPenaltySeconds,
+    int consecutiveEscapes,
+    int consecutiveWrongClaims,
+  });
 }
 
 /// @nodoc
@@ -231,24 +251,27 @@ class _$PenaltyStateCopyWithImpl<$Res, $Val extends PenaltyState>
     Object? consecutiveEscapes = null,
     Object? consecutiveWrongClaims = null,
   }) {
-    return _then(_value.copyWith(
-      activePenalties: null == activePenalties
-          ? _value.activePenalties
-          : activePenalties // ignore: cast_nullable_to_non_nullable
-              as List<TimePenalty>,
-      totalPenaltySeconds: null == totalPenaltySeconds
-          ? _value.totalPenaltySeconds
-          : totalPenaltySeconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      consecutiveEscapes: null == consecutiveEscapes
-          ? _value.consecutiveEscapes
-          : consecutiveEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      consecutiveWrongClaims: null == consecutiveWrongClaims
-          ? _value.consecutiveWrongClaims
-          : consecutiveWrongClaims // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            activePenalties: null == activePenalties
+                ? _value.activePenalties
+                : activePenalties // ignore: cast_nullable_to_non_nullable
+                      as List<TimePenalty>,
+            totalPenaltySeconds: null == totalPenaltySeconds
+                ? _value.totalPenaltySeconds
+                : totalPenaltySeconds // ignore: cast_nullable_to_non_nullable
+                      as int,
+            consecutiveEscapes: null == consecutiveEscapes
+                ? _value.consecutiveEscapes
+                : consecutiveEscapes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            consecutiveWrongClaims: null == consecutiveWrongClaims
+                ? _value.consecutiveWrongClaims
+                : consecutiveWrongClaims // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -256,24 +279,27 @@ class _$PenaltyStateCopyWithImpl<$Res, $Val extends PenaltyState>
 abstract class _$$PenaltyStateImplCopyWith<$Res>
     implements $PenaltyStateCopyWith<$Res> {
   factory _$$PenaltyStateImplCopyWith(
-          _$PenaltyStateImpl value, $Res Function(_$PenaltyStateImpl) then) =
-      __$$PenaltyStateImplCopyWithImpl<$Res>;
+    _$PenaltyStateImpl value,
+    $Res Function(_$PenaltyStateImpl) then,
+  ) = _$$PenaltyStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {List<TimePenalty> activePenalties,
-      int totalPenaltySeconds,
-      int consecutiveEscapes,
-      int consecutiveWrongClaims});
+  $Res call({
+    List<TimePenalty> activePenalties,
+    int totalPenaltySeconds,
+    int consecutiveEscapes,
+    int consecutiveWrongClaims,
+  });
 }
 
 /// @nodoc
-class __$$PenaltyStateImplCopyWithImpl<$Res>
+class _$$PenaltyStateImplCopyWithImpl<$Res>
     extends _$PenaltyStateCopyWithImpl<$Res, _$PenaltyStateImpl>
     implements _$$PenaltyStateImplCopyWith<$Res> {
-  __$$PenaltyStateImplCopyWithImpl(
-      _$PenaltyStateImpl _value, $Res Function(_$PenaltyStateImpl) _then)
-      : super(_value, _then);
+  _$$PenaltyStateImplCopyWithImpl(
+    _$PenaltyStateImpl _value,
+    $Res Function(_$PenaltyStateImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -283,37 +309,39 @@ class __$$PenaltyStateImplCopyWithImpl<$Res>
     Object? consecutiveEscapes = null,
     Object? consecutiveWrongClaims = null,
   }) {
-    return _then(_$PenaltyStateImpl(
-      activePenalties: null == activePenalties
-          ? _value._activePenalties
-          : activePenalties // ignore: cast_nullable_to_non_nullable
-              as List<TimePenalty>,
-      totalPenaltySeconds: null == totalPenaltySeconds
-          ? _value.totalPenaltySeconds
-          : totalPenaltySeconds // ignore: cast_nullable_to_non_nullable
-              as int,
-      consecutiveEscapes: null == consecutiveEscapes
-          ? _value.consecutiveEscapes
-          : consecutiveEscapes // ignore: cast_nullable_to_non_nullable
-              as int,
-      consecutiveWrongClaims: null == consecutiveWrongClaims
-          ? _value.consecutiveWrongClaims
-          : consecutiveWrongClaims // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+    return _then(
+      _$PenaltyStateImpl(
+        activePenalties: null == activePenalties
+            ? _value._activePenalties
+            : activePenalties // ignore: cast_nullable_to_non_nullable
+                  as List<TimePenalty>,
+        totalPenaltySeconds: null == totalPenaltySeconds
+            ? _value.totalPenaltySeconds
+            : totalPenaltySeconds // ignore: cast_nullable_to_non_nullable
+                  as int,
+        consecutiveEscapes: null == consecutiveEscapes
+            ? _value.consecutiveEscapes
+            : consecutiveEscapes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        consecutiveWrongClaims: null == consecutiveWrongClaims
+            ? _value.consecutiveWrongClaims
+            : consecutiveWrongClaims // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$PenaltyStateImpl extends _PenaltyState {
-  const _$PenaltyStateImpl(
-      {final List<TimePenalty> activePenalties = const [],
-      this.totalPenaltySeconds = 0,
-      this.consecutiveEscapes = 0,
-      this.consecutiveWrongClaims = 0})
-      : _activePenalties = activePenalties,
-        super._();
+  const _$PenaltyStateImpl({
+    final List<TimePenalty> activePenalties = const [],
+    this.totalPenaltySeconds = 0,
+    this.consecutiveEscapes = 0,
+    this.consecutiveWrongClaims = 0,
+  }) : _activePenalties = activePenalties,
+       super._();
 
   final List<TimePenalty> _activePenalties;
   @override
@@ -339,8 +367,10 @@ class _$PenaltyStateImpl extends _PenaltyState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PenaltyStateImpl &&
-            const DeepCollectionEquality()
-                .equals(other._activePenalties, _activePenalties) &&
+            const DeepCollectionEquality().equals(
+              other._activePenalties,
+              _activePenalties,
+            ) &&
             (identical(other.totalPenaltySeconds, totalPenaltySeconds) ||
                 other.totalPenaltySeconds == totalPenaltySeconds) &&
             (identical(other.consecutiveEscapes, consecutiveEscapes) ||
@@ -351,25 +381,27 @@ class _$PenaltyStateImpl extends _PenaltyState {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_activePenalties),
-      totalPenaltySeconds,
-      consecutiveEscapes,
-      consecutiveWrongClaims);
+    runtimeType,
+    const DeepCollectionEquality().hash(_activePenalties),
+    totalPenaltySeconds,
+    consecutiveEscapes,
+    consecutiveWrongClaims,
+  );
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PenaltyStateImplCopyWith<_$PenaltyStateImpl> get copyWith =>
-      __$$PenaltyStateImplCopyWithImpl<_$PenaltyStateImpl>(this, _$identity);
+      _$$PenaltyStateImplCopyWithImpl<_$PenaltyStateImpl>(this, _$identity);
 }
 
 abstract class _PenaltyState extends PenaltyState {
-  const factory _PenaltyState(
-      {final List<TimePenalty> activePenalties,
-      final int totalPenaltySeconds,
-      final int consecutiveEscapes,
-      final int consecutiveWrongClaims}) = _$PenaltyStateImpl;
+  const factory _PenaltyState({
+    final List<TimePenalty> activePenalties,
+    final int totalPenaltySeconds,
+    final int consecutiveEscapes,
+    final int consecutiveWrongClaims,
+  }) = _$PenaltyStateImpl;
   const _PenaltyState._() : super._();
 
   @override

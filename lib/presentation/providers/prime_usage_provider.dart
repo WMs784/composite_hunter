@@ -91,5 +91,5 @@ class PrimeUsageNotifier extends StateNotifier<Map<int, int>> {
 
 final primeUsageProvider =
     StateNotifierProvider<PrimeUsageNotifier, Map<int, int>>(
-  (ref) => PrimeUsageNotifier(),
-);
+      (ref) => PrimeUsageNotifier(),
+    );

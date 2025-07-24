@@ -10,32 +10,34 @@ void main() {
     setUp(() {
       emptyInventory = const Inventory();
 
-      sampleInventory = Inventory(primes: [
-        Prime(
-          value: 2,
-          count: 3,
-          firstObtained: DateTime(2024, 1, 1),
-          usageCount: 5,
-        ),
-        Prime(
-          value: 3,
-          count: 2,
-          firstObtained: DateTime(2024, 1, 2),
-          usageCount: 3,
-        ),
-        Prime(
-          value: 5,
-          count: 0,
-          firstObtained: DateTime(2024, 1, 3),
-          usageCount: 1,
-        ),
-        Prime(
-          value: 7,
-          count: 1,
-          firstObtained: DateTime(2024, 1, 4),
-          usageCount: 0,
-        ),
-      ]);
+      sampleInventory = Inventory(
+        primes: [
+          Prime(
+            value: 2,
+            count: 3,
+            firstObtained: DateTime(2024, 1, 1),
+            usageCount: 5,
+          ),
+          Prime(
+            value: 3,
+            count: 2,
+            firstObtained: DateTime(2024, 1, 2),
+            usageCount: 3,
+          ),
+          Prime(
+            value: 5,
+            count: 0,
+            firstObtained: DateTime(2024, 1, 3),
+            usageCount: 1,
+          ),
+          Prime(
+            value: 7,
+            count: 1,
+            firstObtained: DateTime(2024, 1, 4),
+            usageCount: 0,
+          ),
+        ],
+      );
     });
 
     group('Basic Properties', () {
@@ -113,8 +115,10 @@ void main() {
         final updated = emptyInventory.addPrime(newPrime);
 
         expect(updated.uniqueCount, 1);
-        expect(updated.totalCount,
-            1); // 11 is a large prime, clamped to maxLargePrimeCount
+        expect(
+          updated.totalCount,
+          1,
+        ); // 11 is a large prime, clamped to maxLargePrimeCount
         expect(updated.getPrime(11), isNotNull);
       });
 

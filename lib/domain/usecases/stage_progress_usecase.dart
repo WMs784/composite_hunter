@@ -35,18 +35,21 @@ class StageProgressUsecase {
 
       case StageClearType.consecutiveVictories:
         // 連続勝利の場合、逃走や誤判定があると失敗
-        isCleared = victories >= condition.requiredVictories &&
+        isCleared =
+            victories >= condition.requiredVictories &&
             escapes == 0 &&
             wrongClaims == 0;
         break;
 
       case StageClearType.timedVictories:
-        isCleared = victories >= condition.requiredVictories &&
+        isCleared =
+            victories >= condition.requiredVictories &&
             totalTime.inSeconds <= condition.timeLimit;
         break;
 
       case StageClearType.perfectVictories:
-        isCleared = victories >= condition.requiredVictories &&
+        isCleared =
+            victories >= condition.requiredVictories &&
             escapes == 0 &&
             wrongClaims == 0;
         break;
@@ -123,12 +126,8 @@ class StageProgressUsecase {
     int penalty = (escapes * 50) + (wrongClaims * 30);
 
     return math.max(
-        0,
-        baseScore +
-            timeBonus +
-            starBonus +
-            perfectBonus +
-            enemyBonus -
-            penalty);
+      0,
+      baseScore + timeBonus + starBonus + perfectBonus + enemyBonus - penalty,
+    );
   }
 }

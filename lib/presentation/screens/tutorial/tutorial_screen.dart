@@ -93,8 +93,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(_totalPages, (index) {
           return Container(
-            margin:
-                const EdgeInsets.symmetric(horizontal: Dimensions.spacingXs),
+            margin: const EdgeInsets.symmetric(
+              horizontal: Dimensions.spacingXs,
+            ),
             width: 12,
             height: 12,
             decoration: BoxDecoration(
@@ -222,11 +223,7 @@ class _TutorialPage extends StatelessWidget {
               color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(Dimensions.radiusXl),
             ),
-            child: Icon(
-              icon,
-              size: 60,
-              color: iconColor,
-            ),
+            child: Icon(icon, size: 60, color: iconColor),
           ),
 
           const SizedBox(height: Dimensions.spacingXl),
@@ -278,10 +275,7 @@ class _TutorialPage extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.lightbulb,
-                    color: AppColors.victoryGreen,
-                  ),
+                  const Icon(Icons.lightbulb, color: AppColors.victoryGreen),
                   const SizedBox(width: Dimensions.spacingS),
                   Text(
                     readyMessage ?? 'Ready to hunt some composite numbers?',

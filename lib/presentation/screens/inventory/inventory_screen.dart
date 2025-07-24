@@ -45,18 +45,24 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           unselectedLabelColor: AppColors.onSurfaceVariant,
           tabs: [
             Tab(
-              icon: const Icon(Icons.inventory,
-                  color: null), // Use tab bar's color scheme
+              icon: const Icon(
+                Icons.inventory,
+                color: null,
+              ), // Use tab bar's color scheme
               text: l10n.inventory,
             ),
             Tab(
-              icon: const Icon(Icons.book,
-                  color: null), // Use tab bar's color scheme
+              icon: const Icon(
+                Icons.book,
+                color: null,
+              ), // Use tab bar's color scheme
               text: l10n.collection,
             ),
             Tab(
-              icon: const Icon(Icons.analytics,
-                  color: null), // Use tab bar's color scheme
+              icon: const Icon(
+                Icons.analytics,
+                color: null,
+              ), // Use tab bar's color scheme
               text: l10n.statistics,
             ),
           ],
@@ -114,8 +120,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
         // Prime list
         Expanded(
           child: ListView.builder(
-            padding:
-                const EdgeInsets.symmetric(horizontal: Dimensions.paddingM),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Dimensions.paddingM,
+            ),
             itemCount: availablePrimes.length,
             itemBuilder: (context, index) {
               final prime = availablePrimes[index];
@@ -141,14 +148,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
         final prime = availableItems[index];
         final usage = usageStats[prime.value] ?? 0;
         final isUnlocked = usage > 0 || prime.count > 0;
-        final daysSinceObtained =
-            DateTime.now().difference(prime.firstObtained).inDays;
+        final daysSinceObtained = DateTime.now()
+            .difference(prime.firstObtained)
+            .inDays;
 
         return Card(
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor:
-                  isUnlocked ? AppColors.primary : AppColors.surfaceVariant,
+              backgroundColor: isUnlocked
+                  ? AppColors.primary
+                  : AppColors.surfaceVariant,
               child: Text(
                 prime.value.toString(),
                 style: AppTextStyles.labelLarge.copyWith(
@@ -168,8 +177,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
             ),
             subtitle: Text(
               isUnlocked
-                  ? l10n
-                      .firstObtained(l10n.daysAgo(daysSinceObtained.toString()))
+                  ? l10n.firstObtained(
+                      l10n.daysAgo(daysSinceObtained.toString()),
+                    )
                   : l10n.notYetDiscovered,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.onSurfaceVariant,
@@ -183,8 +193,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                     : AppColors.surface,
                 borderRadius: BorderRadius.circular(Dimensions.radiusS),
                 border: Border.all(
-                  color:
-                      isUnlocked ? AppColors.victoryGreen : AppColors.outline,
+                  color: isUnlocked
+                      ? AppColors.victoryGreen
+                      : AppColors.outline,
                   width: 1,
                 ),
               ),
@@ -216,10 +227,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            l10n.usageStatistics,
-            style: AppTextStyles.headlineSmall,
-          ),
+          Text(l10n.usageStatistics, style: AppTextStyles.headlineSmall),
           const SizedBox(height: Dimensions.spacingL),
           _buildStatCard(
             l10n.totalUsage,
@@ -246,10 +254,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
               AppColors.victoryGreen,
             ),
           const SizedBox(height: Dimensions.spacingL),
-          Text(
-            l10n.primeUsageChart,
-            style: AppTextStyles.titleMedium,
-          ),
+          Text(l10n.primeUsageChart, style: AppTextStyles.titleMedium),
           const SizedBox(height: Dimensions.spacingM),
           Expanded(
             child: ListView.builder(
@@ -261,7 +266,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: Dimensions.spacingXs),
+                    vertical: Dimensions.spacingXs,
+                  ),
                   child: Row(
                     children: [
                       SizedBox(
@@ -310,11 +316,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
             color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-            size: Dimensions.iconM,
-          ),
+          child: Icon(icon, color: AppColors.primary, size: Dimensions.iconM),
         ),
         const SizedBox(height: Dimensions.spacingXs),
         Text(
@@ -349,10 +351,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
             color: isAvailable ? AppColors.primary : AppColors.surfaceVariant,
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
             border: isRecentlyObtained
-                ? Border.all(
-                    color: AppColors.victoryGreen,
-                    width: 2,
-                  )
+                ? Border.all(color: AppColors.victoryGreen, width: 2)
                 : null,
           ),
           child: Stack(
@@ -379,11 +378,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                       color: AppColors.victoryGreen,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Icon(
-                      Icons.star,
-                      color: Colors.white,
-                      size: 8,
-                    ),
+                    child: const Icon(Icons.star, color: Colors.white, size: 8),
                   ),
                 ),
             ],
@@ -447,21 +442,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                   width: 1,
                 ),
               ),
-              child: Icon(
-                icon,
-                color: color,
-                size: Dimensions.iconL,
-              ),
+              child: Icon(icon, color: color, size: Dimensions.iconL),
             ),
             const SizedBox(width: Dimensions.spacingL),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.titleMedium,
-                  ),
+                  Text(title, style: AppTextStyles.titleMedium),
                   const SizedBox(height: Dimensions.spacingXs),
                   Text(
                     value,

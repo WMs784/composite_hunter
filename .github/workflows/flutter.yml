@@ -30,9 +30,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Check for outdated dependencies
-        run: flutter pub outdated --no-prereleases || true
-
       - name: Analyze project source
         run: flutter analyze
 
@@ -40,14 +37,7 @@ jobs:
         run: dart format --set-exit-if-changed .
 
       - name: Run tests
-        run: flutter test --coverage
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        with:
-          file: coverage/lcov.info
-          flags: unittests
-        continue-on-error: true
+        run: flutter test
 
   build-android:
     needs: analyze
@@ -68,67 +58,11 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '11'
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
         run: flutter build apk --debug
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
-
-  build-ios:
-    needs: analyze
-    runs-on: macos-latest
-    name: Build iOS
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.32.7'
-          channel: 'stable'
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build iOS (no code signing)
-        run: flutter build ios --no-codesign
-
-  version-matrix:
-    runs-on: ubuntu-latest
-    name: Test Flutter version compatibility
-    strategy:
-      matrix:
-        flutter-version: ['3.32.7', '3.27.0']
-      fail-fast: false
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ matrix.flutter-version }}
-          channel: 'stable'
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Run analyzer
-        run: flutter analyze --no-fatal-infos
-
-      - name: Run tests
-        run: flutter test

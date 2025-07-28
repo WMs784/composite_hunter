@@ -1,4 +1,8 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
 
 /// The translations for English (`en`).
 class AppLocalizationsEn extends AppLocalizations {
@@ -440,4 +444,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String haveCount(String count) {
     return 'Have: $count';
   }
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get restart => 'Restart';
+
+  @override
+  String get restartDescription => 'Reset the current battle and start over';
+
+  @override
+  String get exit => 'Exit';
+
+  @override
+  String get exitDescription => 'Return to stage selection screen';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get exitBattleTitle => 'Exit Battle?';
+
+  @override
+  String get exitBattleConfirmation =>
+      'Your current progress will not be saved. Are you sure you want to exit?';
+
+  @override
+  String get basicBattle => 'Basic Battle';
+
+  @override
+  String get basicBattleDescription =>
+      'Fight small composite numbers and learn prime factorization';
+
+  @override
+  String get intermediateChallenge => 'Intermediate Challenge';
+
+  @override
+  String get intermediateChallengeDescription =>
+      'Face medium composite numbers with strategic attacks';
+
+  @override
+  String get advancedPath => 'Advanced Path';
+
+  @override
+  String get advancedPathDescription =>
+      'Engage in serious battles with large composite numbers';
+
+  @override
+  String get expertMode => 'Expert Mode';
+
+  @override
+  String get expertModeDescription => 'Ultimate challenge for advanced players';
 }

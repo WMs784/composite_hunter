@@ -877,6 +877,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Have: {count}'**
   String haveCount(String count);
+
+  /// Menu button label
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get menu;
+
+  /// Restart battle option
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get restart;
+
+  /// Restart battle description
+  ///
+  /// In en, this message translates to:
+  /// **'Reset the current battle and start over'**
+  String get restartDescription;
+
+  /// Exit battle option
+  ///
+  /// In en, this message translates to:
+  /// **'Exit'**
+  String get exit;
+
+  /// Exit battle description
+  ///
+  /// In en, this message translates to:
+  /// **'Return to stage selection screen'**
+  String get exitDescription;
+
+  /// Back button label
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// Exit battle confirmation title
+  ///
+  /// In en, this message translates to:
+  /// **'Exit Battle?'**
+  String get exitBattleTitle;
+
+  /// Exit battle confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Your current progress will not be saved. Are you sure you want to exit?'**
+  String get exitBattleConfirmation;
+
+  /// Stage 1 title
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Battle'**
+  String get basicBattle;
+
+  /// Stage 1 description
+  ///
+  /// In en, this message translates to:
+  /// **'Fight small composite numbers and learn prime factorization'**
+  String get basicBattleDescription;
+
+  /// Stage 2 title
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate Challenge'**
+  String get intermediateChallenge;
+
+  /// Stage 2 description
+  ///
+  /// In en, this message translates to:
+  /// **'Face medium composite numbers with strategic attacks'**
+  String get intermediateChallengeDescription;
+
+  /// Stage 3 title
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Path'**
+  String get advancedPath;
+
+  /// Stage 3 description
+  ///
+  /// In en, this message translates to:
+  /// **'Engage in serious battles with large composite numbers'**
+  String get advancedPathDescription;
+
+  /// Stage 4 title
+  ///
+  /// In en, this message translates to:
+  /// **'Expert Mode'**
+  String get expertMode;
+
+  /// Stage 4 description
+  ///
+  /// In en, this message translates to:
+  /// **'Ultimate challenge for advanced players'**
+  String get expertModeDescription;
 }
 
 class _AppLocalizationsDelegate

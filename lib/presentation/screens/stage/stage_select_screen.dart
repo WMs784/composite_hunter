@@ -39,15 +39,15 @@ class StageInfo {
   String getLocalizedTitle(AppLocalizations l10n) {
     switch (stageNumber) {
       case 1:
-        return l10n.stage1Title;
+        return l10n.basicBattle;
       case 2:
-        return l10n.stage2Title;
+        return l10n.intermediateChallenge;
       case 3:
-        return l10n.stage3Title;
+        return l10n.advancedPath;
       case 4:
-        return l10n.stage4Title;
+        return l10n.expertMode;
       default:
-        return title;
+        return title; // フォールバック
     }
   }
 
@@ -55,15 +55,15 @@ class StageInfo {
   String getLocalizedDescription(AppLocalizations l10n) {
     switch (stageNumber) {
       case 1:
-        return l10n.stage1Description;
+        return l10n.basicBattleDescription;
       case 2:
-        return l10n.stage2Description;
+        return l10n.intermediateChallengeDescription;
       case 3:
-        return l10n.stage3Description;
+        return l10n.advancedPathDescription;
       case 4:
-        return l10n.stage4Description;
+        return l10n.expertModeDescription;
       default:
-        return description;
+        return description; // フォールバック
     }
   }
 }

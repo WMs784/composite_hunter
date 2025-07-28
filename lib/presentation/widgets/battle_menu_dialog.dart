@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 import '../theme/dimensions.dart';
+import '../../flutter_gen/gen_l10n/app_localizations.dart';
 
 class BattleMenuDialog extends StatelessWidget {
   final VoidCallback? onRestart;
@@ -11,6 +12,7 @@ class BattleMenuDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
@@ -36,7 +38,7 @@ class BattleMenuDialog extends StatelessWidget {
                 const SizedBox(width: Dimensions.spacingM),
                 Expanded(
                   child: Text(
-                    'Menu',
+                    l10n.menu,
                     style: AppTextStyles.titleLarge.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -55,8 +57,8 @@ class BattleMenuDialog extends StatelessWidget {
             // メニューオプション
             _MenuOption(
               icon: Icons.refresh,
-              title: 'Restart',
-              description: 'Reset the current battle and start over',
+              title: l10n.restart,
+              description: l10n.restartDescription,
               color: AppColors.primary,
               onTap: () {
                 Navigator.of(context).pop();
@@ -68,8 +70,8 @@ class BattleMenuDialog extends StatelessWidget {
 
             _MenuOption(
               icon: Icons.exit_to_app,
-              title: 'Exit',
-              description: 'Return to stage selection screen',
+              title: l10n.exit,
+              description: l10n.exitDescription,
               color: AppColors.error,
               onTap: () {
                 Navigator.of(context).pop();
@@ -89,7 +91,7 @@ class BattleMenuDialog extends StatelessWidget {
                     vertical: Dimensions.paddingM,
                   ),
                 ),
-                child: const Text('Back'),
+                child: Text(l10n.back),
               ),
             ),
           ],
@@ -99,17 +101,16 @@ class BattleMenuDialog extends StatelessWidget {
   }
 
   void _showExitConfirmation(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Exit Battle?'),
-        content: const Text(
-          'Your current progress will not be saved. Are you sure you want to exit?',
-        ),
+        title: Text(l10n.exitBattleTitle),
+        content: Text(l10n.exitBattleConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -117,7 +118,7 @@ class BattleMenuDialog extends StatelessWidget {
               onExit?.call();
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Exit'),
+            child: Text(l10n.exit),
           ),
         ],
       ),

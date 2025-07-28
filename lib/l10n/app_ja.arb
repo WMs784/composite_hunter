@@ -129,5 +129,22 @@
   "startBattle": "バトル開始",
   "itemRange": "範囲: {min}-{max}",
   "timeLimit": "制限時間: {seconds}秒",
-  "haveCount": "所持: {count}個"
+  "haveCount": "所持: {count}個",
+
+  "menu": "メニュー",
+  "restart": "リスタート",
+  "restartDescription": "現在のバトルをリセットして最初からやり直します",
+  "exit": "終了",
+  "exitDescription": "ステージ選択画面に戻ります",
+  "back": "戻る",
+  "exitBattleTitle": "バトルを終了しますか？",
+  "exitBattleConfirmation": "現在の進行状況は保存されません。本当に終了しますか？",
+  "basicBattle": "基本バトル",
+  "basicBattleDescription": "小さな合成数と戦い、素因数分解を学ぼう",
+  "intermediateChallenge": "中級チャレンジ",
+  "intermediateChallengeDescription": "中型の合成数に戦略的な攻撃で挑もう",
+  "advancedPath": "上級への道",
+  "advancedPathDescription": "大きな合成数と本格的なバトルを繰り広げよう",
+  "expertMode": "エキスパートモード",
+  "expertModeDescription": "上級者向けの究極のチャレンジ"
 }

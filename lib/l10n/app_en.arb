@@ -739,5 +739,85 @@
         "type": "String"
       }
     }
+  },
+
+  "menu": "Menu",
+  "@menu": {
+    "description": "Menu button label"
+  },
+
+  "restart": "Restart",
+  "@restart": {
+    "description": "Restart battle option"
+  },
+
+  "restartDescription": "Reset the current battle and start over",
+  "@restartDescription": {
+    "description": "Restart battle description"
+  },
+
+  "exit": "Exit",
+  "@exit": {
+    "description": "Exit battle option"
+  },
+
+  "exitDescription": "Return to stage selection screen",
+  "@exitDescription": {
+    "description": "Exit battle description"
+  },
+
+  "back": "Back",
+  "@back": {
+    "description": "Back button label"
+  },
+
+  "exitBattleTitle": "Exit Battle?",
+  "@exitBattleTitle": {
+    "description": "Exit battle confirmation title"
+  },
+
+  "exitBattleConfirmation": "Your current progress will not be saved. Are you sure you want to exit?",
+  "@exitBattleConfirmation": {
+    "description": "Exit battle confirmation message"
+  },
+
+  "basicBattle": "Basic Battle",
+  "@basicBattle": {
+    "description": "Stage 1 title"
+  },
+
+  "basicBattleDescription": "Fight small composite numbers and learn prime factorization",
+  "@basicBattleDescription": {
+    "description": "Stage 1 description"
+  },
+
+  "intermediateChallenge": "Intermediate Challenge",
+  "@intermediateChallenge": {
+    "description": "Stage 2 title"
+  },
+
+  "intermediateChallengeDescription": "Face medium composite numbers with strategic attacks",
+  "@intermediateChallengeDescription": {
+    "description": "Stage 2 description"
+  },
+
+  "advancedPath": "Advanced Path",
+  "@advancedPath": {
+    "description": "Stage 3 title"
+  },
+
+  "advancedPathDescription": "Engage in serious battles with large composite numbers",
+  "@advancedPathDescription": {
+    "description": "Stage 3 description"
+  },
+
+  "expertMode": "Expert Mode",
+  "@expertMode": {
+    "description": "Stage 4 title"
+  },
+
+  "expertModeDescription": "Ultimate challenge for advanced players",
+  "@expertModeDescription": {
+    "description": "Stage 4 description"
   }
 }

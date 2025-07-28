@@ -435,4 +435,52 @@ class AppLocalizationsJa extends AppLocalizations {
   String haveCount(String count) {
     return '所持: $count個';
   }
+
+  @override
+  String get menu => 'メニュー';
+
+  @override
+  String get restart => 'リスタート';
+
+  @override
+  String get restartDescription => '現在のバトルをリセットして最初からやり直します';
+
+  @override
+  String get exit => '終了';
+
+  @override
+  String get exitDescription => 'ステージ選択画面に戻ります';
+
+  @override
+  String get back => '戻る';
+
+  @override
+  String get exitBattleTitle => 'バトルを終了しますか？';
+
+  @override
+  String get exitBattleConfirmation => '現在の進行状況は保存されません。本当に終了しますか？';
+
+  @override
+  String get basicBattle => '基本バトル';
+
+  @override
+  String get basicBattleDescription => '小さな合成数と戦い、素因数分解を学ぼう';
+
+  @override
+  String get intermediateChallenge => '中級チャレンジ';
+
+  @override
+  String get intermediateChallengeDescription => '中型の合成数に戦略的な攻撃で挑もう';
+
+  @override
+  String get advancedPath => '上級への道';
+
+  @override
+  String get advancedPathDescription => '大きな合成数と本格的なバトルを繰り広げよう';
+
+  @override
+  String get expertMode => 'エキスパートモード';
+
+  @override
+  String get expertModeDescription => '上級者向けの究極のチャレンジ';
 }

@@ -819,5 +819,19 @@
   "expertModeDescription": "Ultimate challenge for advanced players",
   "@expertModeDescription": {
     "description": "Stage 4 description"
+  },
+
+  "achievementUnlocked": "Achievement Unlocked!",
+  "@achievementUnlocked": {
+    "description": "Title shown when an achievement is unlocked"
+  },
+  "achievementReward": "Reward: {reward}",
+  "@achievementReward": {
+    "description": "Reward text shown in achievement notification",
+    "placeholders": {
+      "reward": {
+        "type": "String"
+      }
+    }
   }
 }

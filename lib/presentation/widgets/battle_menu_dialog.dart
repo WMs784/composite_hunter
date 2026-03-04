@@ -13,12 +13,13 @@ class BattleMenuDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
         padding: const EdgeInsets.all(Dimensions.paddingL),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: cs.surface,
           borderRadius: BorderRadius.circular(Dimensions.radiusL),
           boxShadow: [
             BoxShadow(
@@ -178,15 +179,15 @@ class _MenuOption extends StatelessWidget {
                   Text(
                     description,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onSurfaceVariant,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.arrow_forward_ios,
-              color: AppColors.onSurfaceVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               size: 16,
             ),
           ],

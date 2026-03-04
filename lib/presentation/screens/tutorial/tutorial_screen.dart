@@ -87,6 +87,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   Widget _buildProgressIndicator() {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       child: Row(
@@ -101,8 +102,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: index <= _currentPage
-                  ? AppColors.primary
-                  : AppColors.surfaceVariant,
+                  ? cs.primary
+                  : cs.surfaceContainerHighest,
             ),
           );
         }),
@@ -111,11 +112,12 @@ class _TutorialScreenState extends State<TutorialScreen> {
   }
 
   Widget _buildWelcomePage(AppLocalizations l10n) {
+    final cs = Theme.of(context).colorScheme;
     return _TutorialPage(
       title: l10n.tutorialWelcomeTitle,
       content: l10n.tutorialWelcomeContent,
       icon: Icons.calculate,
-      iconColor: AppColors.primary,
+      iconColor: cs.primary,
     );
   }
 
@@ -210,6 +212,7 @@ class _TutorialPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       child: Column(
@@ -249,13 +252,13 @@ class _TutorialPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(Dimensions.paddingM),
               decoration: BoxDecoration(
-                color: AppColors.primaryContainer,
+                color: cs.primaryContainer,
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
               ),
               child: Text(
                 example!,
                 style: AppTextStyles.titleMedium.copyWith(
-                  color: AppColors.onPrimaryContainer,
+                  color: cs.onPrimaryContainer,
                   fontFamily: 'monospace',
                 ),
                 textAlign: TextAlign.center,

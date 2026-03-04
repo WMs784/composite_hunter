@@ -7,9 +7,11 @@ import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../widgets/battle_menu_dialog.dart';
+import '../../providers/achievement_provider.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../../providers/prime_usage_provider.dart';
+import '../../widgets/achievement_unlock_banner.dart';
 import '../../../domain/entities/prime.dart';
 import '../stage/stage_clear_screen.dart';
 import '../game_over/game_over_screen.dart';
@@ -19,11 +21,23 @@ import '../../../core/utils/logger.dart';
 // Simple working providers for battle screen
 final battleEnemyProvider = StateProvider<int>((ref) => 12);
 final battleTimerProvider = StateProvider<int>((ref) => 90);
+final battleStartTimeProvider = StateProvider<DateTime>(
+  (ref) => DateTime.now(),
+);
 
 // Recently acquired primes (for visual feedback)
 final recentlyAcquiredPrimesProvider = StateProvider<Map<int, DateTime>>(
   (ref) => {},
 );
+
+// Attack feedback animation trigger (increments on each attack)
+final battleAttackCountProvider = StateProvider<int>((ref) => 0);
+
+// Max timer value for CircularProgressIndicator ratio
+final battleMaxTimerProvider = StateProvider<int>((ref) => 90);
+
+// Invalid attack animation trigger — red flash on enemy card
+final battleInvalidAttackProvider = StateProvider<int>((ref) => 0);
 
 class BattleScreen extends ConsumerStatefulWidget {
   const BattleScreen({super.key});
@@ -168,6 +182,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _initializeBattleForStage() {
+    ref.read(battleStartTimeProvider.notifier).state = DateTime.now();
     final session = ref.read(battleSessionProvider);
 
     // ステージに応じた敵と制限時間を設定
@@ -185,6 +200,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
       final (enemy, timeLimit) = _getStageSettings(stageNumber);
       ref.read(battleEnemyProvider.notifier).state = enemy;
       ref.read(battleTimerProvider.notifier).state = timeLimit;
+      ref.read(battleMaxTimerProvider.notifier).state = timeLimit;
       Logger.logBattle(
         'Stage initialized',
         data: {'stage': stageNumber, 'enemy': enemy, 'timer': timeLimit},
@@ -347,6 +363,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   }
 
   void _generateNewEnemyWithoutTimeReset() {
+    ref.read(battleStartTimeProvider.notifier).state = DateTime.now();
     final session = ref.read(battleSessionProvider);
 
     if (session.isPracticeMode) {
@@ -442,123 +459,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     await Future.delayed(const Duration(milliseconds: 300));
   }
 
-  /// 無効攻撃時の教育的フィードバック
+  /// 無効攻撃時のフィードバック
+  // game-designer: Silent fail — unchanged enemy IS the feedback.
+  // A red flash on the enemy card signals "that didn't work" without explaining why.
   void _showInvalidAttackFeedback(BuildContext context, int prime, int enemy) {
-    // まず素因数を計算
-    final factors = _getFactors(enemy);
-    final factorsText = factors.isNotEmpty
-        ? factors.join(' × ')
-        : 'No factors found';
-
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => AlertDialog(
-        title: const Row(
-          children: [
-            Icon(Icons.info_outline, color: AppColors.timerWarning, size: 24),
-            SizedBox(width: 8),
-            Text('Attack Failed!'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Prime $prime cannot attack enemy $enemy.',
-              style: AppTextStyles.bodyMedium.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Text('Why?', style: AppTextStyles.titleSmall),
-            const SizedBox(height: 4),
-            Text(
-              '$enemy is not divisible by $prime.',
-              style: AppTextStyles.bodySmall,
-            ),
-            if (enemy % prime != 0) ...[
-              const SizedBox(height: 4),
-              Text(
-                '$enemy ÷ $prime = ${enemy / prime} (not a whole number)',
-                style: AppTextStyles.bodySmall.copyWith(
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            const Text(
-              'Enemy\'s prime factors:',
-              style: AppTextStyles.titleSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '$enemy = $factorsText',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Try using one of these factors instead!',
-              style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it!'),
-          ),
-        ],
-      ),
-    );
-
-    // 振動フィードバック（無効攻撃を示す）
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.block, color: Colors.white),
-            const SizedBox(width: 8),
-            Text('Prime $prime wasted! $enemy ÷ $prime is not a whole number.'),
-          ],
-        ),
-        backgroundColor: AppColors.error,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  /// 素因数分解を実行
-  List<int> _getFactors(int n) {
-    List<int> factors = [];
-    int temp = n;
-
-    // 2で割り切れる限り割る
-    while (temp % 2 == 0) {
-      factors.add(2);
-      temp ~/= 2;
-    }
-
-    // 3以上の奇数で割る
-    for (int i = 3; i * i <= temp; i += 2) {
-      while (temp % i == 0) {
-        factors.add(i);
-        temp ~/= i;
-      }
-    }
-
-    // tempが素数の場合
-    if (temp > 2) {
-      factors.add(temp);
-    }
-
-    return factors;
+    ref.read(battleInvalidAttackProvider.notifier).state++;
   }
 
   @override
@@ -576,18 +481,18 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => _showBattleMenu(context),
-          tooltip: 'Menu',
+          tooltip: l10n.menu,
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.inventory),
             onPressed: () => AppRouter.goToInventory(context),
-            tooltip: 'Inventory',
+            tooltip: l10n.inventory,
           ),
           IconButton(
             icon: const Icon(Icons.emoji_events),
             onPressed: () => AppRouter.goToAchievements(context),
-            tooltip: 'Achievements',
+            tooltip: l10n.achievements,
           ),
         ],
       ),
@@ -647,6 +552,7 @@ class _SessionProgressSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(battleSessionProvider);
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     if (session.stageNumber == null || session.isPracticeMode) {
       return const SizedBox.shrink();
@@ -656,31 +562,27 @@ class _SessionProgressSection extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
-        color: AppColors.primaryContainer,
+        color: cs.primaryContainer,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: cs.outline),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.emoji_events,
-            color: AppColors.onPrimaryContainer,
-            size: 20,
-          ),
+          Icon(Icons.emoji_events, color: cs.onPrimaryContainer, size: 20),
           const SizedBox(width: Dimensions.spacingS),
           Expanded(
             child: Text(
               '${l10n.victories}: ${session.victories}',
               style: AppTextStyles.labelLarge.copyWith(
-                color: AppColors.onPrimaryContainer,
+                color: cs.onPrimaryContainer,
               ),
             ),
           ),
           if (session.escapes > 0) ...[
-            const Icon(Icons.directions_run, color: AppColors.error, size: 16),
+            Icon(Icons.directions_run, color: cs.error, size: 16),
             Text(
               '${session.escapes}',
-              style: AppTextStyles.labelSmall.copyWith(color: AppColors.error),
+              style: AppTextStyles.labelSmall.copyWith(color: cs.error),
             ),
             const SizedBox(width: Dimensions.spacingS),
           ],
@@ -705,31 +607,39 @@ class _TimerSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timer = ref.watch(battleTimerProvider);
+    final maxTimer = ref.watch(battleMaxTimerProvider);
     final minutes = timer ~/ 60;
     final seconds = timer % 60;
     final formattedTime =
         '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
+
+    // game-ui-design: Readability under motion — color encodes urgency with 3 states
+    final bool isCritical = timer <= 10;
+    final bool isWarning = timer <= 30 && !isCritical;
 
     Color timerColor = AppColors.timerNormal;
-    Color backgroundColor = AppColors.surface;
-
-    if (timer <= 10) {
+    Color backgroundColor = cs.surface;
+    if (isCritical) {
       timerColor = AppColors.timerCritical;
-      backgroundColor = AppColors.timerCritical.withValues(alpha: 0.1);
-    } else if (timer <= 30) {
+      backgroundColor = AppColors.timerCritical.withValues(alpha: 0.12);
+    } else if (isWarning) {
       timerColor = AppColors.timerWarning;
-      backgroundColor = AppColors.timerWarning.withValues(alpha: 0.1);
+      backgroundColor = AppColors.timerWarning.withValues(alpha: 0.08);
     }
 
+    final double progress = maxTimer > 0
+        ? (timer / maxTimer).clamp(0.0, 1.0)
+        : 1.0;
     final screenWidth = MediaQuery.of(context).size.width;
     final baseFontSize = screenWidth < 350 ? 20.0 : 24.0;
-    final criticalFontSize = screenWidth < 350 ? 24.0 : 28.0;
+    final criticalFontSize = screenWidth < 350 ? 26.0 : 30.0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
-      constraints: const BoxConstraints(minHeight: 60, maxHeight: 100),
+      constraints: const BoxConstraints(minHeight: 64, maxHeight: 100),
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth < 350
             ? Dimensions.paddingS
@@ -740,37 +650,73 @@ class _TimerSection extends ConsumerWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
         border: Border.all(
-          color: timer <= 10 ? timerColor : AppColors.outline,
-          width: timer <= 10 ? 2.0 : 1.0,
+          color: isCritical ? timerColor : cs.outline,
+          width: isCritical ? 2.0 : 1.0,
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
+      // flutter-ui-ux: Row layout — circular ring left, text right
+      child: Row(
         children: [
-          Flexible(
-            child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 300),
-              style: AppTextStyles.timerDisplay.copyWith(
-                color: timerColor,
-                fontSize: timer <= 10 ? criticalFontSize : baseFontSize,
-                fontWeight: timer <= 10 ? FontWeight.w900 : FontWeight.bold,
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(formattedTime),
-              ),
+          // Circular progress ring showing remaining time
+          SizedBox(
+            width: 48,
+            height: 48,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Background ring
+                CircularProgressIndicator(
+                  value: 1.0,
+                  strokeWidth: 4,
+                  color: timerColor.withValues(alpha: 0.15),
+                ),
+                // Foreground ring (actual progress)
+                AnimatedBuilder(
+                  animation: const AlwaysStoppedAnimation(0),
+                  builder: (_, __) => CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 4,
+                    color: timerColor,
+                    strokeCap: StrokeCap.round,
+                  ),
+                ),
+                // Timer icon inside ring
+                Icon(
+                  isCritical ? Icons.warning_rounded : Icons.timer_outlined,
+                  size: 18,
+                  color: timerColor,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: Dimensions.spacingXs),
-          Flexible(
-            child: Text(
-              l10n.timeRemaining,
-              style: AppTextStyles.labelSmall.copyWith(
-                color: AppColors.onSurfaceVariant,
-                fontSize: screenWidth < 350 ? 10 : 11,
-              ),
-              overflow: TextOverflow.ellipsis,
+
+          const SizedBox(width: Dimensions.spacingM),
+
+          // Time text + label
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
+                  style: AppTextStyles.timerDisplay.copyWith(
+                    color: timerColor,
+                    fontSize: isCritical ? criticalFontSize : baseFontSize,
+                    fontWeight: isCritical ? FontWeight.w900 : FontWeight.bold,
+                  ),
+                  child: Text(formattedTime),
+                ),
+                Text(
+                  l10n.timeRemaining,
+                  style: AppTextStyles.labelSmall.copyWith(
+                    color: cs.onSurfaceVariant,
+                    fontSize: screenWidth < 350 ? 10 : 11,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
@@ -779,27 +725,111 @@ class _TimerSection extends ConsumerWidget {
   }
 }
 
-class _EnemySection extends ConsumerWidget {
+// ─── Enemy Section ─────────────────────────────────────────────────────────────
+// game-ui-design: Contextual HUD — enemy color shifts to green+glow when prime
+// flutter-ui-ux: AnimationController for attack-flash (implicit) + pulse (explicit)
+class _EnemySection extends ConsumerStatefulWidget {
   const _EnemySection();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_EnemySection> createState() => _EnemySectionState();
+}
+
+class _EnemySectionState extends ConsumerState<_EnemySection>
+    with TickerProviderStateMixin {
+  // Pulse animation — runs only when enemy is prime
+  late AnimationController _pulseController;
+  late Animation<double> _pulseScale;
+
+  // Attack flash animation — white burst on valid hit
+  late AnimationController _flashController;
+  late Animation<double> _flashOpacity;
+
+  // Invalid attack flash — red burst on failed hit
+  late AnimationController _invalidFlashController;
+  late Animation<double> _invalidFlashOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 900),
+      vsync: this,
+    );
+    _pulseScale = Tween<double>(begin: 1.0, end: 1.06).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _flashController = AnimationController(
+      duration: const Duration(milliseconds: 380),
+      vsync: this,
+    );
+    _flashOpacity = TweenSequence<double>(
+      [
+        TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.55), weight: 20),
+        TweenSequenceItem(tween: Tween(begin: 0.55, end: 0.0), weight: 80),
+      ],
+    ).animate(CurvedAnimation(parent: _flashController, curve: Curves.easeOut));
+
+    _invalidFlashController = AnimationController(
+      duration: const Duration(milliseconds: 320),
+      vsync: this,
+    );
+    _invalidFlashOpacity =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 0.0, end: 0.45), weight: 25),
+          TweenSequenceItem(tween: Tween(begin: 0.45, end: 0.0), weight: 75),
+        ]).animate(
+          CurvedAnimation(
+            parent: _invalidFlashController,
+            curve: Curves.easeOut,
+          ),
+        );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _flashController.dispose();
+    _invalidFlashController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final enemy = ref.watch(battleEnemyProvider);
     final isPrime = _isPrime(enemy);
     final session = ref.watch(battleSessionProvider);
     final l10n = AppLocalizations.of(context)!;
 
+    // Trigger white flash on valid attack
+    ref.listen<int>(battleAttackCountProvider, (previous, next) {
+      if (mounted) _flashController.forward(from: 0);
+    });
+
+    // Trigger red flash on invalid attack or wrong claim
+    ref.listen<int>(battleInvalidAttackProvider, (previous, next) {
+      if (mounted) _invalidFlashController.forward(from: 0);
+    });
+
+    // Control pulse only when prime
+    if (isPrime && !_pulseController.isAnimating) {
+      _pulseController.repeat(reverse: true);
+    } else if (!isPrime && _pulseController.isAnimating) {
+      _pulseController.stop();
+      _pulseController.animateTo(0);
+    }
+
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    // レスポンシブな敵表示サイズ
     final enemyDisplaySize = screenWidth < 350
         ? Dimensions.enemyDisplaySize * 0.7
         : screenHeight < 600
         ? Dimensions.enemyDisplaySize * 0.8
         : Dimensions.enemyDisplaySize;
 
-    // 敵の数値の桁数に応じたフォントサイズ調整
     final enemyString = enemy.toString();
     final baseFontSize = AppTextStyles.enemyValue.fontSize ?? 32;
     final adjustedFontSize = enemyString.length > 4
@@ -808,155 +838,248 @@ class _EnemySection extends ConsumerWidget {
         ? baseFontSize * 0.9
         : baseFontSize;
 
-    return Card(
-      child: Container(
-        width: double.infinity,
-        constraints: BoxConstraints(
-          minHeight: 120,
-          maxHeight: screenHeight * 0.25,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: screenWidth < 350
-              ? Dimensions.paddingS
-              : Dimensions.paddingM,
-          vertical: screenWidth < 350
-              ? Dimensions.paddingXs
-              : Dimensions.paddingS,
-        ),
-        child: session.isPracticeMode
-            ? SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Enemy display
-                    Container(
-                      width: enemyDisplaySize,
-                      height: enemyDisplaySize,
-                      constraints: BoxConstraints(
-                        minWidth: 60,
-                        minHeight: 60,
-                        maxWidth: screenWidth * 0.35,
-                        maxHeight: screenWidth * 0.35,
-                      ),
+    // game-ui-design: Color encodes state — orange for danger, green for victory
+    final List<Color> gradientColors = isPrime
+        ? [const Color(0xFF1B5E20), const Color(0xFF388E3C)]
+        : [const Color(0xFF4E342E), const Color(0xFF795548)];
+
+    return AnimatedBuilder(
+      animation: Listenable.merge([
+        _pulseController,
+        _flashController,
+        _invalidFlashController,
+      ]),
+      builder: (context, child) {
+        return Transform.scale(
+          scale: isPrime ? _pulseScale.value : 1.0,
+          child: Stack(
+            children: [
+              // Main enemy card
+              Card(
+                elevation: isPrime ? 10 : 4,
+                shadowColor: isPrime
+                    ? AppColors.victoryGreen.withValues(alpha: 0.6)
+                    : Colors.black38,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                  side: isPrime
+                      ? BorderSide(color: AppColors.victoryGreen, width: 2.5)
+                      : BorderSide.none,
+                ),
+                child: Container(
+                  width: double.infinity,
+                  constraints: BoxConstraints(
+                    minHeight: 120,
+                    maxHeight: screenHeight * 0.25,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth < 350
+                        ? Dimensions.paddingS
+                        : Dimensions.paddingM,
+                    vertical: screenWidth < 350
+                        ? Dimensions.paddingXs
+                        : Dimensions.paddingS,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: gradientColors,
+                    ),
+                    borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                  ),
+                  child: session.isPracticeMode
+                      ? _buildPracticeLayout(
+                          l10n,
+                          enemy,
+                          isPrime,
+                          enemyDisplaySize,
+                          adjustedFontSize,
+                          enemyString,
+                          screenWidth,
+                        )
+                      : _buildBattleLayout(
+                          l10n,
+                          isPrime,
+                          enemyDisplaySize,
+                          adjustedFontSize,
+                          enemyString,
+                          screenWidth,
+                        ),
+                ),
+              ),
+
+              // Valid attack flash — white burst
+              if (_flashController.value > 0)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.enemyNormal,
                         borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Padding(
-                            padding: const EdgeInsets.all(Dimensions.paddingS),
-                            child: Text(
-                              enemyString,
-                              style: AppTextStyles.enemyValue.copyWith(
-                                color: AppColors.onPrimary,
-                                fontSize: adjustedFontSize,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                        color: Colors.white.withValues(
+                          alpha: _flashOpacity.value,
                         ),
                       ),
                     ),
+                  ),
+                ),
 
-                    SizedBox(
-                      height: screenWidth < 350
-                          ? Dimensions.spacingXs
-                          : Dimensions.spacingS,
-                    ),
-
-                    // Prime/Composite Number タイトル（練習モードのみ表示）
-                    Flexible(
-                      child: Text(
-                        isPrime ? l10n.primeNumber : l10n.compositeNumber,
-                        style: AppTextStyles.titleMedium.copyWith(
-                          fontSize: screenWidth < 350 ? 14 : 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: screenWidth < 350 ? 2 : Dimensions.spacingXs,
-                    ),
-
-                    // 説明文（練習モードのみ表示）
-                    Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth < 350
-                              ? Dimensions.paddingXs
-                              : Dimensions.paddingS,
-                        ),
-                        child: Text(
-                          isPrime
-                              ? l10n.enemyDefeated
-                              : l10n.attackWithPrimeFactors,
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.onSurfaceVariant,
-                            fontSize: screenWidth < 350 ? 10 : 11,
-                            height: 1.2,
-                          ),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
+              // Invalid attack flash — red burst (game-designer: secondary action tells story)
+              if (_invalidFlashController.value > 0)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                        color: Colors.red.withValues(
+                          alpha: _invalidFlashOpacity.value,
                         ),
                       ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // game-designer: No text labels in battle mode — player discovers prime/composite
+  // through gameplay, not through explicit UI messages. The ambient color (brown→green)
+  // is the only atmospheric signal — earned through learning, not hand-holding.
+  Widget _buildBattleLayout(
+    AppLocalizations l10n,
+    bool isPrime,
+    double displaySize,
+    double fontSize,
+    String enemyString,
+    double screenWidth,
+  ) {
+    return Center(
+      child: _buildEnemyNumber(displaySize, fontSize, enemyString, screenWidth),
+    );
+  }
+
+  Widget _buildPracticeLayout(
+    AppLocalizations l10n,
+    int enemy,
+    bool isPrime,
+    double displaySize,
+    double fontSize,
+    String enemyString,
+    double screenWidth,
+  ) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildEnemyNumber(displaySize, fontSize, enemyString, screenWidth),
+          SizedBox(
+            height: screenWidth < 350
+                ? Dimensions.spacingXs
+                : Dimensions.spacingS,
+          ),
+          Flexible(
+            child: Text(
+              isPrime ? l10n.primeNumber : l10n.compositeNumber,
+              style: AppTextStyles.titleMedium.copyWith(
+                fontSize: screenWidth < 350 ? 14 : 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+                shadows: const [
+                  Shadow(
+                    offset: Offset(1, 1),
+                    blurRadius: 2,
+                    color: Colors.black54,
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          SizedBox(height: screenWidth < 350 ? 2 : Dimensions.spacingXs),
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: screenWidth < 350
+                    ? Dimensions.paddingXs
+                    : Dimensions.paddingS,
+              ),
+              child: Text(
+                isPrime ? l10n.enemyDefeated : l10n.attackWithPrimeFactors,
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontSize: screenWidth < 350 ? 10 : 11,
+                  height: 1.2,
+                  shadows: const [
+                    Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 2,
+                      color: Colors.black38,
                     ),
                   ],
                 ),
-              )
-            : Center(
-                child: Container(
-                  width: enemyDisplaySize,
-                  height: enemyDisplaySize,
-                  constraints: BoxConstraints(
-                    minWidth: 60,
-                    minHeight: 60,
-                    maxWidth: screenWidth * 0.35,
-                    maxHeight: screenWidth * 0.35,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.enemyNormal,
-                    borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Padding(
-                        padding: const EdgeInsets.all(Dimensions.paddingS),
-                        child: Text(
-                          enemyString,
-                          style: AppTextStyles.enemyValue.copyWith(
-                            color: AppColors.onPrimary,
-                            fontSize: adjustedFontSize,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEnemyNumber(
+    double displaySize,
+    double fontSize,
+    String enemyString,
+    double screenWidth,
+  ) {
+    return Container(
+      width: displaySize,
+      height: displaySize,
+      constraints: BoxConstraints(
+        minWidth: 60,
+        minHeight: 60,
+        maxWidth: screenWidth * 0.35,
+        maxHeight: screenWidth * 0.35,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(Dimensions.radiusL),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.35),
+          width: 1.5,
+        ),
+      ),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Padding(
+            padding: const EdgeInsets.all(Dimensions.paddingS),
+            child: Text(
+              enemyString,
+              style: AppTextStyles.enemyValue.copyWith(
+                color: Colors.white,
+                fontSize: fontSize,
+                fontWeight: FontWeight.bold,
+                shadows: const [
+                  Shadow(
+                    offset: Offset(1, 2),
+                    blurRadius: 4,
+                    color: Colors.black38,
+                  ),
+                ],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1022,6 +1145,10 @@ class _PrimeGridSection extends ConsumerWidget {
                                 'result': enemy ~/ prime.value,
                               },
                             );
+                            // Trigger attack flash animation
+                            ref
+                                .read(battleAttackCountProvider.notifier)
+                                .state++;
                             ref.read(battleEnemyProvider.notifier).state =
                                 enemy ~/ prime.value;
 
@@ -1078,79 +1205,114 @@ class _PrimeGridSection extends ConsumerWidget {
   }
 }
 
-class _PrimeButton extends ConsumerWidget {
+// ─── Prime Button ───────────────────────────────────────────────────────────────
+// game-designer: All available primes look the same — the player must decide which
+// to use. Discovery through experimentation, not color-coded answers.
+// flutter-ui-ux: AnimatedScale squash on tap for satisfying micro-interaction.
+class _PrimeButton extends StatefulWidget {
   final Prime prime;
   final VoidCallback? onPressed;
 
   const _PrimeButton({required this.prime, this.onPressed});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isAvailable = prime.count > 0;
+  State<_PrimeButton> createState() => _PrimeButtonState();
+}
 
-    return Material(
-      color: isAvailable
-          ? AppColors.primeAvailable.withValues(alpha: 0.1)
-          : AppColors.primeUnavailable.withValues(alpha: 0.3),
-      borderRadius: BorderRadius.circular(Dimensions.radiusM),
-      child: InkWell(
-        onTap: isAvailable ? onPressed : null,
+class _PrimeButtonState extends State<_PrimeButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _tapController;
+  late Animation<double> _tapScale;
+
+  @override
+  void initState() {
+    super.initState();
+    _tapController = AnimationController(
+      duration: const Duration(milliseconds: 180),
+      vsync: this,
+    );
+    _tapScale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.88), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 0.88, end: 1.0), weight: 60),
+    ]).animate(CurvedAnimation(parent: _tapController, curve: Curves.easeOut));
+  }
+
+  @override
+  void dispose() {
+    _tapController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isAvailable = widget.prime.count > 0;
+    final cs = Theme.of(context).colorScheme;
+
+    final Color borderColor = isAvailable
+        ? AppColors.primeAvailable
+        : AppColors.primeUnavailable;
+
+    final Color backgroundColor = isAvailable
+        ? AppColors.primeAvailable.withValues(alpha: 0.08)
+        : AppColors.primeUnavailable.withValues(alpha: 0.25);
+
+    final Color valueColor = isAvailable
+        ? AppColors.primeAvailable
+        : AppColors.primeUnavailable;
+
+    return AnimatedBuilder(
+      animation: _tapScale,
+      builder: (context, child) =>
+          Transform.scale(scale: _tapScale.value, child: child),
+      child: Material(
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Dimensions.radiusM),
-            border: Border.all(
-              color: isAvailable
-                  ? AppColors.primeAvailable
-                  : AppColors.primeUnavailable,
-              width: 2,
+        child: InkWell(
+          onTap: isAvailable
+              ? () {
+                  _tapController.forward(from: 0);
+                  widget.onPressed?.call();
+                }
+              : null,
+          borderRadius: BorderRadius.circular(Dimensions.radiusM),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(Dimensions.radiusM),
+              border: Border.all(color: borderColor, width: 1.5),
             ),
-          ),
-          child: Stack(
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    prime.value.toString(),
-                    style: AppTextStyles.primeValue.copyWith(
-                      color: isAvailable
-                          ? AppColors.primeAvailable
-                          : AppColors.primeUnavailable,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  widget.prime.value.toString(),
+                  style: AppTextStyles.primeValue.copyWith(
+                    color: valueColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: Dimensions.spacingXs),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Dimensions.paddingS,
+                    vertical: Dimensions.paddingXs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isAvailable
+                        ? AppColors.primeAvailable.withValues(alpha: 0.15)
+                        : cs.surface,
+                    borderRadius: BorderRadius.circular(Dimensions.radiusS),
+                    border: Border.all(color: borderColor, width: 1),
+                  ),
+                  child: Text(
+                    'x${widget.prime.count}',
+                    style: AppTextStyles.primeCount.copyWith(
+                      color: valueColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: Dimensions.spacingXs),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: Dimensions.paddingS,
-                      vertical: Dimensions.paddingXs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isAvailable
-                          ? AppColors.primeAvailable.withValues(alpha: 0.2)
-                          : AppColors.surface,
-                      borderRadius: BorderRadius.circular(Dimensions.radiusS),
-                      border: Border.all(
-                        color: isAvailable
-                            ? AppColors.primeAvailable
-                            : AppColors.primeUnavailable,
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      'x${prime.count}',
-                      style: AppTextStyles.primeCount.copyWith(
-                        color: isAvailable
-                            ? AppColors.primeAvailable
-                            : AppColors.primeUnavailable,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -1177,46 +1339,45 @@ class _ActionButtonsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Row(
       children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-              Logger.logBattle('Escape button pressed');
-
-              // Record escape in session
-              ref.read(battleSessionProvider.notifier).recordEscape();
-
-              // Apply time penalty (reduce timer by 10 seconds)
-              final currentTime = ref.read(battleTimerProvider);
-              final newTime = (currentTime - 10).clamp(
-                1,
-                currentTime,
-              ); // 最低1秒は残す
-              ref.read(battleTimerProvider.notifier).state = newTime;
-
-              // Generate new enemy without resetting timer or items
-              onGenerateNewEnemyWithoutTimeReset();
-
-              // Show feedback
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('逃走しました。時間が10秒減少しました。'),
-                  backgroundColor: Colors.orange,
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-            child: Text(l10n.escape),
+        // game-ui-design: Escape is intentionally less visually dominant
+        OutlinedButton(
+          onPressed: () {
+            Logger.logBattle('Escape button pressed');
+            ref.read(battleSessionProvider.notifier).recordEscape();
+            final currentTime = ref.read(battleTimerProvider);
+            final newTime = (currentTime - 10).clamp(1, currentTime);
+            ref.read(battleTimerProvider.notifier).state = newTime;
+            onGenerateNewEnemyWithoutTimeReset();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.escapedItemsRestored),
+                backgroundColor: AppColors.timerWarning,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          },
+          style: OutlinedButton.styleFrom(
+            foregroundColor: cs.onSurfaceVariant,
+            side: BorderSide(color: cs.outline),
+            padding: const EdgeInsets.symmetric(
+              horizontal: Dimensions.paddingM,
+              vertical: Dimensions.paddingM,
+            ),
           ),
+          child: Text(l10n.escape),
         ),
         const SizedBox(width: Dimensions.spacingM),
+
+        // game-designer: Button has one consistent look regardless of prime/composite.
+        // Players must judge for themselves when to claim — that IS the gameplay.
+        // The ambient enemy card color (brown→green) is the only atmospheric signal.
         Expanded(
-          flex: 2,
           child: ElevatedButton(
             onPressed: () {
-              // 複数回の連続クリックを防ぐ
               if (context.mounted) {
                 _claimVictory(
                   context,
@@ -1228,11 +1389,41 @@ class _ActionButtonsSection extends ConsumerWidget {
                 );
               }
             },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimensions.paddingM,
+              ),
+            ),
             child: Text(l10n.claimVictory),
           ),
         ),
       ],
     );
+  }
+
+  Future<void> _checkAndShowAchievements(
+    BuildContext context,
+    WidgetRef ref,
+    int defeatedEnemy,
+  ) async {
+    final battleStart = ref.read(battleStartTimeProvider);
+    final elapsedSeconds = DateTime.now().difference(battleStart).inSeconds;
+    final session = ref.read(battleSessionProvider);
+
+    final newlyUnlocked = await ref
+        .read(achievementProvider.notifier)
+        .checkBattleAchievements(
+          isVictory: true,
+          isPowerEnemy: false,
+          battleTimeSeconds: elapsedSeconds,
+          turnCount: session.usedPrimesInCurrentBattle.length,
+          enemyValue: defeatedEnemy,
+          isPerfectScore: session.wrongClaims == 0,
+        );
+
+    if (newlyUnlocked.isNotEmpty && context.mounted) {
+      showAchievementUnlockNotifications(context, newlyUnlocked);
+    }
   }
 
   void _claimVictory(
@@ -1251,6 +1442,9 @@ class _ActionButtonsSection extends ConsumerWidget {
       final session = ref.read(battleSessionProvider);
       final usedPrimes = session.usedPrimesInCurrentBattle;
       ref.read(battleSessionProvider.notifier).recordVictory(enemy);
+
+      // Check and show achievement unlock notifications (fire-and-forget)
+      _checkAndShowAchievements(context, ref, enemy);
 
       // 最終素数を報酬として獲得
       if (!session.isPracticeMode) {
@@ -1419,23 +1613,84 @@ class _ActionButtonsSection extends ConsumerWidget {
         // No intrusive feedback - let the player continue seamlessly
       }
     } else {
-      // Wrong claim - record error
+      // Wrong claim — red flash + brief SnackBar, no explanation given
+      // game-designer: The unchanged composite enemy IS the feedback. Brief text
+      // names the error without teaching the answer.
       ref.read(battleSessionProvider.notifier).recordWrongClaim();
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(l10n.wrongClaim),
-          content: Text(l10n.stillComposite(enemy.toString())),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.continueAction),
-            ),
-          ],
+      ref.read(battleInvalidAttackProvider.notifier).state++;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.wrongClaim),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          duration: const Duration(milliseconds: 1200),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
+  }
+}
+
+// ─── Pulsing Button Helper ──────────────────────────────────────────────────────
+// flutter-ui-ux: Reusable micro-interaction wrapper for "ready" state emphasis
+// game-ui-design: Motion guides attention — pulse only when action is critical
+class _PulsingButton extends StatefulWidget {
+  final Widget child;
+  final bool active;
+
+  const _PulsingButton({required this.child, required this.active});
+
+  @override
+  State<_PulsingButton> createState() => _PulsingButtonState();
+}
+
+class _PulsingButtonState extends State<_PulsingButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 650),
+      vsync: this,
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 1.055,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    if (widget.active) _controller.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(_PulsingButton old) {
+    super.didUpdateWidget(old);
+    if (widget.active != old.active) {
+      if (widget.active) {
+        _controller.repeat(reverse: true);
+      } else {
+        _controller.stop();
+        _controller.animateTo(0);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _scale,
+      builder: (context, child) => Transform.scale(
+        scale: widget.active ? _scale.value : 1.0,
+        child: child,
+      ),
+      child: widget.child,
+    );
   }
 }
 

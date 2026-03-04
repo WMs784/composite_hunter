@@ -97,13 +97,14 @@ class _StageItemSelectionScreenState
 
   /// ステージ情報ヘッダー
   Widget _buildStageInfoHeader() {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(Dimensions.paddingM),
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryContainer],
+        gradient: LinearGradient(
+          colors: [cs.primary, cs.primaryContainer],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -118,14 +119,14 @@ class _StageItemSelectionScreenState
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: cs.surface,
                   borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 ),
                 child: Center(
                   child: Text(
                     widget.stage.stageNumber.toString(),
                     style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.primary,
+                      color: cs.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -139,7 +140,7 @@ class _StageItemSelectionScreenState
                     Text(
                       widget.stage.title,
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.onPrimary,
+                        color: cs.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -147,7 +148,7 @@ class _StageItemSelectionScreenState
                     Text(
                       widget.stage.description,
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.onPrimary.withValues(alpha: 0.9),
+                        color: cs.onPrimary.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -181,22 +182,19 @@ class _StageItemSelectionScreenState
 
   /// 選択状況表示
   Widget _buildSelectionStatus() {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingM),
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
-        color: AppColors.primaryContainer,
+        color: cs.primaryContainer,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: cs.outline),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.inventory_2,
-            color: AppColors.onPrimaryContainer,
-            size: 24,
-          ),
+          Icon(Icons.inventory_2, color: cs.onPrimaryContainer, size: 24),
           const SizedBox(width: Dimensions.spacingM),
           Expanded(
             child: Column(
@@ -205,7 +203,7 @@ class _StageItemSelectionScreenState
                 Text(
                   AppLocalizations.of(context)!.selectedItems,
                   style: AppTextStyles.titleSmall.copyWith(
-                    color: AppColors.onPrimaryContainer,
+                    color: cs.onPrimaryContainer,
                   ),
                 ),
                 const SizedBox(height: Dimensions.spacingXs),
@@ -214,25 +212,21 @@ class _StageItemSelectionScreenState
                     Text(
                       '$totalSelectedCount',
                       style: AppTextStyles.titleLarge.copyWith(
-                        color: AppColors.onPrimaryContainer,
+                        color: cs.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       ' / $maxSelectableCount',
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.onPrimaryContainer.withValues(
-                          alpha: 0.7,
-                        ),
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(width: Dimensions.spacingS),
                     Text(
                       '($remainingCount ${AppLocalizations.of(context)!.remaining})',
                       style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.onPrimaryContainer.withValues(
-                          alpha: 0.6,
-                        ),
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -245,7 +239,7 @@ class _StageItemSelectionScreenState
             width: 80,
             height: 8,
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(4),
             ),
             child: FractionallySizedBox(
@@ -253,7 +247,7 @@ class _StageItemSelectionScreenState
               widthFactor: totalSelectedCount / maxSelectableCount,
               child: Container(
                 decoration: BoxDecoration(
-                  color: hasReachedLimit ? AppColors.error : AppColors.primary,
+                  color: hasReachedLimit ? cs.error : cs.primary,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -339,25 +333,24 @@ class _StageItemSelectionScreenState
 
   /// 情報チップ
   Widget _buildInfoChip(IconData icon, String text) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: Dimensions.paddingS,
         vertical: Dimensions.paddingXs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.9),
+        color: cs.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(Dimensions.radiusS),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
+          Icon(icon, size: 14, color: cs.primary),
           const SizedBox(width: 4),
           Text(
             text,
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.onSurface,
-            ),
+            style: AppTextStyles.labelSmall.copyWith(color: cs.onSurface),
           ),
         ],
       ),
@@ -468,13 +461,18 @@ class _SelectableItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final isSelected = selectedCount > 0;
+    final bgColor = isSelected ? cs.primaryContainer : cs.surface;
+    final borderColor = isSelected ? cs.primary : cs.outline;
+    final textColor = isSelected ? cs.onPrimaryContainer : cs.onSurface;
+    final canAdd = canIncrease && selectedCount < prime.count;
 
     return Container(
       decoration: BoxDecoration(
-        color: _getBackgroundColor(),
+        color: bgColor,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: _getBorderColor(), width: isSelected ? 3 : 1),
+        border: Border.all(color: borderColor, width: isSelected ? 3 : 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -483,7 +481,7 @@ class _SelectableItemCard extends StatelessWidget {
           Text(
             prime.value.toString(),
             style: AppTextStyles.primeValue.copyWith(
-              color: _getTextColor(),
+              color: textColor,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               fontSize: 16,
             ),
@@ -495,7 +493,7 @@ class _SelectableItemCard extends StatelessWidget {
           Text(
             AppLocalizations.of(context)!.haveCount(prime.count.toString()),
             style: AppTextStyles.labelSmall.copyWith(
-              color: _getTextColor().withValues(alpha: 0.7),
+              color: textColor.withValues(alpha: 0.7),
               fontSize: 9,
             ),
           ),
@@ -513,14 +511,12 @@ class _SelectableItemCard extends StatelessWidget {
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: canDecrease ? AppColors.primary : AppColors.outline,
+                    color: canDecrease ? cs.primary : cs.outline,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.remove,
-                    color: canDecrease
-                        ? AppColors.onPrimary
-                        : AppColors.onSurfaceVariant,
+                    color: canDecrease ? cs.onPrimary : cs.onSurfaceVariant,
                     size: 12,
                   ),
                 ),
@@ -534,7 +530,7 @@ class _SelectableItemCard extends StatelessWidget {
                 child: Text(
                   '$selectedCount',
                   style: AppTextStyles.labelSmall.copyWith(
-                    color: _getTextColor(),
+                    color: textColor,
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
@@ -546,23 +542,17 @@ class _SelectableItemCard extends StatelessWidget {
 
               // 増加ボタン
               GestureDetector(
-                onTap: canIncrease && selectedCount < prime.count
-                    ? onIncrease
-                    : null,
+                onTap: canAdd ? onIncrease : null,
                 child: Container(
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: (canIncrease && selectedCount < prime.count)
-                        ? AppColors.primary
-                        : AppColors.outline,
+                    color: canAdd ? cs.primary : cs.outline,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.add,
-                    color: (canIncrease && selectedCount < prime.count)
-                        ? AppColors.onPrimary
-                        : AppColors.onSurfaceVariant,
+                    color: canAdd ? cs.onPrimary : cs.onSurfaceVariant,
                     size: 12,
                   ),
                 ),
@@ -572,20 +562,5 @@ class _SelectableItemCard extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Color _getBackgroundColor() {
-    final isSelected = selectedCount > 0;
-    return isSelected ? AppColors.primaryContainer : AppColors.surface;
-  }
-
-  Color _getBorderColor() {
-    final isSelected = selectedCount > 0;
-    return isSelected ? AppColors.primary : AppColors.outline;
-  }
-
-  Color _getTextColor() {
-    final isSelected = selectedCount > 0;
-    return isSelected ? AppColors.onPrimaryContainer : AppColors.onSurface;
   }
 }

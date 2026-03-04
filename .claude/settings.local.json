@@ -33,7 +33,9 @@
       "WebFetch(domain:pub.dev)",
       "Bash(sed:*)",
       "Bash(ls:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(npx skills:*)",
+      "WebFetch(domain:skills.sh)"
     ],
     "deny": []
   }

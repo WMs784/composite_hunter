@@ -146,5 +146,8 @@
   "advancedPath": "上級への道",
   "advancedPathDescription": "大きな合成数と本格的なバトルを繰り広げよう",
   "expertMode": "エキスパートモード",
-  "expertModeDescription": "上級者向けの究極のチャレンジ"
+  "expertModeDescription": "上級者向けの究極のチャレンジ",
+
+  "achievementUnlocked": "アチーブメント解放！",
+  "achievementReward": "報酬: {reward}"
 }

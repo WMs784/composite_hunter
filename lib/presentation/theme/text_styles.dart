@@ -5,14 +5,13 @@ class AppTextStyles {
   // Base font family
   static const String fontFamily = 'Roboto';
 
-  // Display styles
+  // Display styles — no explicit color; Material3 applies colorScheme.onSurface
   static const TextStyle displayLarge = TextStyle(
     fontFamily: fontFamily,
     fontSize: 57,
     fontWeight: FontWeight.w400,
     letterSpacing: -0.25,
     height: 1.12,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle displayMedium = TextStyle(
@@ -21,7 +20,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     height: 1.16,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle displaySmall = TextStyle(
@@ -30,7 +28,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     height: 1.22,
-    color: AppColors.onSurface,
   );
 
   // Headline styles
@@ -40,7 +37,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     height: 1.25,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle headlineMedium = TextStyle(
@@ -49,7 +45,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     height: 1.29,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle headlineSmall = TextStyle(
@@ -58,7 +53,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     height: 1.33,
-    color: AppColors.onSurface,
   );
 
   // Title styles
@@ -68,7 +62,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0,
     height: 1.27,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle titleMedium = TextStyle(
@@ -77,7 +70,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     letterSpacing: 0.15,
     height: 1.50,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle titleSmall = TextStyle(
@@ -86,7 +78,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     letterSpacing: 0.10,
     height: 1.43,
-    color: AppColors.onSurface,
   );
 
   // Label styles
@@ -96,7 +87,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     letterSpacing: 0.10,
     height: 1.43,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle labelMedium = TextStyle(
@@ -105,7 +95,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     letterSpacing: 0.50,
     height: 1.33,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle labelSmall = TextStyle(
@@ -114,7 +103,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     letterSpacing: 0.50,
     height: 1.45,
-    color: AppColors.onSurface,
   );
 
   // Body styles
@@ -124,7 +112,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.50,
     height: 1.50,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle bodyMedium = TextStyle(
@@ -133,7 +120,6 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.25,
     height: 1.43,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle bodySmall = TextStyle(
@@ -142,29 +128,25 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     letterSpacing: 0.40,
     height: 1.33,
-    color: AppColors.onSurface,
   );
 
-  // Game specific styles
+  // Game specific styles — no color; inherit from theme context
   static const TextStyle enemyValue = TextStyle(
     fontFamily: fontFamily,
     fontSize: 32,
     fontWeight: FontWeight.bold,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle primeValue = TextStyle(
     fontFamily: fontFamily,
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: AppColors.onSurface,
   );
 
   static const TextStyle primeCount = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w500,
-    color: AppColors.onSurfaceVariant,
   );
 
   static const TextStyle timerDisplay = TextStyle(
@@ -181,6 +163,7 @@ class AppTextStyles {
     letterSpacing: 0.15,
   );
 
+  // game-ui-design: HUD text must have shadow/outline — explicit white for primary background
   static const TextStyle powerEnemyLabel = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
@@ -191,7 +174,7 @@ class AppTextStyles {
     ],
   );
 
-  // Create text theme
+  // Create text theme — colors are null so Material3 colorScheme drives them
   static const TextTheme textTheme = TextTheme(
     displayLarge: displayLarge,
     displayMedium: displayMedium,

@@ -91,6 +91,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
   Widget build(BuildContext context) {
     final stages = ref.watch(stageProgressProvider);
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -125,8 +126,8 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(Dimensions.paddingL),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.primary, AppColors.primaryContainer],
+                  gradient: LinearGradient(
+                    colors: [cs.primary, cs.primaryContainer],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -138,7 +139,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                     Text(
                       l10n.appTitle,
                       style: AppTextStyles.titleLarge.copyWith(
-                        color: AppColors.onPrimary,
+                        color: cs.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -146,7 +147,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
                     Text(
                       l10n.chooseChallenge,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.onPrimary,
+                        color: cs.onPrimary,
                       ),
                     ),
                   ],
@@ -301,6 +302,7 @@ class _StageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLocked = !stage.isUnlocked;
+    final cs = Theme.of(context).colorScheme;
 
     return Card(
       elevation: isLocked ? 1 : 4,
@@ -312,7 +314,7 @@ class _StageCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
             color: isLocked
-                ? AppColors.surfaceVariant.withValues(alpha: 0.5)
+                ? cs.surfaceContainerHighest.withValues(alpha: 0.5)
                 : null,
           ),
           child: Row(
@@ -323,23 +325,19 @@ class _StageCard extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   color: isLocked
-                      ? AppColors.outline
+                      ? cs.outline
                       : (stage.isCompleted
                             ? AppColors.victoryGreen
-                            : AppColors.primary),
+                            : cs.primary),
                   borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 ),
                 child: Center(
                   child: isLocked
-                      ? const Icon(
-                          Icons.lock,
-                          color: AppColors.onSurfaceVariant,
-                          size: 24,
-                        )
+                      ? Icon(Icons.lock, color: cs.onSurfaceVariant, size: 24)
                       : Text(
                           stage.stageNumber.toString(),
                           style: AppTextStyles.titleLarge.copyWith(
-                            color: AppColors.onPrimary,
+                            color: cs.onPrimary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -360,8 +358,8 @@ class _StageCard extends StatelessWidget {
                             stage.getLocalizedTitle(l10n),
                             style: AppTextStyles.titleMedium.copyWith(
                               color: isLocked
-                                  ? AppColors.onSurfaceVariant
-                                  : AppColors.onSurface,
+                                  ? cs.onSurfaceVariant
+                                  : cs.onSurface,
                             ),
                           ),
                         ),
@@ -373,8 +371,8 @@ class _StageCard extends StatelessWidget {
                       stage.getLocalizedDescription(l10n),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: isLocked
-                            ? AppColors.onSurfaceVariant.withValues(alpha: 0.7)
-                            : AppColors.onSurfaceVariant,
+                            ? cs.onSurfaceVariant.withValues(alpha: 0.7)
+                            : cs.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: Dimensions.spacingS),
@@ -382,11 +380,16 @@ class _StageCard extends StatelessWidget {
                       Row(
                         children: [
                           _buildInfoChip(
+                            context,
                             Icons.numbers,
                             '${stage.enemyRangeMin}-${stage.enemyRangeMax}',
                           ),
                           const SizedBox(width: Dimensions.spacingS),
-                          _buildInfoChip(Icons.timer, '${stage.timeLimit}s'),
+                          _buildInfoChip(
+                            context,
+                            Icons.timer,
+                            '${stage.timeLimit}s',
+                          ),
                         ],
                       ),
                     ],
@@ -400,7 +403,7 @@ class _StageCard extends StatelessWidget {
                   stage.isCompleted ? Icons.check_circle : Icons.play_arrow,
                   color: stage.isCompleted
                       ? AppColors.victoryGreen
-                      : AppColors.primary,
+                      : cs.primary,
                   size: 28,
                 ),
             ],
@@ -416,32 +419,33 @@ class _StageCard extends StatelessWidget {
       children: List.generate(3, (index) {
         return Icon(
           index < stars ? Icons.star : Icons.star_border,
-          color: index < stars ? Colors.amber : AppColors.outline,
+          color: index < stars ? Colors.amber : Colors.grey,
           size: 16,
         );
       }),
     );
   }
 
-  Widget _buildInfoChip(IconData icon, String text) {
+  Widget _buildInfoChip(BuildContext context, IconData icon, String text) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: Dimensions.paddingS,
         vertical: Dimensions.paddingXs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.primaryContainer,
+        color: cs.primaryContainer,
         borderRadius: BorderRadius.circular(Dimensions.radiusS),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.onPrimaryContainer),
+          Icon(icon, size: 14, color: cs.onPrimaryContainer),
           const SizedBox(width: 4),
           Text(
             text,
             style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.onPrimaryContainer,
+              color: cs.onPrimaryContainer,
             ),
           ),
         ],

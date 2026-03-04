@@ -13,6 +13,7 @@ class AchievementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     final battleAchievements = ref.watch(battleAchievementsProvider);
     final speedAchievements = ref.watch(speedAchievementsProvider);
     final specialAchievements = ref.watch(specialAchievementsProvider);
@@ -27,7 +28,9 @@ class AchievementScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(Dimensions.paddingM),
         children: [
           _buildProgressSummary(
+            context,
             l10n,
+            cs,
             completionPercentage,
             unlockedCount,
             totalCount,
@@ -37,7 +40,7 @@ class AchievementScreen extends ConsumerWidget {
             Text(l10n.battleAchievements, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
             ...battleAchievements.map(
-              (achievement) => _buildAchievementItem(achievement),
+              (a) => _buildAchievementItem(context, cs, a),
             ),
             const SizedBox(height: Dimensions.spacingL),
           ],
@@ -45,18 +48,15 @@ class AchievementScreen extends ConsumerWidget {
             Text(l10n.speedAchievements, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
             ...speedAchievements.map(
-              (achievement) => _buildAchievementItem(achievement),
+              (a) => _buildAchievementItem(context, cs, a),
             ),
             const SizedBox(height: Dimensions.spacingL),
           ],
           if (collectionAchievements.isNotEmpty) ...[
-            Text(
-              l10n.primeCollector, // 適切な既存のローカライゼーションキーを使用
-              style: AppTextStyles.titleLarge,
-            ),
+            Text(l10n.primeCollector, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
             ...collectionAchievements.map(
-              (achievement) => _buildAchievementItem(achievement),
+              (a) => _buildAchievementItem(context, cs, a),
             ),
             const SizedBox(height: Dimensions.spacingL),
           ],
@@ -64,7 +64,7 @@ class AchievementScreen extends ConsumerWidget {
             Text(l10n.specialAchievements, style: AppTextStyles.titleLarge),
             const SizedBox(height: Dimensions.spacingM),
             ...specialAchievements.map(
-              (achievement) => _buildAchievementItem(achievement),
+              (a) => _buildAchievementItem(context, cs, a),
             ),
           ],
         ],
@@ -73,7 +73,9 @@ class AchievementScreen extends ConsumerWidget {
   }
 
   Widget _buildProgressSummary(
+    BuildContext context,
     AppLocalizations l10n,
+    ColorScheme cs,
     double progress,
     int unlockedCount,
     int totalCount,
@@ -107,7 +109,7 @@ class AchievementScreen extends ConsumerWidget {
                           totalCount.toString(),
                         ),
                         style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.onSurfaceVariant,
+                          color: cs.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -125,7 +127,7 @@ class AchievementScreen extends ConsumerWidget {
             const SizedBox(height: Dimensions.spacingM),
             LinearProgressIndicator(
               value: progress,
-              backgroundColor: AppColors.surfaceVariant,
+              backgroundColor: cs.surfaceContainerHighest,
               valueColor: const AlwaysStoppedAnimation<Color>(
                 AppColors.victoryGreen,
               ),
@@ -136,7 +138,11 @@ class AchievementScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAchievementItem(Achievement achievement) {
+  Widget _buildAchievementItem(
+    BuildContext context,
+    ColorScheme cs,
+    Achievement achievement,
+  ) {
     final progressValue = achievement.targetValue > 0
         ? achievement.currentProgress / achievement.targetValue
         : 0.0;
@@ -155,7 +161,7 @@ class AchievementScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: achievement.isUnlocked
                     ? AppColors.victoryGreen.withValues(alpha: 0.1)
-                    : AppColors.surfaceVariant,
+                    : cs.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 border: achievement.isUnlocked
                     ? Border.all(color: AppColors.victoryGreen, width: 2)
@@ -165,7 +171,7 @@ class AchievementScreen extends ConsumerWidget {
                 icon,
                 color: achievement.isUnlocked
                     ? AppColors.victoryGreen
-                    : AppColors.onSurfaceVariant,
+                    : cs.onSurfaceVariant,
                 size: Dimensions.iconL,
               ),
             ),
@@ -181,15 +187,15 @@ class AchievementScreen extends ConsumerWidget {
                     achievement.title,
                     style: AppTextStyles.titleMedium.copyWith(
                       color: achievement.isUnlocked
-                          ? AppColors.onSurface
-                          : AppColors.onSurfaceVariant,
+                          ? cs.onSurface
+                          : cs.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: Dimensions.spacingXs),
                   Text(
                     achievement.description,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onSurfaceVariant,
+                      color: cs.onSurfaceVariant,
                     ),
                   ),
                   if (!achievement.isUnlocked) ...[
@@ -199,9 +205,9 @@ class AchievementScreen extends ConsumerWidget {
                         Expanded(
                           child: LinearProgressIndicator(
                             value: progressValue,
-                            backgroundColor: AppColors.surfaceVariant,
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
+                            backgroundColor: cs.surfaceContainerHighest,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              cs.primary,
                             ),
                           ),
                         ),
@@ -209,7 +215,7 @@ class AchievementScreen extends ConsumerWidget {
                         Text(
                           '${achievement.currentProgress}/${achievement.targetValue}',
                           style: AppTextStyles.labelSmall.copyWith(
-                            color: AppColors.onSurfaceVariant,
+                            color: cs.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -229,7 +235,7 @@ class AchievementScreen extends ConsumerWidget {
                 ),
                 child: const Icon(
                   Icons.check,
-                  color: AppColors.onPrimary,
+                  color: Colors.white,
                   size: Dimensions.iconS,
                 ),
               )
@@ -237,12 +243,12 @@ class AchievementScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(Dimensions.paddingS),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceVariant,
+                  color: cs.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(Dimensions.radiusRound),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.lock,
-                  color: AppColors.onSurfaceVariant,
+                  color: cs.onSurfaceVariant,
                   size: Dimensions.iconS,
                 ),
               ),

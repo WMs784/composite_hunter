@@ -88,8 +88,9 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: cs.surface,
       body: SafeArea(
         child: AnimatedBuilder(
           animation: _mainController,
@@ -111,6 +112,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
   }
 
   Widget _buildContent(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final session = ref.watch(battleSessionProvider);
     final l10n = AppLocalizations.of(context)!;
 
@@ -122,9 +124,9 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            AppColors.error.withValues(alpha: 0.1),
-            AppColors.surface,
-            AppColors.errorContainer.withValues(alpha: 0.1),
+            cs.error.withValues(alpha: 0.1),
+            cs.surface,
+            cs.errorContainer.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -145,11 +147,11 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: AppColors.error,
+                        color: cs.error,
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.error.withValues(alpha: 0.3),
+                            color: cs.error.withValues(alpha: 0.3),
                             blurRadius: 20,
                             spreadRadius: 5,
                           ),
@@ -173,7 +175,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
               Text(
                 l10n.gameOver,
                 style: AppTextStyles.headlineLarge.copyWith(
-                  color: AppColors.error,
+                  color: cs.error,
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
@@ -185,7 +187,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
               Text(
                 _getReasonText(l10n),
                 style: AppTextStyles.titleMedium.copyWith(
-                  color: AppColors.onSurfaceVariant,
+                  color: cs.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -193,13 +195,14 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
               const SizedBox(height: Dimensions.spacingL),
 
               // セッション結果
-              if (!session.isPracticeMode) _buildSessionResults(session, l10n),
+              if (!session.isPracticeMode)
+                _buildSessionResults(context, session, l10n),
 
               if (!session.isPracticeMode)
                 const SizedBox(height: Dimensions.spacingL),
 
               // アドバイス
-              _buildAdvice(l10n),
+              _buildAdvice(context, l10n),
 
               const SizedBox(height: Dimensions.spacingL),
 
@@ -232,15 +235,17 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
   }
 
   Widget _buildSessionResults(
+    BuildContext context,
     BattleSessionState session,
     AppLocalizations l10n,
   ) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant.withValues(alpha: 0.5),
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(Dimensions.radiusL),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -264,7 +269,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
             icon: Icons.timer,
             label: l10n.timePlayed,
             value: _formatDuration(session.totalTime),
-            color: AppColors.primary,
+            color: cs.primary,
           ),
           if (session.escapes > 0) ...[
             const SizedBox(height: Dimensions.spacingS),
@@ -281,7 +286,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
               icon: Icons.error,
               label: l10n.wrongClaims,
               value: '${session.wrongClaims}',
-              color: AppColors.error,
+              color: cs.error,
             ),
           ],
         ],
@@ -319,7 +324,8 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     );
   }
 
-  Widget _buildAdvice(AppLocalizations l10n) {
+  Widget _buildAdvice(BuildContext context, AppLocalizations l10n) {
+    final cs = Theme.of(context).colorScheme;
     String advice;
     IconData icon;
 
@@ -337,18 +343,18 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
-        color: AppColors.primaryContainer.withValues(alpha: 0.3),
+        color: cs.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: AppColors.primary, size: 32),
+          Icon(icon, color: cs.primary, size: 32),
           const SizedBox(height: Dimensions.spacingS),
           Text(
             l10n.tip,
             style: AppTextStyles.titleMedium.copyWith(
-              color: AppColors.primary,
+              color: cs.primary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -356,7 +362,7 @@ class _GameOverScreenState extends ConsumerState<GameOverScreen>
           Text(
             advice,
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.onPrimaryContainer,
+              color: cs.onPrimaryContainer,
             ),
             textAlign: TextAlign.center,
           ),

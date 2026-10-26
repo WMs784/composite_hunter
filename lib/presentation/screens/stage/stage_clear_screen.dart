@@ -231,7 +231,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               // ボーナス情報
               if (widget.clearResult.isPerfect ||
                   widget.clearResult.isNewRecord)
-                _buildBonusInfo(l10n),
+                _buildBonusInfo(context, l10n),
 
               const SizedBox(height: Dimensions.spacingL),
 
@@ -351,7 +351,10 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildBonusInfo(AppLocalizations l10n) {
+  Widget _buildBonusInfo(BuildContext context, AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final amberTitle = isDark ? Colors.amber.shade300 : Colors.amber.shade800;
+    final amberBody = isDark ? Colors.amber.shade200 : Colors.amber.shade900;
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
@@ -372,13 +375,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             Text(
               l10n.perfectClear,
               style: AppTextStyles.titleMedium.copyWith(
-                color: Colors.amber[700],
+                color: amberTitle,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               l10n.noEscapesOrWrongClaims,
-              style: AppTextStyles.bodySmall.copyWith(color: Colors.amber[600]),
+              style: AppTextStyles.bodySmall.copyWith(color: amberBody),
             ),
           ],
           if (widget.clearResult.isNewRecord) ...[
@@ -387,13 +390,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             Text(
               l10n.newRecord,
               style: AppTextStyles.titleMedium.copyWith(
-                color: Colors.amber[700],
+                color: amberTitle,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               l10n.bestPerformance,
-              style: AppTextStyles.bodySmall.copyWith(color: Colors.amber[600]),
+              style: AppTextStyles.bodySmall.copyWith(color: amberBody),
             ),
           ],
         ],

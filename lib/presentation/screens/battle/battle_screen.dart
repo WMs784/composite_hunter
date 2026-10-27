@@ -1213,6 +1213,9 @@ class _PrimeGridSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final primes = ref.watch(battleInventoryProvider);
     final enemy = ref.watch(battleEnemyProvider);
+    final isPractice = ref.watch(
+      battleSessionProvider.select((s) => s.isPracticeMode),
+    );
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
@@ -1241,6 +1244,12 @@ class _PrimeGridSection extends ConsumerWidget {
 
                     return _PrimeButton(
                       prime: prime,
+                      // Learning aid: practice mode only. Stage battles must
+                      // not reveal which prime divides the enemy.
+                      showValidHint:
+                          isPractice &&
+                          !_isPrime(enemy) &&
+                          enemy % prime.value == 0,
                       onPressed: () {
                         Logger.logBattle(
                           'Prime attack attempt',
@@ -1334,8 +1343,13 @@ class _PrimeGridSection extends ConsumerWidget {
 class _PrimeButton extends StatefulWidget {
   final Prime prime;
   final VoidCallback? onPressed;
+  final bool showValidHint;
 
-  const _PrimeButton({required this.prime, this.onPressed});
+  const _PrimeButton({
+    required this.prime,
+    this.onPressed,
+    this.showValidHint = false,
+  });
 
   @override
   State<_PrimeButton> createState() => _PrimeButtonState();
@@ -1425,6 +1439,26 @@ class _PrimeButtonState extends State<_PrimeButton>
                     ],
                   ),
                 ),
+                if (widget.showValidHint)
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimensions.radiusM),
+                      border: Border.all(
+                        color: AppColors.victoryGreen,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                if (widget.showValidHint)
+                  const Positioned(
+                    top: 2,
+                    right: 4,
+                    child: Icon(
+                      Icons.check_circle,
+                      size: 18,
+                      color: AppColors.victoryGreen,
+                    ),
+                  ),
               ],
             ),
           ),

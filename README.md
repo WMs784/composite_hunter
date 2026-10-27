@@ -23,7 +23,7 @@
 ## 🛠️ 技術仕様
 
 ### 開発環境
-- **フレームワーク**: Flutter 3.32.0+
+- **フレームワーク**: Flutter 3.47.8+
 - **言語**: Dart
 - **状態管理**: Riverpod
 - **データベース**: SQLite (sqflite)
@@ -38,7 +38,7 @@
 ## 🚀 セットアップ
 
 ### 前提条件
-- Flutter SDK 3.32.0 以上
+- Flutter SDK 3.47.8 以上
 - Dart SDK 3.8.0 以上
 - Android Studio / VS Code
 - iOS: Xcode 14.0+ (iOS開発の場合)

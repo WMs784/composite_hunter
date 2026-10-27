@@ -145,15 +145,6 @@
     "description": "Wrong claim dialog title"
   },
   
-  "stillDivisibleBy": "{number} is still divisible by {prime}!",
-  "@stillDivisibleBy": {
-    "description": "Hint shown after a wrong victory claim",
-    "placeholders": {
-      "number": {"type": "int"},
-      "prime": {"type": "int"}
-    }
-  },
-
   "stillComposite": "{number} is still a composite number. Keep attacking!",
   "@stillComposite": {
     "description": "Wrong claim message",

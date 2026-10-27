@@ -95,11 +95,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get wrongClaim => 'Wrong Claim!';
 
   @override
-  String stillDivisibleBy(int number, int prime) {
-    return '$number is still divisible by $prime!';
-  }
-
-  @override
   String stillComposite(String number) {
     return '$number is still a composite number. Keep attacking!';
   }

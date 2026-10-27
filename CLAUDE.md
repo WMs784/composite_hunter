@@ -120,6 +120,8 @@ lib/
 ### Educational Focus
 - The game teaches prime factorization through gameplay
 - Error handling should be educational rather than punitive
+- **Never reveal the answer.** Do not show which prime divides the enemy, the factorization, or whether a number is prime/composite, in hints, snackbars, or visual cues that are not derivable by the player. Finding the factors is the game itself. Feedback may say *that* an action failed (flash, shake, haptic, "Wrong Claim!"), never *why* or *what would work*
+- Visual cues for valid moves (e.g. the glow on valid-factor prime buttons) are a known exception already in the game; do not add new ones without asking
 - UI should clearly show mathematical relationships
 
 ### Performance Requirements

@@ -1037,7 +1037,6 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
             painter: EnemyMonsterPainter(
               primeFactors: _getPrimeFactors(enemy),
               tier: MonsterTier.of(enemy),
-              worried: _getPrimeFactors(enemy).length == 2,
               animPhase: _idleController.value * 2 * pi,
             ),
           ),
@@ -1739,15 +1738,11 @@ class _ActionButtonsSection extends ConsumerWidget {
       ref.read(battleComboProvider.notifier).state = 0;
       HapticFeedback.heavyImpact();
       ref.read(battleInvalidAttackProvider.notifier).state++;
-      // Educational hint: name one prime that still divides the enemy
-      final hintPrime = _getPrimeFactors(enemy).first;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            '${l10n.wrongClaim} ${l10n.stillDivisibleBy(enemy, hintPrime)}',
-          ),
+          content: Text(l10n.wrongClaim),
           backgroundColor: Theme.of(context).colorScheme.error,
-          duration: const Duration(milliseconds: 2000),
+          duration: const Duration(milliseconds: 1200),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -1866,14 +1861,11 @@ class EnemyMonsterPainter extends CustomPainter {
   final List<int> primeFactors;
   final MonsterTier tier;
 
-  /// One more hit turns this enemy prime — it looks nervous (wide eyes, "o" mouth).
-  final bool worried;
   final double animPhase;
 
   EnemyMonsterPainter({
     required this.primeFactors,
     required this.tier,
-    this.worried = false,
     required this.animPhase,
   });
 
@@ -1951,19 +1943,8 @@ class EnemyMonsterPainter extends CustomPainter {
     // Face
     final eyeCount = primeFactors.toSet().length.clamp(1, 3);
     _drawEyes(canvas, cx, cy, r, eyeCount);
-    if (worried) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset(cx, cy + r * 0.40),
-          width: r * 0.22,
-          height: r * 0.28,
-        ),
-        Paint()..color = Colors.black.withValues(alpha: 0.75),
-      );
-    } else {
-      _drawMouth(canvas, cx, cy, r, happy: false);
-    }
-    if (tier == MonsterTier.boss && !worried) _drawFangs(canvas, cx, cy, r);
+    _drawMouth(canvas, cx, cy, r, happy: false);
+    if (tier == MonsterTier.boss) _drawFangs(canvas, cx, cy, r);
   }
 
   void _drawFangs(Canvas canvas, double cx, double cy, double r) {
@@ -2004,7 +1985,7 @@ class EnemyMonsterPainter extends CustomPainter {
   }
 
   void _drawEyes(Canvas canvas, double cx, double cy, double r, int count) {
-    final eyeR = r * (worried ? 0.16 : 0.13);
+    final eyeR = r * 0.13;
     final eyeY = cy - r * 0.20;
     final spacing = r * 0.28;
     final startX = cx - spacing * (count - 1) / 2;
@@ -2063,7 +2044,6 @@ class EnemyMonsterPainter extends CustomPainter {
   bool shouldRepaint(EnemyMonsterPainter old) =>
       old.animPhase != animPhase ||
       old.tier != tier ||
-      old.worried != worried ||
       old.primeFactors.length != primeFactors.length;
 }
 

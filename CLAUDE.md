@@ -121,7 +121,7 @@ lib/
 - The game teaches prime factorization through gameplay
 - Error handling should be educational rather than punitive
 - **Never reveal the answer.** Do not show which prime divides the enemy, the factorization, or whether a number is prime/composite, in hints, snackbars, or visual cues that are not derivable by the player. Finding the factors is the game itself. Feedback may say *that* an action failed (flash, shake, haptic, "Wrong Claim!"), never *why* or *what would work*
-- The only allowed hint is the green glow + ✓ on valid-factor prime buttons, and it is shown in **practice mode only** (never in stage battles). Do not add other cues without asking
+- The only allowed hint is the green border + ✓ on valid-factor prime buttons, and it is shown in **practice mode only** (never in stage battles). Do not add other cues without asking
 - UI should clearly show mathematical relationships
 
 ### Performance Requirements

@@ -254,6 +254,12 @@ abstract class AppLocalizations {
   /// **'Wrong Claim!'**
   String get wrongClaim;
 
+  /// Hint shown after a wrong victory claim
+  ///
+  /// In en, this message translates to:
+  /// **'{number} is still divisible by {prime}!'**
+  String stillDivisibleBy(int number, int prime);
+
   /// Wrong claim message
   ///
   /// In en, this message translates to:

@@ -93,6 +93,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get wrongClaim => '誤った宣言！';
 
   @override
+  String stillDivisibleBy(int number, int prime) {
+    return '$number はまだ $prime で割れます！';
+  }
+
+  @override
   String stillComposite(String number) {
     return '$number はまだ合成数です。攻撃を続けてください！';
   }

@@ -26,6 +26,7 @@
   "continueFighting": "戦闘を続けてください！",
   "continueAction": "続ける",
   "wrongClaim": "誤った宣言！",
+  "stillDivisibleBy": "{number} はまだ {prime} で割れます！",
   "stillComposite": "{number} はまだ合成数です。攻撃を続けてください！",
   "gameOver": "ゲームオーバー",
   "timeRanOut": "時間切れです！",

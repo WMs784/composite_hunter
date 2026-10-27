@@ -976,6 +976,7 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
           child: CustomPaint(
             painter: EnemyMonsterPainter(
               primeFactors: _getPrimeFactors(enemy),
+              tier: MonsterTier.of(enemy),
               animPhase: _idleController.value * 2 * pi,
             ),
           ),
@@ -1763,12 +1764,36 @@ List<int> _getPrimeFactors(int n) {
 //   - Spike count  = total factor count     (12=2×2×3 → 3 spikes)
 //   - Eye count    = distinct prime count   (12={2,3} → 2 eyes)
 //   - Color        = smallest prime factor  (2→red, 3→green, 5→orange, 7→purple)
+//   - Size/menace  = enemy tier             (bigger numbers look scarier)
 //   - Prime enemy  → transforms into sparkle star
+enum MonsterTier {
+  small(0.62),
+  medium(0.70),
+  large(0.78),
+  boss(0.86);
+
+  const MonsterTier(this.bodyScale);
+
+  final double bodyScale;
+
+  static MonsterTier of(int n) {
+    if (n <= 20) return small;
+    if (n <= 100) return medium;
+    if (n <= 500) return large;
+    return boss;
+  }
+}
+
 class EnemyMonsterPainter extends CustomPainter {
   final List<int> primeFactors;
+  final MonsterTier tier;
   final double animPhase;
 
-  EnemyMonsterPainter({required this.primeFactors, required this.animPhase});
+  EnemyMonsterPainter({
+    required this.primeFactors,
+    required this.tier,
+    required this.animPhase,
+  });
 
   Color get _baseColor {
     if (primeFactors.isEmpty) return Colors.grey;
@@ -1784,13 +1809,25 @@ class EnemyMonsterPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
     final cy = size.height / 2;
-    final r = min(cx, cy) * 0.72;
+    final r = min(cx, cy) * tier.bodyScale;
     _drawMonster(canvas, cx, cy, r);
   }
 
   void _drawMonster(Canvas canvas, double cx, double cy, double r) {
     final spikeCount = primeFactors.length.clamp(2, 8);
     final path = _buildBlobPath(cx, cy, r, spikeCount);
+
+    // Boss aura — pulsing red glow
+    if (tier == MonsterTier.boss) {
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = const Color(
+            0xFFFF1744,
+          ).withValues(alpha: 0.30 + 0.15 * sin(animPhase * 2))
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14),
+      );
+    }
 
     // Drop shadow
     canvas.drawPath(
@@ -1833,6 +1870,23 @@ class EnemyMonsterPainter extends CustomPainter {
     final eyeCount = primeFactors.toSet().length.clamp(1, 3);
     _drawEyes(canvas, cx, cy, r, eyeCount);
     _drawMouth(canvas, cx, cy, r, happy: false);
+    if (tier == MonsterTier.boss) _drawFangs(canvas, cx, cy, r);
+  }
+
+  void _drawFangs(Canvas canvas, double cx, double cy, double r) {
+    final mouthY = cy + r * 0.38;
+    final mw = r * 0.38;
+    final fang = Paint()..color = Colors.white;
+    for (final dx in [-mw * 0.55, mw * 0.55]) {
+      canvas.drawPath(
+        Path()
+          ..moveTo(cx + dx - r * 0.07, mouthY)
+          ..lineTo(cx + dx + r * 0.07, mouthY)
+          ..lineTo(cx + dx, mouthY + r * 0.16)
+          ..close(),
+        fang,
+      );
+    }
   }
 
   Path _buildBlobPath(double cx, double cy, double r, int bumps) {
@@ -1874,7 +1928,9 @@ class EnemyMonsterPainter extends CustomPainter {
         Offset(ex + eyeR * 0.15, eyeY + eyeR * 0.15),
         eyeR * 0.55,
         Paint()
-          ..color = Colors.black
+          ..color = tier == MonsterTier.boss
+              ? const Color(0xFFD50000)
+              : Colors.black
           ..style = PaintingStyle.fill,
       );
       canvas.drawCircle(
@@ -1913,6 +1969,7 @@ class EnemyMonsterPainter extends CustomPainter {
   @override
   bool shouldRepaint(EnemyMonsterPainter old) =>
       old.animPhase != animPhase ||
+      old.tier != tier ||
       old.primeFactors.length != primeFactors.length;
 }
 

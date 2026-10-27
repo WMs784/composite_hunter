@@ -1486,14 +1486,8 @@ class _ActionButtonsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final enemy = ref.watch(battleEnemyProvider);
-    final isPractice = ref.watch(
-      battleSessionProvider.select((s) => s.isPracticeMode),
-    );
     final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
-    // Learning aid: practice mode only. Stage battles keep one consistent look
-    // so the player must judge for themselves when to claim.
-    final showClaimHint = isPractice && _isPrime(enemy);
 
     return Row(
       children: [
@@ -1527,33 +1521,29 @@ class _ActionButtonsSection extends ConsumerWidget {
         ),
         const SizedBox(width: Dimensions.spacingM),
 
-        // game-designer: In stage battles the button has one consistent look
-        // regardless of prime/composite — players must judge for themselves.
+        // game-designer: Button has one consistent look regardless of prime/composite.
+        // Players must judge for themselves when to claim — that IS the gameplay.
+        // The ambient enemy card color (brown→green) is the only atmospheric signal.
         Expanded(
-          child: _PulsingButton(
-            active: showClaimHint,
-            child: ElevatedButton(
-              onPressed: () {
-                if (context.mounted) {
-                  _claimVictory(
-                    context,
-                    ref,
-                    enemy,
-                    onStopTimer,
-                    onRestartTimer,
-                    onGenerateNewEnemy,
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  vertical: Dimensions.paddingM,
-                ),
-                backgroundColor: showClaimHint ? AppColors.victoryGreen : null,
-                foregroundColor: showClaimHint ? Colors.white : null,
+          child: ElevatedButton(
+            onPressed: () {
+              if (context.mounted) {
+                _claimVictory(
+                  context,
+                  ref,
+                  enemy,
+                  onStopTimer,
+                  onRestartTimer,
+                  onGenerateNewEnemy,
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(
+                vertical: Dimensions.paddingM,
               ),
-              child: Text(l10n.claimVictory),
             ),
+            child: Text(l10n.claimVictory),
           ),
         ),
       ],

@@ -206,17 +206,13 @@ class LocalDatabase {
       final achievements = await db.query(DatabaseSchema.achievementsTable);
 
       for (final achievement in achievements) {
-        await db.insert(
-          DatabaseSchema.playerAchievementsTable,
-          {
-            'player_id': playerId,
-            'achievement_id': achievement['id'],
-            'current_progress': 0,
-            'is_unlocked': 0,
-            'progress_snapshots': '[]',
-          },
-          conflictAlgorithm: ConflictAlgorithm.ignore,
-        );
+        await db.insert(DatabaseSchema.playerAchievementsTable, {
+          'player_id': playerId,
+          'achievement_id': achievement['id'],
+          'current_progress': 0,
+          'is_unlocked': 0,
+          'progress_snapshots': '[]',
+        }, conflictAlgorithm: ConflictAlgorithm.ignore);
       }
 
       Logger.info('Player achievements initialized for player $playerId');
@@ -447,11 +443,10 @@ class LocalDatabase {
   ) async {
     try {
       final db = await database;
-      await db.insert(
-        DatabaseSchema.battleActionsTable,
-        {...actionData, 'battle_id': battleId},
-        conflictAlgorithm: ConflictAlgorithm.fail,
-      );
+      await db.insert(DatabaseSchema.battleActionsTable, {
+        ...actionData,
+        'battle_id': battleId,
+      }, conflictAlgorithm: ConflictAlgorithm.fail);
       Logger.info('Battle action added for battle $battleId');
     } catch (e) {
       Logger.error('Failed to add battle action: $e');
@@ -539,16 +534,12 @@ class LocalDatabase {
 
       if (affected == 0) {
         // Row doesn't exist yet – insert it
-        await db.insert(
-          DatabaseSchema.playerAchievementsTable,
-          {
-            'player_id': playerId,
-            'achievement_id': achievementId,
-            'progress_snapshots': '[]',
-            ...progressData,
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
+        await db.insert(DatabaseSchema.playerAchievementsTable, {
+          'player_id': playerId,
+          'achievement_id': achievementId,
+          'progress_snapshots': '[]',
+          ...progressData,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
       }
 
       Logger.info(
@@ -591,17 +582,13 @@ class LocalDatabase {
   ) async {
     try {
       final db = await database;
-      await db.insert(
-        DatabaseSchema.gameSettingsTable,
-        {
-          'player_id': playerId,
-          'setting_key': key,
-          'setting_value': value,
-          'setting_type': type,
-          'updated_at': DateTime.now().millisecondsSinceEpoch,
-        },
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      await db.insert(DatabaseSchema.gameSettingsTable, {
+        'player_id': playerId,
+        'setting_key': key,
+        'setting_value': value,
+        'setting_type': type,
+        'updated_at': DateTime.now().millisecondsSinceEpoch,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
       Logger.info('Game setting $key set for player $playerId');
     } catch (e) {
       Logger.error('Failed to set game setting $key for player $playerId: $e');
@@ -647,14 +634,10 @@ class LocalDatabase {
   Future<int> startGameSession(int playerId) async {
     try {
       final db = await database;
-      final sessionId = await db.insert(
-        DatabaseSchema.gameSessionsTable,
-        {
-          'player_id': playerId,
-          'session_start': DateTime.now().millisecondsSinceEpoch,
-        },
-        conflictAlgorithm: ConflictAlgorithm.fail,
-      );
+      final sessionId = await db.insert(DatabaseSchema.gameSessionsTable, {
+        'player_id': playerId,
+        'session_start': DateTime.now().millisecondsSinceEpoch,
+      }, conflictAlgorithm: ConflictAlgorithm.fail);
       Logger.info('Game session started with ID: $sessionId');
       return sessionId;
     } catch (e) {
@@ -719,11 +702,11 @@ class LocalDatabase {
         today.day,
       ).millisecondsSinceEpoch;
 
-      await db.insert(
-        DatabaseSchema.playerStatisticsTable,
-        {'player_id': playerId, 'stat_date': statDate, ...statsData},
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      await db.insert(DatabaseSchema.playerStatisticsTable, {
+        'player_id': playerId,
+        'stat_date': statDate,
+        ...statsData,
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
 
       Logger.info('Daily statistics updated for player $playerId');
     } catch (e) {

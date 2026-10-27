@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
+import '../../widgets/prime_gem_painter.dart';
 import '../../../domain/entities/stage.dart';
 import '../../widgets/animated_stars.dart';
 import '../../providers/stage_progress_provider.dart';
@@ -355,6 +356,9 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
   }
 
   Widget _buildBonusInfo(BuildContext context, AppLocalizations l10n) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final amberTitle = isDark ? Colors.amber.shade300 : Colors.amber.shade800;
+    final amberBody = isDark ? Colors.amber.shade200 : Colors.amber.shade900;
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
@@ -375,13 +379,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             Text(
               l10n.perfectClear,
               style: AppTextStyles.titleMedium.copyWith(
-                color: Colors.amber[700],
+                color: amberTitle,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               l10n.noEscapesOrWrongClaims,
-              style: AppTextStyles.bodySmall.copyWith(color: Colors.amber[600]),
+              style: AppTextStyles.bodySmall.copyWith(color: amberBody),
             ),
           ],
           if (widget.clearResult.isNewRecord) ...[
@@ -390,13 +394,13 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             Text(
               l10n.newRecord,
               style: AppTextStyles.titleMedium.copyWith(
-                color: Colors.amber[700],
+                color: amberTitle,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               l10n.bestPerformance,
-              style: AppTextStyles.bodySmall.copyWith(color: Colors.amber[600]),
+              style: AppTextStyles.bodySmall.copyWith(color: amberBody),
             ),
           ],
         ],
@@ -462,50 +466,24 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
 
           // 報酬アイテム一覧
           Wrap(
-            spacing: Dimensions.spacingS,
-            runSpacing: Dimensions.spacingS,
+            spacing: Dimensions.spacingM,
+            runSpacing: Dimensions.spacingM,
             children: sortedRewards.map((entry) {
               final value = entry.key;
               final count = entry.value;
 
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingM,
-                  vertical: Dimensions.paddingS,
-                ),
-                decoration: BoxDecoration(
-                  color: cs.surface,
-                  borderRadius: BorderRadius.circular(Dimensions.radiusS),
-                  border: Border.all(color: cs.primary.withValues(alpha: 0.5)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: cs.primary.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PrimeGem(primeValue: value, size: 56),
+                  const SizedBox(height: 4),
+                  Text(
+                    'x$count',
+                    style: AppTextStyles.labelSmall.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      value.toString(),
-                      style: AppTextStyles.titleSmall.copyWith(
-                        color: cs.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (count > 1) ...[
-                      const SizedBox(width: Dimensions.spacingXs),
-                      Text(
-                        'x$count',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                  ),
+                ],
               );
             }).toList(),
           ),

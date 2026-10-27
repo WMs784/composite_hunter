@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'dart:math';
+import 'package:google_fonts/google_fonts.dart';
+import '../../widgets/prime_gem_painter.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
@@ -701,7 +703,7 @@ class _TimerSection extends ConsumerWidget {
               children: [
                 AnimatedDefaultTextStyle(
                   duration: const Duration(milliseconds: 300),
-                  style: AppTextStyles.timerDisplay.copyWith(
+                  style: GoogleFonts.orbitron(
                     color: timerColor,
                     fontSize: isCritical ? criticalFontSize : baseFontSize,
                     fontWeight: isCritical ? FontWeight.w900 : FontWeight.bold,
@@ -749,6 +751,9 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
   late AnimationController _invalidFlashController;
   late Animation<double> _invalidFlashOpacity;
 
+  // Monster idle animation — continuous slow wobble for composite enemies
+  late AnimationController _idleController;
+
   @override
   void initState() {
     super.initState();
@@ -786,6 +791,11 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
             curve: Curves.easeOut,
           ),
         );
+
+    _idleController = AnimationController(
+      duration: const Duration(milliseconds: 2800),
+      vsync: this,
+    )..repeat();
   }
 
   @override
@@ -793,6 +803,7 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
     _pulseController.dispose();
     _flashController.dispose();
     _invalidFlashController.dispose();
+    _idleController.dispose();
     super.dispose();
   }
 
@@ -848,6 +859,7 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
         _pulseController,
         _flashController,
         _invalidFlashController,
+        _idleController,
       ]),
       builder: (context, child) {
         return Transform.scale(
@@ -900,6 +912,7 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
                         )
                       : _buildBattleLayout(
                           l10n,
+                          enemy,
                           isPrime,
                           enemyDisplaySize,
                           adjustedFontSize,
@@ -945,19 +958,60 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
     );
   }
 
-  // game-designer: No text labels in battle mode — player discovers prime/composite
-  // through gameplay, not through explicit UI messages. The ambient color (brown→green)
-  // is the only atmospheric signal — earned through learning, not hand-holding.
+  // game-designer: Enemy is a character — shape and color driven by factorization.
+  // Monster form (composite) morphs into sparkle star (prime) as factorization succeeds.
   Widget _buildBattleLayout(
     AppLocalizations l10n,
+    int enemy,
     bool isPrime,
     double displaySize,
     double fontSize,
     String enemyString,
     double screenWidth,
   ) {
-    return Center(
-      child: _buildEnemyNumber(displaySize, fontSize, enemyString, screenWidth),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        RepaintBoundary(
+          child: CustomPaint(
+            painter: EnemyMonsterPainter(
+              primeFactors: _getPrimeFactors(enemy),
+              animPhase: _idleController.value * 2 * pi,
+            ),
+          ),
+        ),
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.50),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.30),
+                width: 1.0,
+              ),
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                enemyString,
+                style: AppTextStyles.enemyValue.copyWith(
+                  color: Colors.white,
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.bold,
+                  shadows: const [
+                    Shadow(
+                      offset: Offset(1, 2),
+                      blurRadius: 4,
+                      color: Colors.black54,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1246,26 +1300,13 @@ class _PrimeButtonState extends State<_PrimeButton>
   @override
   Widget build(BuildContext context) {
     final isAvailable = widget.prime.count > 0;
-    final cs = Theme.of(context).colorScheme;
-
-    final Color borderColor = isAvailable
-        ? AppColors.primeAvailable
-        : AppColors.primeUnavailable;
-
-    final Color backgroundColor = isAvailable
-        ? AppColors.primeAvailable.withValues(alpha: 0.08)
-        : AppColors.primeUnavailable.withValues(alpha: 0.25);
-
-    final Color valueColor = isAvailable
-        ? AppColors.primeAvailable
-        : AppColors.primeUnavailable;
 
     return AnimatedBuilder(
       animation: _tapScale,
       builder: (context, child) =>
           Transform.scale(scale: _tapScale.value, child: child),
       child: Material(
-        color: backgroundColor,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
         child: InkWell(
           onTap: isAvailable
@@ -1275,40 +1316,45 @@ class _PrimeButtonState extends State<_PrimeButton>
                 }
               : null,
           borderRadius: BorderRadius.circular(Dimensions.radiusM),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimensions.radiusM),
-              border: Border.all(color: borderColor, width: 1.5),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(Dimensions.radiusM),
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Text(
-                  widget.prime.value.toString(),
-                  style: AppTextStyles.primeValue.copyWith(
-                    color: valueColor,
-                    fontWeight: FontWeight.bold,
+                RepaintBoundary(
+                  child: CustomPaint(
+                    painter: PrimeGemPainter(
+                      primeValue: widget.prime.value,
+                      isAvailable: isAvailable,
+                    ),
                   ),
                 ),
-                const SizedBox(height: Dimensions.spacingXs),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Dimensions.paddingS,
-                    vertical: Dimensions.paddingXs,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isAvailable
-                        ? AppColors.primeAvailable.withValues(alpha: 0.15)
-                        : cs.surface,
-                    borderRadius: BorderRadius.circular(Dimensions.radiusS),
-                    border: Border.all(color: borderColor, width: 1),
-                  ),
-                  child: Text(
-                    'x${widget.prime.count}',
-                    style: AppTextStyles.primeCount.copyWith(
-                      color: valueColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.prime.value.toString(),
+                        style: GoogleFonts.fredoka(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: const [
+                            Shadow(blurRadius: 3, color: Colors.black54),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        'x${widget.prime.count}',
+                        style: GoogleFonts.fredoka(
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.90),
+                          shadows: const [
+                            Shadow(blurRadius: 2, color: Colors.black45),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -1692,6 +1738,182 @@ class _PulsingButtonState extends State<_PulsingButton>
       child: widget.child,
     );
   }
+}
+
+// ─── Prime Factorization Helper ─────────────────────────────────────────────────
+List<int> _getPrimeFactors(int n) {
+  final List<int> factors = [];
+  int temp = n;
+  while (temp % 2 == 0) {
+    factors.add(2);
+    temp ~/= 2;
+  }
+  for (int i = 3; i * i <= temp; i += 2) {
+    while (temp % i == 0) {
+      factors.add(i);
+      temp ~/= i;
+    }
+  }
+  if (temp > 1) factors.add(temp);
+  return factors;
+}
+
+// ─── Enemy Monster Painter ──────────────────────────────────────────────────────
+// game-designer: Enemy appearance driven by prime factorization:
+//   - Spike count  = total factor count     (12=2×2×3 → 3 spikes)
+//   - Eye count    = distinct prime count   (12={2,3} → 2 eyes)
+//   - Color        = smallest prime factor  (2→red, 3→green, 5→orange, 7→purple)
+//   - Prime enemy  → transforms into sparkle star
+class EnemyMonsterPainter extends CustomPainter {
+  final List<int> primeFactors;
+  final double animPhase;
+
+  EnemyMonsterPainter({required this.primeFactors, required this.animPhase});
+
+  Color get _baseColor {
+    if (primeFactors.isEmpty) return Colors.grey;
+    final smallest = primeFactors.reduce(min);
+    if (smallest == 2) return const Color(0xFFD32F2F);
+    if (smallest == 3) return const Color(0xFF388E3C);
+    if (smallest == 5) return const Color(0xFFF57C00);
+    if (smallest == 7) return const Color(0xFF7B1FA2);
+    return const Color(0xFF0288D1);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final r = min(cx, cy) * 0.72;
+    _drawMonster(canvas, cx, cy, r);
+  }
+
+  void _drawMonster(Canvas canvas, double cx, double cy, double r) {
+    final spikeCount = primeFactors.length.clamp(2, 8);
+    final path = _buildBlobPath(cx, cy, r, spikeCount);
+
+    // Drop shadow
+    canvas.drawPath(
+      path.shift(const Offset(3, 4)),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.25)
+        ..style = PaintingStyle.fill
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+    // Body
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = _baseColor
+        ..style = PaintingStyle.fill,
+    );
+    // Top sheen
+    canvas.save();
+    canvas.clipPath(path);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(cx - r * 0.1, cy - r * 0.3),
+        width: r * 1.2,
+        height: r * 0.7,
+      ),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.18)
+        ..style = PaintingStyle.fill,
+    );
+    canvas.restore();
+    // Outline
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0,
+    );
+    // Face
+    final eyeCount = primeFactors.toSet().length.clamp(1, 3);
+    _drawEyes(canvas, cx, cy, r, eyeCount);
+    _drawMouth(canvas, cx, cy, r, happy: false);
+  }
+
+  Path _buildBlobPath(double cx, double cy, double r, int bumps) {
+    const pts = 72;
+    final path = Path();
+    for (int i = 0; i <= pts; i++) {
+      final angle = 2 * pi * i / pts;
+      final wobble =
+          1.0 +
+          0.10 * sin(bumps * angle + animPhase) +
+          0.05 * sin(bumps * 2 * angle + animPhase * 1.3);
+      final x = cx + r * wobble * cos(angle);
+      final y = cy + r * wobble * sin(angle);
+      if (i == 0) {
+        path.moveTo(x, y);
+      } else {
+        path.lineTo(x, y);
+      }
+    }
+    path.close();
+    return path;
+  }
+
+  void _drawEyes(Canvas canvas, double cx, double cy, double r, int count) {
+    final eyeR = r * 0.13;
+    final eyeY = cy - r * 0.20;
+    final spacing = r * 0.28;
+    final startX = cx - spacing * (count - 1) / 2;
+    for (int i = 0; i < count; i++) {
+      final ex = startX + spacing * i;
+      canvas.drawCircle(
+        Offset(ex, eyeY),
+        eyeR,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.fill,
+      );
+      canvas.drawCircle(
+        Offset(ex + eyeR * 0.15, eyeY + eyeR * 0.15),
+        eyeR * 0.55,
+        Paint()
+          ..color = Colors.black
+          ..style = PaintingStyle.fill,
+      );
+      canvas.drawCircle(
+        Offset(ex - eyeR * 0.25, eyeY - eyeR * 0.25),
+        eyeR * 0.20,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.fill,
+      );
+    }
+  }
+
+  void _drawMouth(
+    Canvas canvas,
+    double cx,
+    double cy,
+    double r, {
+    required bool happy,
+  }) {
+    final mouthY = cy + r * 0.38;
+    final mw = r * 0.38;
+    final ctrl = happy ? -r * 0.12 : r * 0.09;
+    final path = Path()
+      ..moveTo(cx - mw, mouthY)
+      ..quadraticBezierTo(cx, mouthY + ctrl, cx + mw, mouthY);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.70)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(EnemyMonsterPainter old) =>
+      old.animPhase != animPhase ||
+      old.primeFactors.length != primeFactors.length;
 }
 
 bool _isPrime(int n) {

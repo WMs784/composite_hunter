@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
+import '../../widgets/prime_gem_painter.dart';
 import '../../../domain/entities/prime.dart';
 import 'stage_select_screen.dart';
 import '../../../core/utils/logger.dart';
@@ -463,103 +465,117 @@ class _SelectableItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final isSelected = selectedCount > 0;
-    final bgColor = isSelected ? cs.primaryContainer : cs.surface;
-    final borderColor = isSelected ? cs.primary : cs.outline;
-    final textColor = isSelected ? cs.onPrimaryContainer : cs.onSurface;
     final canAdd = canIncrease && selectedCount < prime.count;
 
     return Container(
       decoration: BoxDecoration(
-        color: bgColor,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: borderColor, width: isSelected ? 3 : 1),
+        border: Border.all(
+          color: isSelected
+              ? Colors.white
+              : Colors.white.withValues(alpha: 0.15),
+          width: isSelected ? 2.5 : 1.0,
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 素数値
-          Text(
-            prime.value.toString(),
-            style: AppTextStyles.primeValue.copyWith(
-              color: textColor,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              fontSize: 16,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          // 所持数表示
-          Text(
-            AppLocalizations.of(context)!.haveCount(prime.count.toString()),
-            style: AppTextStyles.labelSmall.copyWith(
-              color: textColor.withValues(alpha: 0.7),
-              fontSize: 9,
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          // 選択数と操作ボタン
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 減少ボタン
-              GestureDetector(
-                onTap: canDecrease ? onDecrease : null,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: canDecrease ? cs.primary : cs.outline,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.remove,
-                    color: canDecrease ? cs.onPrimary : cs.onSurfaceVariant,
-                    size: 12,
-                  ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Dimensions.radiusM - 1),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Gem fills card background
+            RepaintBoundary(
+              child: CustomPaint(
+                painter: PrimeGemPainter(
+                  primeValue: prime.value,
+                  isAvailable: true,
                 ),
               ),
-
-              const SizedBox(width: 8),
-
-              // 選択数表示
-              Container(
-                constraints: const BoxConstraints(minWidth: 24),
-                child: Text(
-                  '$selectedCount',
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color: textColor,
+            ),
+            // Text + controls overlay
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  prime.value.toString(),
+                  style: GoogleFonts.fredoka(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(blurRadius: 3, color: Colors.black54),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-
-              const SizedBox(width: 8),
-
-              // 増加ボタン
-              GestureDetector(
-                onTap: canAdd ? onIncrease : null,
+                Text(
+                  'x${prime.count}',
+                  style: GoogleFonts.fredoka(
+                    fontSize: 10,
+                    color: Colors.white.withValues(alpha: 0.85),
+                    shadows: const [
+                      Shadow(blurRadius: 2, color: Colors.black38),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _ctrlBtn(Icons.remove, canDecrease ? onDecrease : null, cs),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        '$selectedCount',
+                        style: GoogleFonts.fredoka(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    _ctrlBtn(Icons.add, canAdd ? onIncrease : null, cs),
+                  ],
+                ),
+              ],
+            ),
+            // Selection checkmark badge
+            if (isSelected)
+              Positioned(
+                top: 3,
+                right: 3,
                 child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: canAdd ? cs.primary : cs.outline,
-                    borderRadius: BorderRadius.circular(10),
+                  width: 14,
+                  height: 14,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.add,
-                    color: canAdd ? cs.onPrimary : cs.onSurfaceVariant,
-                    size: 12,
-                  ),
+                  child: Icon(Icons.check, size: 10, color: cs.primary),
                 ),
               ),
-            ],
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _ctrlBtn(IconData icon, VoidCallback? onTap, ColorScheme cs) {
+    final enabled = onTap != null;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          color: enabled
+              ? Colors.white.withValues(alpha: 0.90)
+              : Colors.white.withValues(alpha: 0.25),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: enabled ? cs.primary : Colors.white.withValues(alpha: 0.50),
+          size: 12,
+        ),
       ),
     );
   }

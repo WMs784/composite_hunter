@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/colors.dart';
 import '../theme/text_styles.dart';
 import '../theme/dimensions.dart';
 import '../../flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,7 +34,7 @@ class BattleMenuDialog extends StatelessWidget {
             // ヘッダー
             Row(
               children: [
-                const Icon(Icons.menu, color: AppColors.primary, size: 28),
+                Icon(Icons.menu, color: cs.primary, size: 28),
                 const SizedBox(width: Dimensions.spacingM),
                 Expanded(
                   child: Text(
@@ -60,7 +59,7 @@ class BattleMenuDialog extends StatelessWidget {
               icon: Icons.refresh,
               title: l10n.restart,
               description: l10n.restartDescription,
-              color: AppColors.primary,
+              color: cs.primary,
               onTap: () {
                 Navigator.of(context).pop();
                 onRestart?.call();
@@ -73,7 +72,7 @@ class BattleMenuDialog extends StatelessWidget {
               icon: Icons.exit_to_app,
               title: l10n.exit,
               description: l10n.exitDescription,
-              color: AppColors.error,
+              color: cs.error,
               onTap: () {
                 Navigator.of(context).pop();
                 _showExitConfirmation(context);
@@ -103,6 +102,7 @@ class BattleMenuDialog extends StatelessWidget {
 
   void _showExitConfirmation(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -118,7 +118,7 @@ class BattleMenuDialog extends StatelessWidget {
               Navigator.of(context).pop(); // Close confirmation dialog
               onExit?.call();
             },
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(foregroundColor: cs.error),
             child: Text(l10n.exit),
           ),
         ],
@@ -144,6 +144,7 @@ class _MenuOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(Dimensions.radiusM),
@@ -152,7 +153,7 @@ class _MenuOption extends StatelessWidget {
         padding: const EdgeInsets.all(Dimensions.paddingM),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimensions.radiusM),
-          border: Border.all(color: AppColors.outline),
+          border: Border.all(color: cs.outline),
         ),
         child: Row(
           children: [

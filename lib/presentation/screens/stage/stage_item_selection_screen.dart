@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
+import '../../widgets/prime_gem_painter.dart';
 import '../../../domain/entities/prime.dart';
 import 'stage_select_screen.dart';
 import '../../../core/utils/logger.dart';
@@ -97,13 +99,14 @@ class _StageItemSelectionScreenState
 
   /// ステージ情報ヘッダー
   Widget _buildStageInfoHeader() {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.all(Dimensions.paddingM),
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryContainer],
+        gradient: LinearGradient(
+          colors: [cs.primary, cs.primaryContainer],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -118,14 +121,14 @@ class _StageItemSelectionScreenState
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: cs.surface,
                   borderRadius: BorderRadius.circular(Dimensions.radiusM),
                 ),
                 child: Center(
                   child: Text(
                     widget.stage.stageNumber.toString(),
                     style: AppTextStyles.titleMedium.copyWith(
-                      color: AppColors.primary,
+                      color: cs.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -139,7 +142,7 @@ class _StageItemSelectionScreenState
                     Text(
                       widget.stage.title,
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.onPrimary,
+                        color: cs.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -147,7 +150,7 @@ class _StageItemSelectionScreenState
                     Text(
                       widget.stage.description,
                       style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.onPrimary.withValues(alpha: 0.9),
+                        color: cs.onPrimary.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -181,22 +184,19 @@ class _StageItemSelectionScreenState
 
   /// 選択状況表示
   Widget _buildSelectionStatus() {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: Dimensions.paddingM),
       padding: const EdgeInsets.all(Dimensions.paddingM),
       decoration: BoxDecoration(
-        color: AppColors.primaryContainer,
+        color: cs.primaryContainer,
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.outline),
+        border: Border.all(color: cs.outline),
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.inventory_2,
-            color: AppColors.onPrimaryContainer,
-            size: 24,
-          ),
+          Icon(Icons.inventory_2, color: cs.onPrimaryContainer, size: 24),
           const SizedBox(width: Dimensions.spacingM),
           Expanded(
             child: Column(
@@ -205,7 +205,7 @@ class _StageItemSelectionScreenState
                 Text(
                   AppLocalizations.of(context)!.selectedItems,
                   style: AppTextStyles.titleSmall.copyWith(
-                    color: AppColors.onPrimaryContainer,
+                    color: cs.onPrimaryContainer,
                   ),
                 ),
                 const SizedBox(height: Dimensions.spacingXs),
@@ -214,25 +214,21 @@ class _StageItemSelectionScreenState
                     Text(
                       '$totalSelectedCount',
                       style: AppTextStyles.titleLarge.copyWith(
-                        color: AppColors.onPrimaryContainer,
+                        color: cs.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       ' / $maxSelectableCount',
                       style: AppTextStyles.titleMedium.copyWith(
-                        color: AppColors.onPrimaryContainer.withValues(
-                          alpha: 0.7,
-                        ),
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(width: Dimensions.spacingS),
                     Text(
                       '($remainingCount ${AppLocalizations.of(context)!.remaining})',
                       style: AppTextStyles.labelSmall.copyWith(
-                        color: AppColors.onPrimaryContainer.withValues(
-                          alpha: 0.6,
-                        ),
+                        color: cs.onPrimaryContainer.withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -245,7 +241,7 @@ class _StageItemSelectionScreenState
             width: 80,
             height: 8,
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: cs.surface,
               borderRadius: BorderRadius.circular(4),
             ),
             child: FractionallySizedBox(
@@ -253,7 +249,7 @@ class _StageItemSelectionScreenState
               widthFactor: totalSelectedCount / maxSelectableCount,
               child: Container(
                 decoration: BoxDecoration(
-                  color: hasReachedLimit ? AppColors.error : AppColors.primary,
+                  color: hasReachedLimit ? cs.error : cs.primary,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -339,25 +335,24 @@ class _StageItemSelectionScreenState
 
   /// 情報チップ
   Widget _buildInfoChip(IconData icon, String text) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: Dimensions.paddingS,
         vertical: Dimensions.paddingXs,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.9),
+        color: cs.surface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(Dimensions.radiusS),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.primary),
+          Icon(icon, size: 14, color: cs.primary),
           const SizedBox(width: 4),
           Text(
             text,
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.onSurface,
-            ),
+            style: AppTextStyles.labelSmall.copyWith(color: cs.onSurface),
           ),
         ],
       ),
@@ -468,124 +463,120 @@ class _SelectableItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final isSelected = selectedCount > 0;
+    final canAdd = canIncrease && selectedCount < prime.count;
 
     return Container(
       decoration: BoxDecoration(
-        color: _getBackgroundColor(),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: _getBorderColor(), width: isSelected ? 3 : 1),
+        border: Border.all(
+          color: isSelected
+              ? Colors.white
+              : Colors.white.withValues(alpha: 0.15),
+          width: isSelected ? 2.5 : 1.0,
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // 素数値
-          Text(
-            prime.value.toString(),
-            style: AppTextStyles.primeValue.copyWith(
-              color: _getTextColor(),
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              fontSize: 16,
-            ),
-          ),
-
-          const SizedBox(height: 4),
-
-          // 所持数表示
-          Text(
-            AppLocalizations.of(context)!.haveCount(prime.count.toString()),
-            style: AppTextStyles.labelSmall.copyWith(
-              color: _getTextColor().withValues(alpha: 0.7),
-              fontSize: 9,
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          // 選択数と操作ボタン
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 減少ボタン
-              GestureDetector(
-                onTap: canDecrease ? onDecrease : null,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: canDecrease ? AppColors.primary : AppColors.outline,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    Icons.remove,
-                    color: canDecrease
-                        ? AppColors.onPrimary
-                        : AppColors.onSurfaceVariant,
-                    size: 12,
-                  ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(Dimensions.radiusM - 1),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Gem fills card background
+            RepaintBoundary(
+              child: CustomPaint(
+                painter: PrimeGemPainter(
+                  primeValue: prime.value,
+                  isAvailable: true,
                 ),
               ),
-
-              const SizedBox(width: 8),
-
-              // 選択数表示
-              Container(
-                constraints: const BoxConstraints(minWidth: 24),
-                child: Text(
-                  '$selectedCount',
-                  style: AppTextStyles.labelSmall.copyWith(
-                    color: _getTextColor(),
+            ),
+            // Text + controls overlay
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  prime.value.toString(),
+                  style: GoogleFonts.fredoka(
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(blurRadius: 3, color: Colors.black54),
+                    ],
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-
-              const SizedBox(width: 8),
-
-              // 増加ボタン
-              GestureDetector(
-                onTap: canIncrease && selectedCount < prime.count
-                    ? onIncrease
-                    : null,
+                Text(
+                  'x${prime.count}',
+                  style: GoogleFonts.fredoka(
+                    fontSize: 10,
+                    color: Colors.white.withValues(alpha: 0.85),
+                    shadows: const [
+                      Shadow(blurRadius: 2, color: Colors.black38),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _ctrlBtn(Icons.remove, canDecrease ? onDecrease : null, cs),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        '$selectedCount',
+                        style: GoogleFonts.fredoka(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    _ctrlBtn(Icons.add, canAdd ? onIncrease : null, cs),
+                  ],
+                ),
+              ],
+            ),
+            // Selection checkmark badge
+            if (isSelected)
+              Positioned(
+                top: 3,
+                right: 3,
                 child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: (canIncrease && selectedCount < prime.count)
-                        ? AppColors.primary
-                        : AppColors.outline,
-                    borderRadius: BorderRadius.circular(10),
+                  width: 14,
+                  height: 14,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.add,
-                    color: (canIncrease && selectedCount < prime.count)
-                        ? AppColors.onPrimary
-                        : AppColors.onSurfaceVariant,
-                    size: 12,
-                  ),
+                  child: Icon(Icons.check, size: 10, color: cs.primary),
                 ),
               ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Color _getBackgroundColor() {
-    final isSelected = selectedCount > 0;
-    return isSelected ? AppColors.primaryContainer : AppColors.surface;
-  }
-
-  Color _getBorderColor() {
-    final isSelected = selectedCount > 0;
-    return isSelected ? AppColors.primary : AppColors.outline;
-  }
-
-  Color _getTextColor() {
-    final isSelected = selectedCount > 0;
-    return isSelected ? AppColors.onPrimaryContainer : AppColors.onSurface;
+  Widget _ctrlBtn(IconData icon, VoidCallback? onTap, ColorScheme cs) {
+    final enabled = onTap != null;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(
+          color: enabled
+              ? Colors.white.withValues(alpha: 0.90)
+              : Colors.white.withValues(alpha: 0.25),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: enabled ? cs.primary : Colors.white.withValues(alpha: 0.50),
+          size: 12,
+        ),
+      ),
+    );
   }
 }

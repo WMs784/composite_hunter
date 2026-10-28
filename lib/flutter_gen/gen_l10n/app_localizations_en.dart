@@ -496,4 +496,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expertModeDescription => 'Ultimate challenge for advanced players';
+
+  @override
+  String get achievementUnlocked => 'Achievement Unlocked!';
+
+  @override
+  String achievementReward(String reward) {
+    return 'Reward: $reward';
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
+import '../../widgets/prime_gem_painter.dart';
 import '../../../domain/entities/stage.dart';
 import '../../widgets/animated_stars.dart';
 import '../../providers/stage_progress_provider.dart';
@@ -100,8 +101,9 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: cs.surface,
       body: SafeArea(
         child: AnimatedBuilder(
           animation: _mainController,
@@ -129,6 +131,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
   }
 
   Widget _buildContent(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
     return Container(
@@ -140,8 +143,8 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           end: Alignment.bottomCenter,
           colors: [
             AppColors.victoryGreen.withValues(alpha: 0.1),
-            AppColors.surface,
-            AppColors.primaryContainer.withValues(alpha: 0.1),
+            cs.surface,
+            cs.primaryContainer.withValues(alpha: 0.1),
           ],
         ),
       ),
@@ -224,7 +227,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               const SizedBox(height: Dimensions.spacingL),
 
               // 結果詳細
-              _buildResultDetails(l10n),
+              _buildResultDetails(context, l10n),
 
               const SizedBox(height: Dimensions.spacingL),
 
@@ -237,7 +240,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
 
               // 報酬表示
               if (widget.clearResult.rewardItems.isNotEmpty)
-                _buildRewardsSection(l10n),
+                _buildRewardsSection(context, l10n),
 
               const SizedBox(height: Dimensions.spacingL),
 
@@ -268,13 +271,14 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildResultDetails(AppLocalizations l10n) {
+  Widget _buildResultDetails(BuildContext context, AppLocalizations l10n) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(Dimensions.paddingL),
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant.withValues(alpha: 0.5),
+        color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(Dimensions.radiusL),
-        border: Border.all(color: AppColors.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: cs.outline.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -289,7 +293,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
             icon: Icons.timer,
             label: l10n.totalTime,
             value: _formatDuration(widget.clearResult.totalTime),
-            color: AppColors.primary,
+            color: cs.primary,
           ),
           const SizedBox(height: Dimensions.spacingM),
           _buildResultRow(
@@ -313,7 +317,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
               icon: Icons.error,
               label: l10n.wrongClaims,
               value: '${widget.clearResult.wrongClaims}',
-              color: AppColors.error,
+              color: cs.error,
             ),
           ],
         ],
@@ -404,7 +408,8 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
     );
   }
 
-  Widget _buildRewardsSection(AppLocalizations l10n) {
+  Widget _buildRewardsSection(BuildContext context, AppLocalizations l10n) {
+    final cs = Theme.of(context).colorScheme;
     // デバッグ: 受け取った報酬データをログ出力
     Logger.logBattle(
       'Stage clear screen - displaying rewards',
@@ -430,14 +435,14 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.primary.withValues(alpha: 0.1),
-            AppColors.primaryContainer.withValues(alpha: 0.3),
+            cs.primary.withValues(alpha: 0.1),
+            cs.primaryContainer.withValues(alpha: 0.3),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(Dimensions.radiusM),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -445,16 +450,12 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           // 報酬タイトル
           Row(
             children: [
-              const Icon(
-                Icons.card_giftcard,
-                color: AppColors.primary,
-                size: 24,
-              ),
+              Icon(Icons.card_giftcard, color: cs.primary, size: 24),
               const SizedBox(width: Dimensions.spacingS),
               Text(
                 'Stage Rewards', // TODO: Localize
                 style: AppTextStyles.titleMedium.copyWith(
-                  color: AppColors.primary,
+                  color: cs.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -465,52 +466,24 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
 
           // 報酬アイテム一覧
           Wrap(
-            spacing: Dimensions.spacingS,
-            runSpacing: Dimensions.spacingS,
+            spacing: Dimensions.spacingM,
+            runSpacing: Dimensions.spacingM,
             children: sortedRewards.map((entry) {
               final value = entry.key;
               final count = entry.value;
 
-              return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: Dimensions.paddingM,
-                  vertical: Dimensions.paddingS,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(Dimensions.radiusS),
-                  border: Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.5),
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  PrimeGem(primeValue: value, size: 56),
+                  const SizedBox(height: 4),
+                  Text(
+                    'x$count',
+                    style: AppTextStyles.labelSmall.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      value.toString(),
-                      style: AppTextStyles.titleSmall.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (count > 1) ...[
-                      const SizedBox(width: Dimensions.spacingXs),
-                      Text(
-                        'x$count',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                ],
               );
             }).toList(),
           ),
@@ -521,7 +494,7 @@ class _StageClearScreenState extends ConsumerState<StageClearScreen>
           Text(
             'Total: ${widget.clearResult.rewardItems.length} items', // TODO: Localize
             style: AppTextStyles.bodySmall.copyWith(
-              color: AppColors.onSurfaceVariant,
+              color: cs.onSurfaceVariant,
               fontStyle: FontStyle.italic,
             ),
           ),

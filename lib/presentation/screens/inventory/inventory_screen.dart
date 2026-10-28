@@ -34,37 +34,20 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.primeInventory),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppColors.primary,
-          labelColor: Colors.white,
-          unselectedLabelColor: AppColors.onSurfaceVariant,
+          indicatorColor: cs.primary,
+          labelColor: cs.onPrimary,
+          unselectedLabelColor: cs.onSurfaceVariant,
           tabs: [
-            Tab(
-              icon: const Icon(
-                Icons.inventory,
-                color: null,
-              ), // Use tab bar's color scheme
-              text: l10n.inventory,
-            ),
-            Tab(
-              icon: const Icon(
-                Icons.book,
-                color: null,
-              ), // Use tab bar's color scheme
-              text: l10n.collection,
-            ),
-            Tab(
-              icon: const Icon(
-                Icons.analytics,
-                color: null,
-              ), // Use tab bar's color scheme
-              text: l10n.statistics,
-            ),
+            Tab(icon: const Icon(Icons.inventory), text: l10n.inventory),
+            Tab(icon: const Icon(Icons.book), text: l10n.collection),
+            Tab(icon: const Icon(Icons.analytics), text: l10n.statistics),
           ],
         ),
       ),
@@ -81,6 +64,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
 
   Widget _buildInventoryTab() {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     final inventory = ref.watch(inventoryProvider);
     final usageStats = ref.watch(primeUsageProvider);
     final availablePrimes = inventory.where((p) => p.count > 0).toList();
@@ -92,23 +76,26 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           margin: const EdgeInsets.all(Dimensions.paddingM),
           padding: const EdgeInsets.all(Dimensions.paddingL),
           decoration: BoxDecoration(
-            color: AppColors.primaryContainer,
+            color: cs.primaryContainer,
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSummaryItem(
+                context,
                 l10n.totalPrimes,
                 inventory.fold(0, (sum, p) => sum + p.count).toString(),
                 Icons.numbers,
               ),
               _buildSummaryItem(
+                context,
                 l10n.unique,
                 inventory.length.toString(),
                 Icons.category,
               ),
               _buildSummaryItem(
+                context,
                 l10n.available,
                 availablePrimes.length.toString(),
                 Icons.check_circle,
@@ -137,6 +124,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
 
   Widget _buildCollectionTab() {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     final inventory = ref.watch(inventoryProvider);
     final usageStats = ref.watch(primeUsageProvider);
     final availableItems = inventory.where((prime) => prime.count > 0).toList();
@@ -156,23 +144,19 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: isUnlocked
-                  ? AppColors.primary
-                  : AppColors.surfaceVariant,
+                  ? cs.primary
+                  : cs.surfaceContainerHighest,
               child: Text(
                 prime.value.toString(),
                 style: AppTextStyles.labelLarge.copyWith(
-                  color: isUnlocked
-                      ? AppColors.onPrimary
-                      : AppColors.onSurfaceVariant,
+                  color: isUnlocked ? cs.onPrimary : cs.onSurfaceVariant,
                 ),
               ),
             ),
             title: Text(
               l10n.primeWithValue(prime.value.toString()),
               style: AppTextStyles.titleMedium.copyWith(
-                color: isUnlocked
-                    ? AppColors.onSurface
-                    : AppColors.onSurfaceVariant,
+                color: isUnlocked ? cs.onSurface : cs.onSurfaceVariant,
               ),
             ),
             subtitle: Text(
@@ -182,7 +166,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                     )
                   : l10n.notYetDiscovered,
               style: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
             ),
             trailing: Container(
@@ -190,12 +174,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
               decoration: BoxDecoration(
                 color: isUnlocked
                     ? AppColors.victoryGreen.withValues(alpha: 0.1)
-                    : AppColors.surface,
+                    : cs.surface,
                 borderRadius: BorderRadius.circular(Dimensions.radiusS),
                 border: Border.all(
-                  color: isUnlocked
-                      ? AppColors.victoryGreen
-                      : AppColors.outline,
+                  color: isUnlocked ? AppColors.victoryGreen : cs.outline,
                   width: 1,
                 ),
               ),
@@ -203,7 +185,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                 isUnlocked ? Icons.check_circle : Icons.lock,
                 color: isUnlocked
                     ? AppColors.victoryGreen
-                    : AppColors.onSurfaceVariant,
+                    : cs.onSurfaceVariant,
                 size: Dimensions.iconS,
               ),
             ),
@@ -215,6 +197,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
 
   Widget _buildStatisticsTab() {
     final l10n = AppLocalizations.of(context)!;
+    final cs = Theme.of(context).colorScheme;
     final inventory = ref.watch(inventoryProvider);
     final usageStats = ref.watch(primeUsageProvider);
     final usageNotifier = ref.read(primeUsageProvider.notifier);
@@ -234,7 +217,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
             totalUsage.toString(),
             l10n.attacksMade,
             Icons.gps_fixed,
-            AppColors.primary,
+            cs.primary,
           ),
           const SizedBox(height: Dimensions.spacingM),
           if (mostUsedPrime != null)
@@ -281,10 +264,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                       Expanded(
                         child: LinearProgressIndicator(
                           value: percentage,
-                          backgroundColor: AppColors.surfaceVariant,
-                          valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColors.primary,
-                          ),
+                          backgroundColor: cs.surfaceContainerHighest,
+                          valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
                         ),
                       ),
                       const SizedBox(width: Dimensions.spacingM),
@@ -307,29 +288,35 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
     );
   }
 
-  Widget _buildSummaryItem(String label, String value, IconData icon) {
+  Widget _buildSummaryItem(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+  ) {
+    final cs = Theme.of(context).colorScheme;
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(Dimensions.paddingS),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: cs.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
-          child: Icon(icon, color: AppColors.primary, size: Dimensions.iconM),
+          child: Icon(icon, color: cs.primary, size: Dimensions.iconM),
         ),
         const SizedBox(height: Dimensions.spacingXs),
         Text(
           value,
           style: AppTextStyles.titleLarge.copyWith(
-            color: AppColors.onPrimaryContainer,
+            color: cs.onPrimaryContainer,
             fontWeight: FontWeight.bold,
           ),
         ),
         Text(
           label,
           style: AppTextStyles.labelSmall.copyWith(
-            color: AppColors.onPrimaryContainer,
+            color: cs.onPrimaryContainer,
           ),
         ),
       ],
@@ -337,6 +324,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
   }
 
   Widget _buildPrimeItem(Prime prime, int usage, AppLocalizations l10n) {
+    final cs = Theme.of(context).colorScheme;
     final isAvailable = prime.count > 0;
     final isRecentlyObtained =
         DateTime.now().difference(prime.firstObtained).inMinutes < 5;
@@ -348,7 +336,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: isAvailable ? AppColors.primary : AppColors.surfaceVariant,
+            color: isAvailable ? cs.primary : cs.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(Dimensions.radiusM),
             border: isRecentlyObtained
                 ? Border.all(color: AppColors.victoryGreen, width: 2)
@@ -360,9 +348,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                 child: Text(
                   prime.value.toString(),
                   style: AppTextStyles.titleMedium.copyWith(
-                    color: isAvailable
-                        ? AppColors.onPrimary
-                        : AppColors.onSurfaceVariant,
+                    color: isAvailable ? cs.onPrimary : cs.onSurfaceVariant,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -390,9 +376,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
         ),
         subtitle: Text(
           l10n.usedTimes(usage.toString()),
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.onSurfaceVariant,
-          ),
+          style: AppTextStyles.bodySmall.copyWith(color: cs.onSurfaceVariant),
         ),
         trailing: Container(
           padding: const EdgeInsets.symmetric(
@@ -401,16 +385,14 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
           ),
           decoration: BoxDecoration(
             color: isAvailable
-                ? AppColors.primaryContainer
-                : AppColors.surfaceVariant,
+                ? cs.primaryContainer
+                : cs.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(Dimensions.radiusS),
           ),
           child: Text(
             'x${prime.count}',
             style: AppTextStyles.labelLarge.copyWith(
-              color: isAvailable
-                  ? AppColors.onPrimaryContainer
-                  : AppColors.onSurfaceVariant,
+              color: isAvailable ? cs.onPrimaryContainer : cs.onSurfaceVariant,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -426,6 +408,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
     IconData icon,
     Color color,
   ) {
+    final cs = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(Dimensions.paddingL),
@@ -461,7 +444,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                   Text(
                     subtitle,
                     style: AppTextStyles.bodySmall.copyWith(
-                      color: AppColors.onSurfaceVariant,
+                      color: cs.onSurfaceVariant,
                     ),
                   ),
                 ],

@@ -83,9 +83,18 @@ class LocalDatabase {
     Logger.info('Upgrading database from version $oldVersion to $newVersion');
 
     try {
-      // Handle database migrations here
       if (oldVersion < 2) {
-        // Future migration logic
+        // Insert any missing achievement definitions (safe: ConflictAlgorithm.ignore)
+        await _insertDefaultAchievements(db);
+
+        // Initialize player_achievement rows for existing players (safe: ConflictAlgorithm.ignore)
+        final players = await db.query(
+          DatabaseSchema.playersTable,
+          columns: ['id'],
+        );
+        for (final player in players) {
+          await _initializePlayerAchievements(db, player['id'] as int);
+        }
       }
 
       Logger.info('Database upgrade completed');
@@ -497,7 +506,7 @@ class LocalDatabase {
     }
   }
 
-  /// Update achievement progress
+  /// Update achievement progress (upsert: inserts if row not yet present)
   Future<void> updateAchievementProgress(
     int playerId,
     String achievementId,
@@ -507,22 +516,31 @@ class LocalDatabase {
   }) async {
     try {
       final db = await database;
-      final updateData = <String, dynamic>{'current_progress': progress};
+      final progressData = <String, dynamic>{'current_progress': progress};
 
       if (isUnlocked != null) {
-        updateData['is_unlocked'] = isUnlocked ? 1 : 0;
+        progressData['is_unlocked'] = isUnlocked ? 1 : 0;
       }
-
       if (unlockedAt != null) {
-        updateData['unlocked_at'] = unlockedAt;
+        progressData['unlocked_at'] = unlockedAt;
       }
 
-      await db.update(
+      final affected = await db.update(
         DatabaseSchema.playerAchievementsTable,
-        updateData,
+        progressData,
         where: 'player_id = ? AND achievement_id = ?',
         whereArgs: [playerId, achievementId],
       );
+
+      if (affected == 0) {
+        // Row doesn't exist yet – insert it
+        await db.insert(DatabaseSchema.playerAchievementsTable, {
+          'player_id': playerId,
+          'achievement_id': achievementId,
+          'progress_snapshots': '[]',
+          ...progressData,
+        }, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
 
       Logger.info(
         'Achievement progress updated for player $playerId, achievement $achievementId',

@@ -973,6 +973,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ultimate challenge for advanced players'**
   String get expertModeDescription;
+
+  /// Title shown when an achievement is unlocked
+  ///
+  /// In en, this message translates to:
+  /// **'Achievement Unlocked!'**
+  String get achievementUnlocked;
+
+  /// Reward text shown in achievement notification
+  ///
+  /// In en, this message translates to:
+  /// **'Reward: {reward}'**
+  String achievementReward(String reward);
 }
 
 class _AppLocalizationsDelegate

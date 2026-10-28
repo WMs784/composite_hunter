@@ -483,4 +483,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get expertModeDescription => '上級者向けの究極のチャレンジ';
+
+  @override
+  String get achievementUnlocked => 'アチーブメント解放！';
+
+  @override
+  String achievementReward(String reward) {
+    return '報酬: $reward';
+  }
 }

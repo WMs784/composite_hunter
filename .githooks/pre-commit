@@ -4,10 +4,17 @@
 # Runs dart format and flutter analyze before allowing commit
 #
 
+# An x86_64 git (e.g. /usr/local/git) runs hooks under Rosetta on Apple Silicon,
+# which breaks native-asset builds (xcrun is arm64 only). Re-enter as arm64.
+RUN=""
+if [ "$(uname -m)" = "x86_64" ] && [ "$(sysctl -in hw.optional.arm64 2>/dev/null)" = "1" ]; then
+    RUN="arch -arm64"
+fi
+
 echo "Running Dart format check..."
 
 # Run dart format check
-dart format --set-exit-if-changed .
+$RUN dart format --set-exit-if-changed .
 
 # Check if format passed
 if [ $? -ne 0 ]; then
@@ -20,7 +27,7 @@ echo "✅ Dart format check passed."
 echo "Running Flutter analyze..."
 
 # Run flutter analyze
-flutter analyze
+$RUN flutter analyze
 
 # Check if analyze passed
 if [ $? -ne 0 ]; then
@@ -32,7 +39,7 @@ echo "✅ Flutter analyze passed."
 
 # Optionally run tests as well
 echo "Running Flutter tests..."
-flutter test
+$RUN flutter test
 
 if [ $? -ne 0 ]; then
     echo "❌ Flutter tests failed. Please fix the tests before committing."

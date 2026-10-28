@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/achievement.dart';
 import '../../domain/entities/player.dart';
 import '../../domain/entities/inventory.dart';
+import '../../data/repositories/game_repository.dart';
 import 'game_provider.dart';
 import 'inventory_provider.dart';
 import '../../core/utils/logger.dart';
@@ -9,14 +10,15 @@ import '../../core/utils/logger.dart';
 /// State notifier for achievement management
 class AchievementNotifier extends StateNotifier<List<Achievement>> {
   final Ref _ref;
+  final GameRepository _repository;
 
-  AchievementNotifier(this._ref) : super([]) {
+  AchievementNotifier(this._ref, this._repository) : super([]) {
     _initializeAchievements();
   }
 
-  /// Initialize all available achievements
-  void _initializeAchievements() {
-    state = [
+  /// Build the master list of achievement definitions (without saved progress)
+  List<Achievement> _buildDefinitions() {
+    return [
       // Battle achievements
       const Achievement(
         id: 'first_victory',
@@ -240,9 +242,53 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         reward: AchievementReward.experience(100),
       ),
     ];
+  }
 
-    // Update progress based on current game state
+  /// Initialize achievements: merge hardcoded definitions with saved DB progress
+  Future<void> _initializeAchievements() async {
+    final definitions = _buildDefinitions();
+
+    try {
+      final savedAchievements = await _repository.getPlayerAchievements();
+      final savedMap = {for (final a in savedAchievements) a.id: a};
+
+      state = definitions.map((def) {
+        final saved = savedMap[def.id];
+        if (saved == null) return def;
+        return def.copyWith(
+          currentProgress: saved.currentProgress,
+          // Never downgrade: keep unlocked if DB says so
+          isUnlocked: saved.isUnlocked,
+          unlockedAt: saved.unlockedAt,
+        );
+      }).toList();
+
+      Logger.info('Achievement progress loaded from DB');
+    } catch (e) {
+      Logger.error(
+        'Failed to load achievement progress from DB, using defaults',
+        e,
+      );
+      state = definitions;
+    }
+
     _updateAllProgress();
+  }
+
+  /// Persist a single achievement's progress to the DB (fire-and-forget)
+  Future<void> _persistAchievementProgress(Achievement achievement) async {
+    try {
+      await _repository.updateAchievementProgress(
+        achievementId: achievement.id,
+        progress: achievement.currentProgress,
+        isUnlocked: achievement.isUnlocked,
+      );
+    } catch (e) {
+      Logger.error(
+        'Failed to persist achievement progress: ${achievement.id}',
+        e,
+      );
+    }
   }
 
   /// Update all achievement progress based on current game state
@@ -257,9 +303,12 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
         player,
         inventory,
       );
+      // Never downgrade an already-unlocked achievement (timing safety)
+      final newIsUnlocked =
+          achievement.isUnlocked || updatedProgress >= achievement.targetValue;
       return achievement.copyWith(
         currentProgress: updatedProgress,
-        isUnlocked: updatedProgress >= achievement.targetValue,
+        isUnlocked: newIsUnlocked,
       );
     }).toList();
   }
@@ -314,12 +363,14 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
     required bool isPerfectScore,
   }) async {
     final newlyUnlocked = <Achievement>[];
+    final progressChanged = <Achievement>[];
 
     state = state.map((achievement) {
       if (achievement.isUnlocked) return achievement;
 
       bool shouldUnlock = false;
       int newProgress = achievement.currentProgress;
+      bool changed = false;
 
       switch (achievement.id) {
         // Speed achievements
@@ -327,12 +378,14 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
           if (isVictory && battleTimeSeconds <= 10) {
             newProgress = 1;
             shouldUnlock = true;
+            changed = true;
           }
           break;
         case 'lightning_fast':
           if (isVictory && battleTimeSeconds <= 15) {
             newProgress = achievement.currentProgress + 1;
             shouldUnlock = newProgress >= achievement.targetValue;
+            changed = true;
           }
           break;
 
@@ -341,12 +394,14 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
           if (isVictory && turnCount <= 3) {
             newProgress = 1;
             shouldUnlock = true;
+            changed = true;
           }
           break;
         case 'minimalist':
           if (isVictory && turnCount <= 3) {
             newProgress = achievement.currentProgress + 1;
             shouldUnlock = newProgress >= achievement.targetValue;
+            changed = true;
           }
           break;
 
@@ -355,12 +410,14 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
           if (isVictory && isPerfectScore) {
             newProgress = 1;
             shouldUnlock = true;
+            changed = true;
           }
           break;
         case 'giant_slayer':
           if (isVictory && enemyValue > 1000) {
             newProgress = 1;
             shouldUnlock = true;
+            changed = true;
           }
           break;
         case 'comeback_king':
@@ -372,19 +429,28 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
           break;
       }
 
+      if (!changed) return achievement;
+
       final updated = achievement.copyWith(
         currentProgress: newProgress,
         isUnlocked: shouldUnlock,
         unlockedAt: shouldUnlock ? DateTime.now() : achievement.unlockedAt,
       );
 
-      if (shouldUnlock && !achievement.isUnlocked) {
+      if (shouldUnlock) {
         newlyUnlocked.add(updated);
         Logger.debug('Achievement unlocked: ${achievement.id}');
+      } else {
+        progressChanged.add(updated);
       }
 
       return updated;
     }).toList();
+
+    // Persist all changed achievements
+    for (final achievement in [...newlyUnlocked, ...progressChanged]) {
+      await _persistAchievementProgress(achievement);
+    }
 
     // Award rewards for newly unlocked achievements
     for (final achievement in newlyUnlocked) {
@@ -431,18 +497,26 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
   }
 
   /// Update achievement progress manually (for specific cases)
-  void updateProgress(String achievementId, int progress) {
+  Future<void> updateProgress(String achievementId, int progress) async {
+    Achievement? changed;
+
     state = state.map((achievement) {
       if (achievement.id == achievementId) {
         final shouldUnlock = progress >= achievement.targetValue;
-        return achievement.copyWith(
+        final updated = achievement.copyWith(
           currentProgress: progress,
           isUnlocked: shouldUnlock,
           unlockedAt: shouldUnlock ? DateTime.now() : achievement.unlockedAt,
         );
+        changed = updated;
+        return updated;
       }
       return achievement;
     }).toList();
+
+    if (changed != null) {
+      await _persistAchievementProgress(changed!);
+    }
   }
 
   /// Get achievements by category
@@ -502,7 +576,7 @@ class AchievementNotifier extends StateNotifier<List<Achievement>> {
 /// Achievement provider
 final achievementProvider =
     StateNotifierProvider<AchievementNotifier, List<Achievement>>((ref) {
-      return AchievementNotifier(ref);
+      return AchievementNotifier(ref, GameRepository());
     });
 
 /// Computed providers for achievements

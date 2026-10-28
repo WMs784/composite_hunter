@@ -388,7 +388,9 @@ class _StageCard extends StatelessWidget {
                           _buildInfoChip(
                             context,
                             Icons.timer,
-                            '${stage.timeLimit}s',
+                            AppLocalizations.of(
+                              context,
+                            )!.timeLimitShort(stage.timeLimit.toString()),
                           ),
                         ],
                       ),

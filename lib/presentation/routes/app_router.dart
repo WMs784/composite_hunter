@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../flutter_gen/gen_l10n/app_localizations.dart';
 import 'route_names.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/tutorial/tutorial_screen.dart';
@@ -158,22 +159,23 @@ class _UnknownScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Unknown Route')),
-      body: const Center(
+      appBar: AppBar(title: Text(l10n.unknownRoute)),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red),
-            SizedBox(height: 16),
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
             Text(
-              'Unknown Route',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              l10n.unknownRoute,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'The requested page could not be found.',
-              style: TextStyle(fontSize: 16),
+              l10n.unknownRouteMessage,
+              style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ],

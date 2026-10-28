@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
@@ -118,6 +119,7 @@ class ResultScreenButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         // 次のステージボタン（成功時かつ最終ステージでない場合のみ）
@@ -133,7 +135,7 @@ class ResultScreenButtons extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: onNextStage,
                   icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Next Stage'),
+                  label: Text(l10n.nextStage),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                       vertical: Dimensions.paddingM,
@@ -151,7 +153,7 @@ class ResultScreenButtons extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: onStageSelect,
             icon: const Icon(Icons.list),
-            label: const Text('Stage Select'),
+            label: Text(l10n.stageSelect),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
                 vertical: Dimensions.paddingM,
@@ -168,7 +170,7 @@ class ResultScreenButtons extends StatelessWidget {
           child: ElevatedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: Text(isSuccess ? 'Play Again' : 'Try Again'),
+            label: Text(isSuccess ? l10n.playAgain : l10n.tryAgain),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
                 vertical: Dimensions.paddingM,
@@ -183,7 +185,7 @@ class ResultScreenButtons extends StatelessWidget {
         TextButton.icon(
           onPressed: onPractice,
           icon: const Icon(Icons.school),
-          label: const Text('Practice Mode'),
+          label: Text(l10n.practiceMode),
         ),
       ],
     );

@@ -281,7 +281,8 @@ class _TutorialPage extends StatelessWidget {
                   const Icon(Icons.lightbulb, color: AppColors.victoryGreen),
                   const SizedBox(width: Dimensions.spacingS),
                   Text(
-                    readyMessage ?? 'Ready to hunt some composite numbers?',
+                    readyMessage ??
+                        AppLocalizations.of(context)!.tutorialReadyMessage,
                     style: AppTextStyles.labelLarge.copyWith(
                       color: AppColors.victoryGreen,
                     ),

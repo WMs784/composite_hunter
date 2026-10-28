@@ -448,11 +448,11 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // 簡単な視覚的フィードバック
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Row(
+        content: Row(
           children: [
-            Icon(Icons.restore, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Items restored to starting state'),
+            const Icon(Icons.restore, color: Colors.white),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.itemsRestoredToStart),
           ],
         ),
         backgroundColor: Colors.green.shade600,

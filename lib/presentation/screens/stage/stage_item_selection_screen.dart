@@ -140,7 +140,9 @@ class _StageItemSelectionScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.stage.title,
+                      widget.stage.getLocalizedTitle(
+                        AppLocalizations.of(context)!,
+                      ),
                       style: AppTextStyles.titleMedium.copyWith(
                         color: cs.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -148,7 +150,9 @@ class _StageItemSelectionScreenState
                     ),
                     const SizedBox(height: Dimensions.spacingXs),
                     Text(
-                      widget.stage.description,
+                      widget.stage.getLocalizedDescription(
+                        AppLocalizations.of(context)!,
+                      ),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: cs.onPrimary.withValues(alpha: 0.9),
                       ),

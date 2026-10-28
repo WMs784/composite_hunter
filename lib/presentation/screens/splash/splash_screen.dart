@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
@@ -107,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                     // App name
                     Text(
-                      'Composite Hunter',
+                      AppLocalizations.of(context)!.appTitle,
                       style: AppTextStyles.headlineLarge.copyWith(
                         color: AppColors.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -118,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                     // Subtitle
                     Text(
-                      '合成数ハンター',
+                      AppLocalizations.of(context)!.appTagline,
                       style: AppTextStyles.titleMedium.copyWith(
                         color: AppColors.onPrimary.withValues(alpha: 0.8),
                       ),
@@ -142,7 +143,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                     // Loading text
                     Text(
-                      'Loading...',
+                      AppLocalizations.of(context)!.loading,
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.onPrimary.withValues(alpha: 0.7),
                       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/achievement_l10n.dart';
 import '../../domain/entities/achievement.dart';
 import '../../flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -333,7 +334,7 @@ class _AchievementBannerOverlayState extends State<_AchievementBannerOverlay>
           const SizedBox(height: 3),
           // Achievement title — game-ui-design: text shadow for readability
           Text(
-            widget.achievement.title,
+            l10n.achievementTitle(widget.achievement),
             style: TextStyle(
               color: Colors.white,
               fontSize: 15,

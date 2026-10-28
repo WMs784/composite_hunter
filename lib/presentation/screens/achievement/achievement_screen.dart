@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/achievement_l10n.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
@@ -143,6 +144,7 @@ class AchievementScreen extends ConsumerWidget {
     ColorScheme cs,
     Achievement achievement,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     final progressValue = achievement.targetValue > 0
         ? achievement.currentProgress / achievement.targetValue
         : 0.0;
@@ -184,7 +186,7 @@ class AchievementScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    achievement.title,
+                    l10n.achievementTitle(achievement),
                     style: AppTextStyles.titleMedium.copyWith(
                       color: achievement.isUnlocked
                           ? cs.onSurface
@@ -193,7 +195,7 @@ class AchievementScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: Dimensions.spacingXs),
                   Text(
-                    achievement.description,
+                    l10n.achievementDescription(achievement),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: cs.onSurfaceVariant,
                     ),

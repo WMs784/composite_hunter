@@ -985,6 +985,270 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reward: {reward}'**
   String achievementReward(String reward);
+
+  /// achFirstVictoryTitle
+  ///
+  /// In en, this message translates to:
+  /// **'First Victory'**
+  String get achFirstVictoryTitle;
+
+  /// achFirstVictoryDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Win your first battle'**
+  String get achFirstVictoryDesc;
+
+  /// achBattleVeteranTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Battle Veteran'**
+  String get achBattleVeteranTitle;
+
+  /// achBattleVeteranDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Complete 100 battles'**
+  String get achBattleVeteranDesc;
+
+  /// achVictoryStreak10Title
+  ///
+  /// In en, this message translates to:
+  /// **'Winning Streak'**
+  String get achVictoryStreak10Title;
+
+  /// achVictoryStreak10Desc
+  ///
+  /// In en, this message translates to:
+  /// **'Win 10 battles in a row'**
+  String get achVictoryStreak10Desc;
+
+  /// achVictoryStreak25Title
+  ///
+  /// In en, this message translates to:
+  /// **'Unstoppable'**
+  String get achVictoryStreak25Title;
+
+  /// achVictoryStreak25Desc
+  ///
+  /// In en, this message translates to:
+  /// **'Win 25 battles in a row'**
+  String get achVictoryStreak25Desc;
+
+  /// achPowerHunterTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Power Hunter'**
+  String get achPowerHunterTitle;
+
+  /// achPowerHunterDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Defeat your first power enemy'**
+  String get achPowerHunterDesc;
+
+  /// achPowerSlayerTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Power Slayer'**
+  String get achPowerSlayerTitle;
+
+  /// achPowerSlayerDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Defeat 50 power enemies'**
+  String get achPowerSlayerDesc;
+
+  /// achSpeedDemonTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Speed Demon'**
+  String get achSpeedDemonTitle;
+
+  /// achSpeedDemonDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a battle in under 10 seconds'**
+  String get achSpeedDemonDesc;
+
+  /// achLightningFastTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Lightning Fast'**
+  String get achLightningFastTitle;
+
+  /// achLightningFastDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Complete 10 battles in under 15 seconds each'**
+  String get achLightningFastDesc;
+
+  /// achEfficientHunterTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Efficient Hunter'**
+  String get achEfficientHunterTitle;
+
+  /// achEfficientHunterDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a battle in 3 turns or less'**
+  String get achEfficientHunterDesc;
+
+  /// achMinimalistTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Minimalist'**
+  String get achMinimalistTitle;
+
+  /// achMinimalistDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Complete 20 battles in 3 turns or less'**
+  String get achMinimalistDesc;
+
+  /// achCollectorTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Prime Collector'**
+  String get achCollectorTitle;
+
+  /// achCollectorDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Collect 10 different primes'**
+  String get achCollectorDesc;
+
+  /// achHoarderTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Prime Hoarder'**
+  String get achHoarderTitle;
+
+  /// achHoarderDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Have 100 total primes in inventory'**
+  String get achHoarderDesc;
+
+  /// achLargePrimeCollectorTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Large Prime Collector'**
+  String get achLargePrimeCollectorTitle;
+
+  /// achLargePrimeCollectorDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Collect 5 primes larger than 100'**
+  String get achLargePrimeCollectorDesc;
+
+  /// achLevelUp10Title
+  ///
+  /// In en, this message translates to:
+  /// **'Rising Star'**
+  String get achLevelUp10Title;
+
+  /// achLevelUp10Desc
+  ///
+  /// In en, this message translates to:
+  /// **'Reach level 10'**
+  String get achLevelUp10Desc;
+
+  /// achLevelUp25Title
+  ///
+  /// In en, this message translates to:
+  /// **'Expert Hunter'**
+  String get achLevelUp25Title;
+
+  /// achLevelUp25Desc
+  ///
+  /// In en, this message translates to:
+  /// **'Reach level 25'**
+  String get achLevelUp25Desc;
+
+  /// achLevelUp50Title
+  ///
+  /// In en, this message translates to:
+  /// **'Prime Master'**
+  String get achLevelUp50Title;
+
+  /// achLevelUp50Desc
+  ///
+  /// In en, this message translates to:
+  /// **'Reach level 50'**
+  String get achLevelUp50Desc;
+
+  /// achPerfectBattleTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect Battle'**
+  String get achPerfectBattleTitle;
+
+  /// achPerfectBattleDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Complete a battle with perfect score'**
+  String get achPerfectBattleDesc;
+
+  /// achGiantSlayerTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Giant Slayer'**
+  String get achGiantSlayerTitle;
+
+  /// achGiantSlayerDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Defeat an enemy with value over 1000'**
+  String get achGiantSlayerDesc;
+
+  /// achComebackKingTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Comeback King'**
+  String get achComebackKingTitle;
+
+  /// achComebackKingDesc
+  ///
+  /// In en, this message translates to:
+  /// **'Win a battle with less than 5 seconds remaining'**
+  String get achComebackKingDesc;
+
+  /// appTagline
+  ///
+  /// In en, this message translates to:
+  /// **'Master prime factorization'**
+  String get appTagline;
+
+  /// loading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loading;
+
+  /// itemsRestoredToStart
+  ///
+  /// In en, this message translates to:
+  /// **'Items restored to starting state'**
+  String get itemsRestoredToStart;
+
+  /// unknownRoute
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Route'**
+  String get unknownRoute;
+
+  /// unknownRouteMessage
+  ///
+  /// In en, this message translates to:
+  /// **'The requested page could not be found.'**
+  String get unknownRouteMessage;
+
+  /// Short time limit label
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds}s'**
+  String timeLimitShort(String seconds);
 }
 
 class _AppLocalizationsDelegate

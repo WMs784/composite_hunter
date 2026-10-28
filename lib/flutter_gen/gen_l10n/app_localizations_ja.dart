@@ -491,4 +491,138 @@ class AppLocalizationsJa extends AppLocalizations {
   String achievementReward(String reward) {
     return '報酬: $reward';
   }
+
+  @override
+  String get achFirstVictoryTitle => '初勝利';
+
+  @override
+  String get achFirstVictoryDesc => '最初のバトルに勝利する';
+
+  @override
+  String get achBattleVeteranTitle => 'バトルの達人';
+
+  @override
+  String get achBattleVeteranDesc => '100回バトルを完了する';
+
+  @override
+  String get achVictoryStreak10Title => '連勝街道';
+
+  @override
+  String get achVictoryStreak10Desc => '10回連続でバトルに勝利する';
+
+  @override
+  String get achVictoryStreak25Title => '止まらない勢い';
+
+  @override
+  String get achVictoryStreak25Desc => '25回連続でバトルに勝利する';
+
+  @override
+  String get achPowerHunterTitle => 'パワーハンター';
+
+  @override
+  String get achPowerHunterDesc => '初めてパワー敵を倒す';
+
+  @override
+  String get achPowerSlayerTitle => 'パワースレイヤー';
+
+  @override
+  String get achPowerSlayerDesc => 'パワー敵を50体倒す';
+
+  @override
+  String get achSpeedDemonTitle => 'スピードの鬼';
+
+  @override
+  String get achSpeedDemonDesc => '10秒以内にバトルを完了する';
+
+  @override
+  String get achLightningFastTitle => '稲妻の速さ';
+
+  @override
+  String get achLightningFastDesc => '15秒以内のバトル完了を10回達成する';
+
+  @override
+  String get achEfficientHunterTitle => '効率的なハンター';
+
+  @override
+  String get achEfficientHunterDesc => '3ターン以内にバトルを完了する';
+
+  @override
+  String get achMinimalistTitle => 'ミニマリスト';
+
+  @override
+  String get achMinimalistDesc => '3ターン以内のバトル完了を20回達成する';
+
+  @override
+  String get achCollectorTitle => '素数コレクター';
+
+  @override
+  String get achCollectorDesc => '10種類の素数を集める';
+
+  @override
+  String get achHoarderTitle => '素数の貯蔵家';
+
+  @override
+  String get achHoarderDesc => 'インベントリに素数を合計100個持つ';
+
+  @override
+  String get achLargePrimeCollectorTitle => '大きな素数コレクター';
+
+  @override
+  String get achLargePrimeCollectorDesc => '100より大きい素数を5個集める';
+
+  @override
+  String get achLevelUp10Title => '期待の新星';
+
+  @override
+  String get achLevelUp10Desc => 'レベル10に到達する';
+
+  @override
+  String get achLevelUp25Title => '熟練ハンター';
+
+  @override
+  String get achLevelUp25Desc => 'レベル25に到達する';
+
+  @override
+  String get achLevelUp50Title => '素数マスター';
+
+  @override
+  String get achLevelUp50Desc => 'レベル50に到達する';
+
+  @override
+  String get achPerfectBattleTitle => 'パーフェクトバトル';
+
+  @override
+  String get achPerfectBattleDesc => '満点でバトルを完了する';
+
+  @override
+  String get achGiantSlayerTitle => 'ジャイアントキラー';
+
+  @override
+  String get achGiantSlayerDesc => '値が1000を超える敵を倒す';
+
+  @override
+  String get achComebackKingTitle => '逆転の王者';
+
+  @override
+  String get achComebackKingDesc => '残り5秒未満でバトルに勝利する';
+
+  @override
+  String get appTagline => '素因数分解をマスターしよう';
+
+  @override
+  String get loading => '読み込み中...';
+
+  @override
+  String get itemsRestoredToStart => 'アイテムを開始時の状態に戻しました';
+
+  @override
+  String get unknownRoute => '不明なルート';
+
+  @override
+  String get unknownRouteMessage => 'お探しのページが見つかりませんでした。';
+
+  @override
+  String timeLimitShort(String seconds) {
+    return '$seconds秒';
+  }
 }

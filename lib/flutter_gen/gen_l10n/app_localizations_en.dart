@@ -504,4 +504,140 @@ class AppLocalizationsEn extends AppLocalizations {
   String achievementReward(String reward) {
     return 'Reward: $reward';
   }
+
+  @override
+  String get achFirstVictoryTitle => 'First Victory';
+
+  @override
+  String get achFirstVictoryDesc => 'Win your first battle';
+
+  @override
+  String get achBattleVeteranTitle => 'Battle Veteran';
+
+  @override
+  String get achBattleVeteranDesc => 'Complete 100 battles';
+
+  @override
+  String get achVictoryStreak10Title => 'Winning Streak';
+
+  @override
+  String get achVictoryStreak10Desc => 'Win 10 battles in a row';
+
+  @override
+  String get achVictoryStreak25Title => 'Unstoppable';
+
+  @override
+  String get achVictoryStreak25Desc => 'Win 25 battles in a row';
+
+  @override
+  String get achPowerHunterTitle => 'Power Hunter';
+
+  @override
+  String get achPowerHunterDesc => 'Defeat your first power enemy';
+
+  @override
+  String get achPowerSlayerTitle => 'Power Slayer';
+
+  @override
+  String get achPowerSlayerDesc => 'Defeat 50 power enemies';
+
+  @override
+  String get achSpeedDemonTitle => 'Speed Demon';
+
+  @override
+  String get achSpeedDemonDesc => 'Complete a battle in under 10 seconds';
+
+  @override
+  String get achLightningFastTitle => 'Lightning Fast';
+
+  @override
+  String get achLightningFastDesc =>
+      'Complete 10 battles in under 15 seconds each';
+
+  @override
+  String get achEfficientHunterTitle => 'Efficient Hunter';
+
+  @override
+  String get achEfficientHunterDesc => 'Complete a battle in 3 turns or less';
+
+  @override
+  String get achMinimalistTitle => 'Minimalist';
+
+  @override
+  String get achMinimalistDesc => 'Complete 20 battles in 3 turns or less';
+
+  @override
+  String get achCollectorTitle => 'Prime Collector';
+
+  @override
+  String get achCollectorDesc => 'Collect 10 different primes';
+
+  @override
+  String get achHoarderTitle => 'Prime Hoarder';
+
+  @override
+  String get achHoarderDesc => 'Have 100 total primes in inventory';
+
+  @override
+  String get achLargePrimeCollectorTitle => 'Large Prime Collector';
+
+  @override
+  String get achLargePrimeCollectorDesc => 'Collect 5 primes larger than 100';
+
+  @override
+  String get achLevelUp10Title => 'Rising Star';
+
+  @override
+  String get achLevelUp10Desc => 'Reach level 10';
+
+  @override
+  String get achLevelUp25Title => 'Expert Hunter';
+
+  @override
+  String get achLevelUp25Desc => 'Reach level 25';
+
+  @override
+  String get achLevelUp50Title => 'Prime Master';
+
+  @override
+  String get achLevelUp50Desc => 'Reach level 50';
+
+  @override
+  String get achPerfectBattleTitle => 'Perfect Battle';
+
+  @override
+  String get achPerfectBattleDesc => 'Complete a battle with perfect score';
+
+  @override
+  String get achGiantSlayerTitle => 'Giant Slayer';
+
+  @override
+  String get achGiantSlayerDesc => 'Defeat an enemy with value over 1000';
+
+  @override
+  String get achComebackKingTitle => 'Comeback King';
+
+  @override
+  String get achComebackKingDesc =>
+      'Win a battle with less than 5 seconds remaining';
+
+  @override
+  String get appTagline => 'Master prime factorization';
+
+  @override
+  String get loading => 'Loading...';
+
+  @override
+  String get itemsRestoredToStart => 'Items restored to starting state';
+
+  @override
+  String get unknownRoute => 'Unknown Route';
+
+  @override
+  String get unknownRouteMessage => 'The requested page could not be found.';
+
+  @override
+  String timeLimitShort(String seconds) {
+    return '${seconds}s';
+  }
 }

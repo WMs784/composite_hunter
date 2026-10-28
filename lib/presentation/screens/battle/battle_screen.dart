@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:async';
 import 'dart:math';
@@ -8,6 +9,7 @@ import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
 import '../../routes/app_router.dart';
+import '../../widgets/battle_effects.dart';
 import '../../widgets/battle_menu_dialog.dart';
 import '../../providers/achievement_provider.dart';
 import '../../providers/battle_session_provider.dart';
@@ -185,6 +187,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
 
   void _initializeBattleForStage() {
     ref.read(battleStartTimeProvider.notifier).state = DateTime.now();
+    ref.read(battleComboProvider.notifier).state = 0;
     final session = ref.read(battleSessionProvider);
 
     // ステージに応じた敵と制限時間を設定
@@ -465,6 +468,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
   // game-designer: Silent fail — unchanged enemy IS the feedback.
   // A red flash on the enemy card signals "that didn't work" without explaining why.
   void _showInvalidAttackFeedback(BuildContext context, int prime, int enemy) {
+    HapticFeedback.heavyImpact();
     ref.read(battleInvalidAttackProvider.notifier).state++;
   }
 
@@ -498,50 +502,64 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(Dimensions.paddingM),
-          child: Column(
-            children: [
-              // Session progress (only for stage mode)
-              if (!session.isPracticeMode) const _SessionProgressSection(),
+      body: Stack(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(Dimensions.paddingM),
+              child: Column(
+                children: [
+                  // Session progress (only for stage mode)
+                  if (!session.isPracticeMode) const _SessionProgressSection(),
 
-              if (!session.isPracticeMode)
-                const SizedBox(height: Dimensions.spacingM),
+                  if (!session.isPracticeMode)
+                    const SizedBox(height: Dimensions.spacingM),
 
-              // Timer display (only in stage mode)
-              if (!session.isPracticeMode) const _TimerSection(),
+                  // Timer display (only in stage mode)
+                  if (!session.isPracticeMode) const _TimerSection(),
 
-              const SizedBox(height: Dimensions.spacingL),
+                  const SizedBox(height: Dimensions.spacingL),
 
-              // Enemy display
-              const Expanded(flex: 2, child: _EnemySection()),
+                  // Enemy display
+                  const Expanded(flex: 2, child: _EnemySection()),
 
-              const SizedBox(height: Dimensions.spacingL),
+                  const SizedBox(height: Dimensions.spacingL),
 
-              // Prime grid
-              Expanded(
-                flex: 3,
-                child: _PrimeGridSection(
-                  onGameOverCheck: _checkGameOverConditions,
-                  onInvalidAttack: _showInvalidAttackFeedback,
-                ),
+                  // Prime grid
+                  Expanded(
+                    flex: 3,
+                    child: _PrimeGridSection(
+                      onGameOverCheck: _checkGameOverConditions,
+                      onInvalidAttack: _showInvalidAttackFeedback,
+                    ),
+                  ),
+
+                  const SizedBox(height: Dimensions.spacingL),
+
+                  // Action buttons
+                  _ActionButtonsSection(
+                    onRestartTimer: _startTimer,
+                    onStopTimer: _stopTimer,
+                    onGenerateNewEnemy: _generateNewEnemy,
+                    onGenerateNewEnemyWithoutTimeReset:
+                        _generateNewEnemyWithoutTimeReset,
+                    onRestoreInventory: _restoreInventoryWithAnimation,
+                  ),
+                ],
               ),
-
-              const SizedBox(height: Dimensions.spacingL),
-
-              // Action buttons
-              _ActionButtonsSection(
-                onRestartTimer: _startTimer,
-                onStopTimer: _stopTimer,
-                onGenerateNewEnemy: _generateNewEnemy,
-                onGenerateNewEnemyWithoutTimeReset:
-                    _generateNewEnemyWithoutTimeReset,
-                onRestoreInventory: _restoreInventoryWithAnimation,
-              ),
-            ],
+            ),
           ),
-        ),
+          Positioned.fill(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final timer = ref.watch(battleTimerProvider);
+                return BattleEffectsOverlay(
+                  urgent: !session.isPracticeMode && timer > 0 && timer <= 10,
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -580,6 +598,7 @@ class _SessionProgressSection extends ConsumerWidget {
               ),
             ),
           ),
+          const ComboBadge(),
           if (session.escapes > 0) ...[
             Icon(Icons.directions_run, color: cs.error, size: 16),
             Text(
@@ -610,6 +629,12 @@ class _TimerSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final timer = ref.watch(battleTimerProvider);
     final maxTimer = ref.watch(battleMaxTimerProvider);
+    // Final countdown: a tick each second for the last 5 seconds
+    ref.listen<int>(battleTimerProvider, (previous, next) {
+      if (next > 0 && next <= 5 && next != previous) {
+        HapticFeedback.selectionClick();
+      }
+    });
     final minutes = timer ~/ 60;
     final seconds = timer % 60;
     final formattedTime =
@@ -754,6 +779,12 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
   // Monster idle animation — continuous slow wobble for composite enemies
   late AnimationController _idleController;
 
+  // Hit recoil — enemy shrinks briefly when a valid prime lands
+  late AnimationController _hitController;
+
+  // Shake — enemy trembles on invalid attack / wrong claim
+  late AnimationController _shakeController;
+
   @override
   void initState() {
     super.initState();
@@ -792,6 +823,15 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
           ),
         );
 
+    _hitController = AnimationController(
+      duration: const Duration(milliseconds: 320),
+      vsync: this,
+    );
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 420),
+      vsync: this,
+    );
+
     _idleController = AnimationController(
       duration: const Duration(milliseconds: 2800),
       vsync: this,
@@ -804,6 +844,8 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
     _flashController.dispose();
     _invalidFlashController.dispose();
     _idleController.dispose();
+    _hitController.dispose();
+    _shakeController.dispose();
     super.dispose();
   }
 
@@ -816,12 +858,16 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
 
     // Trigger white flash on valid attack
     ref.listen<int>(battleAttackCountProvider, (previous, next) {
-      if (mounted) _flashController.forward(from: 0);
+      if (!mounted) return;
+      _flashController.forward(from: 0);
+      if (!reduceMotionOf(context)) _hitController.forward(from: 0);
     });
 
     // Trigger red flash on invalid attack or wrong claim
     ref.listen<int>(battleInvalidAttackProvider, (previous, next) {
-      if (mounted) _invalidFlashController.forward(from: 0);
+      if (!mounted) return;
+      _invalidFlashController.forward(from: 0);
+      if (!reduceMotionOf(context)) _shakeController.forward(from: 0);
     });
 
     // Control pulse only when prime
@@ -860,98 +906,112 @@ class _EnemySectionState extends ConsumerState<_EnemySection>
         _flashController,
         _invalidFlashController,
         _idleController,
+        _hitController,
+        _shakeController,
       ]),
       builder: (context, child) {
-        return Transform.scale(
-          scale: isPrime ? _pulseScale.value : 1.0,
-          child: Stack(
-            children: [
-              // Main enemy card
-              Card(
-                elevation: isPrime ? 10 : 4,
-                shadowColor: isPrime
-                    ? AppColors.victoryGreen.withValues(alpha: 0.6)
-                    : Colors.black38,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                  side: isPrime
-                      ? BorderSide(color: AppColors.victoryGreen, width: 2.5)
-                      : BorderSide.none,
-                ),
-                child: Container(
-                  width: double.infinity,
-                  constraints: BoxConstraints(
-                    minHeight: 120,
-                    maxHeight: screenHeight * 0.25,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth < 350
-                        ? Dimensions.paddingS
-                        : Dimensions.paddingM,
-                    vertical: screenWidth < 350
-                        ? Dimensions.paddingXs
-                        : Dimensions.paddingS,
-                  ),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: gradientColors,
-                    ),
+        final hitScale = 1.0 - 0.10 * sin(pi * _hitController.value);
+        final shakeX =
+            sin(_shakeController.value * pi * 6) *
+            8 *
+            (1 - _shakeController.value);
+        return Transform.translate(
+          offset: Offset(shakeX, 0),
+          child: Transform.scale(
+            scale: (isPrime ? _pulseScale.value : 1.0) * hitScale,
+            child: Stack(
+              children: [
+                // Main enemy card
+                Card(
+                  elevation: isPrime ? 10 : 4,
+                  shadowColor: isPrime
+                      ? AppColors.victoryGreen.withValues(alpha: 0.6)
+                      : Colors.black38,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                    side: isPrime
+                        ? BorderSide(color: AppColors.victoryGreen, width: 2.5)
+                        : BorderSide.none,
                   ),
-                  child: session.isPracticeMode
-                      ? _buildPracticeLayout(
-                          l10n,
-                          enemy,
-                          isPrime,
-                          enemyDisplaySize,
-                          adjustedFontSize,
-                          enemyString,
-                          screenWidth,
-                        )
-                      : _buildBattleLayout(
-                          l10n,
-                          enemy,
-                          isPrime,
-                          enemyDisplaySize,
-                          adjustedFontSize,
-                          enemyString,
-                          screenWidth,
-                        ),
+                  child: Container(
+                    width: double.infinity,
+                    constraints: BoxConstraints(
+                      minHeight: 120,
+                      maxHeight: screenHeight * 0.25,
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: screenWidth < 350
+                          ? Dimensions.paddingS
+                          : Dimensions.paddingM,
+                      vertical: screenWidth < 350
+                          ? Dimensions.paddingXs
+                          : Dimensions.paddingS,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: gradientColors,
+                      ),
+                      borderRadius: BorderRadius.circular(Dimensions.radiusL),
+                    ),
+                    child: session.isPracticeMode
+                        ? _buildPracticeLayout(
+                            l10n,
+                            enemy,
+                            isPrime,
+                            enemyDisplaySize,
+                            adjustedFontSize,
+                            enemyString,
+                            screenWidth,
+                          )
+                        : _buildBattleLayout(
+                            l10n,
+                            enemy,
+                            isPrime,
+                            enemyDisplaySize,
+                            adjustedFontSize,
+                            enemyString,
+                            screenWidth,
+                          ),
+                  ),
                 ),
-              ),
 
-              // Valid attack flash — white burst
-              if (_flashController.value > 0)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                        color: Colors.white.withValues(
-                          alpha: _flashOpacity.value,
+                // Valid attack flash — white burst
+                if (_flashController.value > 0)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            Dimensions.radiusL,
+                          ),
+                          color: Colors.white.withValues(
+                            alpha: _flashOpacity.value,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
 
-              // Invalid attack flash — red burst (game-designer: secondary action tells story)
-              if (_invalidFlashController.value > 0)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Dimensions.radiusL),
-                        color: Colors.red.withValues(
-                          alpha: _invalidFlashOpacity.value,
+                // Invalid attack flash — red burst (game-designer: secondary action tells story)
+                if (_invalidFlashController.value > 0)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            Dimensions.radiusL,
+                          ),
+                          color: Colors.red.withValues(
+                            alpha: _invalidFlashOpacity.value,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -1153,6 +1213,9 @@ class _PrimeGridSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final primes = ref.watch(battleInventoryProvider);
     final enemy = ref.watch(battleEnemyProvider);
+    final isPractice = ref.watch(
+      battleSessionProvider.select((s) => s.isPracticeMode),
+    );
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
@@ -1181,6 +1244,12 @@ class _PrimeGridSection extends ConsumerWidget {
 
                     return _PrimeButton(
                       prime: prime,
+                      // Learning aid: practice mode only. Stage battles must
+                      // not reveal which prime divides the enemy.
+                      showValidHint:
+                          isPractice &&
+                          !_isPrime(enemy) &&
+                          enemy % prime.value == 0,
                       onPressed: () {
                         Logger.logBattle(
                           'Prime attack attempt',
@@ -1201,9 +1270,16 @@ class _PrimeGridSection extends ConsumerWidget {
                               },
                             );
                             // Trigger attack flash animation
+                            HapticFeedback.lightImpact();
                             ref
                                 .read(battleAttackCountProvider.notifier)
                                 .state++;
+                            ref
+                                .read(battleHitProvider.notifier)
+                                .state = BattleHit(
+                              ref.read(battleAttackCountProvider),
+                              prime.value,
+                            );
                             ref.read(battleEnemyProvider.notifier).state =
                                 enemy ~/ prime.value;
 
@@ -1267,8 +1343,13 @@ class _PrimeGridSection extends ConsumerWidget {
 class _PrimeButton extends StatefulWidget {
   final Prime prime;
   final VoidCallback? onPressed;
+  final bool showValidHint;
 
-  const _PrimeButton({required this.prime, this.onPressed});
+  const _PrimeButton({
+    required this.prime,
+    this.onPressed,
+    this.showValidHint = false,
+  });
 
   @override
   State<_PrimeButton> createState() => _PrimeButtonState();
@@ -1358,6 +1439,26 @@ class _PrimeButtonState extends State<_PrimeButton>
                     ],
                   ),
                 ),
+                if (widget.showValidHint)
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimensions.radiusM),
+                      border: Border.all(
+                        color: AppColors.victoryGreen,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                if (widget.showValidHint)
+                  const Positioned(
+                    top: 2,
+                    right: 4,
+                    child: Icon(
+                      Icons.check_circle,
+                      size: 18,
+                      color: AppColors.victoryGreen,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -1395,6 +1496,7 @@ class _ActionButtonsSection extends ConsumerWidget {
           onPressed: () {
             Logger.logBattle('Escape button pressed');
             ref.read(battleSessionProvider.notifier).recordEscape();
+            ref.read(battleComboProvider.notifier).state = 0;
             final currentTime = ref.read(battleTimerProvider);
             final newTime = (currentTime - 10).clamp(1, currentTime);
             ref.read(battleTimerProvider.notifier).state = newTime;
@@ -1489,6 +1591,9 @@ class _ActionButtonsSection extends ConsumerWidget {
       final session = ref.read(battleSessionProvider);
       final usedPrimes = session.usedPrimesInCurrentBattle;
       ref.read(battleSessionProvider.notifier).recordVictory(enemy);
+      HapticFeedback.mediumImpact();
+      ref.read(battleComboProvider.notifier).state++;
+      ref.read(battleCelebrationProvider.notifier).state++;
 
       // Check and show achievement unlock notifications (fire-and-forget)
       _checkAndShowAchievements(context, ref, enemy);
@@ -1664,6 +1769,8 @@ class _ActionButtonsSection extends ConsumerWidget {
       // game-designer: The unchanged composite enemy IS the feedback. Brief text
       // names the error without teaching the answer.
       ref.read(battleSessionProvider.notifier).recordWrongClaim();
+      ref.read(battleComboProvider.notifier).state = 0;
+      HapticFeedback.heavyImpact();
       ref.read(battleInvalidAttackProvider.notifier).state++;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1674,70 +1781,6 @@ class _ActionButtonsSection extends ConsumerWidget {
         ),
       );
     }
-  }
-}
-
-// ─── Pulsing Button Helper ──────────────────────────────────────────────────────
-// flutter-ui-ux: Reusable micro-interaction wrapper for "ready" state emphasis
-// game-ui-design: Motion guides attention — pulse only when action is critical
-class _PulsingButton extends StatefulWidget {
-  final Widget child;
-  final bool active;
-
-  const _PulsingButton({required this.child, required this.active});
-
-  @override
-  State<_PulsingButton> createState() => _PulsingButtonState();
-}
-
-class _PulsingButtonState extends State<_PulsingButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 650),
-      vsync: this,
-    );
-    _scale = Tween<double>(
-      begin: 1.0,
-      end: 1.055,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-    if (widget.active) _controller.repeat(reverse: true);
-  }
-
-  @override
-  void didUpdateWidget(_PulsingButton old) {
-    super.didUpdateWidget(old);
-    if (widget.active != old.active) {
-      if (widget.active) {
-        _controller.repeat(reverse: true);
-      } else {
-        _controller.stop();
-        _controller.animateTo(0);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _scale,
-      builder: (context, child) => Transform.scale(
-        scale: widget.active ? _scale.value : 1.0,
-        child: child,
-      ),
-      child: widget.child,
-    );
   }
 }
 
@@ -1787,6 +1830,7 @@ enum MonsterTier {
 class EnemyMonsterPainter extends CustomPainter {
   final List<int> primeFactors;
   final MonsterTier tier;
+
   final double animPhase;
 
   EnemyMonsterPainter({

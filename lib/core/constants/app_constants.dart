@@ -1,6 +1,6 @@
 class AppConstants {
   static const String appName = 'Composite Hunter';
-  static const String appVersion = '1.0.0';
+  static const String appVersion = '2.0.0';
 
   // Database
   static const String databaseName = 'composite_hunter.db';

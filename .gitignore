@@ -44,6 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Gradle / Xcode build output under android/ (incl. reports, PIFCache)
+/android/build/
+
 # Generated localization code (arb files in lib/l10n are the source)
 lib/l10n/*.dart
 

@@ -44,8 +44,14 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Gradle / Xcode build output under android/ (incl. reports, PIFCache)
+/android/build/
+
 # Generated localization code (arb files in lib/l10n are the source)
 lib/l10n/*.dart
 
 # Generated localization code (output of flutter gen-l10n, see l10n.yaml)
 lib/flutter_gen/
+
+# Claude Code personal settings
+.claude/settings.local.json

@@ -52,3 +52,6 @@ lib/l10n/*.dart
 
 # Generated localization code (output of flutter gen-l10n, see l10n.yaml)
 lib/flutter_gen/
+
+# Claude Code personal settings
+.claude/settings.local.json

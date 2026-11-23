@@ -8,7 +8,7 @@ import '../../widgets/prime_gem_painter.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
+import '../../routes/app_navigator.dart';
 import '../../widgets/battle_effects.dart';
 import '../../widgets/battle_menu_dialog.dart';
 import '../../providers/achievement_provider.dart';
@@ -421,7 +421,7 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
     // Reset battle session before returning to stage selection
     ref.read(battleSessionProvider.notifier).resetSession();
     // Return to stage selection screen
-    AppRouter.goToStageSelect(context);
+    AppNavigator.goToStageSelect(context);
   }
 
   /// アイテム復元処理（アニメーション付き）
@@ -492,12 +492,12 @@ class _BattleScreenState extends ConsumerState<BattleScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.inventory),
-            onPressed: () => AppRouter.goToInventory(context),
+            onPressed: () => AppNavigator.goToInventory(context),
             tooltip: l10n.inventory,
           ),
           IconButton(
             icon: const Icon(Icons.emoji_events),
-            onPressed: () => AppRouter.goToAchievements(context),
+            onPressed: () => AppNavigator.goToAchievements(context),
             tooltip: l10n.achievements,
           ),
         ],

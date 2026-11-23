@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
+import '../../routes/app_navigator.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/stage_progress_provider.dart';
 import '../../providers/inventory_provider.dart';
@@ -45,12 +45,12 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.inventory),
-            onPressed: () => AppRouter.goToInventory(context),
+            onPressed: () => AppNavigator.goToInventory(context),
             tooltip: l10n.inventory,
           ),
           IconButton(
             icon: const Icon(Icons.emoji_events),
-            onPressed: () => AppRouter.goToAchievements(context),
+            onPressed: () => AppNavigator.goToAchievements(context),
             tooltip: l10n.achievements,
           ),
           IconButton(
@@ -148,7 +148,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
   void _startStage(StageInfo stage) {
     Logger.info('Starting stage ${stage.stageNumber}: ${stage.title}');
     // アイテム選択画面に遷移
-    AppRouter.goToStageItemSelection(context, stage);
+    AppNavigator.goToStageItemSelection(context, stage);
   }
 
   void _startPracticeMode() {
@@ -158,7 +158,7 @@ class _StageSelectScreenState extends ConsumerState<StageSelectScreen> {
     // 練習モードでバトルセッションを開始（アイテム状態を保存）
     ref.read(battleSessionProvider.notifier).startPractice(currentInventory);
     // バトル画面に遷移
-    AppRouter.goToBattle(context);
+    AppNavigator.goToBattle(context);
   }
 
   void _resetInventory() {

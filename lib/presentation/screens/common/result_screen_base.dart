@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
+import '../../routes/app_navigator.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../../providers/stage_progress_provider.dart';
@@ -30,7 +30,7 @@ mixin ResultScreenMixin {
 
     // 現在の画面を閉じてバトル画面に遷移
     Navigator.pop(context);
-    AppRouter.goToBattle(context);
+    AppNavigator.goToBattle(context);
   }
 
   /// ステージ選択画面に戻る
@@ -48,7 +48,7 @@ mixin ResultScreenMixin {
 
     // 現在の画面を閉じてステージ選択画面に戻る
     Navigator.pop(context);
-    AppRouter.goToStageSelect(context);
+    AppNavigator.goToStageSelect(context);
   }
 
   /// 同じステージを再プレイ
@@ -70,7 +70,7 @@ mixin ResultScreenMixin {
 
     // 現在の画面を閉じてアイテム選択画面に遷移
     Navigator.pop(context);
-    AppRouter.goToStageItemSelection(context, stage);
+    AppNavigator.goToStageItemSelection(context, stage);
   }
 
   /// 練習モードを開始
@@ -92,7 +92,7 @@ mixin ResultScreenMixin {
 
     // 現在の画面を閉じてバトル画面に戻る
     Navigator.pop(context);
-    AppRouter.goToBattle(context);
+    AppNavigator.goToBattle(context);
   }
 }
 

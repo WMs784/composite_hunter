@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
+import '../../routes/app_navigator.dart';
 import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../../widgets/prime_gem_painter.dart';
@@ -414,7 +414,7 @@ class _StageItemSelectionScreenState
         );
 
     // バトル画面に遷移
-    AppRouter.goToBattle(context);
+    AppNavigator.goToBattle(context);
   }
 
   /// 選択されたアイテムからインベントリを作成

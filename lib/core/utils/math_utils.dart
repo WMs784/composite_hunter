@@ -80,46 +80,4 @@ class MathUtils {
     if (primeFactors.isEmpty) return 1;
     return primeFactors.reduce((a, b) => a * b);
   }
-
-  /// Get all factors of a number
-  static List<int> getFactors(int n) {
-    if (n <= 1) return [];
-
-    final factors = <int>[];
-
-    for (int i = 1; i * i <= n; i++) {
-      if (n % i == 0) {
-        factors.add(i);
-        if (i != n ~/ i) {
-          factors.add(n ~/ i);
-        }
-      }
-    }
-
-    factors.sort();
-    return factors;
-  }
-
-  /// Get the difficulty rating for a number based on its size and complexity
-  static int getDifficulty(int n) {
-    final factors = factorize(n);
-    final uniqueFactors = factors.toSet().length;
-
-    // Base difficulty from number size
-    int difficulty = 0;
-    if (n <= 20) {
-      difficulty = 1;
-    } else if (n <= 100) {
-      difficulty = 2;
-    } else if (n <= 1000) {
-      difficulty = 3;
-    } else {
-      difficulty = 4;
-    }
-
-    // Increase difficulty based on number of unique factors
-    difficulty += uniqueFactors;
-
-    return difficulty;
-  }
 }

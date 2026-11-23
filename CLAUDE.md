@@ -72,8 +72,7 @@ lib/
 │   └── datasources/        # Local storage, SharedPreferences
 ├── domain/                  # Business logic layer
 │   ├── entities/           # Business entities
-│   ├── usecases/           # Use cases
-│   └── services/           # Business services
+│   └── usecases/           # Use cases
 └── presentation/            # UI layer
     ├── providers/          # State management (Riverpod)
     ├── screens/            # Screen widgets

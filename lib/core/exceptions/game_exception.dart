@@ -13,10 +13,6 @@ abstract class GameException implements Exception {
   }
 }
 
-class InvalidAttackException extends GameException {
-  const InvalidAttackException(super.message, [super.details]);
-}
-
 class InvalidPrimeException extends GameException {
   const InvalidPrimeException(super.message, [super.details]);
 }

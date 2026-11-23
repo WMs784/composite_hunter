@@ -10,63 +10,8 @@ import '../../providers/inventory_provider.dart';
 import '../battle/battle_screen.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../core/utils/logger.dart';
-
-// ステージ情報
-class StageInfo {
-  final int stageNumber;
-  final String title;
-  final String description;
-  final int enemyRangeMin;
-  final int enemyRangeMax;
-  final int timeLimit;
-  final bool isUnlocked;
-  final bool isCompleted;
-  final int stars;
-
-  const StageInfo({
-    required this.stageNumber,
-    required this.title,
-    required this.description,
-    required this.enemyRangeMin,
-    required this.enemyRangeMax,
-    required this.timeLimit,
-    required this.isUnlocked,
-    required this.isCompleted,
-    required this.stars,
-  });
-
-  // 国際化対応のためのローカライズされたタイトルを取得
-  String getLocalizedTitle(AppLocalizations l10n) {
-    switch (stageNumber) {
-      case 1:
-        return l10n.basicBattle;
-      case 2:
-        return l10n.intermediateChallenge;
-      case 3:
-        return l10n.advancedPath;
-      case 4:
-        return l10n.expertMode;
-      default:
-        return title; // フォールバック
-    }
-  }
-
-  // 国際化対応のためのローカライズされた説明を取得
-  String getLocalizedDescription(AppLocalizations l10n) {
-    switch (stageNumber) {
-      case 1:
-        return l10n.basicBattleDescription;
-      case 2:
-        return l10n.intermediateChallengeDescription;
-      case 3:
-        return l10n.advancedPathDescription;
-      case 4:
-        return l10n.expertModeDescription;
-      default:
-        return description; // フォールバック
-    }
-  }
-}
+import '../../l10n/stage_info_l10n.dart';
+import '../../../domain/entities/stage_info.dart';
 
 class StageSelectScreen extends ConsumerStatefulWidget {
   const StageSelectScreen({super.key});

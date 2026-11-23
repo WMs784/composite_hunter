@@ -14,15 +14,12 @@ import '../../core/utils/logger.dart';
 class GameRepository {
   final LocalDatabase _database;
   final SharedPreferencesService _preferences;
-  // final GameMapper _mapper; // Future feature
 
   GameRepository({
     LocalDatabase? database,
     SharedPreferencesService? preferences,
-    // GameMapper? mapper, // Future feature
   }) : _database = database ?? LocalDatabase(),
        _preferences = preferences ?? SharedPreferencesService();
-  // _mapper = mapper ?? GameMapper(); // Future feature
 
   // ========== PLAYER OPERATIONS ==========
 

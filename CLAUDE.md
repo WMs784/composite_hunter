@@ -86,23 +86,21 @@ lib/
 1. **State Management**: Uses Riverpod for state management with StateNotifier pattern
 2. **Clean Architecture**: Separates concerns across data, domain, and presentation layers
 3. **Repository Pattern**: Abstracts data sources behind repository interfaces
-4. **Strategy Pattern**: Used for enemy generation and battle logic
 
 ### Core Game Mechanics
 
 - **Prime Number Combat**: Players attack composite numbers with prime factors
 - **Timer System**: Time-limited battles with penalties for escapes/wrong claims
 - **Victory Declaration**: Players must manually declare victory when enemy becomes prime
-- **Power Enemies**: Special enemies that are prime powers (e.g., 2³, 3², 5²) with bonus rewards
+- **Power Enemies** (planned, not implemented): Special enemies that are prime powers (e.g., 2³, 3², 5²) with bonus rewards
 - **Inventory System**: Players collect and manage prime numbers
 
 ### Key Components
 
-1. **BattleEngine**: Core battle logic and attack processing
-2. **TimerManager**: Handles countdown timers and penalties
-3. **EnemyGenerator**: Creates appropriate enemies based on player level
-4. **PowerEnemyDetector**: Identifies and creates power enemies
-5. **VictoryValidator**: Validates player victory claims
+1. **BattleScreen** (`presentation/screens/battle/`): Runs the battle (enemy generation, attacks, timer, victory claims)
+2. **battleSessionProvider**: Stage/practice session state and results
+3. **inventoryProvider**: Player's prime inventory
+4. **stageProgressProvider**: Stage definitions, unlocks and stars
 
 ## Important Implementation Notes
 

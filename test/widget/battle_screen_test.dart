@@ -4,11 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:composite_hunter/presentation/screens/battle/battle_screen.dart';
 import 'package:composite_hunter/presentation/theme/app_theme.dart';
-import 'package:composite_hunter/presentation/providers/battle_provider.dart';
 import 'package:composite_hunter/presentation/providers/inventory_provider.dart';
 import 'package:composite_hunter/presentation/providers/battle_session_provider.dart';
-import 'package:composite_hunter/domain/services/enemy_generator.dart';
-import 'package:composite_hunter/domain/services/timer_manager.dart';
 import 'package:composite_hunter/flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
@@ -17,9 +14,6 @@ void main() {
       return ProviderScope(
         overrides: [
           inventoryProvider.overrideWith((ref) => InventoryNotifier()),
-          battleProvider.overrideWith(
-            (ref) => BattleNotifier(EnemyGenerator(), TimerManager(), ref),
-          ),
           battleSessionProvider.overrideWith((ref) => BattleSessionNotifier()),
         ],
         child: MaterialApp(

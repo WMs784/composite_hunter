@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/stage.dart';
-import '../screens/stage/stage_select_screen.dart';
+import '../../domain/entities/stage_info.dart';
 
 /// ステージ進行状況の永続化
 class StageProgressNotifier extends StateNotifier<List<StageInfo>> {

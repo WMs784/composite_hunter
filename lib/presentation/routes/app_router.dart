@@ -10,6 +10,7 @@ import '../screens/stage/stage_clear_screen.dart';
 import '../screens/inventory/inventory_screen.dart';
 import '../screens/achievement/achievement_screen.dart';
 import '../../domain/entities/stage.dart';
+import '../../domain/entities/stage_info.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {

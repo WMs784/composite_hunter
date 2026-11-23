@@ -9,7 +9,8 @@ import '../../providers/battle_session_provider.dart';
 import '../../providers/inventory_provider.dart';
 import '../../widgets/prime_gem_painter.dart';
 import '../../../domain/entities/prime.dart';
-import 'stage_select_screen.dart';
+import '../../../domain/entities/stage_info.dart';
+import '../../l10n/stage_info_l10n.dart';
 import '../../../core/utils/logger.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 

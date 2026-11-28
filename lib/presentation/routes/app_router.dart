@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../flutter_gen/gen_l10n/app_localizations.dart';
 import 'route_names.dart';
 import '../screens/splash/splash_screen.dart';

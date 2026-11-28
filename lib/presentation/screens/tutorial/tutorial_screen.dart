@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
+import '../../routes/app_navigator.dart';
 import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 
 class TutorialScreen extends StatefulWidget {
@@ -45,7 +45,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   void _completeTutorial() {
     // TODO: Mark tutorial as completed in preferences
-    AppRouter.goToStageSelect(context);
+    AppNavigator.goToStageSelect(context);
   }
 
   @override

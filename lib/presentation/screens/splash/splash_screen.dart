@@ -3,7 +3,7 @@ import '../../../flutter_gen/gen_l10n/app_localizations.dart';
 import '../../theme/colors.dart';
 import '../../theme/text_styles.dart';
 import '../../theme/dimensions.dart';
-import '../../routes/app_router.dart';
+import '../../routes/app_navigator.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (mounted) {
       // TODO: Check if this is first launch or tutorial is completed
       // For now, always go to tutorial
-      await AppRouter.goToTutorial(context);
+      await AppNavigator.goToTutorial(context);
     }
   }
 

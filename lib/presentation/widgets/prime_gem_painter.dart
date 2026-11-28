@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Displays a prime number as a colored gem shape.
 /// Used in battle screen prime buttons, item selection, and stage results.
